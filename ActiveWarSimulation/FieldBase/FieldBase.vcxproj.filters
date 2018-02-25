@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Shape">
+      <UniqueIdentifier>{57d35887-4aba-4dae-a3b8-98fae8889cf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Shape">
+      <UniqueIdentifier>{9933f794-0886-4a41-848d-097a6743d0d1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FieldBaseMain.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\input.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="Circle.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="Edge.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ActiveWarSimulation\input.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Circle.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Edge.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
