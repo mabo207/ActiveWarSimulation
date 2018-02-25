@@ -50,3 +50,11 @@ Vector2D Circle::CalculatePushVec(const Shape *pShape)const{
 	}
 	return ret;
 }
+
+Vector2D Circle::GetLeftTop()const{
+	return Vector2D(m_position.x-m_r,m_position.y-m_r);
+}
+
+Vector2D Circle::GetRightBottom()const{
+	return Vector2D(m_position.x+m_r,m_position.y+m_r);
+}

@@ -64,11 +64,13 @@ public:
 	}
 	void Move(Vector2D displacement);//オブジェクトを移動させる。数フレームかけて位置補正を行うため、当たり判定による位置の補正はMove()ではなくUpdate()によって行う
 	const std::vector<std::shared_ptr<const Shape>> InShapeList(const std::vector<std::shared_ptr<const Shape>> &pShapeVec)const;//pShapeVecにある図形のうちthis内に存在する図形を全てリストアップする
-	void Update(const std::vector<std::shared_ptr<Shape>> &pShapeVec);//当たり判定による位置補正を行う。全ての図形に対しまとめて行うのが前提。
+	void Update(const std::vector<std::shared_ptr<Shape>> &pShapeVec,size_t updateTimes);//当たり判定による位置補正をupdateTimes回だけ行う。全ての図形に対しまとめて行うのが前提。
+	bool JudgeInShapeRect(const Shape *pShape)const;//長方形判定によって中にあるかどうかを判定する
 	//純粋仮想関数
 	virtual void Draw(Vector2D adjust,unsigned int color,int fillFlag,float lineTickness=1.0f)const=0;
 	virtual Vector2D CalculatePushVec(const Shape *pShape)const=0;//pShapeとthisが重なっているか判定し、押し出すベクトルを返す。重なっていない場合はVector2D(0,0)が返される。
-	
+	virtual Vector2D GetLeftTop()const=0;//左上の座標を求める
+	virtual Vector2D GetRightBottom()const=0;//右下の座標を求める
 };
 
 #endif // !DEF_SHAPE_H

@@ -29,6 +29,8 @@ public:
 	}
 	void Draw(Vector2D adjust,unsigned int color,int fillFlag,float lineThickness=1.0f)const;
 	Vector2D CalculatePushVec(const Shape *pShape)const;//pShapeとthisが重なっているか判定し、押し出すベクトルを返す。重なっていない場合はVector2D(0,0)が返される。
+	Vector2D GetLeftTop()const;//左上の座標を求める
+	Vector2D GetRightBottom()const;//右下の座標を求める
 };
 
 

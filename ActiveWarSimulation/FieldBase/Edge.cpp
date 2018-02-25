@@ -82,3 +82,25 @@ Vector2D Edge::CalculatePushVec(const Shape *pShape)const{
 	}
 	return ret;
 }
+
+Vector2D Edge::GetLeftTop()const{
+	Vector2D ret=m_position;
+	if(m_vec.x<0.0f){
+		ret.x+=m_vec.x;
+	}
+	if(m_vec.y<0.0f){
+		ret.y+=m_vec.y;
+	}
+	return ret;
+}
+
+Vector2D Edge::GetRightBottom()const{
+	Vector2D ret=m_position;
+	if(m_vec.x>0.0f){
+		ret.x+=m_vec.x;
+	}
+	if(m_vec.y>0.0f){
+		ret.y+=m_vec.y;
+	}
+	return ret;
+}

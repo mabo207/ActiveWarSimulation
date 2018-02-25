@@ -45,14 +45,16 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		std::shared_ptr<Shape> pMoveCircle(new Circle(Vector2D(100.0f,300.0f),30.0f,Shape::Fix::e_dynamic));
 		std::vector<std::shared_ptr<Shape>> field={pMoveCircle};
 		Vector2D epos(800.0f,300.0f),evec(80.0f,20.0f);
-		for(int i=0,max=100;i<max;i++){
+		for(int i=0,max=500;i<max;i++){
 			//障害物の追加
 			field.push_back(std::shared_ptr<Shape>(new Circle(Vector2D(120.0f*(float)i-2.0f/2.0f*(float)(i*i),150.0f),30.0f,Shape::Fix::e_static)));
 			field.push_back(std::shared_ptr<Shape>(new Edge(epos,evec,Shape::Fix::e_static)));
 			epos+=evec;
 			evec=evec.turn((float)(M_PI*2/max));
 		}
-		
+		std::shared_ptr<Shape> pSharedWindow(new Edge(Vector2D(0.0f,0.0f),Vector2D(1280.0f,720.0f),Shape::Fix::e_ignore));//画面を表すベクトル
+		const Shape *pWindow=pSharedWindow.get();
+
 		//実行
 		while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
 			//ゲーム本体
@@ -67,7 +69,9 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 			//描画
 			fpsMeasuring.RecordTime();
 			for(const std::shared_ptr<const Shape> &pShape:field){
-				pShape->Draw(Vector2D(0.0f,0.0f),GetColor(255,255,255),TRUE,1.0f);
+				if(pShape->JudgeInShapeRect(pWindow)){
+					pShape->Draw(Vector2D(0.0f,0.0f),GetColor(255,255,255),TRUE,1.0f);
+				}
 			}
 			pMoveCircle->Draw(Vector2D(0.0f,0.0f),GetColor(255,0,0),TRUE,1.0f);
 			printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000);
@@ -76,9 +80,9 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 			fpsMeasuring.RecordTime();
 			int index=0;
 			const float speed=3.0f;//オブジェクトの移動速度
-			const int moveCount=5;//移動回数の分割数
-			const int judgeCount=3;//1移動内の当たり判定実行回数
-			for(int j=0;j<moveCount;j++){
+			const size_t moveCount=5;//移動回数の分割数
+			const size_t judgeCount=3;//1移動内の当たり判定実行回数
+			for(size_t i=0;i<moveCount;i++){
 				//1フレーム内に5回移動
 				//移動処理を小分けにする事で、移動速度を向上させることができる
 				if(fpsMeasuring.GetFlame()%1==0){
@@ -86,12 +90,10 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					Vector2D v=GetMousePointVector2D()-pMoveCircle->GetPosition();
 					pMoveCircle->Move(v.norm()*std::fminf((float)(speed/moveCount),v.size()));
 				}
-				for(int i=0;i<judgeCount;i++){
-					//1フレーム内に複数回当たり判定処理を行うと、処理が重くなる代わりにオブジェクトの移動速度を上げることができる
-					for(const std::shared_ptr<Shape> &pShape:field){
-						//当たり判定系の処理
-						pShape->Update(field);
-					}
+				//1フレーム内に複数回当たり判定処理を行うと、処理が重くなる代わりにオブジェクトの移動速度を上げることができる
+				for(const std::shared_ptr<Shape> &pShape:field){
+					//当たり判定系の処理
+					pShape->Update(field,judgeCount);
 				}
 			}
 
