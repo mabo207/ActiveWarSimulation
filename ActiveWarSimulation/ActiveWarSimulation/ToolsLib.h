@@ -139,6 +139,9 @@ std::string to_string_0d(int pal,unsigned int length);
 //ファイルが存在するかどうかを調べる。実行ファイルの存在するディレクトリ上に存在するかを調べる。
 bool JudgeFileExist(const std::string &str);
 
+//現在の背景色のカラーコードを取得する
+unsigned int GetBackgroundColor();
+
 //反転色のカラーコードを取得する
 unsigned int GetInvertedColor(unsigned int color);
 

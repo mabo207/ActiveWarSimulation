@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\Tools">
+      <UniqueIdentifier>{58abda6c-a672-43be-aa2e-f15ea963352b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Tools">
+      <UniqueIdentifier>{5ced6b30-9138-4bb4-a2c8-e0f7a2fc7e31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Shape">
+      <UniqueIdentifier>{9a8e5a8f-7257-4fb9-bf28-d14c463da22f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\FieldObject">
+      <UniqueIdentifier>{af8d7f5e-6f2f-45e8-a532-78a55638830c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\StageEditor">
+      <UniqueIdentifier>{ca4d9bec-02e3-4661-b2f2-0824a3013928}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\StageEditor\ButtonHaving">
+      <UniqueIdentifier>{0a55fd6a-fddc-4ae4-9164-791eb67e063d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\StageEditor\ButtonHaving\PosSetting">
+      <UniqueIdentifier>{2025bc73-d765-4d7d-b01b-2079bcd68b50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\StageEditor\ButtonHaving\EditAction">
+      <UniqueIdentifier>{86a8e244-9778-44bb-ad4c-d21e775c9cfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\StageEditor\ButtonHaving\ShapeFactory">
+      <UniqueIdentifier>{983abe64-19be-4820-9f80-a8882850e506}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\FieldObject">
+      <UniqueIdentifier>{a96fd7c8-5a2d-4199-a3c3-36cde4bee2d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Shape">
+      <UniqueIdentifier>{77e2ac32-6e3a-4459-b4fa-48aae60a6865}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\StageEditor">
+      <UniqueIdentifier>{f2e98346-dde8-45d6-961c-377af078201c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\StageEditor\ButtonHaving">
+      <UniqueIdentifier>{570f2265-e7c7-4692-900a-5d5f10b1eb5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\StageEditor\ButtonHaving\EditAction">
+      <UniqueIdentifier>{596e0b3f-5f3c-4577-9998-230db358d0c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\StageEditor\ButtonHaving\PosSetting">
+      <UniqueIdentifier>{c0270207-f711-4989-9b1c-985bf6eee2e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory">
+      <UniqueIdentifier>{c426e704-96b6-4cae-9909-38d3e56e68b9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ActiveWarSimulation\input.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="AngledTriangleFactory.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="CircleFactory.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="RectangleFactory.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeFactory.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleObject.h">
+      <Filter>ヘッダー ファイル\FieldObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>ヘッダー ファイル\FieldObject</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonHaving.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstPosSet.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\PosSetting</Filter>
+    </ClInclude>
+    <ClInclude Include="PosSetting.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\PosSetting</Filter>
+    </ClInclude>
+    <ClInclude Include="EditAction.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClInclude>
+    <ClInclude Include="EditMove.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClInclude>
+    <ClInclude Include="EditPut.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClInclude>
+    <ClInclude Include="EditRemove.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClInclude>
+    <ClInclude Include="EditResize.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClInclude>
+    <ClInclude Include="EditActionSettings.h">
+      <Filter>ヘッダー ファイル\StageEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="MyAngledTriangle.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="MyCircle.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="MyRectangle.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="MyShape.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollBar.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving</Filter>
+    </ClInclude>
+    <ClInclude Include="StageEditor.h">
+      <Filter>ヘッダー ファイル\StageEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FieldBase\Circle.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FieldBase\Edge.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FieldBase\Shape.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\input.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="BattleObject.cpp">
+      <Filter>ソース ファイル\FieldObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>ソース ファイル\FieldObject</Filter>
+    </ClCompile>
+    <ClCompile Include="AngledTriangleFactory.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="CircleFactory.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstPosSet.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\PosSetting</Filter>
+    </ClCompile>
+    <ClCompile Include="EditAction.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClCompile>
+    <ClCompile Include="EditActionSettings.cpp">
+      <Filter>ソース ファイル\StageEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="EditMove.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClCompile>
+    <ClCompile Include="EditPut.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClCompile>
+    <ClCompile Include="EditRemove.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClCompile>
+    <ClCompile Include="EditResize.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClCompile>
+    <ClCompile Include="MyAngledTriangle.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="MyCircle.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="MyRectangle.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="MyShape.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="PosSetting.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\PosSetting</Filter>
+    </ClCompile>
+    <ClCompile Include="RectangleFactory.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeFactory.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollBar.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving</Filter>
+    </ClCompile>
+    <ClCompile Include="StageEditor.cpp">
+      <Filter>ソース ファイル\StageEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FieldBase\Circle.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FieldBase\Edge.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FieldBase\Shape.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

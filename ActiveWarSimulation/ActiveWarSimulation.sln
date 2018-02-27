@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ActiveWarSimulation", "Acti
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FieldBase", "FieldBase\FieldBase.vcxproj", "{2C57A1B9-D72A-4343-A201-BDDB4667E9EB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StageEditor", "StageEditor\StageEditor.vcxproj", "{4E49DB91-27F9-4345-B45A-8493981F8149}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{2C57A1B9-D72A-4343-A201-BDDB4667E9EB}.Release|x64.Build.0 = Release|x64
 		{2C57A1B9-D72A-4343-A201-BDDB4667E9EB}.Release|x86.ActiveCfg = Release|Win32
 		{2C57A1B9-D72A-4343-A201-BDDB4667E9EB}.Release|x86.Build.0 = Release|Win32
+		{4E49DB91-27F9-4345-B45A-8493981F8149}.Debug|x64.ActiveCfg = Debug|x64
+		{4E49DB91-27F9-4345-B45A-8493981F8149}.Debug|x64.Build.0 = Debug|x64
+		{4E49DB91-27F9-4345-B45A-8493981F8149}.Debug|x86.ActiveCfg = Debug|Win32
+		{4E49DB91-27F9-4345-B45A-8493981F8149}.Debug|x86.Build.0 = Debug|Win32
+		{4E49DB91-27F9-4345-B45A-8493981F8149}.Release|x64.ActiveCfg = Release|x64
+		{4E49DB91-27F9-4345-B45A-8493981F8149}.Release|x64.Build.0 = Release|x64
+		{4E49DB91-27F9-4345-B45A-8493981F8149}.Release|x86.ActiveCfg = Release|Win32
+		{4E49DB91-27F9-4345-B45A-8493981F8149}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

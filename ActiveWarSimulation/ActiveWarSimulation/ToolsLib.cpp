@@ -262,6 +262,13 @@ bool JudgeFileExist(const std::string &str){
 	return flag;
 }
 
+//現在の背景色のカラーコードを取得する
+unsigned int GetBackgroundColor(){
+	int r,g,b;
+	GetBackgroundColor(&r,&g,&b);
+	return GetColor(r,g,b);
+}
+
 //反転色のカラーコードを取得する
 unsigned int GetInvertedColor(unsigned int color){
 	int r,g,b;

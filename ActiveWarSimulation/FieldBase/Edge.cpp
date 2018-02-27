@@ -9,6 +9,10 @@ Edge::Edge(Vector2D begin,Vector2D vec,Fix::Kind fix)
 
 Edge::~Edge(){}
 
+std::shared_ptr<Shape> Edge::VCopy()const{
+	return std::shared_ptr<Shape>(new Edge(this->m_position,this->m_vec,this->m_fix));
+}
+
 Vector2D Edge::CalculateParpendicularVec(Vector2D point)const{
 	//pointからこの直線に垂線を下ろした時、直線からpointに向けた方向の垂線ベクトルを求める
 	float dot=m_vec.dot(point-GetBeginPoint());//垂線の足の位置はm_position+Norm()*dotとなる
@@ -81,4 +85,54 @@ Vector2D Edge::CalculatePushVec(const Shape *pShape)const{
 		break;
 	}
 	return ret;
+}
+
+bool Edge::VJudgePointInsideShape(Vector2D point)const{
+	//pointへのEdge上の最近傍点を求める
+	float dot=m_vec.dot(point-GetBeginPoint());//垂線の位置はm_position+Norm()*dot/Size()となる
+	Vector2D nearestPoint;//円の中心に最も近い線分上の点
+	if(dot<0.0f){
+		//線分外に垂線の足があり、最近傍点がm_positionになる
+		nearestPoint=GetBeginPoint();
+	} else if(dot<=m_vec.sqSize()){
+		//線分内に垂線の足がある場合。
+		nearestPoint=m_position+m_vec*dot/m_vec.sqSize();
+	} else{
+		//線分外に垂線の足があり、最近傍点がm_position+m_vecになる
+		nearestPoint=GetEndPoint();
+	}
+	//最近傍点への距離が1px以内なら点が線上にあるとみなす
+	return (point-nearestPoint).sqSize()<=1.0f*1.0f;
+}
+
+Vector2D Edge::GetLeftTop()const{
+	Vector2D ret=m_position;
+	if(m_vec.x<0.0f){
+		ret.x+=m_vec.x;
+	}
+	if(m_vec.y<0.0f){
+		ret.y+=m_vec.y;
+	}
+	return ret;
+}
+
+Vector2D Edge::GetRightBottom()const{
+	Vector2D ret=m_position;
+	if(m_vec.x>0.0f){
+		ret.x+=m_vec.x;
+	}
+	if(m_vec.y>0.0f){
+		ret.y+=m_vec.y;
+	}
+	return ret;
+}
+
+void Edge::Resize(Vector2D v){
+	//ベクトルをvにする
+	m_vec=v;
+}
+
+Vector2D Edge::GetRetResize()const{
+	//Resize()の逆関数
+	return m_vec;
 }
