@@ -43,7 +43,7 @@ void ConstPosSet::DrawGuide(int leftUpPosX,int leftUpPosY,int mapSizeX,int mapSi
 			DrawLine(leftUpPosX+dx,leftUpPosY,leftUpPosX+dx,leftUpPosY+mapSizeY,GetColor(255,255,255));
 		}
 		//âEë§ècê¸ÇÃï`âÊ
-		for(int dx=m_gridSize-adjustx%m_gridSize-1;dx<mapSizeX;dx+=m_gridSize){
+		for(int dx=adjustx%m_gridSize-1;dx<mapSizeX;dx+=m_gridSize){
 			DrawLine(leftUpPosX+dx,leftUpPosY,leftUpPosX+dx,leftUpPosY+mapSizeY,GetColor(255,255,255));
 		}
 		//è„ë§â°ê¸ÇÃï`âÊ
@@ -51,7 +51,7 @@ void ConstPosSet::DrawGuide(int leftUpPosX,int leftUpPosY,int mapSizeX,int mapSi
 			DrawLine(leftUpPosX,leftUpPosY+dy,leftUpPosX+mapSizeX,leftUpPosY+dy,GetColor(255,255,255));
 		}
 		//â∫ë§â°ê¸ÇÃï`âÊ
-		for(int dy=m_gridSize-adjusty%m_gridSize-1;dy<mapSizeY;dy+=m_gridSize){
+		for(int dy=adjusty%m_gridSize-1;dy<mapSizeY;dy+=m_gridSize){
 			DrawLine(leftUpPosX,leftUpPosY+dy,leftUpPosX+mapSizeX,leftUpPosY+dy,GetColor(255,255,255));
 		}
 	}
