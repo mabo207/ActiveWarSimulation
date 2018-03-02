@@ -69,13 +69,7 @@
     <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="AngledTriangleFactory.h">
-      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
-    </ClInclude>
     <ClInclude Include="CircleFactory.h">
-      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
-    </ClInclude>
-    <ClInclude Include="RectangleFactory.h">
       <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
     </ClInclude>
     <ClInclude Include="ShapeFactory.h">
@@ -114,18 +108,6 @@
     <ClInclude Include="EditActionSettings.h">
       <Filter>ヘッダー ファイル\StageEditor</Filter>
     </ClInclude>
-    <ClInclude Include="MyAngledTriangle.h">
-      <Filter>ヘッダー ファイル\Shape</Filter>
-    </ClInclude>
-    <ClInclude Include="MyCircle.h">
-      <Filter>ヘッダー ファイル\Shape</Filter>
-    </ClInclude>
-    <ClInclude Include="MyRectangle.h">
-      <Filter>ヘッダー ファイル\Shape</Filter>
-    </ClInclude>
-    <ClInclude Include="MyShape.h">
-      <Filter>ヘッダー ファイル\Shape</Filter>
-    </ClInclude>
     <ClInclude Include="ScrollBar.h">
       <Filter>ヘッダー ファイル\StageEditor\ButtonHaving</Filter>
     </ClInclude>
@@ -161,9 +143,6 @@
     <ClCompile Include="Terrain.cpp">
       <Filter>ソース ファイル\FieldObject</Filter>
     </ClCompile>
-    <ClCompile Include="AngledTriangleFactory.cpp">
-      <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
-    </ClCompile>
     <ClCompile Include="CircleFactory.cpp">
       <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
     </ClCompile>
@@ -188,23 +167,8 @@
     <ClCompile Include="EditResize.cpp">
       <Filter>ソース ファイル\StageEditor\ButtonHaving\EditAction</Filter>
     </ClCompile>
-    <ClCompile Include="MyAngledTriangle.cpp">
-      <Filter>ソース ファイル\Shape</Filter>
-    </ClCompile>
-    <ClCompile Include="MyCircle.cpp">
-      <Filter>ソース ファイル\Shape</Filter>
-    </ClCompile>
-    <ClCompile Include="MyRectangle.cpp">
-      <Filter>ソース ファイル\Shape</Filter>
-    </ClCompile>
-    <ClCompile Include="MyShape.cpp">
-      <Filter>ソース ファイル\Shape</Filter>
-    </ClCompile>
     <ClCompile Include="PosSetting.cpp">
       <Filter>ソース ファイル\StageEditor\ButtonHaving\PosSetting</Filter>
-    </ClCompile>
-    <ClCompile Include="RectangleFactory.cpp">
-      <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
     </ClCompile>
     <ClCompile Include="ShapeFactory.cpp">
       <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>

@@ -150,7 +150,6 @@
     <ClInclude Include="..\FieldBase\Circle.h" />
     <ClInclude Include="..\FieldBase\Edge.h" />
     <ClInclude Include="..\FieldBase\Shape.h" />
-    <ClInclude Include="AngledTriangleFactory.h" />
     <ClInclude Include="BattleObject.h" />
     <ClInclude Include="ButtonHaving.h" />
     <ClInclude Include="CircleFactory.h" />
@@ -163,12 +162,7 @@
     <ClInclude Include="EditRemove.h" />
     <ClInclude Include="EditResize.h" />
     <ClInclude Include="StageEditor.h" />
-    <ClInclude Include="MyAngledTriangle.h" />
-    <ClInclude Include="MyCircle.h" />
-    <ClInclude Include="MyRectangle.h" />
-    <ClInclude Include="MyShape.h" />
     <ClInclude Include="PosSetting.h" />
-    <ClInclude Include="RectangleFactory.h" />
     <ClInclude Include="ScrollBar.h" />
     <ClInclude Include="ShapeFactory.h" />
     <ClInclude Include="Terrain.h" />
@@ -179,7 +173,6 @@
     <ClCompile Include="..\FieldBase\Circle.cpp" />
     <ClCompile Include="..\FieldBase\Edge.cpp" />
     <ClCompile Include="..\FieldBase\Shape.cpp" />
-    <ClCompile Include="AngledTriangleFactory.cpp" />
     <ClCompile Include="BattleObject.cpp" />
     <ClCompile Include="CircleFactory.cpp" />
     <ClCompile Include="ConstPosSet.cpp" />
@@ -192,12 +185,7 @@
     <ClCompile Include="EditResize.cpp" />
     <ClCompile Include="StageEditor.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MyAngledTriangle.cpp" />
-    <ClCompile Include="MyCircle.cpp" />
-    <ClCompile Include="MyRectangle.cpp" />
-    <ClCompile Include="MyShape.cpp" />
     <ClCompile Include="PosSetting.cpp" />
-    <ClCompile Include="RectangleFactory.cpp" />
     <ClCompile Include="ScrollBar.cpp" />
     <ClCompile Include="ShapeFactory.cpp" />
     <ClCompile Include="Terrain.cpp" />
