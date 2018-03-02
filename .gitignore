@@ -56,12 +56,15 @@ Temporary Items
 /ActiveWarSimulation/ActiveWarSimulation.sdf
 /ActiveWarSimulation/ActiveWarSimulation/Debug
 /ActiveWarSimulation/ActiveWarSimulation/Release
+/ActiveWarSimulation/ActiveWarSimulation/SaveData
 /ActiveWarSimulation/ActiveWarSimulation/Log.txt
 /ActiveWarSimulation/FieldBase/Debug
 /ActiveWarSimulation/FieldBase/Release
+/ActiveWarSimulation/FieldBase/SaveData
 /ActiveWarSimulation/FieldBase/Log.txt
 /ActiveWarSimulation/StageEditor/Debug
 /ActiveWarSimulation/StageEditor/Release
+/ActiveWarSimulation/StageEditor/SaveData
 /ActiveWarSimulation/StageEditor/Log.txt
 /ActiveWarSimulation/shinntyoku
 /ActiveWarSimulation/document

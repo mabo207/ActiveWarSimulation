@@ -7,6 +7,10 @@ Terrain::Terrain(const std::shared_ptr<Shape> hitJudgeShape, int gHandle, int ki
 
 Terrain::~Terrain() {}
 
+void Terrain::WriteOutObjectPeculiarInfo(std::ofstream &ofs)const{
+	ofs<<"(Terrain)";
+}
+
 void Terrain::VDraw(Vector2D point,Vector2D adjust)const{
 	m_hitJudgeShape->Draw(adjust,m_color,TRUE,1.0f);
 }

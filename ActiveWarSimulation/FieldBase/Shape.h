@@ -4,6 +4,8 @@
 #include"ToolsLib.h"
 #include<vector>
 #include<memory>
+#include<iostream>
+#include<fstream>
 
 //当たり判定図形を指す純粋仮想関数
 class Shape{
@@ -36,6 +38,7 @@ public:
 			}
 			return END;
 		}
+		static std::string GetStr(Kind kind);
 	};
 
 	//定数
@@ -75,6 +78,8 @@ public:
 	virtual bool VJudgePointInsideShape(Vector2D point)const=0;//図形内に点があるかどうかの判定、CalculatePushVecを用いるより高速に実装できるので関数を分ける
 	virtual void Resize(Vector2D v)=0;//図形を表現するベクトルを用いて図形の大きさを変更する
 	virtual Vector2D GetRetResize()const=0;//Resizeの逆関数。引数rでResizeすると現在の図形になるようなrを返す。
+	//読み込み・書き出し用仮想関数
+	virtual void WriteOutShape(std::ofstream &ofs)const=0;//書き出し用関数
 };
 
 #endif // !DEF_SHAPE_H

@@ -1,5 +1,19 @@
 #include"Shape.h"
 
+//---------------------Shape::Fix---------------------
+std::string Shape::Fix::GetStr(Kind kind){
+	switch(kind){
+	case(e_dynamic):
+		return "dynamic";
+	case(e_static):
+		return "static";
+	case(e_ignore):
+		return "ignore";
+	default:
+		return "";
+	}
+}
+
 //---------------------Shape---------------------
 const float Shape::pushRate=0.4f;
 

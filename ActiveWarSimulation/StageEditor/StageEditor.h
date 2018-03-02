@@ -50,6 +50,8 @@ protected:
 	void ProcessMapPush(int mouseX,int mouseY);//マップ画面を押した時の動作
 	//常に行う編集行為
 	void NonPressEdit(int mouseX,int mouseY);
+	//制作データの書き出し
+	void WriteOutStage(const char *filename)const;
 
 public:
 	//コンストラクタとデストラクタ

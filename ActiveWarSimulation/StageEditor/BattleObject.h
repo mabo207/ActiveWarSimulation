@@ -3,6 +3,8 @@
 
 //インクルードファイル
 #include<memory>
+#include<iostream>
+#include<fstream>
 #include"ToolsLib.h"
 #include"Shape.h"
 
@@ -31,6 +33,10 @@ public:
 	bool fixFlag;
 
 	//関数
+protected:
+	//仮想関数
+	virtual void WriteOutObjectPeculiarInfo(std::ofstream &ofs)const=0;//オブジェクト特有の情報を返す
+
 public:
 	//コンストラクタとデストラクタ
 	BattleObject(const std::shared_ptr<Shape> hitJudgeShape,int gHandle,int kind)
@@ -59,6 +65,7 @@ public:
 	Vector2D getPos()const;
 	Vector2D getResizeVec()const;
 	std::shared_ptr<Shape> getHitJudgeShape()const;
+	void WriteOutObjectWholeInfo(std::ofstream &ofs)const;//オブジェクト全体の情報書き出し
 };
 
 #endif // !DEF_BATTLEOBJECT_H

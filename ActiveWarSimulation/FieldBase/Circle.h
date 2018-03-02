@@ -29,6 +29,8 @@ public:
 	//エディタ用
 	void Resize(Vector2D v);//図形を表現するベクトルを用いて図形の大きさを変更する
 	Vector2D GetRetResize()const;//Resizeの逆関数。引数rでResizeすると現在の図形になるようなrを返す。
+	//読み込み・書き出し用関数
+	void WriteOutShape(std::ofstream &ofs)const;//書き出し用関数
 };
 
 #endif // !DEF_CIRCLE_H

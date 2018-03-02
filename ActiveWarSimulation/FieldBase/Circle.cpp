@@ -77,3 +77,11 @@ Vector2D Circle::GetRetResize()const{
 	//長さm_rのベクトルを返せばなんでもよい
 	return Vector2D(m_r,0);
 }
+
+void Circle::WriteOutShape(std::ofstream &ofs)const{
+	//"("→(種別)→(始点位置)→(半径)→(初期固定)→")"
+	ofs<<"(Circle,";
+	ofs<<"("<<m_position.x<<","<<m_position.y<<"),";
+	ofs<<m_r<<",";
+	ofs<<Fix::GetStr(m_fix)<<")";
+}

@@ -64,3 +64,10 @@ Vector2D BattleObject::getResizeVec()const{
 	return m_hitJudgeShape.get()->GetRetResize()+m_hitJudgeShape->GetPosition();
 }
 
+void BattleObject::WriteOutObjectWholeInfo(std::ofstream &ofs)const{
+	//"{"→(オブジェクト特有情報)→(図形情報)→"}\n"と出力する
+	ofs<<"{";
+	WriteOutObjectPeculiarInfo(ofs);
+	m_hitJudgeShape->WriteOutShape(ofs);
+	ofs<<"}"<<std::endl;
+}

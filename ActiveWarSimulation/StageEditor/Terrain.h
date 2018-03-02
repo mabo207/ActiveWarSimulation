@@ -15,6 +15,9 @@ protected:
 	bool m_breakable;//破壊できるかどうか
 
 	//関数
+protected:
+	void WriteOutObjectPeculiarInfo(std::ofstream &ofs)const;//オブジェクト特有の情報を返す
+
 public:
 	Terrain(const std::shared_ptr<Shape> hitJudgeShape,int gHandle,int kind,unsigned int color,bool breakable);
 	~Terrain();
