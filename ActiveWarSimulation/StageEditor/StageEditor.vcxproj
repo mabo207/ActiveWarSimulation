@@ -155,6 +155,7 @@
     <ClInclude Include="ButtonHaving.h" />
     <ClInclude Include="CircleFactory.h" />
     <ClInclude Include="ConstPosSet.h" />
+    <ClInclude Include="EdgeFactory.h" />
     <ClInclude Include="EditAction.h" />
     <ClInclude Include="EditActionSettings.h" />
     <ClInclude Include="EditMove.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="BattleObject.cpp" />
     <ClCompile Include="CircleFactory.cpp" />
     <ClCompile Include="ConstPosSet.cpp" />
+    <ClCompile Include="EdgeFactory.cpp" />
     <ClCompile Include="EditAction.cpp" />
     <ClCompile Include="EditActionSettings.cpp" />
     <ClCompile Include="EditMove.cpp" />

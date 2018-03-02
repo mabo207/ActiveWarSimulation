@@ -16,6 +16,7 @@
 #include"EditResize.h"
 
 #include"CircleFactory.h"
+#include"EdgeFactory.h"
 
 #include"ConstPosSet.h"
 
@@ -118,8 +119,8 @@ StageEditor::StageEditor()
 	)));
 	pRectangleFactoryButton=m_buttons.back();//最初から押されているようにする
 
-	//RectangleFactoryボタン(線分生成ボタンに変える)
-	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new CircleFactory::CircleFactoryButton(
+	//EdgeFactoryボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EdgeFactory::EdgeFactoryButton(
 		Vector2D(
 		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*1)
 			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*0)
