@@ -9,7 +9,7 @@ void BattleObject::ShapeDraw(unsigned int color,int fillFlag,Vector2D adjust)con
 	m_hitJudgeShape->Draw(adjust,color,fillFlag);
 }
 
-void BattleObject::PosDraw(unsigned int color,int fillFlag,int size,Vector2D adjust)const{
+void BattleObject::PosDraw(unsigned int color,int fillFlag,float size,Vector2D adjust)const{
 	Vector2D pos=adjust+m_hitJudgeShape->GetPosition();
 	DrawCircleAA(pos.x,pos.y,size,color,fillFlag);
 }

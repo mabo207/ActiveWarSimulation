@@ -46,7 +46,7 @@ public:
 
 	//通常関数
 	void ShapeDraw(unsigned int color,int fillFlag,Vector2D adjust=Vector2D())const;//当たり判定形状に基づいた描画処理(dx,dyはズレの値)
-	void PosDraw(unsigned int color,int fillFlag,int size,Vector2D adjust=Vector2D())const;//m_Posの位置に円を描画する。
+	void PosDraw(unsigned int color,int fillFlag,float size,Vector2D adjust=Vector2D())const;//m_Posの位置に円を描画する。
 	void Move(Vector2D v);//ベクトルvだけ動かす(バトルの時等で用いる)
 	void Warp(Vector2D v);//ベクトルvへ動かす(ステージ編集で用いる)
 	void Resize(Vector2D v);//位置ベクトルvを参考に大きさを変更する(ステージ編集で用いる)

@@ -17,8 +17,8 @@ void CircleFactory::CircleFactoryButton::ButtonDraw(int font,int fillFlag)const{
 	//ògê¸ÇÃï`âÊ
 	DrawBox((int)m_point.x,(int)m_point.y,(int)(m_point+m_vec).x,(int)(m_point+m_vec).y,GetColor(192,192,64),FALSE);//äOòg
 	//ìñÇΩÇËîªíËê}å`ÇÃï`âÊ
-	const int r=20;//îºåa
-	DrawCircle((int)(m_point+m_vec/2).x,(int)(m_point+m_vec/2).y,r,GetColor(255,255,255),TRUE);
+	const float r=20.0f;//îºåa
+	DrawCircleAA((m_point+m_vec/2).x,(m_point+m_vec/2).y,r,30,GetColor(255,255,255),TRUE);
 }
 
 void CircleFactory::CircleFactoryButton::PushedProcess(EditActionSettings &settings)const{
