@@ -213,6 +213,9 @@ int StageEditor::Calculate() {
 	if(keyboard_get(KEY_INPUT_S)==10){
 		//Sキー長押しで保存
 		m_actionSettings.WriteOutStage("SaveData/stage.txt");
+	} else if(keyboard_get(KEY_INPUT_R)==10){
+		//Rキー長押しで読み込み
+		m_actionSettings.ReadStage("SaveData/stage.txt");
 	} else if(keyboard_get(KEY_INPUT_NUMPADENTER) == 1){
 		//Enterキー入力でエディタを終了
 		return -1;

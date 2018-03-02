@@ -70,7 +70,7 @@ public:
 	//制作データの書き出し
 	void WriteOutStage(const char *filename)const;
 	//ステージの読み込み
-	void ReadStage(const char *filename)const;
+	void ReadStage(const char *filename);
 
 };
 

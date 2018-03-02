@@ -139,7 +139,49 @@ void EditActionSettings::WriteOutStage(const char *filename)const{
 }
 
 //ステージの読み込み
-void EditActionSettings::ReadStage(const char *filename)const{
-
+void EditActionSettings::ReadStage(const char *filename){
+	m_objects.clear();
+	//ファイルを開く
+	std::ifstream ifs(filename);
+	//各{}に対して読み込みを行う
+	char ch;//読み込んだ1文字を一時格納する
+	int tokenCount=0;//読み込んだ{の個数-読み込んだ}の個数。0より大きいならstrに追加。0未満にはならないようにする。
+	std::string str;//読み込んだ{}内文字列
+	str.reserve(40);//処理速度を速めるためにreserveはしておく。職人技になる。
+	while(true){
+		ch=ifs.get();
+		//ファイルの終端でwhileから脱出
+		if(ch==EOF){
+			break;
+		}
+		//トークンは'{','}'の2つ
+		if(ch=='{'){
+			//オブジェクト読み込み開始
+			if(tokenCount>0){
+				//既にオブジェクト読み込みが開始されている場合は、'{'もstrに加える
+				str.push_back(ch);
+			}
+			tokenCount++;
+		} else if(ch=='}'){
+			//トークンのcountを調整
+			if(tokenCount>=0){
+				//負の個数になるトークンは無視する
+				tokenCount--;
+				if(tokenCount>0){
+					//トークンのcountが正なら読み込みを続ける
+					str.push_back(ch);
+				} else{
+					//トークンのcountが0になったら{}内読み込みは終了、オブジェクトの追加へ
+					//m_objects.push_back(BattleObject::CreateObject(str));
+					str.clear();
+				}
+			}
+		} else{
+			//tokenCountが0より大きいならstrに追加
+			if(tokenCount>0){
+				str.push_back(ch);
+			}
+		}
+	}
 }
 
