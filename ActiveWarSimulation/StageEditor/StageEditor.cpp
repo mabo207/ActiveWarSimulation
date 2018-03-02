@@ -185,24 +185,6 @@ void StageEditor::NonPressEdit(int mouseX,int mouseY){
 	m_actionSettings.PracticeNonPressEdit(Vector2D((float)mouseX,(float)mouseY));
 }
 
-//制作データの書き出し
-void StageEditor::WriteOutStage(const char *filename)const{
-	/*
-		形式例
-		{(オブジェクト情報),(図形情報)}
-		{(Terrain)(Edge,(200,20),(30,10))}
-	*/
-	//ファイルを開く
-	std::ofstream ofs(filename,std::ios_base::trunc);
-	if(!ofs){
-		return;
-	}
-	//全てのオブジェクト情報を書き出し
-	for(const std::shared_ptr<BattleObject> &pObj:*m_actionSettings.GetPMObject()){
-		pObj->WriteOutObjectWholeInfo(ofs);
-	}
-}
-
 //毎ループ動作部分の関数
 int StageEditor::Calculate() {
 	//マウスの位置計算
@@ -230,7 +212,7 @@ int StageEditor::Calculate() {
 	//キーボード入力受付
 	if(keyboard_get(KEY_INPUT_S)==10){
 		//Sキー長押しで保存
-		WriteOutStage("SaveData/stage.txt");
+		m_actionSettings.WriteOutStage("SaveData/stage.txt");
 	} else if(keyboard_get(KEY_INPUT_NUMPADENTER) == 1){
 		//Enterキー入力でエディタを終了
 		return -1;

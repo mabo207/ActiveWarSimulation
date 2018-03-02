@@ -67,6 +67,11 @@ public:
 	void SetEditObject(Vector2D point);//現在マウスを指している位置にあるオブジェクトを編集対象に設定する
 	void CancelEditing();//編集をキャンセルする。編集対象を編集の変更前の状態に戻す
 	void InitEditObject();//編集行為を行う際の初期化。m_pBattleObjectとm_pOriginObjectをnullptrに。
+	//制作データの書き出し
+	void WriteOutStage(const char *filename)const;
+	//ステージの読み込み
+	void ReadStage(const char *filename)const;
+
 };
 
 #endif // !DEF_EDITACTIONSETTINGS_H

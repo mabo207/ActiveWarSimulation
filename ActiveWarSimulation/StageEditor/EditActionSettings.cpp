@@ -119,3 +119,27 @@ void EditActionSettings::InitEditObject(){
 	m_pBattleObject=std::shared_ptr<BattleObject>(nullptr);
 	m_pOriginObject=std::shared_ptr<BattleObject>(nullptr);
 }
+
+//制作データの書き出し
+void EditActionSettings::WriteOutStage(const char *filename)const{
+	/*
+	形式例
+	{(オブジェクト情報),(図形情報)}
+	{(Terrain)(Edge,(200,20),(30,10))}
+	*/
+	//ファイルを開く
+	std::ofstream ofs(filename,std::ios_base::trunc);
+	if(!ofs){
+		return;
+	}
+	//全てのオブジェクト情報を書き出し
+	for(const std::shared_ptr<BattleObject> &pObj:m_objects){
+		pObj->WriteOutObjectWholeInfo(ofs);
+	}
+}
+
+//ステージの読み込み
+void EditActionSettings::ReadStage(const char *filename)const{
+
+}
+
