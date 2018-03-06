@@ -8,7 +8,7 @@ Terrain::Terrain(const std::shared_ptr<Shape> hitJudgeShape, int gHandle, unsign
 Terrain::~Terrain() {}
 
 void Terrain::WriteOutObjectPeculiarInfo(std::ofstream &ofs)const{
-	ofs<<"("+Type::GetStr(m_type)+")";
+	ofs<<"("<<Type::GetStr(m_type)<<")";
 }
 
 void Terrain::VDraw(Vector2D point,Vector2D adjust)const{

@@ -55,7 +55,7 @@ protected:
 public:
 	//コンストラクタとデストラクタ
 	BattleObject(Type::Kind type,const std::shared_ptr<Shape> hitJudgeShape,int gHandle)
-		:m_hitJudgeShape(hitJudgeShape),m_gHandle(gHandle),fixFlag(false){}
+		:m_hitJudgeShape(hitJudgeShape),m_gHandle(gHandle),fixFlag(false),m_type(type){}
 	virtual ~BattleObject() {}
 
 	

@@ -23,6 +23,7 @@ public:
 			}
 			return END;
 		}
+		static std::string GetStr(Kind kind);
 	};
 	struct Fix{
 		//自オブジェクト移動時は衝突判定があると必ず移動場所が補正される
@@ -44,6 +45,7 @@ public:
 	//定数
 public:
 	static const float pushRate;//当たり判定処理を行う際、押し出す距離の割合
+	static const char spliter,beginer,ender;//データ読み込みの際に使う区切り文字等
 
 	//変数
 protected:

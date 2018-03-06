@@ -159,7 +159,8 @@ StageEditor::StageEditor()
 	//フォント
 	m_font=CreateFontToHandle("メイリオ",16,1);
 
-	
+	//図形の読み込み
+	m_actionSettings.ReadStage("Savedata/stage.txt");
 }
 
 StageEditor::~StageEditor() {

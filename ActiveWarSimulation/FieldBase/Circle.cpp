@@ -80,8 +80,8 @@ Vector2D Circle::GetRetResize()const{
 
 void Circle::WriteOutShape(std::ofstream &ofs)const{
 	//"("¨(í•Ê)¨(n“_ˆÊ’u)¨(”¼Œa)¨(‰ŠúŒÅ’è)¨")"
-	ofs<<"(Circle,";
-	ofs<<"("<<m_position.x<<","<<m_position.y<<"),";
-	ofs<<m_r<<",";
-	ofs<<Fix::GetStr(m_fix)<<")";
+	ofs<<beginer<<Type::GetStr(m_type)<<spliter;//ofs<<"(Circle,";
+	ofs<<beginer<<m_position.x<<spliter<<m_position.y<<ender<<spliter;//ofs<<"("<<m_position.x<<","<<m_position.y<<"),";
+	ofs<<Fix::GetStr(m_fix)<<spliter;//ofs<<Fix::GetStr(m_fix)<<",";
+	ofs<<m_r<<ender;//ofs<<m_r<<")";
 }

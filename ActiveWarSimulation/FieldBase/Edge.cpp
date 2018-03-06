@@ -139,8 +139,8 @@ Vector2D Edge::GetRetResize()const{
 
 void Edge::WriteOutShape(std::ofstream &ofs)const{
 	//"("→(種別)→(始点位置)→(方向ベクトル)→(初期固定)→")"
-	ofs<<"(Edge,";
-	ofs<<"("<<m_position.x<<","<<m_position.y<<"),";
-	ofs<<"("<<m_vec.x<<","<<m_vec.y<<"),";
-	ofs<<Fix::GetStr(m_fix)<<")";
+	ofs<<beginer<<Type::GetStr(m_type)<<spliter;//ofs<<"(Edge,";
+	ofs<<beginer<<m_position.x<<spliter<<m_position.y<<ender<<spliter;//ofs<<"("<<m_position.x<<","<<m_position.y<<"),";
+	ofs<<Fix::GetStr(m_fix)<<spliter;//ofs<<Fix::GetStr(m_fix)<<",";
+	ofs<<beginer<<m_vec.x<<spliter<<m_vec.y<<ender<<ender;//ofs<<"("<<m_vec.x<<","<<m_vec.y<<"))";	
 }

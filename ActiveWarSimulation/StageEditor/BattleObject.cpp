@@ -97,9 +97,12 @@ std::shared_ptr<BattleObject> BattleObject::CreateObject(const std::string &info
 	std::shared_ptr<Shape> pShape=Shape::CreateShape(sb.m_vec[1].GetString());
 	//オブジェクトの生成
 	std::shared_ptr<BattleObject> pb(nullptr);
-	const std::string objectname=sb.m_vec[0].GetString();
-	if(objectname==Type::GetStr(Type::e_terrain)){
-		pb=std::shared_ptr<BattleObject>(new Terrain(pShape,-1,GetColor(128,128,128),true));
+	if(pShape.get()!=nullptr){
+		//当たり判定図形がnullptrならオブジェクト生成は行わずにnullptrを返す。
+		const std::string objectname=sb.m_vec[0].GetString();
+		if(objectname==Type::GetStr(Type::e_terrain)){
+			pb=std::shared_ptr<BattleObject>(new Terrain(pShape,-1,GetColor(128,128,128),true));
+		}
 	}
 
 	return pb;
