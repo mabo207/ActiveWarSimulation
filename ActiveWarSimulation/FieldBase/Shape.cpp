@@ -55,3 +55,41 @@ void Shape::Update(const std::vector<std::shared_ptr<Shape>> &pShapeVec){
 	}
 }
 
+std::shared_ptr<Shape> Shape::CreateShape(const std::string &infostr){
+	//「種類,位置,初期固定,図形情報」の順。それぞれの要素を抽出する。
+	std::vector<std::string> strVec;//分割したもの
+	char ch;//読み込んだ1文字を一時格納する
+	int tokenCount=0;//読み込んだ(の個数-読み込んだ)の個数。0より大きいならstrに追加。0未満にはならないようにする。
+	std::string str;//読み込んだ()内文字列
+	str.reserve(40);//処理速度を速めるためにreserveはしておく。職人技になる。
+	for(std::string::const_iterator it=infostr.begin(),ite=infostr.end();it!=ite;it++){
+		ch=*it;
+		//トークンは'(',')',','の3つ
+		if(ch==',' && tokenCount<=0){
+			//オブジェクト読み込み開始、しかし()内のものは無視する
+			
+		} else if(ch==')'){
+			//トークンのcountを調整
+			if(tokenCount>=0){
+				//負の個数になるトークンは無視する
+				tokenCount--;
+				if(tokenCount>0){
+					//トークンのcountが正なら読み込みを続ける
+					str.push_back(ch);
+				} else{
+					//トークンのcountが0になったら()内読み込みは終了、strVecに格納
+					strVec.push_back(str);
+					str.clear();
+				}
+			}
+		} else{
+			//tokenCountが0より大きいならstrに追加
+			if(tokenCount>0){
+				str.push_back(ch);
+			}
+		}
+	}
+	//strの解釈。strVec[0]:オブジェクトの種類 strVec[1]:当たり判定図形の情報
+
+	return std::shared_ptr<Shape>(nullptr);
+}

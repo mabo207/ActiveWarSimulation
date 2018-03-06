@@ -125,7 +125,7 @@ void EditActionSettings::WriteOutStage(const char *filename)const{
 	/*
 	形式例
 	{(オブジェクト情報),(図形情報)}
-	{(Terrain)(Edge,(200,20),(30,10))}
+	{(Terrain),(Edge,(200,20),(30,10))}
 	*/
 	//ファイルを開く
 	std::ofstream ofs(filename,std::ios_base::trunc);
@@ -141,47 +141,22 @@ void EditActionSettings::WriteOutStage(const char *filename)const{
 //ステージの読み込み
 void EditActionSettings::ReadStage(const char *filename){
 	m_objects.clear();
-	//ファイルを開く
+	//ファイルを開きすべての文字列を書き出す
 	std::ifstream ifs(filename);
-	//各{}に対して読み込みを行う
-	char ch;//読み込んだ1文字を一時格納する
-	int tokenCount=0;//読み込んだ{の個数-読み込んだ}の個数。0より大きいならstrに追加。0未満にはならないようにする。
-	std::string str;//読み込んだ{}内文字列
-	str.reserve(40);//処理速度を速めるためにreserveはしておく。職人技になる。
+	std::string str;//書き出し先
 	while(true){
+		char ch;
 		ch=ifs.get();
 		//ファイルの終端でwhileから脱出
 		if(ch==EOF){
 			break;
 		}
-		//トークンは'{','}'の2つ
-		if(ch=='{'){
-			//オブジェクト読み込み開始
-			if(tokenCount>0){
-				//既にオブジェクト読み込みが開始されている場合は、'{'もstrに加える
-				str.push_back(ch);
-			}
-			tokenCount++;
-		} else if(ch=='}'){
-			//トークンのcountを調整
-			if(tokenCount>=0){
-				//負の個数になるトークンは無視する
-				tokenCount--;
-				if(tokenCount>0){
-					//トークンのcountが正なら読み込みを続ける
-					str.push_back(ch);
-				} else{
-					//トークンのcountが0になったら{}内読み込みは終了、オブジェクトの追加へ
-					//m_objects.push_back(BattleObject::CreateObject(str));
-					str.clear();
-				}
-			}
-		} else{
-			//tokenCountが0より大きいならstrに追加
-			if(tokenCount>0){
-				str.push_back(ch);
-			}
-		}
+		str.push_back(ch);
+	}
+	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
+	StringBuilder sb(str,'\n','{','}',false,true);
+	for(const StringBuilder &ssb:sb.m_vec){
+		m_objects.push_back(BattleObject::CreateObject(ssb.GetString()));
 	}
 }
 

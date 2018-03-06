@@ -46,7 +46,7 @@ const int StageEditor::baseSize=32;
 StageEditor::StageEditor()
 	:m_actionSettings(
 		std::shared_ptr<EditAction>(nullptr)
-		,std::shared_ptr<BattleObject>(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(0.0f,0.0f),20.0f,Shape::Fix::e_static)),-1,0,GetColor(128,128,128),false))
+		,std::shared_ptr<BattleObject>(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(0.0f,0.0f),20.0f,Shape::Fix::e_static)),-1,GetColor(128,128,128),false))
 		,std::shared_ptr<ShapeFactory>(nullptr)
 		,std::shared_ptr<PosSetting>(nullptr))
 {

@@ -35,7 +35,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	InitInputControler();
 
 	std::shared_ptr<StageEditor> ggEditor(new StageEditor());
-	
+
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
 		//ゲーム本体
 		//キー情報更新

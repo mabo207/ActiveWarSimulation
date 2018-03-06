@@ -2,13 +2,13 @@
 #include"Terrain.h"
 
 
-Terrain::Terrain(const std::shared_ptr<Shape> hitJudgeShape, int gHandle, int kind, unsigned int color, bool breakable)
-	:BattleObject(hitJudgeShape,gHandle,kind),m_color(color),m_breakable(breakable){}
+Terrain::Terrain(const std::shared_ptr<Shape> hitJudgeShape, int gHandle, unsigned int color, bool breakable)
+	:BattleObject(Type::e_terrain,hitJudgeShape,gHandle),m_color(color),m_breakable(breakable){}
 
 Terrain::~Terrain() {}
 
 void Terrain::WriteOutObjectPeculiarInfo(std::ofstream &ofs)const{
-	ofs<<"(Terrain)";
+	ofs<<"("+Type::GetStr(m_type)+")";
 }
 
 void Terrain::VDraw(Vector2D point,Vector2D adjust)const{
@@ -20,5 +20,5 @@ void Terrain::VHitProcess(const BattleObject *potherobj) {
 }
 
 std::shared_ptr<BattleObject> Terrain::VCopy()const{
-	return std::shared_ptr<BattleObject>(new Terrain(m_hitJudgeShape.get()->VCopy(),m_gHandle,m_kind,m_color,m_breakable));
+	return std::shared_ptr<BattleObject>(new Terrain(m_hitJudgeShape.get()->VCopy(),m_gHandle,m_color,m_breakable));
 }

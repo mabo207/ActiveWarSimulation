@@ -1,6 +1,19 @@
 #include"DxLib.h"
 #include"BattleObject.h"
 
+#include"Terrain.h"
+
+std::string BattleObject::Type::GetStr(Kind kind){
+	switch(kind){
+	case(e_terrain):
+		return "Terrain";
+	case(e_unit):
+		return "Unit";
+	default:
+		return "";
+	}
+}
+
 void BattleObject::VDraw(Vector2D adjust)const{
 	VDraw(m_hitJudgeShape->GetPosition(),adjust);
 }
@@ -65,9 +78,29 @@ Vector2D BattleObject::getResizeVec()const{
 }
 
 void BattleObject::WriteOutObjectWholeInfo(std::ofstream &ofs)const{
-	//"{"→(オブジェクト特有情報)→(図形情報)→"}\n"と出力する
+	//"{"→(オブジェクト特有情報)→","→(図形情報)→"}\n"と出力する
 	ofs<<"{";
 	WriteOutObjectPeculiarInfo(ofs);
+	ofs<<",";
 	m_hitJudgeShape->WriteOutShape(ofs);
 	ofs<<"}"<<std::endl;
+}
+
+std::shared_ptr<BattleObject> BattleObject::CreateObject(const std::string &infostr){
+	//strをStringBuilderを用いて分割する
+	StringBuilder sb(infostr,',','(',')',false,true);
+	//strの解釈。sb.m_vec[0]:オブジェクトの種類 strVec[1]:当たり判定図形の情報
+	if(sb.m_vec.size()<2){
+		return std::shared_ptr<BattleObject>(nullptr);
+	}
+	//当たり判定図形の生成
+	std::shared_ptr<Shape> pShape=Shape::CreateShape(sb.m_vec[1].GetString());
+	//オブジェクトの生成
+	std::shared_ptr<BattleObject> pb(nullptr);
+	const std::string objectname=sb.m_vec[0].GetString();
+	if(objectname==Type::GetStr(Type::e_terrain)){
+		pb=std::shared_ptr<BattleObject>(new Terrain(pShape,-1,GetColor(128,128,128),true));
+	}
+
+	return pb;
 }

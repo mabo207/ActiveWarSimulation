@@ -16,14 +16,29 @@
 //バトル画面におけるオブジェクトの基底クラス
 class BattleObject {
 	//型
+public:
+	struct Type{
+		//オブジェクトの種類
+		enum Kind{
+			e_terrain,//障害物
+			e_unit,//ユニット
+			END
+		};
+		static Kind link(int num){
+			if(num>=0 && num<END){
+				return static_cast<Kind>(num);
+			}
+			return END;
+		}
+		static std::string GetStr(Kind kind);
+	};
 
 	//定数
 
 	//変数
 protected:
-	
+	Type::Kind m_type;//オブジェクトの種類
 	int m_gHandle;//オブジェクトのグラフィックハンドル
-	int m_kind;//オブジェクトの分類(暫定的にintにしている)
 	//protectedに戻しました(getterを作ったため)
 	//Vector2D m_pos;//オブジェクトの位置(m_hitJudgeShapeが持つ)
 	std::shared_ptr<Shape> m_hitJudgeShape;//当たり判定の形状
@@ -39,8 +54,8 @@ protected:
 
 public:
 	//コンストラクタとデストラクタ
-	BattleObject(const std::shared_ptr<Shape> hitJudgeShape,int gHandle,int kind)
-		:m_hitJudgeShape(hitJudgeShape),m_gHandle(gHandle),m_kind(kind),fixFlag(false){}
+	BattleObject(Type::Kind type,const std::shared_ptr<Shape> hitJudgeShape,int gHandle)
+		:m_hitJudgeShape(hitJudgeShape),m_gHandle(gHandle),fixFlag(false){}
 	virtual ~BattleObject() {}
 
 	
@@ -66,6 +81,9 @@ public:
 	Vector2D getResizeVec()const;
 	std::shared_ptr<Shape> getHitJudgeShape()const;
 	void WriteOutObjectWholeInfo(std::ofstream &ofs)const;//オブジェクト全体の情報書き出し
+
+	//文字列からBattleObjectを作る関数
+	static std::shared_ptr<BattleObject> CreateObject(const std::string &infostr);
 };
 
 #endif // !DEF_BATTLEOBJECT_H

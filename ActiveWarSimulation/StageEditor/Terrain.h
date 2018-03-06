@@ -19,7 +19,7 @@ protected:
 	void WriteOutObjectPeculiarInfo(std::ofstream &ofs)const;//オブジェクト特有の情報を返す
 
 public:
-	Terrain(const std::shared_ptr<Shape> hitJudgeShape,int gHandle,int kind,unsigned int color,bool breakable);
+	Terrain(const std::shared_ptr<Shape> hitJudgeShape,int gHandle,unsigned int color,bool breakable);
 	~Terrain();
 	void VDraw(Vector2D point,Vector2D adjust)const;//描画処理
 	void VHitProcess(const BattleObject *potherobj);
