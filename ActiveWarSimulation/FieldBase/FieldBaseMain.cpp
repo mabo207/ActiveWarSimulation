@@ -43,18 +43,18 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		FpsMeasuring fpsMeasuring;
 
 		//デモ用変数
-		std::shared_ptr<Shape> pMoveCircle(new Circle(Vector2D(100.0f,300.0f),30.0f,Shape::Fix::e_dynamic));
-		std::vector<std::shared_ptr<Shape>> field={pMoveCircle};
+		BattleObject *pMoveCircle(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(100.0f,300.0f),30.0f,Shape::Fix::e_dynamic)),-1,GetColor(255,0,0),false));
+		std::vector<BattleObject *> field={pMoveCircle};
 		Vector2D epos(800.0f,300.0f),evec(80.0f,20.0f);
 		for(int i=0,max=1000;i<max;i++){
 			//障害物の追加
-			field.push_back(std::shared_ptr<Shape>(new Circle(Vector2D(120.0f*(float)i-2.0f/2.0f*(float)(i*i),150.0f),30.0f,Shape::Fix::e_static)));
-			field.push_back(std::shared_ptr<Shape>(new Edge(epos,evec,Shape::Fix::e_static)));
+			field.push_back(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(120.0f*(float)i-2.0f/2.0f*(float)(i*i),150.0f),30.0f,Shape::Fix::e_static)),-1,GetColor(255,255,255),false));
+			field.push_back(new Terrain(std::shared_ptr<Shape>(new Edge(epos,evec,Shape::Fix::e_static)),-1,GetColor(255,255,255),false));
 			epos+=evec;
 			evec=evec.turn((float)(M_PI*2/max));
 		}
-		std::shared_ptr<Shape> pSharedWindow(new Edge(Vector2D(0.0f,0.0f),Vector2D(1280.0f,720.0f),Shape::Fix::e_ignore));//画面を表すベクトル
-		const Shape *pWindow=pSharedWindow.get();
+		std::shared_ptr<ShapeHaving> pSharedWindow(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1280.0f,720.0f),Shape::Fix::e_ignore)),-1,0,false));//画面を表すベクトル
+		const ShapeHaving *pWindow=pSharedWindow.get();
 
 		//実行
 		while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
@@ -69,15 +69,15 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 			//描画
 			fpsMeasuring.RecordTime();
-			for(const std::shared_ptr<const Shape> &pShape:field){
-				if(pShape->JudgeInShapeRect(pWindow)){
-					pShape->Draw(Vector2D(0.0f,0.0f),GetColor(255,255,255),TRUE,1.0f);
+			for(const BattleObject *pObject:field){
+				if(pObject->JudgeInShapeRect(pWindow)){
+					pObject->VDraw(Vector2D(0.0f,0.0f));
 				}
 			}
-			pMoveCircle->Draw(Vector2D(0.0f,0.0f),GetColor(255,0,0),TRUE,1.0f);
+			pMoveCircle->VDraw(Vector2D(0.0f,0.0f));
 			printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000);
 
-			//情報更新
+			//位置更新
 			fpsMeasuring.RecordTime();
 			int index=0;
 			const float speed=3.0f;//オブジェクトの移動速度
@@ -88,13 +88,13 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 				//移動処理を小分けにする事で、移動速度を向上させることができる
 				if(fpsMeasuring.GetFlame()%1==0){
 					//1回の移動距離を小さくしないとギリギリ通れない場所が通れるようになってしまう
-					Vector2D v=GetMousePointVector2D()-pMoveCircle->GetPosition();
+					Vector2D v=GetMousePointVector2D()-pMoveCircle->getPos();
 					pMoveCircle->Move(v.norm()*std::fminf((float)(speed/moveCount),v.size()));
 				}
 				//1フレーム内に複数回当たり判定処理を行うと、処理が重くなる代わりにオブジェクトの移動速度を上げることができる
-				for(const std::shared_ptr<Shape> &pShape:field){
+				for(BattleObject *pObject:field){
 					//当たり判定系の処理
-					pShape->Update(field,judgeCount);
+					pObject->UpdatePosition(pointer_array_cast<ShapeHaving>(field.data()),field.size(),judgeCount);
 				}
 			}
 
@@ -104,8 +104,12 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 			}
 			printfDx("Update : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000);
 		}
-
+//*/
 		//終了処理
+		//fieldの開放
+		for(BattleObject *pobj:field){
+			delete pobj;
+		}
 		DeleteInputControler();//入力機構の解放
 		DxLib_End();
 

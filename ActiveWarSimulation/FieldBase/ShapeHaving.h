@@ -7,6 +7,10 @@
 
 //当たり判定処理を持つ純粋仮想クラス、「当たり判定を持つ障害物」などを作る時に基底クラスにすると良い
 class ShapeHaving{
+	//定数
+protected:
+	static const float pushRate;
+
 	//変数
 protected:
 	std::shared_ptr<Shape> m_hitJudgeShape;//当たり判定の形状
@@ -30,7 +34,12 @@ public:
 	float getRight()const;
 	Vector2D getPos()const;
 	Vector2D getResizeVec()const;
-	std::shared_ptr<Shape> getHitJudgeShape()const;
+	const Shape *GetHitJudgeShape()const;//m_hitJudgeShapeのconstポインタを取得、当たり判定処理に用いる
+	Shape::Fix::Kind GetFix()const;//m_hitJudgeShape.m_fixを取得
+	Shape::Fix::Kind SetFix(Shape::Fix::Kind fix)const;//m_hitJudgeShape.m_fixを変更
+	const std::vector<const ShapeHaving *> InShapeHavingList(ShapeHaving **pShapeHavingVec,size_t vecSize)const;//pShapeVecにある図形のうちthis内に存在する図形を全てリストアップする
+	void UpdatePosition(ShapeHaving **pShapeHavingVec,size_t vecSize,size_t updateTimes);//当たり判定による位置補正をupdateTimes回だけ行う。全ての図形に対しまとめて行うのが前提。std::vectorで管理している場合はstd::vector::data()を用いる。
+	bool JudgeInShapeRect(const ShapeHaving *pShapeHaving)const;//長方形判定によって中にあるかどうかを判定する
 
 };
 

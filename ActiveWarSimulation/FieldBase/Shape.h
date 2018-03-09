@@ -44,7 +44,6 @@ public:
 
 	//定数
 public:
-	static const float pushRate;//当たり判定処理を行う際、押し出す距離の割合
 	static const char spliter,beginer,ender;//データ読み込みの際に使う区切り文字等
 
 	//変数
@@ -68,9 +67,6 @@ public:
 		return m_type;
 	}
 	void Move(Vector2D displacement);//オブジェクトを移動させる。数フレームかけて位置補正を行うため、当たり判定による位置の補正はMove()ではなくUpdate()によって行う
-	const std::vector<std::shared_ptr<const Shape>> InShapeList(const std::vector<std::shared_ptr<const Shape>> &pShapeVec)const;//pShapeVecにある図形のうちthis内に存在する図形を全てリストアップする
-	void Update(const std::vector<std::shared_ptr<Shape>> &pShapeVec,size_t updateTimes);//当たり判定による位置補正をupdateTimes回だけ行う。全ての図形に対しまとめて行うのが前提。
-	bool JudgeInShapeRect(const Shape *pShape)const;//長方形判定によって中にあるかどうかを判定する
 	//純粋仮想関数
 	virtual std::shared_ptr<Shape> VCopy()const=0;//内容が同じでポインタの位置のみが異なるオブジェクトのポインタを返す
 	virtual void Draw(Vector2D adjust,unsigned int color,int fillFlag,float lineTickness=1.0f)const=0;
