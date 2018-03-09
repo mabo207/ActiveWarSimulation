@@ -61,6 +61,7 @@ public:
 
 	//文字列からBattleObjectを作る関数
 	static std::shared_ptr<BattleObject> CreateObject(const std::string &infostr);
+	static BattleObject *CreateRawObject(const std::string &infostr);//newで生ポインタで作る。shared_ptrに突っ込まない場合は自分でメモリ解放する。
 };
 
 #endif // !DEF_BATTLEOBJECT_H

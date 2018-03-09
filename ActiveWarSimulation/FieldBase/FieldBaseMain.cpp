@@ -45,14 +45,30 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		//デモ用変数
 		BattleObject *pMoveCircle(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(100.0f,300.0f),30.0f,Shape::Fix::e_dynamic)),-1,GetColor(255,0,0),false));
 		std::vector<BattleObject *> field={pMoveCircle};
-		Vector2D epos(800.0f,300.0f),evec(80.0f,20.0f);
-		for(int i=0,max=1000;i<max;i++){
-			//障害物の追加
-			field.push_back(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(120.0f*(float)i-2.0f/2.0f*(float)(i*i),150.0f),30.0f,Shape::Fix::e_static)),-1,GetColor(255,255,255),false));
-			field.push_back(new Terrain(std::shared_ptr<Shape>(new Edge(epos,evec,Shape::Fix::e_static)),-1,GetColor(255,255,255),false));
-			epos+=evec;
-			evec=evec.turn((float)(M_PI*2/max));
+		//ファイルを開きすべての文字列を書き出す
+		std::ifstream ifs("../StageEditor/SaveData/stage.txt");
+		if(!ifs){
+			return -1;
 		}
+		std::string str;//書き出し先
+		while(true){
+			char ch;
+			ch=ifs.get();
+			//ファイルの終端でwhileから脱出
+			if(ch==EOF){
+				break;
+			}
+			str.push_back(ch);
+		}
+		//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
+		StringBuilder sb(str,'\n','{','}',false,true);
+		for(const StringBuilder &ssb:sb.m_vec){
+			BattleObject *pb=BattleObject::CreateRawObject(ssb.GetString());
+			if(pb!=nullptr){
+				field.push_back(pb);
+			}
+		}
+		//ウインドウの設定
 		std::shared_ptr<ShapeHaving> pSharedWindow(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1280.0f,720.0f),Shape::Fix::e_ignore)),-1,0,false));//画面を表すベクトル
 		const ShapeHaving *pWindow=pSharedWindow.get();
 
