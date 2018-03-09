@@ -5,6 +5,7 @@
 #include"input.h"
 #include"ToolsLib.h"
 
+#include"Terrain.h"
 #include"Circle.h"
 #include"Edge.h"
 
@@ -45,7 +46,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		std::shared_ptr<Shape> pMoveCircle(new Circle(Vector2D(100.0f,300.0f),30.0f,Shape::Fix::e_dynamic));
 		std::vector<std::shared_ptr<Shape>> field={pMoveCircle};
 		Vector2D epos(800.0f,300.0f),evec(80.0f,20.0f);
-		for(int i=0,max=500;i<max;i++){
+		for(int i=0,max=1000;i<max;i++){
 			//áŠQ•¨‚Ì’Ç‰Á
 			field.push_back(std::shared_ptr<Shape>(new Circle(Vector2D(120.0f*(float)i-2.0f/2.0f*(float)(i*i),150.0f),30.0f,Shape::Fix::e_static)));
 			field.push_back(std::shared_ptr<Shape>(new Edge(epos,evec,Shape::Fix::e_static)));

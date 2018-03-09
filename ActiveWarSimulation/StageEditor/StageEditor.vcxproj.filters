@@ -126,6 +126,9 @@
     <ClInclude Include="EdgeFactory.h">
       <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
     </ClInclude>
+    <ClInclude Include="..\FieldBase\ShapeHaving.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -190,6 +193,9 @@
     </ClCompile>
     <ClCompile Include="EdgeFactory.cpp">
       <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FieldBase\ShapeHaving.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
