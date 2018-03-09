@@ -6,6 +6,7 @@
 #include<vector>
 #include<math.h>
 #include<type_traits>
+#include<memory>
 
 //一般的に用いることができる便利関数・構造体をここに書く
 //位置についての構造体
@@ -157,6 +158,11 @@ template<typename T,typename FROM> std::enable_if_t<std::is_base_of_v<T,FROM>,T*
 	//std::is_base_of_v<class Base,class Derived> --- DerivedがBaseを継承しているか
 	//std::is_convertible_v<class From,class To> --- FromからToへ暗黙的に変換が可能かどうか
 	return reinterpret_cast<T**>(arr);
+}
+
+//pointer_array_cast()のshared_pointer版
+template<typename T,typename FROM> std::enable_if_t<std::is_base_of_v<T,FROM>,std::shared_ptr<T>*> shared_pointer_array_cast(std::shared_ptr<FROM> *arr){
+	return reinterpret_cast<std::shared_ptr<T>*>(arr);
 }
 
 //継承クラスのポインタのポインタを基底クラスのポインタのポインタにキャストする関数。継承先ポインタで作った配列を基底クラスのポインタで作った配列に変えたい時に使う

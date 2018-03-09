@@ -75,8 +75,8 @@ Vector2D ShapeHaving::getResizeVec()const{
 	return m_hitJudgeShape.get()->GetRetResize()+m_hitJudgeShape->GetPosition();
 }
 
-const std::vector<const ShapeHaving *> ShapeHaving::InShapeHavingList(ShapeHaving **pShapeHavingVec,size_t vecSize)const{
-	std::vector<const ShapeHaving *> list;
+const std::vector<std::shared_ptr<ShapeHaving>> ShapeHaving::InShapeHavingList(std::shared_ptr<ShapeHaving> *pShapeHavingVec,size_t vecSize)const{
+	std::vector<std::shared_ptr<ShapeHaving>> list;
 	const Vector2D v=Vector2D();
 	for(size_t i=0;i<vecSize;i++){
 		if(m_hitJudgeShape->CalculatePushVec(pShapeHavingVec[i]->GetHitJudgeShape())!=v){
@@ -86,17 +86,17 @@ const std::vector<const ShapeHaving *> ShapeHaving::InShapeHavingList(ShapeHavin
 	return list;
 }
 
-void ShapeHaving::UpdatePosition(ShapeHaving **pShapeHavingVec,size_t vecSize,size_t updateTimes){
+void ShapeHaving::UpdatePosition(std::shared_ptr<ShapeHaving> *pShapeHavingVec,size_t vecSize,size_t updateTimes){
 	if(m_hitJudgeShape->m_fix==Shape::Fix::e_dynamic){
 		//m_fixによって動くかどうかを決める
 		//この関数が呼ばれた際図形が存在するのは仮移動先である。仮移動先において、自分と重なっている図形を探し、位置をずらす。
 		//重なっている図形を全てリストアップする
-		std::vector<const ShapeHaving *> inShapeList;
+		std::vector<std::shared_ptr<ShapeHaving>> inShapeList;
 		for(size_t i=0;i<vecSize;i++){
 			//当たり判定に影響を与える図形以外に対して押し出し処理を行う
 			if(pShapeHavingVec[i]->GetFix()!=Shape::Fix::e_ignore){
 				//図形をぴったり収める長方形を利用して簡易的な当たり判定を行う
-				if(JudgeInShapeRect(pShapeHavingVec[i])){
+				if(JudgeInShapeRect(pShapeHavingVec[i].get())){
 					//押し出しする図形に追加
 					inShapeList.push_back(pShapeHavingVec[i]);
 				}
@@ -104,7 +104,7 @@ void ShapeHaving::UpdatePosition(ShapeHaving **pShapeHavingVec,size_t vecSize,si
 		}
 		//簡易的当たり判定によって判定できる、重なっている図形の外に出るように押し出し処理をする
 		for(size_t i=0;i<updateTimes;i++){
-			for(const ShapeHaving *pShapeHaving:inShapeList){
+			for(const std::shared_ptr<ShapeHaving> &pShapeHaving:inShapeList){
 				//各図形に対して完全に押し出せる距離を求める
 				Vector2D pushVec=m_hitJudgeShape->CalculatePushVec(pShapeHaving->GetHitJudgeShape());
 				//押し出し距離の一定の割合のベクトルだけ押し出す

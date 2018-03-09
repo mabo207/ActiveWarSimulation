@@ -43,13 +43,13 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		FpsMeasuring fpsMeasuring;
 
 		//デモ用変数
-		BattleObject *pMoveCircle(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(100.0f,300.0f),30.0f,Shape::Fix::e_dynamic)),-1,GetColor(255,0,0),false));
-		std::vector<BattleObject *> field={pMoveCircle};
+		std::shared_ptr<BattleObject> pMoveCircle(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(100.0f,300.0f),30.0f,Shape::Fix::e_dynamic)),-1,GetColor(255,0,0),false));
+		std::vector<std::shared_ptr<BattleObject>> field={pMoveCircle};
 		Vector2D epos(800.0f,300.0f),evec(80.0f,20.0f);
 		for(int i=0,max=1000;i<max;i++){
 			//障害物の追加
-			field.push_back(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(120.0f*(float)i-2.0f/2.0f*(float)(i*i),150.0f),30.0f,Shape::Fix::e_static)),-1,GetColor(255,255,255),false));
-			field.push_back(new Terrain(std::shared_ptr<Shape>(new Edge(epos,evec,Shape::Fix::e_static)),-1,GetColor(255,255,255),false));
+			field.push_back(std::shared_ptr<BattleObject>(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(120.0f*(float)i-2.0f/2.0f*(float)(i*i),150.0f),30.0f,Shape::Fix::e_static)),-1,GetColor(255,255,255),false)));
+			field.push_back(std::shared_ptr<BattleObject>(new Terrain(std::shared_ptr<Shape>(new Edge(epos,evec,Shape::Fix::e_static)),-1,GetColor(255,255,255),false)));
 			epos+=evec;
 			evec=evec.turn((float)(M_PI*2/max));
 		}
@@ -69,7 +69,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 			//描画
 			fpsMeasuring.RecordTime();
-			for(const BattleObject *pObject:field){
+			for(const std::shared_ptr<BattleObject> &pObject:field){
 				if(pObject->JudgeInShapeRect(pWindow)){
 					pObject->VDraw(Vector2D(0.0f,0.0f));
 				}
@@ -92,9 +92,9 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					pMoveCircle->Move(v.norm()*std::fminf((float)(speed/moveCount),v.size()));
 				}
 				//1フレーム内に複数回当たり判定処理を行うと、処理が重くなる代わりにオブジェクトの移動速度を上げることができる
-				for(BattleObject *pObject:field){
+				for(std::shared_ptr<BattleObject> &pObject:field){
 					//当たり判定系の処理
-					pObject->UpdatePosition(pointer_array_cast<ShapeHaving>(field.data()),field.size(),judgeCount);
+					pObject->UpdatePosition(shared_pointer_array_cast<ShapeHaving>(field.data()),field.size(),judgeCount);
 				}
 			}
 
@@ -104,12 +104,13 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 			}
 			printfDx("Update : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000);
 		}
-//*/
 		//終了処理
+/*
 		//fieldの開放
 		for(BattleObject *pobj:field){
 			delete pobj;
 		}
+//*/
 		DeleteInputControler();//入力機構の解放
 		DxLib_End();
 
