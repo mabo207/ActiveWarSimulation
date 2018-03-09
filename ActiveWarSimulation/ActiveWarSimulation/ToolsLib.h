@@ -5,6 +5,7 @@
 #include<string>
 #include<vector>
 #include<math.h>
+#include<type_traits>
 
 //一般的に用いることができる便利関数・構造体をここに書く
 //位置についての構造体
@@ -148,6 +149,24 @@ unsigned int GetInvertedColor(unsigned int color);
 
 //pointがp1,p2,p3による三角形の内部にあるかを判定
 bool JudgeInTriangle(Vector2D point,Vector2D p1,Vector2D p2,Vector2D p3);
+
+//継承クラスのポインタのポインタを基底クラスのポインタのポインタにキャストする関数。継承先ポインタで作った配列を基底クラスのポインタで作った配列に変えたい時に使う
+template<typename T,typename FROM> std::enable_if_t<std::is_base_of_v<T,FROM>,T**> pointer_array_cast(FROM **arr){
+	//TがFROMを継承していないとコンパイルエラーになる。
+	//std::enable_if_t<bool Condition,class T> --- Conditionがtrueの時のみ型Tを表す
+	//std::is_base_of_v<class Base,class Derived> --- DerivedがBaseを継承しているか
+	//std::is_convertible_v<class From,class To> --- FromからToへ暗黙的に変換が可能かどうか
+	return reinterpret_cast<T**>(arr);
+}
+
+//継承クラスのポインタのポインタを基底クラスのポインタのポインタにキャストする関数。継承先ポインタで作った配列を基底クラスのポインタで作った配列に変えたい時に使う
+template<typename T,typename FROM> std::enable_if_t<std::is_convertible_v<FROM*,T*>,T**> pointer_array_cast2(FROM **arr){
+	//TがFROMを継承していないとコンパイルエラーになる。
+	//std::enable_if_t<bool Condition,class T> --- Conditionがtrueの時のみ型Tを表す
+	//std::is_base_of_v<class Base,class Derived> --- DerivedがBaseを継承しているか
+	//std::is_convertible_v<class From,class To> --- FromからToへ暗黙的に変換が可能かどうか
+	return reinterpret_cast<T**>(arr);
+}
 
 //数値の変化を様々な式で管理するクラス
 class Easing{
