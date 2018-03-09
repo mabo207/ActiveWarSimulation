@@ -37,8 +37,8 @@ public:
 	const Shape *GetHitJudgeShape()const;//m_hitJudgeShapeのconstポインタを取得、当たり判定処理に用いる
 	Shape::Fix::Kind GetFix()const;//m_hitJudgeShape.m_fixを取得
 	Shape::Fix::Kind SetFix(Shape::Fix::Kind fix)const;//m_hitJudgeShape.m_fixを変更
-	const std::vector<const ShapeHaving *> InShapeHavingList(ShapeHaving **pShapeHavingVec,size_t vecSize)const;//pShapeVecにある図形のうちthis内に存在する図形を全てリストアップする
-	void UpdatePosition(ShapeHaving **pShapeHavingVec,size_t vecSize,size_t updateTimes);//当たり判定による位置補正をupdateTimes回だけ行う。全ての図形に対しまとめて行うのが前提。std::vectorで管理している場合はstd::vector::data()を用いる。
+	const std::vector<const ShapeHaving *> InShapeHavingList(const ShapeHaving  * const * const pShapeHavingVec,const size_t vecSize)const;//pShapeVecにある図形のうちthis内に存在する図形を全てリストアップする
+	void UpdatePosition(ShapeHaving * const * const pShapeHavingVec,const size_t vecSize,const size_t updateTimes);//当たり判定による位置補正をupdateTimes回だけ行う。全ての図形に対しまとめて行うのが前提。std::vectorで管理している場合はstd::vector::data()を用いる。
 	bool JudgeInShapeRect(const ShapeHaving *pShapeHaving)const;//長方形判定によって中にあるかどうかを判定する
 
 };

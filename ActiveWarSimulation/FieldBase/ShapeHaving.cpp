@@ -75,7 +75,7 @@ Vector2D ShapeHaving::getResizeVec()const{
 	return m_hitJudgeShape.get()->GetRetResize()+m_hitJudgeShape->GetPosition();
 }
 
-const std::vector<const ShapeHaving *> ShapeHaving::InShapeHavingList(ShapeHaving **pShapeHavingVec,size_t vecSize)const{
+const std::vector<const ShapeHaving *> ShapeHaving::InShapeHavingList(const ShapeHaving * const * const pShapeHavingVec,const size_t vecSize)const{
 	std::vector<const ShapeHaving *> list;
 	const Vector2D v=Vector2D();
 	for(size_t i=0;i<vecSize;i++){
@@ -86,7 +86,7 @@ const std::vector<const ShapeHaving *> ShapeHaving::InShapeHavingList(ShapeHavin
 	return list;
 }
 
-void ShapeHaving::UpdatePosition(ShapeHaving **pShapeHavingVec,size_t vecSize,size_t updateTimes){
+void ShapeHaving::UpdatePosition(ShapeHaving * const * const pShapeHavingVec,const size_t vecSize,const size_t updateTimes){
 	if(m_hitJudgeShape->m_fix==Shape::Fix::e_dynamic){
 		//m_fixによって動くかどうかを決める
 		//この関数が呼ばれた際図形が存在するのは仮移動先である。仮移動先において、自分と重なっている図形を探し、位置をずらす。
