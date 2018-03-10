@@ -20,10 +20,13 @@ public:
 	ShapeHaving(std::shared_ptr<Shape> pShape);
 	virtual ~ShapeHaving();
 
+	//仮想関数
+	virtual void Move(Vector2D v);//ベクトルvだけ動かす(バトルの時等で用いる)(継承先で当たり判定図形を複数切り替えるのであればオーバーライドする)
+	virtual const Shape *GetHitJudgeShape()const;//m_hitJudgeShapeのconstポインタを取得、当たり判定処理に用いる(継承先で当たり判定図形を複数切り替えるのであればオーバーライドする)
+
 	//通常関数
 	void ShapeDraw(unsigned int color,int fillFlag,float linethickness=1.0f,Vector2D adjust=Vector2D())const;//当たり判定形状に基づいた描画処理(dx,dyはズレの値)
 	void PosDraw(unsigned int color,int fillFlag,float size,Vector2D adjust=Vector2D())const;//m_Posの位置に円を描画する。
-	void Move(Vector2D v);//ベクトルvだけ動かす(バトルの時等で用いる)
 	void Warp(Vector2D v);//ベクトルvへ動かす(ステージ編集で用いる)
 	void Resize(Vector2D v);//位置ベクトルvを参考に大きさを変更する(ステージ編集で用いる)
 	void ChangeShape(std::shared_ptr<Shape> pShape);//当たり判定図形を変更する
@@ -34,7 +37,6 @@ public:
 	float getRight()const;
 	Vector2D getPos()const;
 	Vector2D getResizeVec()const;
-	const Shape *GetHitJudgeShape()const;//m_hitJudgeShapeのconstポインタを取得、当たり判定処理に用いる
 	Shape::Fix::Kind GetFix()const;//m_hitJudgeShape.m_fixを取得
 	Shape::Fix::Kind SetFix(Shape::Fix::Kind fix)const;//m_hitJudgeShape.m_fixを変更
 	const std::vector<const ShapeHaving *> InShapeHavingList(const ShapeHaving  * const * const pShapeHavingVec,const size_t vecSize)const;//pShapeVecにある図形のうちthis内に存在する図形を全てリストアップする

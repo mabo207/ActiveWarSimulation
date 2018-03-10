@@ -19,6 +19,18 @@
     <Filter Include="ヘッダー ファイル\Tools">
       <UniqueIdentifier>{1b3a558b-b3ba-4c88-9dcc-910378b1032e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\BattleObject">
+      <UniqueIdentifier>{360c9abf-62bb-494d-b213-de26349574c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Shape">
+      <UniqueIdentifier>{b35f9e5f-e843-4aa9-93c0-00c902e25140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\BattleObject">
+      <UniqueIdentifier>{96923158-8036-48f1-9e96-3cc690b70010}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Shape">
+      <UniqueIdentifier>{a5159a22-a211-4ba9-9c49-36d4197c7e2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -30,6 +42,27 @@
     <ClCompile Include="ToolsLib.cpp">
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
+    <ClCompile Include="Unit.cpp">
+      <Filter>ソース ファイル\BattleObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FieldBase\Shape.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FieldBase\ShapeHaving.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FieldBase\Circle.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FieldBase\Edge.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StageEditor\Terrain.cpp">
+      <Filter>ソース ファイル\BattleObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StageEditor\BattleObject.cpp">
+      <Filter>ソース ファイル\BattleObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -37,6 +70,27 @@
     </ClInclude>
     <ClInclude Include="ToolsLib.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Unit.h">
+      <Filter>ヘッダー ファイル\BattleObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FieldBase\Shape.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FieldBase\ShapeHaving.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FieldBase\Circle.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FieldBase\Edge.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StageEditor\BattleObject.h">
+      <Filter>ヘッダー ファイル\BattleObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StageEditor\Terrain.h">
+      <Filter>ヘッダー ファイル\BattleObject</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
