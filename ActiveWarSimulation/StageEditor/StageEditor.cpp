@@ -256,14 +256,14 @@ void StageEditor::Draw() {
 		obj.get()->VDraw(adjust);
 		//マウスが被っている図形には黄色い枠を描画しフォーカスを表現
 		if(firstflag && obj.get()->JudgePointInsideShape(mouse)){
-			obj.get()->ShapeDraw(GetColor(255,255,0),FALSE,adjust);
+			obj.get()->ShapeDraw(GetColor(255,255,0),FALSE,1.0f,adjust);
 			obj.get()->PosDraw(GetColor(255,255,0),TRUE,2.0f,adjust);
 			firstflag=false;
 		}
 		//選択中の図形については赤い枠を描画しフォーカスを表現
 		if(obj.get()==m_actionSettings.m_pBattleObject.get()){
-			obj.get()->ShapeDraw(GetColor(255,0,0),FALSE,adjust);
-			obj.get()->PosDraw(GetColor(255,0,0),TRUE,2,adjust);
+			obj.get()->ShapeDraw(GetColor(255,0,0),FALSE,1.0f,adjust);
+			obj.get()->PosDraw(GetColor(255,0,0),TRUE,2.0f,adjust);
 		}
 	}
 	

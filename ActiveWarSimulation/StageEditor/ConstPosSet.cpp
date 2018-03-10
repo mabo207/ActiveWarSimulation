@@ -62,7 +62,7 @@ Vector2D ConstPosSet::CalculatePos(Vector2D point,const EditActionSettings &sett
 	const BattleObject *inObj=settings.GetMousePointedObjectPointer(point);
 	if(inObj!=nullptr){
 		//‘I‘ð‚³‚ê‚½}Œ`‚ª‘¶Ý‚·‚éê‡
-		point=inObj->getHitJudgeShape()->VGetNearEndpoint(point,3.0f);
+		point=inObj->getHitJudgeShape()->VGetNearEndpoint(point,5.0f);
 	}
 	//˜g‚ÌŒð·“_‚Éˆê’v‚·‚é‚æ‚¤‚ÉˆÊ’u’²®
 	switch(settings.m_pEditAction->VGetPosSetKind(settings)){

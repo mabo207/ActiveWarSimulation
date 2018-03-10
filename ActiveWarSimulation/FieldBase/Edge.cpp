@@ -101,8 +101,9 @@ bool Edge::VJudgePointInsideShape(Vector2D point)const{
 		//線分外に垂線の足があり、最近傍点がm_position+m_vecになる
 		nearestPoint=GetEndPoint();
 	}
-	//最近傍点への距離が1px以内なら点が線上にあるとみなす
-	return (point-nearestPoint).sqSize()<=1.0f*1.0f;
+	//最近傍点への距離が5px以内なら点が線上にあるとみなす
+	const float capacity=5.0f;
+	return (point-nearestPoint).sqSize()<=capacity*capacity;
 }
 
 Vector2D Edge::GetLeftTop()const{

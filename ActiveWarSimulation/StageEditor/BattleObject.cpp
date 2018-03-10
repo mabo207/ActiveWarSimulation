@@ -18,8 +18,8 @@ void BattleObject::VDraw(Vector2D adjust)const{
 	VDraw(m_hitJudgeShape->GetPosition(),adjust);
 }
 
-void BattleObject::ShapeDraw(unsigned int color,int fillFlag,Vector2D adjust)const{
-	m_hitJudgeShape->Draw(adjust,color,fillFlag);
+void BattleObject::ShapeDraw(unsigned int color,int fillFlag,float lineThickness,Vector2D adjust)const{
+	m_hitJudgeShape->Draw(adjust,color,fillFlag,lineThickness);
 }
 
 void BattleObject::PosDraw(unsigned int color,int fillFlag,float size,Vector2D adjust)const{
