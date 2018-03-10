@@ -153,6 +153,7 @@
     <ClCompile Include="..\FieldBase\ShapeHaving.cpp" />
     <ClCompile Include="..\StageEditor\BattleObject.cpp" />
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="ToolsLib.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="..\FieldBase\ShapeHaving.h" />
     <ClInclude Include="..\StageEditor\BattleObject.h" />
     <ClInclude Include="..\StageEditor\Terrain.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="ToolsLib.h" />
     <ClInclude Include="Unit.h" />

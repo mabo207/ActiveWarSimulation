@@ -31,6 +31,12 @@
     <Filter Include="ヘッダー ファイル\Shape">
       <UniqueIdentifier>{a5159a22-a211-4ba9-9c49-36d4197c7e2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameScene">
+      <UniqueIdentifier>{ea065b0b-8915-485a-b71f-75f118a497ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene">
+      <UniqueIdentifier>{cba1a45a-6c16-4022-a093-badee911fb9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -63,6 +69,9 @@
     <ClCompile Include="..\StageEditor\BattleObject.cpp">
       <Filter>ソース ファイル\BattleObject</Filter>
     </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>ソース ファイル\GameScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -91,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="..\StageEditor\Terrain.h">
       <Filter>ヘッダー ファイル\BattleObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>ヘッダー ファイル\GameScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
