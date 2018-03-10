@@ -13,9 +13,9 @@ Unit::Team::Kind Unit::Team::link(int num){
 unsigned int Unit::Team::GetColor(Kind kind){
 	switch(kind){
 	case(e_player):
-		return DxLib::GetColor(0,0,255);
+		return DxLib::GetColor(64,64,255);
 	case(e_enemy):
-		return DxLib::GetColor(255,0,0);
+		return DxLib::GetColor(255,64,64);
 	}
 	return DxLib::GetColor(128,128,128);
 }
@@ -26,7 +26,7 @@ const float Unit::BattleStatus::maxOP=100.0f;
 //------------Unit---------------
 const float Unit::unitCircleSize=30.0f;
 const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
-const float Unit::closeAttackLength=Unit::unitCircleSize*1.1f+Unit::rivalInpenetratableCircleSize;
+const float Unit::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.3f;
 const float Unit::openAttackLength=Unit::closeAttackLength*2.0f;
 
 Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
@@ -77,13 +77,23 @@ void Unit::VDraw(Vector2D point,Vector2D adjust)const{
 	GetDrawBlendMode(&mode,&pal);
 	//アクションの効果範囲を半透明(弱)で描画
 	//ひとまず短射程で描画本来は武器クラスのDraw関数を使うのが望ましい。
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-	DrawCircleAA(pos.x,pos.y,closeAttackLength,100,Team::GetColor(m_battleStatus.team),TRUE);//面
-	SetDrawBlendMode(mode,pal);
-	DrawCircleAA(pos.x,pos.y,closeAttackLength,100,Team::GetColor(m_battleStatus.team),FALSE);//枠
+	if(GetFix()==Shape::Fix::e_dynamic){
+		//dynamicなキャラのみアクション範囲を表示。恐らく移動しているキャラのみ
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+		DrawCircleAA(pos.x,pos.y,closeAttackLength,100,Team::GetColor(m_battleStatus.team),TRUE);//面
+		SetDrawBlendMode(mode,pal);
+		DrawCircleAA(pos.x,pos.y,closeAttackLength,100,Team::GetColor(m_battleStatus.team),FALSE);//枠
+	}
 	//ユニットの当たり判定図形を描画
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
-	GetHitJudgeShape()->Draw(adjust,Team::GetColor(m_battleStatus.team),TRUE);//面のみ描画
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+	GetHitJudgeShape()->Draw(adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+	SetDrawBlendMode(mode,pal);
+	GetHitJudgeShape()->Draw(adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
+	//ユニット自身の当たり判定の描画
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+	m_hitJudgeShape->Draw(adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+	SetDrawBlendMode(mode,pal);
+	m_hitJudgeShape->Draw(adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
 	//ユニットグラフィックを描画
 	SetDrawBlendMode(mode,pal);
 

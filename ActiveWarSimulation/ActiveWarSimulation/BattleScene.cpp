@@ -36,6 +36,8 @@ BattleScene::BattleScene(const char *stagename)
 	//読み込み方法が確立していないので暫定
 	m_field.push_back(new Unit(Vector2D(196.0f,196.0f),-1,Unit::Team::e_player));
 	m_field.push_back(new Unit(Vector2D(1024.0f,540.0f),-1,Unit::Team::e_enemy));
+	m_field.push_back(new Unit(Vector2D(296.0f,196.0f),-1,Unit::Team::e_player));
+	m_field.push_back(new Unit(Vector2D(524.0f,340.0f),-1,Unit::Team::e_enemy));
 	//最初に操作するユニットの選択
 	for(BattleObject *obj:m_field){
 		if(obj->GetType()==BattleObject::Type::e_unit){
@@ -133,4 +135,6 @@ void BattleScene::Draw()const{
 	}
 	//操作中ユニットの描画
 	m_operateUnit->BattleObject::VDraw();
+	Vector2D pos=m_operateUnit->getPos();
+	DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
 }
