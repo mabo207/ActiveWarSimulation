@@ -3,6 +3,8 @@
 #include<cassert>
 #include"DxLib.h"
 #include"input.h"
+#include"BattleScene.h"
+#include<memory>
 
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
@@ -34,7 +36,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		//入力機構の初期化
 		InitInputControler();
 
-		//デモ用変数
+		//場面変数
+		std::shared_ptr<GameScene> pGameScene(new BattleScene(""));
 
 		//実行
 		while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
@@ -44,9 +47,10 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 			//描画
 			clsDx();
+			pGameScene->Draw();
 
 			//情報更新
-			int index=0;
+			int index=pGameScene->Calculate();
 
 			//終了検出
 			if(keyboard_get(KEY_INPUT_ESCAPE)>0 || index!=0){

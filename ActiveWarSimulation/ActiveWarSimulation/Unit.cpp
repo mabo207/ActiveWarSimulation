@@ -21,7 +21,7 @@ unsigned int Unit::Team::GetColor(Kind kind){
 }
 
 //------------Unit::BattleStatus---------------
-const int Unit::BattleStatus::maxOP=100;
+const float Unit::BattleStatus::maxOP=100.0f;
 
 //------------Unit---------------
 const float Unit::unitCircleSize=30.0f;
@@ -66,18 +66,23 @@ void Unit::Move(Vector2D v){
 	m_rivalInpenetratableCircle->Move(v);
 }
 
+Shape::Fix::Kind Unit::SetFix(Shape::Fix::Kind fix)const{
+	m_hitJudgeShape->m_fix=fix;
+	return (m_rivalInpenetratableCircle->m_fix=fix);
+}
+
 void Unit::VDraw(Vector2D point,Vector2D adjust)const{
 	Vector2D pos=point-adjust;
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
 	//アクションの効果範囲を半透明(弱)で描画
 	//ひとまず短射程で描画本来は武器クラスのDraw関数を使うのが望ましい。
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,pal/2);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
 	DrawCircleAA(pos.x,pos.y,closeAttackLength,100,Team::GetColor(m_battleStatus.team),TRUE);//面
 	SetDrawBlendMode(mode,pal);
 	DrawCircleAA(pos.x,pos.y,closeAttackLength,100,Team::GetColor(m_battleStatus.team),FALSE);//枠
 	//ユニットの当たり判定図形を描画
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,pal/2);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
 	GetHitJudgeShape()->Draw(adjust,Team::GetColor(m_battleStatus.team),TRUE);//面のみ描画
 	//ユニットグラフィックを描画
 	SetDrawBlendMode(mode,pal);

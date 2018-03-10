@@ -30,12 +30,12 @@ public:
 	};
 	struct BattleStatus{
 		//定数
-		static const int maxOP;//オーダーポイントの最大値、全てのユニットで一律
+		static const float maxOP;//オーダーポイントの最大値、全てのユニットで一律
 		//変数
 		int HP;
-		int OP;
+		float OP;
 		Team::Kind team;
-		BattleStatus(int i_HP,int i_OP,Team::Kind i_team)
+		BattleStatus(int i_HP,float i_OP,Team::Kind i_team)
 			:HP(i_HP),OP(i_OP),team(i_team){}
 	};
 
@@ -88,6 +88,7 @@ public:
 	//仮想関数・純粋仮想関数のオーバーライド
 	const Shape *GetHitJudgeShape()const;//当たり判定図形を取得。
 	void Move(Vector2D v);//当たり判定図形の移動。２種類の当たり判定図形を共に移動させる。
+	Shape::Fix::Kind SetFix(Shape::Fix::Kind fix)const;//m_hitJudgeShape.m_fixを変更
 	void VDraw(Vector2D point,Vector2D adjust)const;//描画処理(任意座標に描画)
 	void VHitProcess(const BattleObject *potherobj);//何かに当たった時の処理
 	std::shared_ptr<BattleObject> VCopy()const;//同じオブジェクトを複製する(ポインタのみ異なる)

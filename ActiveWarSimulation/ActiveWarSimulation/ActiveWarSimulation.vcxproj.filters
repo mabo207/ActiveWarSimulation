@@ -37,6 +37,12 @@
     <Filter Include="ヘッダー ファイル\GameScene">
       <UniqueIdentifier>{cba1a45a-6c16-4022-a093-badee911fb9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\BattleScene">
+      <UniqueIdentifier>{4630b0a8-c11d-4e25-b195-2f606819702e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameScene\BattleScene">
+      <UniqueIdentifier>{e308d2be-b696-4d89-a915-d90636da4639}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -72,6 +78,9 @@
     <ClCompile Include="GameScene.cpp">
       <Filter>ソース ファイル\GameScene</Filter>
     </ClCompile>
+    <ClCompile Include="BattleScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -103,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>ヘッダー ファイル\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

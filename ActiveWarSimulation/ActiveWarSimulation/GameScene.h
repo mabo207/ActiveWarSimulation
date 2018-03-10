@@ -13,7 +13,7 @@ class GameScene{
 	//ä÷êî
 public:
 	virtual int Calculate()=0;
-	virtual void Draw()=0;
+	virtual void Draw()const=0;
 	GameScene(){}
 	virtual ~GameScene(){}
 };
@@ -43,7 +43,7 @@ public:
 	FadeInOutGameScene(GameScene *pActivateClass,int fadeFlag,int flame);
 	~FadeInOutGameScene();
 	int Calculate();
-	void Draw();
+	void Draw()const;
 };
 
 

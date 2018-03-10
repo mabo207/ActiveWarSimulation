@@ -62,7 +62,7 @@ int FadeInOutGameScene::Calculate(){
 	return 0;
 }
 
-void FadeInOutGameScene::Draw(){
+void FadeInOutGameScene::Draw()const{
 	//”wŒiF‚Ìæ“¾
 	unsigned int backColor;
 	{

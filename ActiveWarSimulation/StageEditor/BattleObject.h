@@ -58,6 +58,9 @@ public:
 
 	//通常関数
 	void WriteOutObjectWholeInfo(std::ofstream &ofs)const;//オブジェクト全体の情報書き出し
+	Type::Kind GetType()const{
+		return m_type;
+	}
 
 	//文字列からBattleObjectを作る関数
 	static std::shared_ptr<BattleObject> CreateObject(const std::string &infostr);
