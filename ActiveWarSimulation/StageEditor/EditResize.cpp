@@ -33,7 +33,7 @@ void EditResize::VNonPressEditing(Vector2D point,EditActionSettings &settings)co
 	}
 }
 
-void EditResize::VProcessAction(Vector2D point,EditActionSettings &settings)const{
+void EditResize::VProcessAction(Vector2D point,EditActionSettings &settings){
 	//サイズ変更を行うBattleObjectが決まっているかどうかで行う行為が変わる
 	if(VGetPosSetKind(settings)==BASEEXIST){
 		//編集対象が決まっている場合、そのサイズ変更を行う

@@ -27,7 +27,7 @@ void EditRemove::VNonPressEditing(Vector2D point,EditActionSettings &settings)co
 	//‰½‚à‚µ‚È‚¢
 }
 
-void EditRemove::VProcessAction(Vector2D point,EditActionSettings &settings)const{
+void EditRemove::VProcessAction(Vector2D point,EditActionSettings &settings){
 	settings.RemoveObject(point);
 }
 

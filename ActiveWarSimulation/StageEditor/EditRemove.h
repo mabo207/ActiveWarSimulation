@@ -24,7 +24,7 @@ public:
 	~EditRemove(){}
 
 	void VNonPressEditing(Vector2D point,EditActionSettings &settings)const;//マウスを押していない時も編集を行う編集行為について、そのような編集行為を行う
-	void VProcessAction(Vector2D point,EditActionSettings &settings)const;
+	void VProcessAction(Vector2D point,EditActionSettings &settings);
 	PosSetKind VGetPosSetKind(const EditActionSettings &settings)const;//編集状況に依って返す値が異なるため
 };
 
