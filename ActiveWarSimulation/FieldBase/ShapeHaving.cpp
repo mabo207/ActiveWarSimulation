@@ -8,8 +8,8 @@ ShapeHaving::ShapeHaving(std::shared_ptr<Shape> pShape):m_hitJudgeShape(pShape){
 
 ShapeHaving::~ShapeHaving(){}
 
-void ShapeHaving::ShapeDraw(unsigned int color,int fillFlag,Vector2D adjust)const{
-	m_hitJudgeShape->Draw(adjust,color,fillFlag);
+void ShapeHaving::ShapeDraw(unsigned int color,int fillFlag,float linethickness,Vector2D adjust)const{
+	m_hitJudgeShape->Draw(adjust,color,fillFlag,linethickness);
 }
 
 void ShapeHaving::PosDraw(unsigned int color,int fillFlag,float size,Vector2D adjust)const{

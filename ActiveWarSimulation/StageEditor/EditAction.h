@@ -41,7 +41,7 @@ public:
 		:m_buttonX(buttonX),m_buttonY(buttonY),m_buttonDX(buttonDX),m_buttonDY(buttonDY),m_pushedColor(pushedColor){}
 	virtual ~EditAction() {}
 	virtual void VNonPressEditing(Vector2D point,EditActionSettings &settings)const=0;//マウスを押していない時も編集を行う編集行為について、そのような編集行為を行う
-	virtual void VProcessAction(Vector2D point,EditActionSettings &settings)const=0;//マップ上の点の座標を取得しsettingsに対し編集行為を実行する
+	virtual void VProcessAction(Vector2D point,EditActionSettings &settings)=0;//マップ上の点の座標を取得しsettingsに対し編集行為を実行する
 	void DrawPushedButton()const;//該当するボタンが押されているように表示する関数
 	virtual PosSetKind VGetPosSetKind(const EditActionSettings &settings)const=0;//編集状況に依って返す値が異なるため
 };

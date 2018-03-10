@@ -12,7 +12,7 @@ void Terrain::WriteOutObjectPeculiarInfo(std::ofstream &ofs)const{
 }
 
 void Terrain::VDraw(Vector2D point,Vector2D adjust)const{
-	m_hitJudgeShape->Draw(adjust,m_color,TRUE,1.0f);
+	m_hitJudgeShape->Draw(adjust,m_color,TRUE,5.0f);
 }
 
 void Terrain::VHitProcess(const BattleObject *potherobj) {

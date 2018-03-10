@@ -58,7 +58,13 @@ void ConstPosSet::DrawGuide(int leftUpPosX,int leftUpPosY,int mapSizeX,int mapSi
 }
 
 Vector2D ConstPosSet::CalculatePos(Vector2D point,const EditActionSettings &settings)const{
-	int pointx=(int)point.x,pointy=(int)point.y;
+	//マウスが図形と重なっており、その図形の端点に近い場合は、その端点の座標に対して位置調整を行う
+	const BattleObject *inObj=settings.GetMousePointedObjectPointer(point);
+	if(inObj!=nullptr){
+		//選択された図形が存在する場合
+		point=inObj->GetHitJudgeShape()->VGetNearEndpoint(point,5.0f);
+	}
+	//枠の交差点に一致するように位置調整
 	switch(settings.m_pEditAction->VGetPosSetKind(settings)){
 	case(EditAction::NONEDIT):
 		//そもそも位置調整をしない場合(例.BattleObjectのRemove対象選択時)
