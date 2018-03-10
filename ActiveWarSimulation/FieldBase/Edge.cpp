@@ -127,6 +127,20 @@ Vector2D Edge::GetRightBottom()const{
 	return ret;
 }
 
+Vector2D Edge::VGetNearEndpoint(Vector2D point,float capacity)const{
+	const float sqCapacity=capacity*capacity;
+	if((m_position-point).sqSize()<sqCapacity){
+		//始点に近い場合
+		return m_position;
+	}
+	if((m_position+m_vec-point).sqSize()<sqCapacity){
+		//終点に近い場合
+		return m_position+m_vec;
+	}
+	//端点に近くないならpointを返す
+	return point;
+}
+
 void Edge::Resize(Vector2D v){
 	//ベクトルをvにする
 	m_vec=v;

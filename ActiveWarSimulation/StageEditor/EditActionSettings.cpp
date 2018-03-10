@@ -18,8 +18,8 @@ EditActionSettings::EditActionSettings(std::shared_ptr<EditAction> pEditAction, 
 
 EditActionSettings::~EditActionSettings() {}
 
-std::vector<std::shared_ptr<BattleObject>>::iterator EditActionSettings::GetMousePointedObject(Vector2D point){
-	std::vector<std::shared_ptr<BattleObject>>::iterator it=m_objects.begin(),ite=m_objects.end();
+std::vector<std::shared_ptr<BattleObject>>::const_iterator EditActionSettings::GetMousePointedObject(Vector2D point)const{
+	std::vector<std::shared_ptr<BattleObject>>::const_iterator it=m_objects.begin(),ite=m_objects.end();
 	for(;it!=ite;it++) {
 		//マウスが被っている図形には枠を描画しフォーカスを表現
 		if(it->get()->JudgePointInsideShape(point)){
@@ -27,6 +27,14 @@ std::vector<std::shared_ptr<BattleObject>>::iterator EditActionSettings::GetMous
 		}
 	}
 	return it;
+}
+
+const BattleObject *EditActionSettings::GetMousePointedObjectPointer(Vector2D point)const{
+	std::vector<std::shared_ptr<BattleObject>>::const_iterator it=GetMousePointedObject(point);
+	if(it==m_objects.end()){
+		return nullptr;
+	}
+	return it->get();
 }
 
 void EditActionSettings::PracticeEdit(Vector2D point){
@@ -93,14 +101,14 @@ void EditActionSettings::PutObject(Vector2D point){
 
 void EditActionSettings::RemoveObject(Vector2D point){
 	//取り除くオブジェクトを探す
-	std::vector<std::shared_ptr<BattleObject>>::iterator it=GetMousePointedObject(point);
+	std::vector<std::shared_ptr<BattleObject>>::const_iterator it=GetMousePointedObject(point);
 	if(it!=m_objects.end()){
 		m_objects.erase(it);
 	}
 }
 
 void EditActionSettings::SetEditObject(Vector2D point){
-	std::vector<std::shared_ptr<BattleObject>>::iterator it=GetMousePointedObject(point);
+	std::vector<std::shared_ptr<BattleObject>>::const_iterator it=GetMousePointedObject(point);
 	if(it!=m_objects.end()){
 		m_pBattleObject=*it;
 		m_pOriginObject=it->get()->VCopy();

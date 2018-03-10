@@ -253,7 +253,6 @@ void StageEditor::Draw() {
 	}
 	//マップに存在しているものを全て描画
 	for (const std::shared_ptr<BattleObject> &obj : *m_actionSettings.GetPMObject()) {
-		//obj.get()->VDraw(leftUpPosX-(int)m_actionSettings.GetMAdjust().x,leftUpPosY-(int)m_actionSettings.GetMAdjust().y);
 		obj.get()->VDraw(adjust);
 		//マウスが被っている図形には黄色い枠を描画しフォーカスを表現
 		if(firstflag && obj.get()->JudgePointInsideShape(mouse)){

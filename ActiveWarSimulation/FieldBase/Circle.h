@@ -23,10 +23,11 @@ public:
 	}
 	void Draw(Vector2D adjust,unsigned int color,int fillFlag,float lineThickness=1.0f)const;
 	Vector2D CalculatePushVec(const Shape *pShape)const;//pShapeとthisが重なっているか判定し、押し出すベクトルを返す。重なっていない場合はVector2D(0,0)が返される。
-	bool VJudgePointInsideShape(Vector2D point)const;//図形内に点があるかどうかの判定、CalculatePushVecを用いるより高速に実装できるので関数を分ける
 	Vector2D GetLeftTop()const;//左上の座標を求める
 	Vector2D GetRightBottom()const;//右下の座標を求める
 	//エディタ用
+	bool VJudgePointInsideShape(Vector2D point)const;//図形内に点があるかどうかの判定、CalculatePushVecを用いるより高速に実装できるので関数を分ける
+	Vector2D VGetNearEndpoint(Vector2D point,float capacity)const;//pointが端点に近い(距離がcapacity以内)場合、その端点を返す
 	void Resize(Vector2D v);//図形を表現するベクトルを用いて図形の大きさを変更する
 	Vector2D GetRetResize()const;//Resizeの逆関数。引数rでResizeすると現在の図形になるようなrを返す。
 	//読み込み・書き出し用関数
