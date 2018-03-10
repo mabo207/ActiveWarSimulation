@@ -75,6 +75,7 @@ public:
 	virtual Vector2D GetRightBottom()const=0;//右下の座標を求める
 	//エディタ用の純粋仮想関数
 	virtual bool VJudgePointInsideShape(Vector2D point)const=0;//図形内に点があるかどうかの判定、CalculatePushVecを用いるより高速に実装できるので関数を分ける
+	virtual Vector2D VGetNearEndpoint(Vector2D point,float capacity)const=0;//pointが端点に近い(距離がcapacity以内)場合、その端点を返す
 	virtual void Resize(Vector2D v)=0;//図形を表現するベクトルを用いて図形の大きさを変更する
 	virtual Vector2D GetRetResize()const=0;//Resizeの逆関数。引数rでResizeすると現在の図形になるようなrを返す。
 	//読み込み・書き出し用仮想関数

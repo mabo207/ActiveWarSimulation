@@ -68,6 +68,11 @@ Vector2D Circle::GetRightBottom()const{
 	return Vector2D(m_position.x+m_r,m_position.y+m_r);
 }
 
+Vector2D Circle::VGetNearEndpoint(Vector2D point,float capacity)const{
+	//‰~‚É’[“_‚Í–³‚¢‚Ì‚Åpoint‚ð‚»‚Ì‚Ü‚Ü•Ô‚·
+	return point;
+}
+
 void Circle::Resize(Vector2D v){
 	//”¼Œam_r‚ðv‚Ì’·‚³‚É‚·‚é
 	m_r=v.size();

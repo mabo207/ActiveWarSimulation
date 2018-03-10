@@ -23,7 +23,7 @@ protected:
 	std::vector<std::shared_ptr<BattleObject>> m_objects;//マップ上に設置しているオブジェクト一覧
 	Vector2D m_adjust;//描画の左右補正値(実際のステージのm_adjustの座標点を左上に合わせてエディタに表示)
 
-					  //編集やり直し用データ(編集データにこの変数使って編集してやれば治るよ)
+	//編集やり直し用データ(編集データにこの変数使って編集してやれば治るよ)
 	std::shared_ptr<BattleObject> m_pOriginObject;//編集前のオブジェクトのコピー
 
 public:
@@ -35,7 +35,7 @@ public:
 
 	//関数
 protected:
-	std::vector<std::shared_ptr<BattleObject>>::iterator GetMousePointedObject(Vector2D point);
+	std::vector<std::shared_ptr<BattleObject>>::const_iterator GetMousePointedObject(Vector2D point)const;//pointを含む図形を返す
 
 public:
 	//コンストラクタとデストラクタ
@@ -67,6 +67,7 @@ public:
 	void SetEditObject(Vector2D point);//現在マウスを指している位置にあるオブジェクトを編集対象に設定する
 	void CancelEditing();//編集をキャンセルする。編集対象を編集の変更前の状態に戻す
 	void InitEditObject();//編集行為を行う際の初期化。m_pBattleObjectとm_pOriginObjectをnullptrに。
+	const BattleObject *GetMousePointedObjectPointer(Vector2D point)const;//イテレータを返すGetMousePointedObject()をクラス外部から使えるようにした
 	//制作データの書き出し
 	void WriteOutStage(const char *filename)const;
 	//ステージの読み込み
