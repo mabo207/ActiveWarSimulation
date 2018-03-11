@@ -71,56 +71,78 @@ void BattleScene::UpdateFix(){
 	m_operateUnit->SetFix(Shape::Fix::e_dynamic);
 }
 
-int BattleScene::Calculate(){
-	//m_operateUnitの位置更新
+bool BattleScene::PositionUpdate(){
+	//各値の定義
 	const float speed=(float)(m_operateUnit->GetBaseStatus().move);//オブジェクトの移動速度
 	const size_t moveCount=5;//移動回数の分割数
 	const size_t judgeCount=3;//1移動内の当たり判定実行回数
-	const Vector2D beforePos=m_operateUnit->getPos();
+	const Vector2D beforePos=m_operateUnit->getPos();//移動前の位置を取得
+	//移動方向の計算
+	Vector2D moveVec=analogjoypad_get(DX_INPUT_PAD1);
+	bool inputFlag;
+	if(moveVec.sqSize()==0.0f){
+		inputFlag=false;
+	} else{
+		inputFlag=true;
+		moveVec=moveVec.norm()*std::fminf((float)(speed/moveCount),moveVec.size());
+	}
+	//位置更新作業
 	for(size_t i=0;i<moveCount;i++){
 		//1フレーム内に5回移動
 		//移動処理を小分けにする事で、移動速度を向上させることができる
 		//1回の移動距離を小さくしないとギリギリ通れない場所が通れるようになってしまう
-		Vector2D v=analogjoypad_get(DX_INPUT_PAD1);
-		m_operateUnit->Move(v.norm()*std::fminf((float)(speed/moveCount),v.size()));
+		if(inputFlag){
+			m_operateUnit->Move(moveVec);
+		}
 		//1フレーム内に複数回当たり判定処理を行うと、処理が重くなる代わりにオブジェクトの移動速度を上げることができる
 		for(BattleObject *pObject:m_field){
 			//当たり判定系の処理
 			pObject->UpdatePosition(pointer_array_cast<ShapeHaving>(m_field.data()),m_field.size(),judgeCount);
 		}
 	}
-	//移動距離の計測と行動終了判定
+	//移動距離の計測とOP減少
 	const float moveCost=(m_operateUnit->getPos()-beforePos).size()/speed;
-	//その他の入力を受け付ける
-	if(keyboard_get(KEY_INPUT_Z)==1){
-		//攻撃
+	m_operateUnit->ReduceOP(moveCost);
 
-	} else if(keyboard_get(KEY_INPUT_X)==1){
-		//必殺技
+	return inputFlag;
+}
 
-	} else if(keyboard_get(KEY_INPUT_A)==1){
-		//狙いのキャラの変更(反時計回り)
+int BattleScene::Calculate(){
+	//m_operateUnitの位置更新
+	if(PositionUpdate()){
 
-	} else if(keyboard_get(KEY_INPUT_S)==1){
-		//狙いのキャラの変更(時計回り)
+	} else{
+		//移動操作をしなかった時はその他の入力を受け付ける
+		if(keyboard_get(KEY_INPUT_Z)==1){
+			//攻撃
 
-	} else if(keyboard_get(KEY_INPUT_C)==1){
-		//アイテムの使用
+		} else if(keyboard_get(KEY_INPUT_X)==1){
+			//必殺技
 
-	} else if(keyboard_get(KEY_INPUT_V)==1){
-		//待機
-		//次のキャラクターに操作を移す
-		for(BattleObject *obj:m_field){
-			if(obj->GetType()==BattleObject::Type::e_unit && obj!=m_operateUnit){
-				m_operateUnit=dynamic_cast<Unit *>(obj);
-				break;
+		} else if(keyboard_get(KEY_INPUT_A)==1){
+			//狙いのキャラの変更(反時計回り)
+
+		} else if(keyboard_get(KEY_INPUT_S)==1){
+			//狙いのキャラの変更(時計回り)
+
+		} else if(keyboard_get(KEY_INPUT_C)==1){
+			//アイテムの使用
+
+		} else if(keyboard_get(KEY_INPUT_V)==1){
+			//待機
+			//次のキャラクターに操作を移す
+			for(BattleObject *obj:m_field){
+				if(obj->GetType()==BattleObject::Type::e_unit && obj!=m_operateUnit){
+					m_operateUnit=dynamic_cast<Unit *>(obj);
+					break;
+				}
 			}
-		}
-		//ユニットの当たり判定図形を変化させる
-		UpdateFix();
-	} else if(keyboard_get(KEY_INPUT_D)==1){
-		//移動やり直し
+			//ユニットの当たり判定図形を変化させる
+			UpdateFix();
+		} else if(keyboard_get(KEY_INPUT_D)==1){
+			//移動やり直し
 
+		}
 	}
 	return 0;
 }
@@ -128,8 +150,9 @@ int BattleScene::Calculate(){
 void BattleScene::Draw()const{
 	//フィールドの描画
 	for(const BattleObject *obj:m_field){
-		if(obj!=m_operateUnit){
+		if(obj!=m_operateUnit && m_Window->JudgeInShapeRect(obj)){
 			//操作中ユニットは最後に描画
+			//ウインドウに入っていない物は描画しない
 			obj->VDraw();
 		}
 	}
@@ -137,4 +160,14 @@ void BattleScene::Draw()const{
 	m_operateUnit->BattleObject::VDraw();
 	Vector2D pos=m_operateUnit->getPos();
 	DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
+
+	//ユニット情報をデバッグ出力
+	int i=0;
+	for(const BattleObject *obj:m_field){
+		if(obj->GetType()==BattleObject::Type::e_unit){
+			const Unit *u=dynamic_cast<const Unit *>(obj);
+			printfDx("(Unit[%d])HP:%d OP:%3.3f pos:(%.3f,%.3f)\n",i,u->GetBattleStatus().HP,u->GetBattleStatus().OP,u->getPos().x,u->getPos().y);
+			i++;
+		}
+	}
 }

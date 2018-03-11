@@ -32,6 +32,7 @@ protected:
 	//関数
 protected:
 	void UpdateFix();
+	bool PositionUpdate();//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
 
 public:
 	BattleScene(const char *stagename);

@@ -50,6 +50,10 @@ bool Unit::SetPenetratable(Team::Kind nowPhase){
 	return (m_penetratable=(m_battleStatus.team==nowPhase));
 }
 
+void Unit::ReduceOP(float cost){
+	m_battleStatus.OP-=cost;
+}
+
 const Shape *Unit::GetHitJudgeShape()const{
 	if(m_penetratable){
 		//味方の行動フェイズならば、ユニット自身の当たり判定図形を返す
