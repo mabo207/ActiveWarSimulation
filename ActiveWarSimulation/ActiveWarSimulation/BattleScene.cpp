@@ -79,12 +79,15 @@ bool BattleScene::PositionUpdate(){
 	const Vector2D beforePos=m_operateUnit->getPos();//移動前の位置を取得
 	//移動方向の計算
 	Vector2D moveVec=analogjoypad_get(DX_INPUT_PAD1);
-	bool inputFlag;
-	if(moveVec.sqSize()==0.0f){
-		inputFlag=false;
-	} else{
-		inputFlag=true;
-		moveVec=moveVec.norm()*std::fminf((float)(speed/moveCount),moveVec.size());
+	bool inputFlag=false;
+	if(m_operateUnit->GetBattleStatus().OP>0.0f){
+		//OPが足りないと動けない
+		if(moveVec.sqSize()==0.0f){
+			inputFlag=false;
+		} else{
+			inputFlag=true;
+			moveVec=moveVec.norm()*std::fminf((float)(speed/moveCount),moveVec.size());
+		}
 	}
 	//位置更新作業
 	for(size_t i=0;i<moveCount;i++){
@@ -143,6 +146,7 @@ void BattleScene::FinishUnitOperation(){
 int BattleScene::Calculate(){
 	//m_operateUnitの位置更新
 	if(PositionUpdate()){
+		//位置更新をした時の処理
 
 	} else{
 		//移動操作をしなかった時はその他の入力を受け付ける

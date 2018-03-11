@@ -21,7 +21,7 @@ unsigned int Unit::Team::GetColor(Kind kind){
 }
 
 //------------Unit::BattleStatus---------------
-const float Unit::BattleStatus::maxOP=100.0f;
+const float Unit::BattleStatus::maxOP=100.0001f;//100‚æ‚è­‚µ‚¾‚¯‘å‚«‚­‚·‚é–‚ÅOP‚ğmaxOP‚Ü‚Å‘‚â‚·‚ÉOP‚ªŒvZŒë·‚Å99.999‚É‚È‚ç‚È‚¢‚æ‚¤‚É‚µ‚½B
 
 //------------Unit---------------
 const float Unit::unitCircleSize=30.0f;
