@@ -46,6 +46,8 @@ protected:
 	static const float closeAttackLength;//短距離攻撃の射程
 	static const float openAttackLength;//長距離攻撃の射程
 
+	static const float attackCost;//攻撃のコストを実装(これは武器クラスに突っ込む可能性が高い)
+
 public:
 
 	//変数
@@ -85,6 +87,8 @@ public:
 	//通常関数
 	bool SetPenetratable(Team::Kind nowPhase);//現在動かしているユニットの所属を見て、侵入可否のフラグを更新する
 	void AddOP(float cost);//OPを減らす関数
+	void DrawMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)
+	void DrawMoveInfo(Vector2D point,Vector2D adjust)const;//移動範囲関連の情報を描画する関数
 	
 	//仮想関数・純粋仮想関数のオーバーライド
 	const Shape *GetHitJudgeShape()const;//当たり判定図形を取得。

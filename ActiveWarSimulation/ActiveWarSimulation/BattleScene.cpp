@@ -187,6 +187,7 @@ void BattleScene::Draw()const{
 	}
 	//‘€ì’†ƒ†ƒjƒbƒg‚Ì•`‰æ
 	m_operateUnit->BattleObject::VDraw();
+	m_operateUnit->DrawMoveInfo();//ˆÚ“®î•ñ‚Ì•`‰æ
 	Vector2D pos=m_operateUnit->getPos();
 	DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
 

@@ -21,13 +21,15 @@ unsigned int Unit::Team::GetColor(Kind kind){
 }
 
 //------------Unit::BattleStatus---------------
-const float Unit::BattleStatus::maxOP=100.0001f;//100より少しだけ大きくする事でOPをmaxOPまで増やす時にOPが計算誤差で99.999にならないようにした。
+const float Unit::BattleStatus::maxOP=100.0f+0.0001f;//キリの良い整数より少しだけ大きくする事でOPをmaxOPまで増やす時にOPが計算誤差で半端な整数にならないようにする。
 
 //------------Unit---------------
 const float Unit::unitCircleSize=30.0f;
 const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
 const float Unit::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.3f;
 const float Unit::openAttackLength=Unit::closeAttackLength*2.0f;
+
+const float Unit::attackCost=Unit::unitCircleSize;
 
 Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
@@ -52,6 +54,21 @@ bool Unit::SetPenetratable(Team::Kind nowPhase){
 
 void Unit::AddOP(float cost){
 	m_battleStatus.OP+=cost;
+}
+
+void Unit::DrawMoveInfo(Vector2D adjust)const{
+	DrawMoveInfo(getPos(),adjust);
+}
+
+void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
+	Vector2D pos=point-adjust;
+	//ユニットの移動限界距離を緑を描画
+	DrawCircleAA(pos.x,pos.y,m_battleStatus.OP*m_baseStatus.move,100,DxLib::GetColor(0,255,0),FALSE);//枠
+	//ユニットの攻撃可能な移動限界距離を水色で描画(攻撃可能な場合のみ)
+	if(m_battleStatus.OP>Unit::attackCost){
+		DrawCircleAA(pos.x,pos.y,(m_battleStatus.OP-Unit::attackCost)*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//枠
+	}
+
 }
 
 const Shape *Unit::GetHitJudgeShape()const{

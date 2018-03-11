@@ -51,7 +51,7 @@ public:
 
 	
 	//仮想関数
-	void VDraw(Vector2D adjust=Vector2D(0.0f,0.0f))const;//描画処理(位置ずらし含める)
+	void VDraw(Vector2D adjust=Vector2D())const;//描画処理(位置ずらし含める)
 	virtual void VDraw(Vector2D point,Vector2D adjust)const=0;//描画処理(任意座標に描画)
 	virtual void VHitProcess(const BattleObject *potherobj)=0;//何かに当たった時の処理
 	virtual std::shared_ptr<BattleObject> VCopy()const=0;//同じオブジェクトを複製する(ポインタのみ異なる)
