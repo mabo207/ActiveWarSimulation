@@ -50,8 +50,8 @@ bool Unit::SetPenetratable(Team::Kind nowPhase){
 	return (m_penetratable=(m_battleStatus.team==nowPhase));
 }
 
-void Unit::ReduceOP(float cost){
-	m_battleStatus.OP-=cost;
+void Unit::AddOP(float cost){
+	m_battleStatus.OP+=cost;
 }
 
 const Shape *Unit::GetHitJudgeShape()const{

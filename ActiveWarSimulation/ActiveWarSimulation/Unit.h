@@ -84,7 +84,7 @@ public:
 	}
 	//通常関数
 	bool SetPenetratable(Team::Kind nowPhase);//現在動かしているユニットの所属を見て、侵入可否のフラグを更新する
-	void ReduceOP(float cost);//OPを減らす関数
+	void AddOP(float cost);//OPを減らす関数
 	
 	//仮想関数・純粋仮想関数のオーバーライド
 	const Shape *GetHitJudgeShape()const;//当たり判定図形を取得。

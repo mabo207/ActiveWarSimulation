@@ -38,13 +38,13 @@ BattleScene::BattleScene(const char *stagename)
 	m_field.push_back(new Unit(Vector2D(1024.0f,540.0f),-1,Unit::Team::e_enemy));
 	m_field.push_back(new Unit(Vector2D(296.0f,196.0f),-1,Unit::Team::e_player));
 	m_field.push_back(new Unit(Vector2D(524.0f,340.0f),-1,Unit::Team::e_enemy));
-	//最初に操作するユニットの選択
+	//m_unitListやm_operateUnitの初期化
 	for(BattleObject *obj:m_field){
 		if(obj->GetType()==BattleObject::Type::e_unit){
-			m_operateUnit=dynamic_cast<Unit *>(obj);
-			break;
+			m_unitList.push_back(dynamic_cast<Unit *>(obj));
 		}
 	}
+	FinishUnitOperation();
 	//当たり判定情報の更新
 	UpdateFix();
 }
@@ -102,9 +102,42 @@ bool BattleScene::PositionUpdate(){
 	}
 	//移動距離の計測とOP減少
 	const float moveCost=(m_operateUnit->getPos()-beforePos).size()/speed;
-	m_operateUnit->ReduceOP(moveCost);
+	m_operateUnit->AddOP(-moveCost);//現象なのでcostをマイナスしたものを加算する
 
 	return inputFlag;
+}
+
+void BattleScene::SortUnitList(){
+	std::vector<Unit *> list=m_unitList;//元の配列をコピー
+	m_unitList.clear();
+	//m_unitListにソート結果を格納。O(n^2)の実装なので直せるのなら直したいが、同じOPのオブジェクトは前後で同じ順番にしたい。
+	while(!list.empty()){
+		std::vector<Unit *>::const_iterator maxit=list.begin();
+		//itにOP最大のオブジェクトの内、先頭に近いものを格納
+		for(std::vector<Unit *>::const_iterator it=list.begin(),ite=list.end();it!=ite;it++){
+			if((*maxit)->GetBattleStatus().OP<(*it)->GetBattleStatus().OP){
+				//itの方が大きい場合
+				maxit=it;
+			}
+		}
+		//m_unitListに格納し、listから削除
+		m_unitList.push_back(*maxit);
+		list.erase(maxit);
+	}
+}
+
+void BattleScene::FinishUnitOperation(){
+	//m_unitListソートをし直す
+	SortUnitList();
+	//先頭をm_operateUnitに格納
+	m_operateUnit=m_unitList.front();
+	//m_operateUnitのOPが最大になるようにm_unitList全員のOP値を変化
+	const float plusOP=Unit::BattleStatus::maxOP-m_operateUnit->GetBattleStatus().OP;
+	for(Unit *u:m_unitList){
+		u->AddOP(plusOP);
+	}
+	//当たり判定図形の変化
+	UpdateFix();
 }
 
 int BattleScene::Calculate(){
@@ -130,15 +163,7 @@ int BattleScene::Calculate(){
 
 		} else if(keyboard_get(KEY_INPUT_V)==1){
 			//待機
-			//次のキャラクターに操作を移す
-			for(BattleObject *obj:m_field){
-				if(obj->GetType()==BattleObject::Type::e_unit && obj!=m_operateUnit){
-					m_operateUnit=dynamic_cast<Unit *>(obj);
-					break;
-				}
-			}
-			//ユニットの当たり判定図形を変化させる
-			UpdateFix();
+			FinishUnitOperation();
 		} else if(keyboard_get(KEY_INPUT_D)==1){
 			//移動やり直し
 
@@ -163,11 +188,8 @@ void BattleScene::Draw()const{
 
 	//ユニット情報をデバッグ出力
 	int i=0;
-	for(const BattleObject *obj:m_field){
-		if(obj->GetType()==BattleObject::Type::e_unit){
-			const Unit *u=dynamic_cast<const Unit *>(obj);
-			printfDx("(Unit[%d])HP:%d OP:%3.3f pos:(%.3f,%.3f)\n",i,u->GetBattleStatus().HP,u->GetBattleStatus().OP,u->getPos().x,u->getPos().y);
-			i++;
-		}
+	for(const Unit *u:m_unitList){
+		printfDx("(Unit[%d])HP:%d OP:%3.3f pos:(%.3f,%.3f)\n",i,u->GetBattleStatus().HP,u->GetBattleStatus().OP,u->getPos().x,u->getPos().y);
+		i++;
 	}
 }
