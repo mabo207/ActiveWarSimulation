@@ -22,7 +22,7 @@ void ShapeHaving::Move(Vector2D v){
 }
 
 void ShapeHaving::Warp(Vector2D v){
-	m_hitJudgeShape->Move(v-m_hitJudgeShape->GetPosition());
+	Move(v-m_hitJudgeShape->GetPosition());
 }
 
 void ShapeHaving::Resize(Vector2D v){
@@ -35,27 +35,27 @@ void ShapeHaving::ChangeShape(std::shared_ptr<Shape> pShape){
 }
 
 bool ShapeHaving::JudgePointInsideShape(Vector2D point)const{
-	return m_hitJudgeShape.get()->VJudgePointInsideShape(point);
+	return GetHitJudgeShape()->VJudgePointInsideShape(point);
 }
 
 float ShapeHaving::getTop()const {
-	return m_hitJudgeShape->GetLeftTop().y;
+	return GetHitJudgeShape()->GetLeftTop().y;
 }
 
 float ShapeHaving::getBottom()const {
-	return m_hitJudgeShape->GetRightBottom().y;
+	return GetHitJudgeShape()->GetRightBottom().y;
 }
 
 float ShapeHaving::getLeft()const {
-	return m_hitJudgeShape->GetLeftTop().x;
+	return GetHitJudgeShape()->GetLeftTop().x;
 }
 
 float ShapeHaving::getRight()const {
-	return m_hitJudgeShape->GetRightBottom().x;
+	return GetHitJudgeShape()->GetRightBottom().x;
 }
 
 Vector2D ShapeHaving::getPos()const {
-	return m_hitJudgeShape->GetPosition();
+	return GetHitJudgeShape()->GetPosition();
 }
 
 const Shape *ShapeHaving::GetHitJudgeShape()const{
@@ -63,7 +63,7 @@ const Shape *ShapeHaving::GetHitJudgeShape()const{
 }
 
 Shape::Fix::Kind ShapeHaving::GetFix()const{
-	return m_hitJudgeShape->m_fix;
+	return GetHitJudgeShape()->m_fix;
 }
 
 Shape::Fix::Kind ShapeHaving::SetFix(Shape::Fix::Kind fix)const{
@@ -79,7 +79,7 @@ const std::vector<const ShapeHaving *> ShapeHaving::InShapeHavingList(const Shap
 	std::vector<const ShapeHaving *> list;
 	const Vector2D v=Vector2D();
 	for(size_t i=0;i<vecSize;i++){
-		if(m_hitJudgeShape->CalculatePushVec(pShapeHavingVec[i]->GetHitJudgeShape())!=v){
+		if(JudgeInShape(pShapeHavingVec[i])){
 			list.push_back(pShapeHavingVec[i]);
 		}
 	}
@@ -106,7 +106,7 @@ void ShapeHaving::UpdatePosition(ShapeHaving * const * const pShapeHavingVec,con
 		for(size_t i=0;i<updateTimes;i++){
 			for(const ShapeHaving *pShapeHaving:inShapeList){
 				//各図形に対して完全に押し出せる距離を求める
-				Vector2D pushVec=m_hitJudgeShape->CalculatePushVec(pShapeHaving->GetHitJudgeShape());
+				Vector2D pushVec=GetHitJudgeShape()->CalculatePushVec(pShapeHaving->GetHitJudgeShape());
 				//押し出し距離の一定の割合のベクトルだけ押し出す
 				this->Move(pushVec*ShapeHaving::pushRate);
 			}
@@ -118,3 +118,7 @@ bool ShapeHaving::JudgeInShapeRect(const ShapeHaving *pShapeHaving)const{
 	return this->getLeft()<=pShapeHaving->getRight() && this->getRight()>=pShapeHaving->getLeft() && this->getTop()<=pShapeHaving->getBottom() && this->getBottom()>=pShapeHaving->getTop();
 }
 
+bool ShapeHaving::JudgeInShape(const ShapeHaving *pShapeHaving)const{
+	const Vector2D v=Vector2D();
+	return JudgeInShapeRect(pShapeHaving) && (GetHitJudgeShape()->CalculatePushVec(pShapeHaving->GetHitJudgeShape())!=v);//計算高速化のために長方形判定を加える
+}
