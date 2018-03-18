@@ -88,7 +88,9 @@ public:
 	bool SetPenetratable(Team::Kind nowPhase);//現在動かしているユニットの所属を見て、侵入可否のフラグを更新する
 	bool JudgeAttackable(const Unit *pUnit)const;//pUnitに攻撃可能か
 	const Shape *GetUnitCircleShape()const;//ユニット自身を示す円を取得
-	void AddOP(float cost);//OPを減らす関数
+	int AddHP(int pal);//HPを増減させる関数、増減後のHPを返す
+	void AddOP(float cost);//OPを増減させる関数
+	float CalculateAddOPNormalAttack()const;//通常攻撃によって増加するOPを計算する。負値が返る。
 	void DrawMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)
 	void DrawMoveInfo(Vector2D point,Vector2D adjust)const;//移動範囲関連の情報を描画する関数
 	

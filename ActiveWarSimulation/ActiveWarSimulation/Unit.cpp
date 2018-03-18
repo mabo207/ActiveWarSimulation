@@ -29,11 +29,11 @@ const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
 const float Unit::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.3f;
 const float Unit::openAttackLength=Unit::closeAttackLength*2.0f;
 
-const float Unit::attackCost=Unit::unitCircleSize;
+const float Unit::attackCost=50.0f;
 
 Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
-	,m_baseStatus(10,100,30,30,20,20,5,4)
+	,m_baseStatus(10,100,30,12,20,10,5,4)
 	,m_battleStatus(100,0,team)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
 {
@@ -71,8 +71,23 @@ const Shape *Unit::GetUnitCircleShape()const{
 	return m_hitJudgeShape.get();
 }
 
+int Unit::AddHP(int pal){
+	m_battleStatus.HP+=pal;
+	if(m_battleStatus.HP>m_baseStatus.maxHP){
+		m_battleStatus.HP=m_baseStatus.maxHP;
+	} else if(m_battleStatus.HP<0){
+		m_battleStatus.HP=0;
+	}
+	return m_battleStatus.HP;
+}
+
 void Unit::AddOP(float cost){
 	m_battleStatus.OP+=cost;
+}
+
+float Unit::CalculateAddOPNormalAttack()const{
+	//•Ší‚É‚æ‚Á‚ÄŒˆ‚Ü‚é‚ªA‚Ð‚Æ‚Ü‚¸Œˆ‚ß‘Å‚¿‚Ì’l‚ð•Ô‚·
+	return -attackCost;
 }
 
 void Unit::DrawMoveInfo(Vector2D adjust)const{

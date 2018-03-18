@@ -234,6 +234,29 @@ void BattleScene::SetAimedUnit(float angle,int turntimes){
 	}
 }
 
+void BattleScene::ProcessAttack(){
+	//コストの消費
+	m_operateUnit->AddOP(m_operateUnit->CalculateAddOPNormalAttack());
+	//操作ユニット→対象ユニットへの攻撃
+	int aimedHP=m_aimedUnit->AddHP(-(m_operateUnit->GetBaseStatus().power-m_aimedUnit->GetBaseStatus().def));
+	if(aimedHP<=0){
+		//対象ユニットのHPが0以下なら、ステージからユニットを取り除く
+		m_aimedUnit->SetFix(Shape::Fix::e_ignore);//当たり判定の対象から取り除く
+		//m_unitListからm_aimedUnitを取り除く
+		for(std::vector<Unit *>::const_iterator it=m_unitList.begin(),ite=m_unitList.end();it!=ite;it++){
+			if(*it==m_aimedUnit){
+				m_unitList.erase(it);
+				break;
+			}
+		}
+		//m_aimedUnitをnullに
+		m_aimedUnit=nullptr;
+	} else{
+		//対象ユニットが生き残っているなら反撃処理を行う
+		//未実装
+	}
+}
+
 int BattleScene::Calculate(){
 	//m_operateUnitの位置更新
 	if(PositionUpdate()){
@@ -243,8 +266,9 @@ int BattleScene::Calculate(){
 		//移動操作をしなかった時はその他の入力を受け付ける
 		if(keyboard_get(KEY_INPUT_Z)==1){
 			//攻撃
-			if(m_aimedUnit==nullptr){
-				//攻撃対象が存在する場合のみ攻撃処理を行う
+			if(m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0){
+				//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
+				ProcessAttack();//攻撃処理
 				FinishUnitOperation();//行動終了処理
 			}
 		} else if(keyboard_get(KEY_INPUT_X)==1){
@@ -285,9 +309,10 @@ int BattleScene::Calculate(){
 void BattleScene::Draw()const{
 	//フィールドの描画
 	for(const BattleObject *obj:m_field){
-		if(obj!=m_operateUnit && m_Window->JudgeInShapeRect(obj)){
+		if(obj!=m_operateUnit && m_Window->JudgeInShapeRect(obj) && !(obj->GetFix()==Shape::Fix::e_ignore && obj->GetType()==BattleObject::Type::e_unit)){
 			//操作中ユニットは最後に描画
 			//ウインドウに入っていない物は描画しない
+			//退却したユニット(typeがe_unitかつfixがe_ignore)は描画しない
 			obj->VDraw();
 		}
 	}
