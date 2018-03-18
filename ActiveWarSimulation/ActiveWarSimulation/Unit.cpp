@@ -52,6 +52,25 @@ bool Unit::SetPenetratable(Team::Kind nowPhase){
 	return (m_penetratable=(m_battleStatus.team==nowPhase));
 }
 
+bool Unit::JudgeAttackable(const Unit *pUnit)const{
+	if(GetBattleStatus().team==pUnit->GetBattleStatus().team){
+		//“¯‚¶ƒ`[ƒ€‚È‚çUŒ‚‚Å‚«‚È‚¢
+		return false;
+	}
+	//UŒ‚‚ÌË’ö‚ÆˆÊ’uŠÖŒW‚É‚æ‚éğŒ
+	std::shared_ptr<Shape> pWeapon(new Circle(getPos(),closeAttackLength,Shape::Fix::e_dynamic));
+	if(pWeapon->CalculatePushVec(pUnit->GetUnitCircleShape())==Vector2D()){
+		//UŒ‚”ÍˆÍ‚É“Gƒ†ƒjƒbƒg–{‘Ì‚ª‚¢‚È‚¯‚ê‚Î
+		return false;
+	}
+
+	return true;
+}
+
+const Shape *Unit::GetUnitCircleShape()const{
+	return m_hitJudgeShape.get();
+}
+
 void Unit::AddOP(float cost){
 	m_battleStatus.OP+=cost;
 }

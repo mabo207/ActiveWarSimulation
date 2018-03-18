@@ -2,6 +2,7 @@
 #include"BattleScene.h"
 #include"input.h"
 #include"Edge.h"
+#include<algorithm>
 
 //----------------------BattleScene----------------------
 BattleScene::BattleScene(const char *stagename)
@@ -45,8 +46,7 @@ BattleScene::BattleScene(const char *stagename)
 		}
 	}
 	FinishUnitOperation();
-	//当たり判定情報の更新
-	UpdateFix();
+
 }
 
 BattleScene::~BattleScene(){
@@ -106,6 +106,29 @@ bool BattleScene::PositionUpdate(){
 	//移動距離の計測とOP減少
 	const float moveCost=(m_operateUnit->getPos()-beforePos).size()/speed;
 	m_operateUnit->AddOP(-moveCost);//現象なのでcostをマイナスしたものを加算する
+	
+	//攻撃対象ユニットの更新(移動しなくても(=inputFlagがfalseでも)ユニットの位置は動く可能性があるので毎ループ処理する)
+	bool changeAimedUnitFlag;//対象ユニットの変更を行うか
+	float aimedUnitAngle;//対象ユニットのいた方向
+	if(m_aimedUnit!=nullptr){
+		//前のフレームで対象ユニットがいた場合
+		if(m_operateUnit->JudgeAttackable(m_aimedUnit)){
+			//現在の対象ユニットが操作ユニットの攻撃範囲に入っている時は特に何もしない
+			changeAimedUnitFlag=false;
+		} else{
+			//現在の対象ユニットが操作ユニットの攻撃範囲に入っていない時は
+			changeAimedUnitFlag=true;
+			aimedUnitAngle=(m_aimedUnit->getPos()-m_operateUnit->getPos()).GetRadian();
+		}
+	} else{
+		//前のフレームで対象ユニットがいなかった場合
+		changeAimedUnitFlag=true;
+		aimedUnitAngle=0.0f;
+	}
+	if(changeAimedUnitFlag){
+		//対象ユニットの変更
+		SetAimedUnit(aimedUnitAngle);
+	}
 
 	return inputFlag;
 }
@@ -141,6 +164,42 @@ void BattleScene::FinishUnitOperation(){
 	}
 	//当たり判定図形の変化
 	UpdateFix();
+	//m_aimedUnitの初期化
+	SetAimedUnit(0.0f);
+}
+
+void BattleScene::SetAimedUnit(float angle){
+	//範囲内のオブジェクト一覧の作成
+	std::vector<Unit *> list;
+	for(Unit *pUnit:m_unitList){
+		if(m_operateUnit->JudgeAttackable(pUnit)){
+			//異なるチームかつ一定距離内にいれば追加
+			list.push_back(pUnit);
+		}
+	}
+	m_aimedUnit=nullptr;
+	if(!list.empty()){
+		//比較関数の作成と並べ替え。m_operateUnitからのベクトルの向きでソートする
+		const Vector2D pos=m_operateUnit->getPos();
+		auto f=[&pos](Unit *lobj,Unit *robj)->bool{
+			const float langle=(lobj->getPos()-pos).GetRadian(),rangle=(robj->getPos()-pos).GetRadian();
+			return langle<rangle;
+		};
+		std::sort(list.begin(),list.end(),f);
+		//aimedUnitAngleに近いオブジェクトを探す
+		std::vector<Unit *>::const_iterator it_begin=list.begin();
+		for(std::vector<Unit *>::const_iterator ite=list.end();it_begin!=ite;it_begin++){
+			if(angle<((*it_begin)->getPos()-pos).GetRadian()){
+				//初めてaimedUnitAngleを超えた所にいるオブジェクトを初期オブジェクトとする
+				break;
+			}
+		}
+		if(it_begin==list.end()){
+			m_aimedUnit=*list.begin();
+		} else{
+			m_aimedUnit=*it_begin;
+		}
+	}
 }
 
 int BattleScene::Calculate(){
@@ -152,7 +211,10 @@ int BattleScene::Calculate(){
 		//移動操作をしなかった時はその他の入力を受け付ける
 		if(keyboard_get(KEY_INPUT_Z)==1){
 			//攻撃
-
+			if(m_aimedUnit==nullptr){
+				//攻撃対象が存在する場合のみ攻撃処理を行う
+				FinishUnitOperation();//行動終了処理
+			}
 		} else if(keyboard_get(KEY_INPUT_X)==1){
 			//必殺技
 
@@ -190,6 +252,12 @@ void BattleScene::Draw()const{
 	m_operateUnit->DrawMoveInfo();//移動情報の描画
 	Vector2D pos=m_operateUnit->getPos();
 	DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
+
+	//狙っているユニットの描画
+	if(m_aimedUnit!=nullptr){
+		pos=m_aimedUnit->getPos();
+		DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
+	}
 
 	//ユニット情報をデバッグ出力
 	int i=0;

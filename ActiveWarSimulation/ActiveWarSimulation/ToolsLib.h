@@ -47,7 +47,7 @@ public:
 		return Vector2D(-x,-y);
 	}
 	bool operator==(const Vector2D &otherobj)const{
-		return (this->x==otherobj.x) && (this->y && otherobj.y);
+		return (this->x==otherobj.x) && (this->y==otherobj.y);
 	}
 	bool operator!=(const Vector2D &otherobj)const{
 		return !((*this)==otherobj);

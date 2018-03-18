@@ -79,7 +79,7 @@ const std::vector<const ShapeHaving *> ShapeHaving::InShapeHavingList(const Shap
 	std::vector<const ShapeHaving *> list;
 	const Vector2D v=Vector2D();
 	for(size_t i=0;i<vecSize;i++){
-		if(GetHitJudgeShape()->CalculatePushVec(pShapeHavingVec[i]->GetHitJudgeShape())!=v){
+		if(JudgeInShape(pShapeHavingVec[i])){
 			list.push_back(pShapeHavingVec[i]);
 		}
 	}
@@ -118,3 +118,7 @@ bool ShapeHaving::JudgeInShapeRect(const ShapeHaving *pShapeHaving)const{
 	return this->getLeft()<=pShapeHaving->getRight() && this->getRight()>=pShapeHaving->getLeft() && this->getTop()<=pShapeHaving->getBottom() && this->getBottom()>=pShapeHaving->getTop();
 }
 
+bool ShapeHaving::JudgeInShape(const ShapeHaving *pShapeHaving)const{
+	const Vector2D v=Vector2D();
+	return JudgeInShapeRect(pShapeHaving) && (GetHitJudgeShape()->CalculatePushVec(pShapeHaving->GetHitJudgeShape())!=v);//ŒvZ‚‘¬‰»‚Ì‚½‚ß‚É’·•ûŒ`”»’è‚ğ‰Á‚¦‚é
+}

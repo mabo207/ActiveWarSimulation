@@ -42,7 +42,7 @@ public:
 	const std::vector<const ShapeHaving *> InShapeHavingList(const ShapeHaving  * const * const pShapeHavingVec,const size_t vecSize)const;//pShapeVecにある図形のうちthis内に存在する図形を全てリストアップする
 	void UpdatePosition(ShapeHaving * const * const pShapeHavingVec,const size_t vecSize,const size_t updateTimes);//当たり判定による位置補正をupdateTimes回だけ行う。全ての図形に対しまとめて行うのが前提。std::vectorで管理している場合はstd::vector::data()を用いる。
 	bool JudgeInShapeRect(const ShapeHaving *pShapeHaving)const;//長方形判定によって中にあるかどうかを判定する
-
+	bool JudgeInShape(const ShapeHaving *pShapeHaving)const;//正確にpShapeHavingが中にあるかを判定する
 };
 
 #endif // !DEF_SHAPEHAVING_H
