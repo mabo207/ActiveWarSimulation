@@ -151,6 +151,8 @@ void Unit::VDraw(Vector2D point,Vector2D adjust)const{
 	m_hitJudgeShape->Draw(adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
 	//ユニットグラフィックを描画
 	SetDrawBlendMode(mode,pal);
+	//HPゲージとHPの表示
+
 
 	//描画モードを元に戻っている
 }

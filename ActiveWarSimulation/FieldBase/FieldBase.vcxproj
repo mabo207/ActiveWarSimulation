@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\ActiveWarSimulation\GraphicControl.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\GraphicProgramming.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\input.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp" />
     <ClCompile Include="..\StageEditor\BattleObject.cpp" />
@@ -30,6 +32,8 @@
     <ClCompile Include="ShapeHaving.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ActiveWarSimulation\GraphicControl.h" />
+    <ClInclude Include="..\ActiveWarSimulation\GraphicProgramming.h" />
     <ClInclude Include="..\ActiveWarSimulation\input.h" />
     <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h" />
     <ClInclude Include="..\StageEditor\BattleObject.h" />
