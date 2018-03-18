@@ -130,7 +130,8 @@ InputControler::InputControler(){
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_X,PAD_INPUT_3));
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_C,PAD_INPUT_1));
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_V,PAD_INPUT_2));
-	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_A,PAD_INPUT_5));
+	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_A,PAD_INPUT_7));
+	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_S,PAD_INPUT_8));
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_D,PAD_INPUT_6));
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_UP,PAD_INPUT_UP));
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_LEFT,PAD_INPUT_LEFT));
