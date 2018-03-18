@@ -37,7 +37,7 @@ protected:
 	bool PositionUpdate();//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
 	void SortUnitList();//m_unitListをソートしなおす。
 	void FinishUnitOperation();//次のユニットへの遷移処理
-	void SetAimedUnit(float angle=0.0f);//m_aimedUnitを変更する
+	void SetAimedUnit(float angle=0.0f,int turntimes=1);//m_aimedUnitを変更する。turntimesだけ時計回りに回転させる
 
 public:
 	BattleScene(const char *stagename);

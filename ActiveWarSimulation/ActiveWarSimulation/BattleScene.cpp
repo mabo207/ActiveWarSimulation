@@ -127,7 +127,7 @@ bool BattleScene::PositionUpdate(){
 	}
 	if(changeAimedUnitFlag){
 		//対象ユニットの変更
-		SetAimedUnit(aimedUnitAngle);
+		SetAimedUnit(aimedUnitAngle,0);
 	}
 
 	return inputFlag;
@@ -165,11 +165,11 @@ void BattleScene::FinishUnitOperation(){
 	//当たり判定図形の変化
 	UpdateFix();
 	//m_aimedUnitの初期化
-	SetAimedUnit(0.0f);
+	SetAimedUnit(0.0f,0);
 }
 
-void BattleScene::SetAimedUnit(float angle){
-	//範囲内のオブジェクト一覧の作成
+void BattleScene::SetAimedUnit(float angle,int turntimes){
+	//範囲内のユニット一覧の作成
 	std::vector<Unit *> list;
 	for(Unit *pUnit:m_unitList){
 		if(m_operateUnit->JudgeAttackable(pUnit)){
@@ -177,7 +177,8 @@ void BattleScene::SetAimedUnit(float angle){
 			list.push_back(pUnit);
 		}
 	}
-	m_aimedUnit=nullptr;
+	//攻撃対象ユニットを設定
+	m_aimedUnit=nullptr;//ひとまずnullptrに
 	if(!list.empty()){
 		//比較関数の作成と並べ替え。m_operateUnitからのベクトルの向きでソートする
 		const Vector2D pos=m_operateUnit->getPos();
@@ -186,19 +187,48 @@ void BattleScene::SetAimedUnit(float angle){
 			return langle<rangle;
 		};
 		std::sort(list.begin(),list.end(),f);
-		//aimedUnitAngleに近いオブジェクトを探す
-		std::vector<Unit *>::const_iterator it_begin=list.begin();
-		for(std::vector<Unit *>::const_iterator ite=list.end();it_begin!=ite;it_begin++){
-			if(angle<((*it_begin)->getPos()-pos).GetRadian()){
+		//aimedUnitAngleに時計回り方向に近いユニットを探す(turntimesが1であるユニットの検出)
+		std::vector<Unit *>::const_iterator it=list.begin(),ite=list.end();
+		for(;it!=ite;it++){
+			if(angle<((*it)->getPos()-pos).GetRadian()){
 				//初めてaimedUnitAngleを超えた所にいるオブジェクトを初期オブジェクトとする
 				break;
 			}
 		}
-		if(it_begin==list.end()){
-			m_aimedUnit=*list.begin();
-		} else{
-			m_aimedUnit=*it_begin;
+		if(it==list.end()){
+			it=list.begin();
 		}
+		//turntimes回の回転に合わせる。現時点ではturntimes=1のユニットが求められている。
+		if(turntimes>0){
+			//正の方向の回転は、iteに達したらlist.begin()に戻す事だけ気をつければ良い
+			for(int i=1;i<turntimes;i++){
+				it++;
+				if(it==ite){
+					it=list.begin();
+				}
+			}
+		} else{
+			//0以下の回転は、angleにぴったり合わさった場合とそうでない場合で異なる
+			std::vector<Unit *>::const_iterator beforeit=it;//turntimes=1の直前のイテレータ
+			if(beforeit==list.begin()){
+				beforeit=list.end();
+			}
+			beforeit--;
+			//itをturntimes=0の場所に合わせる
+			if(angle!=((*beforeit)->getPos()-pos).GetRadian()){
+				//angleにぴったり合わさったユニットが存在しない場合
+				it=beforeit;
+			}
+			//turntimes回の回転に合わせる
+			for(int i=0;i>turntimes;i--){
+				if(it==list.begin()){
+					it=list.end();
+				}
+				it--;
+			}
+		}
+		//求めたイテレータに格納されているユニットをm_aimedUnitに格納する
+		m_aimedUnit=*it;
 	}
 }
 
