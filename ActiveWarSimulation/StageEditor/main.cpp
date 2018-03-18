@@ -2,6 +2,7 @@
 #include<memory>
 #include"DxLib.h"
 #include"input.h"
+#include"GraphicControl.h"
 #include"StageEditor.h"
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -27,9 +28,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		return 0;
 	}
 
-	/**
-	*	以下、円軌道上に等速で直角三角形を描画して回すデモ
-	*/
+	//グラフィック管理クラスの初期化
+	GraphicControler_Init();
+	FontControler_Init();
 
 	//入力についての初期化
 	InitInputControler();
@@ -52,6 +53,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//入力関連のメモリ領域開放
 	DeleteInputControler();
+	GraphicControler_End();//グラフィック管理クラスの解放
+	FontControler_End();//フォント管理クラスの解放
 
 	DxLib_End();//DXライブラリ終了処理
 	return 0;
