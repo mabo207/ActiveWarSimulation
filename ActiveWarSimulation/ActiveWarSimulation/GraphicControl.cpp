@@ -4,10 +4,6 @@
 #include"GraphicControl.h"
 
 
-using namespace std;
-
-
-
 /*GraphicControlClassを用いるための関数*/
 static GraphicControlClass *GraphicControler=NULL;
 
@@ -24,14 +20,14 @@ void GraphicControler_End(){
 	}
 }
 
-int LoadGraphEX(string filename){
+int LoadGraphEX(std::string filename){
 	if(GraphicControler==NULL){
 		return -1;
 	}
 	return GraphicControler->LoadGraphEX(filename);
 }
 
-int LoadDivGraphEX(string filename,int Allnum,int XNum,int YNum,int XSize,int YSize,int *HandleBuf){
+int LoadDivGraphEX(std::string filename,int Allnum,int XNum,int YNum,int XSize,int YSize,int *HandleBuf){
 	if(GraphicControler==NULL){
 		return -1;
 	}
@@ -51,9 +47,9 @@ int DeleteGraphEX(int GRHandle){
 
 /*GraphicControlClass*///内部定義したGraphicData方の戻り値の書き方に注意！！
 //m_Graphicの中から欲しいデータを探す(同じ名前のものは一番配列番号の小さいものが返ってくる)
-vector<GraphicControlClass::GraphicData>::iterator GraphicControlClass::GraphicSearch(int GRHandle){
+std::vector<GraphicControlClass::GraphicData>::iterator GraphicControlClass::GraphicSearch(int GRHandle){
 	//イテレータを用意
-	vector<GraphicData>::iterator pGraphic=m_Graphic.begin();
+	std::vector<GraphicData>::iterator pGraphic=m_Graphic.begin();
 	for(;pGraphic!=m_Graphic.end();pGraphic++){
 		if(pGraphic->m_handle==GRHandle){
 			return pGraphic;
@@ -63,9 +59,9 @@ vector<GraphicControlClass::GraphicData>::iterator GraphicControlClass::GraphicS
 	return m_Graphic.end();
 }
 
-vector<GraphicControlClass::GraphicData>::iterator GraphicControlClass::GraphicSearch(string GRName){
+std::vector<GraphicControlClass::GraphicData>::iterator GraphicControlClass::GraphicSearch(std::string GRName){
 	//イテレータを用意
-	vector<GraphicData>::iterator pGraphic=m_Graphic.begin();
+	std::vector<GraphicData>::iterator pGraphic=m_Graphic.begin();
 	for(;pGraphic!=m_Graphic.end();pGraphic++){
 		if(pGraphic->m_name==GRName){
 			return pGraphic;
@@ -76,9 +72,9 @@ vector<GraphicControlClass::GraphicData>::iterator GraphicControlClass::GraphicS
 }
 
 //グラフィックの読み込み
-int GraphicControlClass::LoadGraphEX(string filename){
+int GraphicControlClass::LoadGraphEX(std::string filename){
 	//まず同じデータがないかを確認する。
-	vector<GraphicData>::iterator pData=GraphicSearch(filename);
+	std::vector<GraphicData>::iterator pData=GraphicSearch(filename);
 	if( pData != m_Graphic.end() ){//同じデータがあるなら
 		pData->m_number++;//グラフィックデータの用いられている箇所を増やす。
 		return pData->m_handle;//グラフィックハンドルを返す
@@ -92,14 +88,14 @@ int GraphicControlClass::LoadGraphEX(string filename){
 }
 
 //グラフィックの分割読み込み
-int GraphicControlClass::LoadDivGraphEX(string filename,int Allnum,int XNum,int YNum,int XSize,int YSize,int *HandleBuf){
+int GraphicControlClass::LoadDivGraphEX(std::string filename,int Allnum,int XNum,int YNum,int XSize,int YSize,int *HandleBuf){
 	//分割数が0以下なら失敗
 	if(Allnum<=0){
 		return -1;
 	}
 	int flag=0;//成功かどうかのフラグ
 	//名前と分割数でダブリの存在を検索
-	vector<DivGraphicData>::iterator pData=m_DivGraphic.begin();
+	std::vector<DivGraphicData>::iterator pData=m_DivGraphic.begin();
 	for(;pData!=m_DivGraphic.end();pData++){
 		if(pData->m_name==filename && pData->m_divNUM==Allnum){//被っていたら
 			break;//イテレータをそのままにして返す
@@ -111,7 +107,7 @@ int GraphicControlClass::LoadDivGraphEX(string filename,int Allnum,int XNum,int 
 		pData->m_number++;
 		//m_Graphicの編集
 		for(int i=0;i<Allnum;i++){
-			vector<GraphicData>::iterator pGdata=GraphicSearch(pData->m_handle[i]);
+			std::vector<GraphicData>::iterator pGdata=GraphicSearch(pData->m_handle[i]);
 			if(pGdata!=m_Graphic.end()){//ちゃんとi番目のデータが存在しているならば
 				HandleBuf[i]=pData->m_handle[i];//HandleBufにハンドルを入れてあげる
 				pGdata->m_number++;//使われている回数を増やす
@@ -148,7 +144,7 @@ int GraphicControlClass::LoadDivGraphEX(string filename,int Allnum,int XNum,int 
 //グラフィックの複製
 int GraphicControlClass::CopyGraph(int GRHandle){
 	//該当するグラフィックの検索
-	vector<GraphicData>::iterator Data=GraphicSearch(GRHandle);
+	std::vector<GraphicData>::iterator Data=GraphicSearch(GRHandle);
 	//Dataが意味のないイテレータを指している時はエラーとして処理。
 	if(Data==m_Graphic.end()){
 		return -1;
@@ -163,25 +159,25 @@ int GraphicControlClass::CopyGraph(int GRHandle){
 int GraphicControlClass::DeleteGraphEX(int GRHandle){
 	int returnnum=0;//戻り値
 	//m_Graphicから探す
-	vector<GraphicData>::iterator pData=GraphicSearch(GRHandle);
+	std::vector<GraphicData>::iterator pData=GraphicSearch(GRHandle);
 	if(pData==m_Graphic.end()){//データが見つからなかった場合
 		returnnum=DeleteGraph(GRHandle);//とりあえずDeleteGraphと同じ働きをするようにする
 	}else{
 		//データが見つかった場合
-		string GRName=pData->m_name;//後々名前は用いるので保存
+		std::string GRName=pData->m_name;//後々名前は用いるので保存
 		pData->m_number--;//使われている箇所を1減らす
 		if(pData->m_number <= 0){//使われている場所がなければ
 			//その場所を破棄する
 			returnnum=DeleteGraph(pData->m_handle);//グラフィックデータの削除
-			m_Graphic.erase(pData);//vectorの要素の削除
+			m_Graphic.erase(pData);//std::vectorの要素の削除
 			m_Graphic.shrink_to_fit();//並び替え
 			//削除作業を終えた後、m_DivGraphicの編集
 			//削除したデータについて、それが分割読み込みしていた時、
 			//それと同じ名前のグラフィックが存在していなければm_DivGraphから取り除く
-			//for(vector<DivGraphicData>::iterator pd=m_DivGraphic.begin();pd!=m_DivGraphic.end();pd++){
-			vector<DivGraphicData>::iterator pd=m_DivGraphic.begin();
+			//for(std::vector<DivGraphicData>::iterator pd=m_DivGraphic.begin();pd!=m_DivGraphic.end();pd++){
+			std::vector<DivGraphicData>::iterator pd=m_DivGraphic.begin();
 			while(true){
-				vector<DivGraphicData>::iterator pdtmp=m_DivGraphic.end();
+				std::vector<DivGraphicData>::iterator pdtmp=m_DivGraphic.end();
 				if(pd==m_DivGraphic.end()){
 					break;
 				}
@@ -223,7 +219,7 @@ int GraphicControlClass::InitGraphEX(){
 	return 0;
 }
 
-GraphicControlClass::GraphicData::GraphicData(int handle,string name,int number)
+GraphicControlClass::GraphicData::GraphicData(int handle,std::string name,int number)
 	:m_handle(handle),m_name(name),m_number(number){}
 
 GraphicControlClass::GraphicData::~GraphicData(){}
@@ -233,3 +229,130 @@ GraphicControlClass::GraphicControlClass(){
 }
 
 GraphicControlClass::~GraphicControlClass(){}
+
+//------------------FontControlClassとそれを扱うための関数------------------
+static FontControlClass *pFontControler=nullptr;
+
+//クラスの関数
+FontControlClass::FontData::FontData(std::string i_fontname,int i_size,int i_thick,int i_fonttype)
+	:fontname(i_fontname),size(i_size),thick(i_thick),fonttype(i_fonttype){}
+
+bool FontControlClass::FontData::operator<(const FontData &otherobj)const{
+	//size
+	if(size<otherobj.size){
+		return true;
+	} else if(size>otherobj.size){
+		return false;
+	}
+	//thick
+	if(thick<otherobj.thick){
+		return true;
+	} else if(thick>otherobj.thick){
+		return false;
+	}
+	//fonttype
+	if(fonttype<otherobj.fonttype){
+		return true;
+	} else if(fonttype>otherobj.fonttype){
+		return false;
+	}
+	//fontname
+	if(fontname<otherobj.fontname){
+		return true;
+	} else if(fontname>otherobj.fontname){
+		return false;
+	}
+
+	return false;
+}
+
+bool FontControlClass::FontData::operator==(const FontData &otherobj)const{
+	return (fontname==otherobj.fontname && size==otherobj.size && thick==otherobj.thick && fonttype==otherobj.fonttype);
+}
+
+FontControlClass::FontControlClass(){}
+
+FontControlClass::~FontControlClass(){
+	//m_fontを全て削除する
+	for(const std::pair<FontData,MapValue> &data:m_font){
+		DeleteFontToHandle(data.second.handle);
+	}
+}
+
+int FontControlClass::CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype){
+	//同一フォントが存在しているかの調査
+	FontData fontdata(fontname,size,thick,fonttype);
+	std::map<FontData,MapValue>::iterator it=m_font.find(fontdata);
+	//フォントの作成処理
+	int handle;
+	if(it!=m_font.end()){
+		//既にフォントが作られている場合
+		it->second.count++;
+		handle=it->second.handle;
+	} else{
+		//まだフォントが作られていない場合
+		handle=CreateFontToHandle(fontname.c_str(),size,thick,fonttype);
+		if(handle!=-1){
+			//フォント生成が成功した場合はm_fontに情報を格納
+			m_font.insert(std::pair<FontData,MapValue>(fontdata,MapValue(handle,1)));
+		}
+	}
+	return handle;
+}
+
+int FontControlClass::DeleteFontToHandleEX(int handle){
+	//handleの検索
+	bool flag=false;//handleをDelete下かどうか
+	int ret=-1;
+	for(std::map<FontData,MapValue>::iterator it=m_font.begin(),ite=m_font.end();it!=ite;it++){
+		if(it->second.handle==handle){
+			//削除処理
+			it->second.count--;//使用箇所が1減る
+			if(it->second.count<=0){
+				//使用箇所がなくなったらフォントを削除し、m_fontからデータを取り除く
+				ret=DeleteFontToHandle(handle);
+				m_font.erase(it);
+				flag=true;
+				break;
+			}
+		}
+	}
+	//handleがデータ一覧に存在していなければ、削除のみ行う
+	if(!flag){
+		ret=DeleteFontToHandle(handle);
+	}
+	return ret;
+
+}
+
+//関数群
+void FontControler_Init(){
+	pFontControler=new FontControlClass();
+}
+
+void FontControler_End(){
+	if(pFontControler!=nullptr){
+		delete pFontControler;
+	}
+}
+
+int CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype){
+	int handle;
+	if(pFontControler!=nullptr){
+		handle=pFontControler->CreateFontToHandleEX(fontname,size,thick,fonttype);
+	} else{
+		handle=CreateFontToHandle(fontname.c_str(),size,thick,fonttype);
+	}
+	return handle;
+}
+
+int DeleteFontToHandleEX(int handle){
+	int ret;
+	if(pFontControler!=nullptr){
+		ret=pFontControler->DeleteFontToHandleEX(handle);
+	} else{
+		ret=DeleteFontToHandle(handle);
+	}
+	return ret;
+}
+
