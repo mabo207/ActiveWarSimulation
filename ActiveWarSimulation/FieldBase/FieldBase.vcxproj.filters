@@ -60,6 +60,12 @@
     <ClCompile Include="ShapeHaving.cpp">
       <Filter>ソース ファイル\Shape</Filter>
     </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\GraphicControl.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\GraphicProgramming.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shape.h">
@@ -85,6 +91,12 @@
     </ClInclude>
     <ClInclude Include="ShapeHaving.h">
       <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\GraphicControl.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\GraphicProgramming.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
