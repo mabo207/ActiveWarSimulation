@@ -35,19 +35,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//入力についての初期化
 	InitInputControler();
 
-	std::shared_ptr<StageEditor> ggEditor(new StageEditor());
+	{
+		std::shared_ptr<StageEditor> ggEditor(new StageEditor());
 
-	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
-		//ゲーム本体
-		//キー情報更新
-		input_update();
-		//描画
-		ggEditor->Draw();
-		//計算処理
-		int index = ggEditor->Calculate();
-		//終了検出
-		if(index<0){
-			break;
+		while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
+			//ゲーム本体
+			//キー情報更新
+			input_update();
+			//描画
+			ggEditor->Draw();
+			//計算処理
+			int index = ggEditor->Calculate();
+			//終了検出
+			if(index<0){
+				break;
+			}
 		}
 	}
 
