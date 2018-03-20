@@ -14,7 +14,6 @@ void GraphicControler_Init(){
 
 void GraphicControler_End(){
 	if(GraphicControler!=NULL){
-		GraphicControler->InitGraphEX();
 		delete GraphicControler;
 		GraphicControler=NULL;
 	}
@@ -228,7 +227,10 @@ GraphicControlClass::GraphicControlClass(){
 
 }
 
-GraphicControlClass::~GraphicControlClass(){}
+GraphicControlClass::~GraphicControlClass(){
+	//全てのグラフィックデータを解放する
+	GraphicControler->InitGraphEX();
+}
 
 //------------------FontControlClassとそれを扱うための関数------------------
 static FontControlClass *pFontControler=nullptr;
@@ -333,6 +335,7 @@ void FontControler_Init(){
 void FontControler_End(){
 	if(pFontControler!=nullptr){
 		delete pFontControler;
+		pFontControler=nullptr;
 	}
 }
 
