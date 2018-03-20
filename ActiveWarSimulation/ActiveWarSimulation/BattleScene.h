@@ -5,6 +5,7 @@
 #include"GameScene.h"
 #include"Unit.h"
 #include"Terrain.h"
+#include"ToolsLib.h"
 
 //バトル場面表すクラス
 class BattleScene:public GameScene{
@@ -30,6 +31,8 @@ protected:
 	//グラフィック関連の変数
 	std::shared_ptr<Terrain> m_Window;//ウインドウ全体を表す線分(対角線)
 
+	//その他の変数
+	FpsMeasuring m_fpsMesuring;//fps計測器。タイマーの意味合いも兼ねる。
 
 	//関数
 protected:
