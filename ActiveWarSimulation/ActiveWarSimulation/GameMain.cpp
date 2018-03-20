@@ -5,6 +5,7 @@
 #include"input.h"
 #include"BattleScene.h"
 #include<memory>
+#include"GraphicControl.h"
 
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
@@ -33,6 +34,10 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 			throw(std::runtime_error("SetDrawScreen(DX_SCREEN_BACK) failed."));
 		}
 
+		//グラフィック管理クラスの初期化
+		GraphicControler_Init();
+		FontControler_Init();
+
 		//入力機構の初期化
 		InitInputControler();
 
@@ -60,6 +65,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		//終了処理
 		DeleteInputControler();//入力機構の解放
+		GraphicControler_End();//グラフィック管理クラスの解放
+		FontControler_End();//フォント管理クラスの解放
 		DxLib_End();
 
 
