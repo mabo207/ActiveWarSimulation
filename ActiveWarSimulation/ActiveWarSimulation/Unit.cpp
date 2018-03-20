@@ -1,6 +1,8 @@
 #include"Unit.h"
 #include"DxLib.h"
 #include"Circle.h"
+#include"GraphicControl.h"
+#include"ToolsLib.h"
 
 //------------Unit::Team---------------
 Unit::Team::Kind Unit::Team::link(int num){
@@ -21,27 +23,34 @@ unsigned int Unit::Team::GetColor(Kind kind){
 }
 
 //------------Unit::BattleStatus---------------
-const float Unit::BattleStatus::maxOP=100.0f+0.0001f;//キリの良い整数より少しだけ大きくする事でOPをmaxOPまで増やす時にOPが計算誤差で半端な整数にならないようにする。
+const float Unit::BattleStatus::maxOP=100.0f+Unit::reduceStartActionCost+0.0001f;//キリの良い整数より少しだけ大きくする事でOPをmaxOPまで増やす時にOPが計算誤差で半端な整数にならないようにする。
 
 //------------Unit---------------
 const float Unit::unitCircleSize=30.0f;
 const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
 const float Unit::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.3f;
 const float Unit::openAttackLength=Unit::closeAttackLength*2.0f;
+const float Unit::reduceStartActionCost=50.0f;
 
 const float Unit::attackCost=50.0f;
+
+const int Unit::hpFontSize=10;
 
 Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
 	,m_baseStatus(10,100,30,12,20,10,5,4)
 	,m_battleStatus(100,0,team)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
+	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,1,DX_FONTTYPE_EDGE))
 {
 	//テスト用のコンストラクタ
 	m_battleStatus.HP=m_baseStatus.maxHP;
 }
 
-Unit::~Unit(){}
+Unit::~Unit(){
+	//フォントの解放
+	DeleteFontToHandleEX(m_hpFont);
+}
 
 void Unit::WriteOutObjectPeculiarInfo(std::ofstream &ofs)const{
 	//暫定
@@ -150,11 +159,30 @@ void Unit::VDraw(Vector2D point,Vector2D adjust)const{
 	SetDrawBlendMode(mode,pal);
 	m_hitJudgeShape->Draw(adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
 	//ユニットグラフィックを描画
+
+	//HPゲージとHPの表示。ゲージは非AAで描画したほうが綺麗に見える
+	const int gageX=(int)(getPos().x-unitCircleSize),gageY=(int)(getPos().y+unitCircleSize)-hpFontSize/2,unitCircleSizeInteger=(int)(unitCircleSize),margin=2;
+	const int gageMaxLength=(unitCircleSizeInteger-margin)*2;
+	const int gageLength=gageMaxLength*m_battleStatus.HP/m_baseStatus.maxHP;
+	unsigned int color;//ゲージの色
+	if(gageLength>gageMaxLength*3/4){
+		//HPが全体の3/4以上なら水色
+		color=GetColor(0,196,255);
+	} else if(gageLength>gageMaxLength*2/4){
+		//HPが全体の1/2以上なら黄緑色
+		color=GetColor(32,196,0);
+	} else if(gageLength>gageMaxLength*1/4){
+		//HPが全体の1/4以上なら黄色
+		color=GetColor(196,196,0);
+	} else{
+		//HPが全体の1/4以下なら赤色
+		color=GetColor(255,64,0);
+	}
+	DrawBox(gageX,gageY,gageX+unitCircleSizeInteger*2,gageY+hpFontSize,GetColor(0,0,0),TRUE);//ゲージ外側
+	DrawBox(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,color,TRUE);//ゲージ内側
+	DrawStringRightJustifiedToHandle(gageX,gageY,std::to_string(m_battleStatus.HP),GetColor(255,255,255),m_hpFont,GetColor(0,0,0));//HPの文字列
+	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
-	//HPゲージとHPの表示
-
-
-	//描画モードを元に戻っている
 }
 
 void Unit::VHitProcess(const BattleObject *potherobj){

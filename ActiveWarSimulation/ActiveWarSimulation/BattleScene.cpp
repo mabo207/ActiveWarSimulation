@@ -7,6 +7,7 @@
 //----------------------BattleScene----------------------
 BattleScene::BattleScene(const char *stagename)
 	:GameScene(),m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1280.0f,720.0f),Shape::Fix::e_ignore)),-1,0,true))
+	,m_fpsMesuring()
 {
 	//ファイルからステージを読み込み
 	//ファイルを開きすべての文字列を書き出す
@@ -80,7 +81,29 @@ bool BattleScene::PositionUpdate(){
 	const size_t judgeCount=3;//1移動内の当たり判定実行回数
 	const Vector2D beforePos=m_operateUnit->getPos();//移動前の位置を取得
 	//移動方向の計算
-	Vector2D moveVec=analogjoypad_get(DX_INPUT_PAD1);
+	Vector2D moveVec;
+	if(m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
+		//プレイヤー操作時
+		moveVec=analogjoypad_get(DX_INPUT_PAD1);
+	} else{
+		//コンピュータ操作時、AIが方向を決める
+		//ターン開始から1秒経ったらひとまず最近傍ユニットに単純に近づく
+		if(m_fpsMesuring.GetProcessedTime()>1.0){
+			const Unit *nearestUnit=nullptr;
+			for(const Unit *pu:m_unitList){
+				if(pu->GetBattleStatus().team!=m_operateUnit->GetBattleStatus().team){
+					if(nearestUnit==nullptr){
+						nearestUnit=pu;
+					} else if((pu->getPos()-m_operateUnit->getPos()).sqSize()<(nearestUnit->getPos()-m_operateUnit->getPos()).sqSize()){
+						nearestUnit=pu;
+					}
+				}
+			}
+			if(nearestUnit!=nullptr){
+				moveVec=nearestUnit->getPos()-m_operateUnit->getPos();
+			}
+		}
+	}
 	bool inputFlag=false;
 	if(m_operateUnit->GetBattleStatus().OP>0.0f){
 		//OPが足りないと動けない
@@ -107,8 +130,8 @@ bool BattleScene::PositionUpdate(){
 	}
 	//移動距離の計測とOP減少
 	const float moveCost=(m_operateUnit->getPos()-beforePos).size()/speed;
-	m_operateUnit->AddOP(-moveCost);//現象なのでcostをマイナスしたものを加算する
-	
+	m_operateUnit->AddOP(-moveCost);//減少なのでcostをマイナスしたものを加算する
+
 	//攻撃対象ユニットの更新(移動しなくても(=inputFlagがfalseでも)ユニットの位置は動く可能性があるので毎ループ処理する)
 	bool changeAimedUnitFlag;//対象ユニットの変更を行うか
 	float aimedUnitAngle;//対象ユニットのいた方向
@@ -159,15 +182,33 @@ void BattleScene::FinishUnitOperation(){
 	SortUnitList();
 	//先頭をm_operateUnitに格納
 	m_operateUnit=m_unitList.front();
+/*
+	//以下は、ユニットを動かさないでいると同じユニットに手番がずっと回ってしまう事への対策。
+	//しかし、OP差がほとんどない同チームのユニット２体が動かないでい続けると同チームでループしてしまい問題の解決にならなかったのでボツ。
+	//行動開始時にユニットのOPを一定量減らす事で対策する
+	if(m_unitList.size()<2 || m_operateUnit!=m_unitList.front()){
+		//次の行動するユニットが同じユニットでない場合は素直に格納
+		m_operateUnit=m_unitList.front();
+	} else{
+		//次も同じユニットが行動してしまう場合、OPを2番目に大きいユニットよりほんの少しだけ小さくなるまで減らしてソートし直す
+		m_operateUnit->AddOP(m_unitList[1]->GetBattleStatus().OP-m_operateUnit->GetBattleStatus().OP-0.001f);
+		SortUnitList();
+		m_operateUnit=m_unitList.front();
+	}
+//*/
 	//m_operateUnitのOPが最大になるようにm_unitList全員のOP値を変化
 	const float plusOP=Unit::BattleStatus::maxOP-m_operateUnit->GetBattleStatus().OP;
 	for(Unit *u:m_unitList){
 		u->AddOP(plusOP);
 	}
+	//m_operateUnitのOPを一定値減らす
+	m_operateUnit->AddOP(-Unit::reduceStartActionCost);
 	//当たり判定図形の変化
 	UpdateFix();
 	//m_aimedUnitの初期化
 	SetAimedUnit(0.0f,0);
+	//タイマーセット
+	m_fpsMesuring.RecordTime();
 }
 
 void BattleScene::SetAimedUnit(float angle,int turntimes){
@@ -258,49 +299,68 @@ void BattleScene::ProcessAttack(){
 }
 
 int BattleScene::Calculate(){
-	//m_operateUnitの位置更新
-	if(PositionUpdate()){
-		//位置更新をした時の処理
+	if(m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
+		//味方操作時
+		//m_operateUnitの位置更新
+		if(PositionUpdate()){
+			//位置更新をした時の処理
 
+		} else{
+			//移動操作をしなかった時はその他の入力を受け付ける
+			if(keyboard_get(KEY_INPUT_Z)==1){
+				//攻撃
+				if(m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0){
+					//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
+					ProcessAttack();//攻撃処理
+					FinishUnitOperation();//行動終了処理
+				}
+			} else if(keyboard_get(KEY_INPUT_X)==1){
+				//必殺技
+
+			} else if(keyboard_get(KEY_INPUT_A)==1){
+				//狙いのキャラの変更(反時計回り)
+				float angle;
+				if(m_aimedUnit!=nullptr){
+					angle=(m_aimedUnit->getPos()-m_operateUnit->getPos()).GetRadian();
+				} else{
+					angle=0.0f;
+				}
+				SetAimedUnit(angle,-1);
+			} else if(keyboard_get(KEY_INPUT_S)==1){
+				//狙いのキャラの変更(時計回り)
+				float angle;
+				if(m_aimedUnit!=nullptr){
+					angle=(m_aimedUnit->getPos()-m_operateUnit->getPos()).GetRadian();
+				} else{
+					angle=0.0f;
+				}
+				SetAimedUnit(angle,1);
+			} else if(keyboard_get(KEY_INPUT_C)==1){
+				//アイテムの使用
+
+			} else if(keyboard_get(KEY_INPUT_V)==1){
+				//待機
+				FinishUnitOperation();
+			} else if(keyboard_get(KEY_INPUT_D)==1){
+				//移動やり直し
+
+			}
+		}
 	} else{
-		//移動操作をしなかった時はその他の入力を受け付ける
-		if(keyboard_get(KEY_INPUT_Z)==1){
-			//攻撃
+		//敵操作時
+		//味方操作時
+		//m_operateUnitの位置更新
+		PositionUpdate();
+		if(m_fpsMesuring.GetProcessedTime()>1.0){
+			//1秒経ったら行動する
 			if(m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0){
 				//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
 				ProcessAttack();//攻撃処理
 				FinishUnitOperation();//行動終了処理
+			} else if(m_operateUnit->GetBattleStatus().OP<2.0f || m_fpsMesuring.GetProcessedTime()>10.0f){
+				//移動できなくなったら、または10秒経ったら待機
+				FinishUnitOperation();
 			}
-		} else if(keyboard_get(KEY_INPUT_X)==1){
-			//必殺技
-
-		} else if(keyboard_get(KEY_INPUT_A)==1){
-			//狙いのキャラの変更(反時計回り)
-			float angle;
-			if(m_aimedUnit!=nullptr){
-				angle=(m_aimedUnit->getPos()-m_operateUnit->getPos()).GetRadian();
-			} else{
-				angle=0.0f;
-			}
-			SetAimedUnit(angle,-1);
-		} else if(keyboard_get(KEY_INPUT_S)==1){
-			//狙いのキャラの変更(時計回り)
-			float angle;
-			if(m_aimedUnit!=nullptr){
-				angle=(m_aimedUnit->getPos()-m_operateUnit->getPos()).GetRadian();
-			} else{
-				angle=0.0f;
-			}
-			SetAimedUnit(angle,1);
-		} else if(keyboard_get(KEY_INPUT_C)==1){
-			//アイテムの使用
-
-		} else if(keyboard_get(KEY_INPUT_V)==1){
-			//待機
-			FinishUnitOperation();
-		} else if(keyboard_get(KEY_INPUT_D)==1){
-			//移動やり直し
-
 		}
 	}
 	return 0;

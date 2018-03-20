@@ -22,6 +22,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		SetWindowIconID(101);
 		//非アクティブ状態での処理の続行のフラグ
 		SetAlwaysRunFlag(FALSE);
+		//背景色は黒より少しだけ白っぽくする
+		SetBackgroundColor(32,32,32);
 
 		if(ChangeWindowMode(TRUE) != 0) {
 			throw(std::runtime_error("ChangeWindowMode(TRUE) failed."));
@@ -41,27 +43,31 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		//入力機構の初期化
 		InitInputControler();
 
-		//場面変数
-		std::shared_ptr<GameScene> pGameScene(new BattleScene(""));
+		{
+			//場面変数
+			std::shared_ptr<GameScene> pGameScene(new BattleScene(""));
 
-		//実行
-		while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
-			//ゲーム本体
-			//キー情報更新
-			input_update();
+			//実行
+			while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
+				//ゲーム本体
+				//キー情報更新
+				input_update();
 
-			//描画
-			clsDx();
-			pGameScene->Draw();
+				//描画
+				clsDx();
+				pGameScene->Draw();
 
-			//情報更新
-			int index=pGameScene->Calculate();
+				//情報更新
+				int index=pGameScene->Calculate();
 
-			//終了検出
-			if(keyboard_get(KEY_INPUT_ESCAPE)>0 || index!=0){
-				break;
+				//終了検出
+				if(keyboard_get(KEY_INPUT_ESCAPE)>0 || index!=0){
+					break;
+				}
 			}
 		}
+
+		//ここに来るまでにゲーム中で用いられていた変数は解放される
 
 		//終了処理
 		DeleteInputControler();//入力機構の解放
