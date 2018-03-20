@@ -182,11 +182,27 @@ void BattleScene::FinishUnitOperation(){
 	SortUnitList();
 	//先頭をm_operateUnitに格納
 	m_operateUnit=m_unitList.front();
+/*
+	//以下は、ユニットを動かさないでいると同じユニットに手番がずっと回ってしまう事への対策。
+	//しかし、OP差がほとんどない同チームのユニット２体が動かないでい続けると同チームでループしてしまい問題の解決にならなかったのでボツ。
+	//行動開始時にユニットのOPを一定量減らす事で対策する
+	if(m_unitList.size()<2 || m_operateUnit!=m_unitList.front()){
+		//次の行動するユニットが同じユニットでない場合は素直に格納
+		m_operateUnit=m_unitList.front();
+	} else{
+		//次も同じユニットが行動してしまう場合、OPを2番目に大きいユニットよりほんの少しだけ小さくなるまで減らしてソートし直す
+		m_operateUnit->AddOP(m_unitList[1]->GetBattleStatus().OP-m_operateUnit->GetBattleStatus().OP-0.001f);
+		SortUnitList();
+		m_operateUnit=m_unitList.front();
+	}
+//*/
 	//m_operateUnitのOPが最大になるようにm_unitList全員のOP値を変化
 	const float plusOP=Unit::BattleStatus::maxOP-m_operateUnit->GetBattleStatus().OP;
 	for(Unit *u:m_unitList){
 		u->AddOP(plusOP);
 	}
+	//m_operateUnitのOPを一定値減らす
+	m_operateUnit->AddOP(-Unit::reduceStartActionCost);
 	//当たり判定図形の変化
 	UpdateFix();
 	//m_aimedUnitの初期化

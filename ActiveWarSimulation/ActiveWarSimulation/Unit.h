@@ -51,6 +51,7 @@ protected:
 	static const int hpFontSize;//HPのフォントの大きさ
 
 public:
+	static const float reduceStartActionCost;//行動開始時に減らされるコスト
 
 	//変数
 protected:

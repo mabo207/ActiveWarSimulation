@@ -23,13 +23,14 @@ unsigned int Unit::Team::GetColor(Kind kind){
 }
 
 //------------Unit::BattleStatus---------------
-const float Unit::BattleStatus::maxOP=100.0f+0.0001f;//キリの良い整数より少しだけ大きくする事でOPをmaxOPまで増やす時にOPが計算誤差で半端な整数にならないようにする。
+const float Unit::BattleStatus::maxOP=100.0f+Unit::reduceStartActionCost+0.0001f;//キリの良い整数より少しだけ大きくする事でOPをmaxOPまで増やす時にOPが計算誤差で半端な整数にならないようにする。
 
 //------------Unit---------------
 const float Unit::unitCircleSize=30.0f;
 const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
 const float Unit::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.3f;
 const float Unit::openAttackLength=Unit::closeAttackLength*2.0f;
+const float Unit::reduceStartActionCost=50.0f;
 
 const float Unit::attackCost=50.0f;
 
