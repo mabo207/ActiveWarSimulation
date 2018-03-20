@@ -48,6 +48,8 @@ protected:
 
 	static const float attackCost;//攻撃のコストを実装(これは武器クラスに突っ込む可能性が高い)
 
+	static const int hpFontSize;//HPのフォントの大きさ
+
 public:
 
 	//変数
@@ -61,6 +63,7 @@ protected:
 	//描画系変数
 	//マップ上のキャラグラフィック(BattleObjectにある)
 	//ステータス画面のキャラグラフィック
+	int m_hpFont;//HPのフォント
 
 public:
 	//武器
