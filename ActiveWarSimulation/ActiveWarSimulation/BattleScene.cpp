@@ -74,13 +74,7 @@ void BattleScene::UpdateFix(){
 	m_operateUnit->SetFix(Shape::Fix::e_dynamic);
 }
 
-bool BattleScene::PositionUpdate(){
-	//各値の定義
-	const float speed=(float)(m_operateUnit->GetBaseStatus().move);//オブジェクトの移動速度
-	const size_t moveCount=5;//移動回数の分割数
-	const size_t judgeCount=3;//1移動内の当たり判定実行回数
-	const Vector2D beforePos=m_operateUnit->getPos();//移動前の位置を取得
-	//移動方向の計算
+Vector2D BattleScene::CalculateInputVec()const{
 	Vector2D moveVec;
 	if(m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 		//プレイヤー操作時
@@ -104,14 +98,25 @@ bool BattleScene::PositionUpdate(){
 			}
 		}
 	}
-	bool inputFlag=false;
+	return moveVec;
+}
+
+bool BattleScene::PositionUpdate(const Vector2D inputVec){
+	//各値の定義
+	const float speed=(float)(m_operateUnit->GetBaseStatus().move);//オブジェクトの移動速度
+	const size_t moveCount=5;//移動回数の分割数
+	const size_t judgeCount=3;//1移動内の当たり判定実行回数
+	const Vector2D beforePos=m_operateUnit->getPos();//移動前の位置を取得
+	Vector2D moveVec;
+	//移動ベクトルの計算
+	bool inputFlag=false;//移動の入力があったかどうか
 	if(m_operateUnit->GetBattleStatus().OP>0.0f){
 		//OPが足りないと動けない
-		if(moveVec.sqSize()==0.0f){
+		if(inputVec.sqSize()==0.0f){
 			inputFlag=false;
 		} else{
 			inputFlag=true;
-			moveVec=moveVec.norm()*std::fminf((float)(speed/moveCount),moveVec.size());
+			moveVec=inputVec.norm()*std::fminf((float)(speed/moveCount),inputVec.size());
 		}
 	}
 	//位置更新作業
@@ -302,7 +307,7 @@ int BattleScene::Calculate(){
 	if(m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 		//味方操作時
 		//m_operateUnitの位置更新
-		if(PositionUpdate()){
+		if(PositionUpdate(CalculateInputVec())){
 			//位置更新をした時の処理
 
 		} else{
@@ -350,7 +355,7 @@ int BattleScene::Calculate(){
 		//敵操作時
 		//味方操作時
 		//m_operateUnitの位置更新
-		PositionUpdate();
+		PositionUpdate(CalculateInputVec());
 		if(m_fpsMesuring.GetProcessedTime()>1.0){
 			//1秒経ったら行動する
 			if(m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0){
