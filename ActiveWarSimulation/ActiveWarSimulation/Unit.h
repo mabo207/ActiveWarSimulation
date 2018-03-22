@@ -2,6 +2,8 @@
 #define DEF_UNIT_H
 
 #include"BattleObject.h"
+#include"Weapon.h"
+class Weapon;//循環参照を防ぐために宣言のみする
 
 //ユニットを示す
 class Unit:public BattleObject{
@@ -35,8 +37,9 @@ public:
 		int HP;
 		float OP;
 		Team::Kind team;
-		BattleStatus(int i_HP,float i_OP,Team::Kind i_team)
-			:HP(i_HP),OP(i_OP),team(i_team){}
+		std::shared_ptr<Weapon> weapon;
+		BattleStatus(int i_HP,float i_OP,Team::Kind i_team,std::shared_ptr<Weapon> i_weapon)
+			:HP(i_HP),OP(i_OP),team(i_team),weapon(i_weapon){}
 	};
 
 	//定数

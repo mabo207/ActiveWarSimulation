@@ -49,6 +49,18 @@
     <Filter Include="ソース ファイル\UnitHaving">
       <UniqueIdentifier>{4fe96574-16d2-4b2a-8790-9834b9f0d304}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\UnitHaving\Object">
+      <UniqueIdentifier>{da015031-9565-41ae-b2a1-177fc8edf40b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\UnitHaving\Object">
+      <UniqueIdentifier>{457930e7-7c78-4235-a0f9-5f6a7f9c8a48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\UnitHaving\Explain">
+      <UniqueIdentifier>{39bbe34b-0df1-4e07-970b-c3cbef7321f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UnitHaving\Explain">
+      <UniqueIdentifier>{c670ccf6-03d9-48a3-8a50-301296b2cda2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -94,7 +106,10 @@
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
     <ClCompile Include="Weapon.cpp">
-      <Filter>ソース ファイル\UnitHaving</Filter>
+      <Filter>ソース ファイル\UnitHaving\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="DamageCalculators.cpp">
+      <Filter>ソース ファイル\UnitHaving\Explain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -138,7 +153,10 @@
       <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
     <ClInclude Include="Weapon.h">
-      <Filter>ヘッダー ファイル\UnitHaving</Filter>
+      <Filter>ヘッダー ファイル\UnitHaving\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageCalculators.h">
+      <Filter>ヘッダー ファイル\UnitHaving\Explain</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

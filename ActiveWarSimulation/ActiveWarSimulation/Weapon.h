@@ -5,27 +5,40 @@
 #include<map>
 #include<memory>
 #include"Unit.h"
+#include"DamageCalculators.h"
+class DamageCalculator;//循環参照を防ぐために宣言のみする
+class Unit;//循環参照を防ぐために宣言のみする
 
 //武器についてのクラス
 class Weapon{
 	//列挙体・型
-	
+	struct AttackInfo{
+		//攻撃結果を格納する構造体
+		int damage;//ダメージ
+		//状態異常などがあればそれも追加していく
+	};
+
 	//定数
 
 	//変数
 protected:
 	std::string m_name;//名前
+	int m_power;//威力
 	float m_length;//射程
 	float m_cost;//消費OP
+	std::shared_ptr<DamageCalculator> m_calculator;//ダメージ計算式
 
 	//関数
 protected:
-	Weapon(const std::string &name,float length,float cost):m_name(name),m_length(length),m_cost(cost){}
+	Weapon(const std::string &name,int power,float length,float cost,std::shared_ptr<DamageCalculator> calculator):m_name(name),m_power(power),m_length(length),m_cost(cost),m_calculator(calculator){}
 public:
 	~Weapon(){}
 
 	std::string GetName()const{
 		return m_name;
+	}
+	int GetPower()const{
+		return m_power;
 	}
 	float GetLength()const{
 		return m_length;
@@ -33,6 +46,8 @@ public:
 	float GetCost()const{
 		return m_cost;
 	}
+
+	AttackInfo GetAttackInfo(const Unit *attacker,const Unit *defender)const;
 
 	//静的変数
 private:

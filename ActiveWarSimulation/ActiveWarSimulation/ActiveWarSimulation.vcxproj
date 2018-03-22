@@ -154,6 +154,7 @@
     <ClCompile Include="..\StageEditor\BattleObject.cpp" />
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
     <ClCompile Include="BattleScene.cpp" />
+    <ClCompile Include="DamageCalculators.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GraphicControl.cpp" />
     <ClCompile Include="GraphicProgramming.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="..\StageEditor\BattleObject.h" />
     <ClInclude Include="..\StageEditor\Terrain.h" />
     <ClInclude Include="BattleScene.h" />
+    <ClInclude Include="DamageCalculators.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
