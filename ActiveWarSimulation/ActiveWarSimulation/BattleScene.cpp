@@ -355,15 +355,17 @@ int BattleScene::Calculate(){
 		//敵操作時
 		//味方操作時
 		//m_operateUnitの位置更新
+		const Vector2D beforeVec=m_operateUnit->getPos();
 		PositionUpdate(CalculateInputVec());
+		const float moveSqLength=(beforeVec-m_operateUnit->getPos()).sqSize();
 		if(m_fpsMesuring.GetProcessedTime()>1.0){
 			//1秒経ったら行動する
 			if(m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0){
 				//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
 				ProcessAttack();//攻撃処理
 				FinishUnitOperation();//行動終了処理
-			} else if(m_operateUnit->GetBattleStatus().OP<2.0f || m_fpsMesuring.GetProcessedTime()>10.0f){
-				//移動できなくなったら、または10秒経ったら待機
+			} else if(m_operateUnit->GetBattleStatus().OP<2.0f || m_fpsMesuring.GetProcessedTime()>10.0f || moveSqLength<0.1f){
+				//移動できなくなったら、または10秒経ったら、また移動距離が少ない場合は待機
 				FinishUnitOperation();
 			}
 		}
