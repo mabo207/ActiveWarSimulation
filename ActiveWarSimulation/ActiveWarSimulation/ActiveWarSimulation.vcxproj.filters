@@ -43,6 +43,12 @@
     <Filter Include="ソース ファイル\GameScene\BattleScene">
       <UniqueIdentifier>{e308d2be-b696-4d89-a915-d90636da4639}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\UnitHaving">
+      <UniqueIdentifier>{95d8dbfb-5494-4ae0-86cf-bec447ba2e08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UnitHaving">
+      <UniqueIdentifier>{4fe96574-16d2-4b2a-8790-9834b9f0d304}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -87,6 +93,9 @@
     <ClCompile Include="GraphicControl.cpp">
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>ソース ファイル\UnitHaving</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -127,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="GraphicProgramming.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>ヘッダー ファイル\UnitHaving</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

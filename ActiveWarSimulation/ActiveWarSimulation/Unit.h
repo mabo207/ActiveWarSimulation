@@ -40,7 +40,7 @@ public:
 	};
 
 	//定数
-protected:
+public:
 	static const float unitCircleSize;//ユニットそのものの大きさ
 	static const float rivalInpenetratableCircleSize;//敵対ユニットの進入不可領域
 	static const float closeAttackLength;//短距離攻撃の射程
@@ -50,7 +50,6 @@ protected:
 
 	static const int hpFontSize;//HPのフォントの大きさ
 
-public:
 	static const float reduceStartActionCost;//行動開始時に減らされるコスト
 
 	//変数
