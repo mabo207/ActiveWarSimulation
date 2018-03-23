@@ -283,8 +283,10 @@ void BattleScene::SetAimedUnit(float angle,int turntimes){
 void BattleScene::ProcessAttack(){
 	//コストの消費
 	m_operateUnit->AddOP(m_operateUnit->CalculateAddOPNormalAttack());
-	//操作ユニット→対象ユニットへの攻撃
-	int aimedHP=m_aimedUnit->AddHP(-(m_operateUnit->GetBaseStatus().power-m_aimedUnit->GetBaseStatus().def));
+	//操作ユニット→対象ユニットへの攻撃情報の計算
+	Weapon::AttackInfo attackinfo=m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_operateUnit,m_aimedUnit);
+	//操作ユニット→対象ユニットへの攻撃処理
+	int aimedHP=m_aimedUnit->AddHP(-attackinfo.damage);
 	if(aimedHP<=0){
 		//対象ユニットのHPが0以下なら、ステージからユニットを取り除く
 		m_aimedUnit->SetFix(Shape::Fix::e_ignore);//当たり判定の対象から取り除く

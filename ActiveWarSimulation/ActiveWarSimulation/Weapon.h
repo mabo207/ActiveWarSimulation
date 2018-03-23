@@ -12,6 +12,7 @@ class Unit;//循環参照を防ぐために宣言のみする
 //武器についてのクラス
 class Weapon{
 	//列挙体・型
+public:
 	struct AttackInfo{
 		//攻撃結果を格納する構造体
 		int damage;//ダメージ

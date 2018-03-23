@@ -38,7 +38,7 @@ const int Unit::hpFontSize=10;
 
 Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
-	,m_baseStatus(10,100,30,12,20,10,5,4)
+	,m_baseStatus(2,20,5,3,2,3,5,4)
 	,m_battleStatus(100,0,team,Weapon::GetWeapon("ìSÇÃëÑ"))
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
 	,m_hpFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",hpFontSize,1,DX_FONTTYPE_EDGE))
