@@ -9,6 +9,20 @@ class Weapon;//循環参照を防ぐために宣言のみする
 class Unit:public BattleObject{
 	//型・列挙体
 public:
+	struct Profession{
+		//兵種
+		enum Kind{
+			e_lancer,
+			e_archer,
+			e_armer,
+			e_mage,
+			END
+		};
+		static const std::map<std::string,Profession::Kind> professionMap;
+		static Kind link(int num);
+		static std::string GetName(Kind kind);
+		static Kind GetKind(const std::string &str);
+	};
 	struct Team{
 		enum Kind{
 			e_player,
@@ -27,6 +41,7 @@ public:
 		int mdef;
 		int speed;
 		int move;
+		BaseStatus(){}
 		BaseStatus(int i_lv,int i_maxHP,int i_power,int i_def,int i_mpower,int i_mdef,int i_speed,int i_move)
 			:lv(i_lv),maxHP(i_maxHP),power(i_power),def(i_def),mpower(i_mpower),mdef(i_mdef),speed(i_speed),move(i_move){}
 	};
@@ -80,6 +95,7 @@ protected:
 public:
 	//コンストラクタ系
 	Unit(Vector2D position,int gHandle,Team::Kind team);
+	Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team);
 	~Unit();
 	//演算子オーバーロード
 
@@ -109,6 +125,11 @@ public:
 	void VDraw(Vector2D point,Vector2D adjust)const;//描画処理(任意座標に描画)
 	void VHitProcess(const BattleObject *potherobj);//何かに当たった時の処理
 	std::shared_ptr<BattleObject> VCopy()const;//同じオブジェクトを複製する(ポインタのみ異なる)
+
+	//静的関数
+public:
+	Unit *CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,int gHandle,Team::Kind team);//モブユニットを動的生成する。
+
 };
 
 #endif // !DEF_UNIT_H

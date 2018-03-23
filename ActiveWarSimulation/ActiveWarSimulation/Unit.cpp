@@ -4,6 +4,40 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 
+//------------Unit::Profession---------------
+const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
+	std::pair<std::string,Unit::Profession::Kind>("槍術士",Unit::Profession::e_lancer)
+	,std::pair<std::string,Unit::Profession::Kind>("射手",Unit::Profession::e_archer)
+	,std::pair<std::string,Unit::Profession::Kind>("重装兵",Unit::Profession::e_armer)
+	,std::pair<std::string,Unit::Profession::Kind>("魔道士",Unit::Profession::e_mage)
+};
+
+Unit::Profession::Kind Unit::Profession::link(int num){
+	if(num>=0 && num<END){
+		return static_cast<Kind>(num);
+	}
+	return END;
+}
+
+std::string Unit::Profession::GetName(Kind kind){
+	for(std::map<std::string,Unit::Profession::Kind>::const_iterator it=professionMap.begin(),ite=professionMap.end();it!=ite;it++){
+		if(it->second==kind){
+			return it->first;
+		}
+	}
+	return "";//見つからなかったら空文字列を返す
+}
+
+Unit::Profession::Kind Unit::Profession::GetKind(const std::string &str){
+	std::map<std::string,Unit::Profession::Kind>::const_iterator it=professionMap.find(str);
+	if(it==professionMap.end()){
+		//見つからなかった場合
+		return END;
+	} else{
+		return it->second;
+	}
+}
+
 //------------Unit::Team---------------
 Unit::Team::Kind Unit::Team::link(int num){
 	if(num>=0 && num<END){
@@ -39,7 +73,17 @@ const int Unit::hpFontSize=10;
 Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
 	,m_baseStatus(2,20,5,3,2,3,5,4)
-	,m_battleStatus(100,0,team,Weapon::GetWeapon("鉄の槍"))
+	,m_battleStatus(20,0,team,Weapon::GetWeapon("鉄の槍"))
+	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
+	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,1,DX_FONTTYPE_EDGE))
+{
+	//テスト用のコンストラクタ
+	m_battleStatus.HP=m_baseStatus.maxHP;
+}
+
+Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team)
+	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
+	,m_baseStatus(baseStatus),m_battleStatus(100,Unit::BattleStatus::maxOP,team,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
 	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,1,DX_FONTTYPE_EDGE))
 {
@@ -199,4 +243,28 @@ void Unit::VHitProcess(const BattleObject *potherobj){
 
 std::shared_ptr<BattleObject> Unit::VCopy()const{
 	return std::shared_ptr<BattleObject>(new Unit(m_hitJudgeShape->GetPosition(),m_gHandle,m_battleStatus.team));
+}
+
+Unit *Unit::CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,int gHandle,Team::Kind team){
+	BaseStatus baseStatus;
+	std::shared_ptr<Weapon> weapon;
+	switch(profession){
+	case(Profession::e_lancer):
+		baseStatus=BaseStatus(lv,20+(int)(lv*0.8),5+(int)(lv*0.5),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),5+(int)(lv*0.5),4);
+		weapon=Weapon::GetWeapon("鉄の槍");
+		break;
+	case(Profession::e_archer):
+		baseStatus=BaseStatus(lv,18+(int)(lv*0.75),4+(int)(lv*0.45),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),3+(int)(lv*0.3),4);
+		weapon=Weapon::GetWeapon("鉄の弓");
+		break;
+	case(Profession::e_armer):
+		baseStatus=BaseStatus(lv,25+(int)(lv*0.9),6+(int)(lv*0.6),6+(int)(lv*0.5),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
+		weapon=Weapon::GetWeapon("鉄の槍");
+		break;
+	case(Profession::e_mage):
+		baseStatus=BaseStatus(lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
+		weapon=Weapon::GetWeapon("ファイアー");
+		break;
+	}
+	return new Unit(baseStatus,weapon,position,gHandle,team);
 }
