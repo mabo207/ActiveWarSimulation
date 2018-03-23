@@ -114,6 +114,35 @@ void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
 
 }
 
+void Unit::DrawHPGage(Vector2D adjust)const{
+	DrawHPGage(getPos(),adjust);
+}
+
+void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
+	//HPゲージとHPの表示。ゲージは非AAで描画したほうが綺麗に見える
+	const int gageX=(int)(getPos().x-unitCircleSize),gageY=(int)(getPos().y+unitCircleSize)-hpFontSize/2,unitCircleSizeInteger=(int)(unitCircleSize),margin=2;
+	const int gageMaxLength=(unitCircleSizeInteger-margin)*2;
+	const int gageLength=gageMaxLength*m_battleStatus.HP/m_baseStatus.maxHP;
+	unsigned int color;//ゲージの色
+	if(gageLength>gageMaxLength*3/4){
+		//HPが全体の3/4以上なら水色
+		color=GetColor(0,196,255);
+	} else if(gageLength>gageMaxLength*2/4){
+		//HPが全体の1/2以上なら黄緑色
+		color=GetColor(32,196,0);
+	} else if(gageLength>gageMaxLength*1/4){
+		//HPが全体の1/4以上なら黄色
+		color=GetColor(196,196,0);
+	} else{
+		//HPが全体の1/4以下なら赤色
+		color=GetColor(255,64,0);
+	}
+	DrawBox(gageX,gageY,gageX+unitCircleSizeInteger*2,gageY+hpFontSize,GetColor(0,0,0),TRUE);//ゲージ外側
+	DrawBox(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,color,TRUE);//ゲージ内側
+	DrawStringRightJustifiedToHandle(gageX,gageY,std::to_string(m_battleStatus.HP),GetColor(255,255,255),m_hpFont,GetColor(0,0,0));//HPの文字列
+
+}
+
 const Shape *Unit::GetHitJudgeShape()const{
 	if(m_penetratable){
 		//味方の行動フェイズならば、ユニット自身の当たり判定図形を返す
@@ -160,27 +189,6 @@ void Unit::VDraw(Vector2D point,Vector2D adjust)const{
 	m_hitJudgeShape->Draw(adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
 	//ユニットグラフィックを描画
 
-	//HPゲージとHPの表示。ゲージは非AAで描画したほうが綺麗に見える
-	const int gageX=(int)(getPos().x-unitCircleSize),gageY=(int)(getPos().y+unitCircleSize)-hpFontSize/2,unitCircleSizeInteger=(int)(unitCircleSize),margin=2;
-	const int gageMaxLength=(unitCircleSizeInteger-margin)*2;
-	const int gageLength=gageMaxLength*m_battleStatus.HP/m_baseStatus.maxHP;
-	unsigned int color;//ゲージの色
-	if(gageLength>gageMaxLength*3/4){
-		//HPが全体の3/4以上なら水色
-		color=GetColor(0,196,255);
-	} else if(gageLength>gageMaxLength*2/4){
-		//HPが全体の1/2以上なら黄緑色
-		color=GetColor(32,196,0);
-	} else if(gageLength>gageMaxLength*1/4){
-		//HPが全体の1/4以上なら黄色
-		color=GetColor(196,196,0);
-	} else{
-		//HPが全体の1/4以下なら赤色
-		color=GetColor(255,64,0);
-	}
-	DrawBox(gageX,gageY,gageX+unitCircleSizeInteger*2,gageY+hpFontSize,GetColor(0,0,0),TRUE);//ゲージ外側
-	DrawBox(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,color,TRUE);//ゲージ内側
-	DrawStringRightJustifiedToHandle(gageX,gageY,std::to_string(m_battleStatus.HP),GetColor(255,255,255),m_hpFont,GetColor(0,0,0));//HPの文字列
 	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
 }

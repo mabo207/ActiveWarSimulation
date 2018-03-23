@@ -364,7 +364,7 @@ int BattleScene::Calculate(){
 				//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
 				ProcessAttack();//攻撃処理
 				FinishUnitOperation();//行動終了処理
-			} else if(m_operateUnit->GetBattleStatus().OP<2.0f || m_fpsMesuring.GetProcessedTime()>10.0f || moveSqLength<0.1f){
+			} else if(m_operateUnit->GetBattleStatus().OP<2.0f || m_fpsMesuring.GetProcessedTime()>10.0 || moveSqLength<0.1f){
 				//移動できなくなったら、または10秒経ったら、また移動距離が少ない場合は待機
 				FinishUnitOperation();
 			}
@@ -376,23 +376,35 @@ int BattleScene::Calculate(){
 void BattleScene::Draw()const{
 	//フィールドの描画
 	for(const BattleObject *obj:m_field){
-		if(obj!=m_operateUnit && m_Window->JudgeInShapeRect(obj) && !(obj->GetFix()==Shape::Fix::e_ignore && obj->GetType()==BattleObject::Type::e_unit)){
-			//操作中ユニットは最後に描画
+		if((obj!=m_operateUnit || obj!=m_aimedUnit) && m_Window->JudgeInShapeRect(obj) && !(obj->GetFix()==Shape::Fix::e_ignore && obj->GetType()==BattleObject::Type::e_unit)){
+			//操作中ユニットと攻撃対象ユニットは最後に描画
 			//ウインドウに入っていない物は描画しない
 			//退却したユニット(typeがe_unitかつfixがe_ignore)は描画しない
 			obj->VDraw();
 		}
 	}
+
+	//狙っているユニットの描画
+	if(m_aimedUnit!=nullptr){
+		m_aimedUnit->BattleObject::VDraw();
+		Vector2D pos=m_aimedUnit->getPos();
+		DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
+	}
+
 	//操作中ユニットの描画
 	m_operateUnit->BattleObject::VDraw();
 	m_operateUnit->DrawMoveInfo();//移動情報の描画
 	Vector2D pos=m_operateUnit->getPos();
 	DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
 
-	//狙っているユニットの描画
-	if(m_aimedUnit!=nullptr){
-		pos=m_aimedUnit->getPos();
-		DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
+
+	//全ユニットのHPゲージの描画
+	for(const Unit *unit:m_unitList){
+		if(m_Window->JudgeInShapeRect(unit) && unit->GetFix()!=Shape::Fix::e_ignore){
+			//ウインドウに入っていない物は描画しない
+			//退却したユニット(typeがe_unitかつfixがe_ignore)は描画しない
+			unit->DrawHPGage();
+		}
 	}
 
 	//ユニット情報をデバッグ出力

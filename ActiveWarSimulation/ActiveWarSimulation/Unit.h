@@ -99,6 +99,8 @@ public:
 	float CalculateAddOPNormalAttack()const;//通常攻撃によって増加するOPを計算する。負値が返る。
 	void DrawMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)
 	void DrawMoveInfo(Vector2D point,Vector2D adjust)const;//移動範囲関連の情報を描画する関数
+	void DrawHPGage(Vector2D adjust=Vector2D())const;//HPゲージの描画
+	void DrawHPGage(Vector2D point,Vector2D adjust)const;//HPゲージの描画
 	
 	//仮想関数・純粋仮想関数のオーバーライド
 	const Shape *GetHitJudgeShape()const;//当たり判定図形を取得。
