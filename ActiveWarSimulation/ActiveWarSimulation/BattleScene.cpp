@@ -40,8 +40,10 @@ BattleScene::BattleScene(const char *stagename)
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1024.0f,540.0f),-1,Unit::Team::e_enemy));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,1,Vector2D(296.0f,196.0f),-1,Unit::Team::e_player));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(524.0f,340.0f),-1,Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(196.0f,246.0f),-1,Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(196.0f,256.0f),-1,Unit::Team::e_player));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(624.0f,340.0f),-1,Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_mage,1,Vector2D(100.0f,346.0f),-1,Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1060.0f,440.0f),-1,Unit::Team::e_enemy));
 	//m_unitList‚âm_operateUnit‚Ì‰Šú‰»
 	for(BattleObject *obj:m_field){
 		if(obj->GetType()==BattleObject::Type::e_unit){
