@@ -37,7 +37,8 @@ protected:
 	//関数
 protected:
 	void UpdateFix();
-	bool PositionUpdate();//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
+	Vector2D CalculateInputVec()const;//味方ターン時は入力されてるアナログスティックのベクトルを返す。敵ターン時はAIに従って移動方向のベクトルを返す。
+	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
 	void SortUnitList();//m_unitListをソートしなおす。
 	void FinishUnitOperation();//次のユニットへの遷移処理
 	void SetAimedUnit(float angle=0.0f,int turntimes=1);//m_aimedUnitを変更する。turntimesだけ時計回りに回転させる

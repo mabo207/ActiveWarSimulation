@@ -36,12 +36,14 @@ BattleScene::BattleScene(const char *stagename)
 	}
 	//ファイルからユニットを読み込み
 	//読み込み方法が確立していないので暫定
-	m_field.push_back(new Unit(Vector2D(196.0f,196.0f),-1,Unit::Team::e_player));
-	m_field.push_back(new Unit(Vector2D(1024.0f,540.0f),-1,Unit::Team::e_enemy));
-	m_field.push_back(new Unit(Vector2D(296.0f,196.0f),-1,Unit::Team::e_player));
-	m_field.push_back(new Unit(Vector2D(524.0f,340.0f),-1,Unit::Team::e_enemy));
-	m_field.push_back(new Unit(Vector2D(196.0f,246.0f),-1,Unit::Team::e_player));
-	m_field.push_back(new Unit(Vector2D(624.0f,340.0f),-1,Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(196.0f,196.0f),-1,Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1024.0f,540.0f),-1,Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,1,Vector2D(296.0f,196.0f),-1,Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(524.0f,340.0f),-1,Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(196.0f,256.0f),-1,Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(624.0f,340.0f),-1,Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_mage,1,Vector2D(100.0f,346.0f),-1,Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1060.0f,440.0f),-1,Unit::Team::e_enemy));
 	//m_unitListやm_operateUnitの初期化
 	for(BattleObject *obj:m_field){
 		if(obj->GetType()==BattleObject::Type::e_unit){
@@ -74,13 +76,7 @@ void BattleScene::UpdateFix(){
 	m_operateUnit->SetFix(Shape::Fix::e_dynamic);
 }
 
-bool BattleScene::PositionUpdate(){
-	//各値の定義
-	const float speed=(float)(m_operateUnit->GetBaseStatus().move);//オブジェクトの移動速度
-	const size_t moveCount=5;//移動回数の分割数
-	const size_t judgeCount=3;//1移動内の当たり判定実行回数
-	const Vector2D beforePos=m_operateUnit->getPos();//移動前の位置を取得
-	//移動方向の計算
+Vector2D BattleScene::CalculateInputVec()const{
 	Vector2D moveVec;
 	if(m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 		//プレイヤー操作時
@@ -104,14 +100,25 @@ bool BattleScene::PositionUpdate(){
 			}
 		}
 	}
-	bool inputFlag=false;
+	return moveVec;
+}
+
+bool BattleScene::PositionUpdate(const Vector2D inputVec){
+	//各値の定義
+	const float speed=(float)(m_operateUnit->GetBaseStatus().move);//オブジェクトの移動速度
+	const size_t moveCount=5;//移動回数の分割数
+	const size_t judgeCount=3;//1移動内の当たり判定実行回数
+	const Vector2D beforePos=m_operateUnit->getPos();//移動前の位置を取得
+	Vector2D moveVec;
+	//移動ベクトルの計算
+	bool inputFlag=false;//移動の入力があったかどうか
 	if(m_operateUnit->GetBattleStatus().OP>0.0f){
 		//OPが足りないと動けない
-		if(moveVec.sqSize()==0.0f){
+		if(inputVec.sqSize()==0.0f){
 			inputFlag=false;
 		} else{
 			inputFlag=true;
-			moveVec=moveVec.norm()*std::fminf((float)(speed/moveCount),moveVec.size());
+			moveVec=inputVec.norm()*std::fminf((float)(speed/moveCount),inputVec.size());
 		}
 	}
 	//位置更新作業
@@ -278,8 +285,10 @@ void BattleScene::SetAimedUnit(float angle,int turntimes){
 void BattleScene::ProcessAttack(){
 	//コストの消費
 	m_operateUnit->AddOP(m_operateUnit->CalculateAddOPNormalAttack());
-	//操作ユニット→対象ユニットへの攻撃
-	int aimedHP=m_aimedUnit->AddHP(-(m_operateUnit->GetBaseStatus().power-m_aimedUnit->GetBaseStatus().def));
+	//操作ユニット→対象ユニットへの攻撃情報の計算
+	Weapon::AttackInfo attackinfo=m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_operateUnit,m_aimedUnit);
+	//操作ユニット→対象ユニットへの攻撃処理
+	int aimedHP=m_aimedUnit->AddHP(-attackinfo.damage);
 	if(aimedHP<=0){
 		//対象ユニットのHPが0以下なら、ステージからユニットを取り除く
 		m_aimedUnit->SetFix(Shape::Fix::e_ignore);//当たり判定の対象から取り除く
@@ -302,7 +311,7 @@ int BattleScene::Calculate(){
 	if(m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 		//味方操作時
 		//m_operateUnitの位置更新
-		if(PositionUpdate()){
+		if(PositionUpdate(CalculateInputVec())){
 			//位置更新をした時の処理
 
 		} else{
@@ -350,15 +359,17 @@ int BattleScene::Calculate(){
 		//敵操作時
 		//味方操作時
 		//m_operateUnitの位置更新
-		PositionUpdate();
+		const Vector2D beforeVec=m_operateUnit->getPos();
+		PositionUpdate(CalculateInputVec());
+		const float moveSqLength=(beforeVec-m_operateUnit->getPos()).sqSize();
 		if(m_fpsMesuring.GetProcessedTime()>1.0){
 			//1秒経ったら行動する
 			if(m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0){
 				//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
 				ProcessAttack();//攻撃処理
 				FinishUnitOperation();//行動終了処理
-			} else if(m_operateUnit->GetBattleStatus().OP<2.0f || m_fpsMesuring.GetProcessedTime()>10.0f){
-				//移動できなくなったら、または10秒経ったら待機
+			} else if(m_operateUnit->GetBattleStatus().OP<2.0f || m_fpsMesuring.GetProcessedTime()>10.0 || moveSqLength<0.1f){
+				//移動できなくなったら、または10秒経ったら、また移動距離が少ない場合は待機
 				FinishUnitOperation();
 			}
 		}
@@ -369,23 +380,35 @@ int BattleScene::Calculate(){
 void BattleScene::Draw()const{
 	//フィールドの描画
 	for(const BattleObject *obj:m_field){
-		if(obj!=m_operateUnit && m_Window->JudgeInShapeRect(obj) && !(obj->GetFix()==Shape::Fix::e_ignore && obj->GetType()==BattleObject::Type::e_unit)){
-			//操作中ユニットは最後に描画
+		if((obj!=m_operateUnit || obj!=m_aimedUnit) && m_Window->JudgeInShapeRect(obj) && !(obj->GetFix()==Shape::Fix::e_ignore && obj->GetType()==BattleObject::Type::e_unit)){
+			//操作中ユニットと攻撃対象ユニットは最後に描画
 			//ウインドウに入っていない物は描画しない
 			//退却したユニット(typeがe_unitかつfixがe_ignore)は描画しない
 			obj->VDraw();
 		}
 	}
+
+	//狙っているユニットの描画
+	if(m_aimedUnit!=nullptr){
+		m_aimedUnit->BattleObject::VDraw();
+		Vector2D pos=m_aimedUnit->getPos();
+		DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
+	}
+
 	//操作中ユニットの描画
 	m_operateUnit->BattleObject::VDraw();
 	m_operateUnit->DrawMoveInfo();//移動情報の描画
 	Vector2D pos=m_operateUnit->getPos();
 	DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
 
-	//狙っているユニットの描画
-	if(m_aimedUnit!=nullptr){
-		pos=m_aimedUnit->getPos();
-		DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
+
+	//全ユニットのHPゲージの描画
+	for(const Unit *unit:m_unitList){
+		if(m_Window->JudgeInShapeRect(unit) && unit->GetFix()!=Shape::Fix::e_ignore){
+			//ウインドウに入っていない物は描画しない
+			//退却したユニット(typeがe_unitかつfixがe_ignore)は描画しない
+			unit->DrawHPGage();
+		}
 	}
 
 	//ユニット情報をデバッグ出力

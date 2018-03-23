@@ -1,0 +1,69 @@
+#ifndef DEF_WEAPON_H
+#define DEF_WEAPON_H
+
+#include<string>
+#include<map>
+#include<memory>
+#include"Unit.h"
+#include"DamageCalculators.h"
+class DamageCalculator;//zŠÂQÆ‚ğ–h‚®‚½‚ß‚ÉéŒ¾‚Ì‚İ‚·‚é
+class Unit;//zŠÂQÆ‚ğ–h‚®‚½‚ß‚ÉéŒ¾‚Ì‚İ‚·‚é
+
+//•Ší‚É‚Â‚¢‚Ä‚ÌƒNƒ‰ƒX
+class Weapon{
+	//—ñ‹“‘ÌEŒ^
+public:
+	struct AttackInfo{
+		//UŒ‚Œ‹‰Ê‚ğŠi”[‚·‚é\‘¢‘Ì
+		int damage;//ƒ_ƒ[ƒW
+		//ó‘ÔˆÙí‚È‚Ç‚ª‚ ‚ê‚Î‚»‚ê‚à’Ç‰Á‚µ‚Ä‚¢‚­
+	};
+
+	//’è”
+public:
+	static const float closeAttackLength;//’Z‹——£UŒ‚‚ÌË’ö
+	static const float openAttackLength;//’·‹——£UŒ‚‚ÌË’ö
+
+	//•Ï”
+protected:
+	std::string m_name;//–¼‘O
+	int m_power;//ˆĞ—Í
+	float m_length;//Ë’ö
+	float m_cost;//Á”ïOP
+	std::shared_ptr<DamageCalculator> m_calculator;//ƒ_ƒ[ƒWŒvZ®
+
+	//ŠÖ”
+protected:
+	Weapon(const std::string &name,int power,float length,float cost,std::shared_ptr<DamageCalculator> calculator):m_name(name),m_power(power),m_length(length),m_cost(cost),m_calculator(calculator){}
+public:
+	~Weapon(){}
+
+	std::string GetName()const{
+		return m_name;
+	}
+	int GetPower()const{
+		return m_power;
+	}
+	float GetLength()const{
+		return m_length;
+	}
+	float GetCost()const{
+		return m_cost;
+	}
+
+	AttackInfo GetAttackInfo(const Unit *attacker,const Unit *defender)const;
+
+	//Ã“I•Ï”
+private:
+	static const std::map<std::string,std::shared_ptr<Weapon>> m_weaponMap;//•Ší‚Ìˆê——‚ğŠi”[‚·‚éÃ“I•Ï”
+	
+	//Ã“IŠÖ”
+private:
+	static std::map<std::string,std::shared_ptr<Weapon>> InitWeaponMap();
+	static std::pair<std::string,std::shared_ptr<Weapon>> CreateWeaponMapElement(std::shared_ptr<Weapon> weapon);
+public:
+	static const std::shared_ptr<Weapon> GetWeapon(const std::string &name);
+};
+
+#endif // !DEF_WEAPON_H
+#pragma once

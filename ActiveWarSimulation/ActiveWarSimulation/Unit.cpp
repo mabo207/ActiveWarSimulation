@@ -4,6 +4,40 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 
+//------------Unit::Profession---------------
+const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
+	std::pair<std::string,Unit::Profession::Kind>("槍術士",Unit::Profession::e_lancer)
+	,std::pair<std::string,Unit::Profession::Kind>("射手",Unit::Profession::e_archer)
+	,std::pair<std::string,Unit::Profession::Kind>("重装兵",Unit::Profession::e_armer)
+	,std::pair<std::string,Unit::Profession::Kind>("魔道士",Unit::Profession::e_mage)
+};
+
+Unit::Profession::Kind Unit::Profession::link(int num){
+	if(num>=0 && num<END){
+		return static_cast<Kind>(num);
+	}
+	return END;
+}
+
+std::string Unit::Profession::GetName(Kind kind){
+	for(std::map<std::string,Unit::Profession::Kind>::const_iterator it=professionMap.begin(),ite=professionMap.end();it!=ite;it++){
+		if(it->second==kind){
+			return it->first;
+		}
+	}
+	return "";//見つからなかったら空文字列を返す
+}
+
+Unit::Profession::Kind Unit::Profession::GetKind(const std::string &str){
+	std::map<std::string,Unit::Profession::Kind>::const_iterator it=professionMap.find(str);
+	if(it==professionMap.end()){
+		//見つからなかった場合
+		return END;
+	} else{
+		return it->second;
+	}
+}
+
 //------------Unit::Team---------------
 Unit::Team::Kind Unit::Team::link(int num){
 	if(num>=0 && num<END){
@@ -28,8 +62,6 @@ const float Unit::BattleStatus::maxOP=100.0f+Unit::reduceStartActionCost+0.0001f
 //------------Unit---------------
 const float Unit::unitCircleSize=30.0f;
 const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
-const float Unit::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.3f;
-const float Unit::openAttackLength=Unit::closeAttackLength*2.0f;
 const float Unit::reduceStartActionCost=50.0f;
 
 const float Unit::attackCost=50.0f;
@@ -38,8 +70,18 @@ const int Unit::hpFontSize=10;
 
 Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
-	,m_baseStatus(10,100,30,12,20,10,5,4)
-	,m_battleStatus(100,0,team)
+	,m_baseStatus(2,20,5,3,2,3,5,4)
+	,m_battleStatus(20,0,team,Weapon::GetWeapon("鉄の槍"))
+	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
+	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,1,DX_FONTTYPE_EDGE))
+{
+	//テスト用のコンストラクタ
+	m_battleStatus.HP=m_baseStatus.maxHP;
+}
+
+Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team)
+	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
+	,m_baseStatus(baseStatus),m_battleStatus(100,Unit::BattleStatus::maxOP,team,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
 	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,1,DX_FONTTYPE_EDGE))
 {
@@ -67,7 +109,7 @@ bool Unit::JudgeAttackable(const Unit *pUnit)const{
 		return false;
 	}
 	//攻撃の射程と位置関係による条件
-	std::shared_ptr<Shape> pWeapon(new Circle(getPos(),closeAttackLength,Shape::Fix::e_dynamic));
+	std::shared_ptr<Shape> pWeapon(new Circle(getPos(),m_battleStatus.weapon->GetLength(),Shape::Fix::e_dynamic));
 	if(pWeapon->CalculatePushVec(pUnit->GetUnitCircleShape())==Vector2D()){
 		//攻撃範囲に敵ユニット本体がいなければ
 		return false;
@@ -114,6 +156,35 @@ void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
 
 }
 
+void Unit::DrawHPGage(Vector2D adjust)const{
+	DrawHPGage(getPos(),adjust);
+}
+
+void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
+	//HPゲージとHPの表示。ゲージは非AAで描画したほうが綺麗に見える
+	const int gageX=(int)(getPos().x-unitCircleSize),gageY=(int)(getPos().y+unitCircleSize)-hpFontSize/2,unitCircleSizeInteger=(int)(unitCircleSize),margin=2;
+	const int gageMaxLength=(unitCircleSizeInteger-margin)*2;
+	const int gageLength=gageMaxLength*m_battleStatus.HP/m_baseStatus.maxHP;
+	unsigned int color;//ゲージの色
+	if(gageLength>gageMaxLength*3/4){
+		//HPが全体の3/4以上なら水色
+		color=GetColor(0,196,255);
+	} else if(gageLength>gageMaxLength*2/4){
+		//HPが全体の1/2以上なら黄緑色
+		color=GetColor(32,196,0);
+	} else if(gageLength>gageMaxLength*1/4){
+		//HPが全体の1/4以上なら黄色
+		color=GetColor(196,196,0);
+	} else{
+		//HPが全体の1/4以下なら赤色
+		color=GetColor(255,64,0);
+	}
+	DrawBox(gageX,gageY,gageX+unitCircleSizeInteger*2,gageY+hpFontSize,GetColor(0,0,0),TRUE);//ゲージ外側
+	DrawBox(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,color,TRUE);//ゲージ内側
+	DrawStringRightJustifiedToHandle(gageX,gageY,std::to_string(m_battleStatus.HP),GetColor(255,255,255),m_hpFont,GetColor(0,0,0));//HPの文字列
+
+}
+
 const Shape *Unit::GetHitJudgeShape()const{
 	if(m_penetratable){
 		//味方の行動フェイズならば、ユニット自身の当たり判定図形を返す
@@ -144,9 +215,9 @@ void Unit::VDraw(Vector2D point,Vector2D adjust)const{
 	if(GetFix()==Shape::Fix::e_dynamic){
 		//dynamicなキャラのみアクション範囲を表示。恐らく移動しているキャラのみ
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-		DrawCircleAA(pos.x,pos.y,closeAttackLength,100,Team::GetColor(m_battleStatus.team),TRUE);//面
+		DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),TRUE);//面
 		SetDrawBlendMode(mode,pal);
-		DrawCircleAA(pos.x,pos.y,closeAttackLength,100,Team::GetColor(m_battleStatus.team),FALSE);//枠
+		DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),FALSE);//枠
 	}
 	//ユニットの当たり判定図形を描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
@@ -160,27 +231,6 @@ void Unit::VDraw(Vector2D point,Vector2D adjust)const{
 	m_hitJudgeShape->Draw(adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
 	//ユニットグラフィックを描画
 
-	//HPゲージとHPの表示。ゲージは非AAで描画したほうが綺麗に見える
-	const int gageX=(int)(getPos().x-unitCircleSize),gageY=(int)(getPos().y+unitCircleSize)-hpFontSize/2,unitCircleSizeInteger=(int)(unitCircleSize),margin=2;
-	const int gageMaxLength=(unitCircleSizeInteger-margin)*2;
-	const int gageLength=gageMaxLength*m_battleStatus.HP/m_baseStatus.maxHP;
-	unsigned int color;//ゲージの色
-	if(gageLength>gageMaxLength*3/4){
-		//HPが全体の3/4以上なら水色
-		color=GetColor(0,196,255);
-	} else if(gageLength>gageMaxLength*2/4){
-		//HPが全体の1/2以上なら黄緑色
-		color=GetColor(32,196,0);
-	} else if(gageLength>gageMaxLength*1/4){
-		//HPが全体の1/4以上なら黄色
-		color=GetColor(196,196,0);
-	} else{
-		//HPが全体の1/4以下なら赤色
-		color=GetColor(255,64,0);
-	}
-	DrawBox(gageX,gageY,gageX+unitCircleSizeInteger*2,gageY+hpFontSize,GetColor(0,0,0),TRUE);//ゲージ外側
-	DrawBox(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,color,TRUE);//ゲージ内側
-	DrawStringRightJustifiedToHandle(gageX,gageY,std::to_string(m_battleStatus.HP),GetColor(255,255,255),m_hpFont,GetColor(0,0,0));//HPの文字列
 	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
 }
@@ -191,4 +241,28 @@ void Unit::VHitProcess(const BattleObject *potherobj){
 
 std::shared_ptr<BattleObject> Unit::VCopy()const{
 	return std::shared_ptr<BattleObject>(new Unit(m_hitJudgeShape->GetPosition(),m_gHandle,m_battleStatus.team));
+}
+
+Unit *Unit::CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,int gHandle,Team::Kind team){
+	BaseStatus baseStatus;
+	std::shared_ptr<Weapon> weapon;
+	switch(profession){
+	case(Profession::e_lancer):
+		baseStatus=BaseStatus(lv,20+(int)(lv*0.8),5+(int)(lv*0.5),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),5+(int)(lv*0.5),4);
+		weapon=Weapon::GetWeapon("鉄の槍");
+		break;
+	case(Profession::e_archer):
+		baseStatus=BaseStatus(lv,18+(int)(lv*0.75),4+(int)(lv*0.45),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),3+(int)(lv*0.3),4);
+		weapon=Weapon::GetWeapon("鉄の弓");
+		break;
+	case(Profession::e_armer):
+		baseStatus=BaseStatus(lv,25+(int)(lv*0.9),6+(int)(lv*0.6),8+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
+		weapon=Weapon::GetWeapon("鉄の槍");
+		break;
+	case(Profession::e_mage):
+		baseStatus=BaseStatus(lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
+		weapon=Weapon::GetWeapon("ファイアー");
+		break;
+	}
+	return new Unit(baseStatus,weapon,position,gHandle,team);
 }
