@@ -115,6 +115,7 @@ public:
 	void DrawMoveInfo(Vector2D point,Vector2D adjust)const;//移動範囲関連の情報を描画する関数
 	void DrawHPGage(Vector2D adjust=Vector2D())const;//HPゲージの描画
 	void DrawHPGage(Vector2D point,Vector2D adjust)const;//HPゲージの描画
+	void DrawFacePic(Vector2D point)const;//ユニットの顔グラフィックを用いたアイコンの描画を行う
 	
 	//仮想関数・純粋仮想関数のオーバーライド
 	const Shape *GetHitJudgeShape()const;//当たり判定図形を取得。
@@ -126,7 +127,7 @@ public:
 
 	//静的関数
 public:
-	static Unit *CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,int gHandle,Team::Kind team);//モブユニットを動的生成する。
+	static Unit *CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,Team::Kind team);//モブユニットを動的生成する。
 
 };
 

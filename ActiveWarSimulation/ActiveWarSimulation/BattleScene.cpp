@@ -5,6 +5,8 @@
 #include<algorithm>
 
 //----------------------BattleScene----------------------
+const float BattleScene::routeFrequency=1.0f;
+
 BattleScene::BattleScene(const char *stagename)
 	:GameScene(),m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1280.0f,720.0f),Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring()
@@ -36,14 +38,14 @@ BattleScene::BattleScene(const char *stagename)
 	}
 	//ファイルからユニットを読み込み
 	//読み込み方法が確立していないので暫定
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(196.0f,196.0f),-1,Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1024.0f,540.0f),-1,Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,1,Vector2D(296.0f,196.0f),-1,Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(524.0f,340.0f),-1,Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(196.0f,256.0f),-1,Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(624.0f,340.0f),-1,Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_mage,1,Vector2D(100.0f,346.0f),-1,Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1060.0f,440.0f),-1,Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,3,Vector2D(336.0f,196.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,3,Vector2D(236.0f,196.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_mage,3,Vector2D(150.0f,346.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,3,Vector2D(306.0f,296.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(524.0f,340.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1064.0f,110.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1160.0f,440.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(1024.0f,540.0f),Unit::Team::e_enemy));
 	//m_unitListやm_operateUnitの初期化
 	for(BattleObject *obj:m_field){
 		if(obj->GetType()==BattleObject::Type::e_unit){
@@ -161,6 +163,11 @@ bool BattleScene::PositionUpdate(const Vector2D inputVec){
 		//対象ユニットの変更
 		SetAimedUnit(aimedUnitAngle,0);
 	}
+	//m_routeの追加
+	if(m_route.empty() || m_route.back().OP-m_operateUnit->GetBattleStatus().OP>routeFrequency){
+		//routeFrequencyを以前の計測以降に消費したOPが越したら現在位置と現在のOPをm_routeに格納
+		m_route.push_back(RouteInfo(m_operateUnit->getPos(),m_operateUnit->GetBattleStatus().OP));
+	}
 
 	return inputFlag;
 }
@@ -189,20 +196,6 @@ void BattleScene::FinishUnitOperation(){
 	SortUnitList();
 	//先頭をm_operateUnitに格納
 	m_operateUnit=m_unitList.front();
-/*
-	//以下は、ユニットを動かさないでいると同じユニットに手番がずっと回ってしまう事への対策。
-	//しかし、OP差がほとんどない同チームのユニット２体が動かないでい続けると同チームでループしてしまい問題の解決にならなかったのでボツ。
-	//行動開始時にユニットのOPを一定量減らす事で対策する
-	if(m_unitList.size()<2 || m_operateUnit!=m_unitList.front()){
-		//次の行動するユニットが同じユニットでない場合は素直に格納
-		m_operateUnit=m_unitList.front();
-	} else{
-		//次も同じユニットが行動してしまう場合、OPを2番目に大きいユニットよりほんの少しだけ小さくなるまで減らしてソートし直す
-		m_operateUnit->AddOP(m_unitList[1]->GetBattleStatus().OP-m_operateUnit->GetBattleStatus().OP-0.001f);
-		SortUnitList();
-		m_operateUnit=m_unitList.front();
-	}
-//*/
 	//m_operateUnitのOPが最大になるようにm_unitList全員のOP値を変化
 	const float plusOP=Unit::BattleStatus::maxOP-m_operateUnit->GetBattleStatus().OP;
 	for(Unit *u:m_unitList){
@@ -214,8 +207,11 @@ void BattleScene::FinishUnitOperation(){
 	UpdateFix();
 	//m_aimedUnitの初期化
 	SetAimedUnit(0.0f,0);
+	//m_routeの初期化
+	m_route.clear();
 	//タイマーセット
 	m_fpsMesuring.RecordTime();
+
 }
 
 void BattleScene::SetAimedUnit(float angle,int turntimes){
@@ -307,6 +303,10 @@ void BattleScene::ProcessAttack(){
 	}
 }
 
+bool BattleScene::JudgeAttackCommandUsable()const{
+	return m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0;
+}
+
 int BattleScene::Calculate(){
 	if(m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 		//味方操作時
@@ -318,16 +318,16 @@ int BattleScene::Calculate(){
 			//移動操作をしなかった時はその他の入力を受け付ける
 			if(keyboard_get(KEY_INPUT_Z)==1){
 				//攻撃
-				if(m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0){
+				if(JudgeAttackCommandUsable()){
 					//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
 					ProcessAttack();//攻撃処理
 					FinishUnitOperation();//行動終了処理
 				}
-			} else if(keyboard_get(KEY_INPUT_X)==1){
+			} else if(keyboard_get(KEY_INPUT_D)==1){
 				//必殺技
 
-			} else if(keyboard_get(KEY_INPUT_A)==1){
-				//狙いのキャラの変更(反時計回り)
+			} else if(keyboard_get(KEY_INPUT_A)==1 && JudgeAttackCommandUsable()){
+				//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(反時計回り)
 				float angle;
 				if(m_aimedUnit!=nullptr){
 					angle=(m_aimedUnit->getPos()-m_operateUnit->getPos()).GetRadian();
@@ -335,8 +335,8 @@ int BattleScene::Calculate(){
 					angle=0.0f;
 				}
 				SetAimedUnit(angle,-1);
-			} else if(keyboard_get(KEY_INPUT_S)==1){
-				//狙いのキャラの変更(時計回り)
+			} else if(keyboard_get(KEY_INPUT_S)==1 && JudgeAttackCommandUsable()){
+				//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(時計回り)
 				float angle;
 				if(m_aimedUnit!=nullptr){
 					angle=(m_aimedUnit->getPos()-m_operateUnit->getPos()).GetRadian();
@@ -350,9 +350,22 @@ int BattleScene::Calculate(){
 			} else if(keyboard_get(KEY_INPUT_V)==1){
 				//待機
 				FinishUnitOperation();
-			} else if(keyboard_get(KEY_INPUT_D)==1){
-				//移動やり直し
-
+			} else if(keyboard_get(KEY_INPUT_X)==1 || keyboard_get(KEY_INPUT_X)>30){
+				//移動やり直し(m_route.back()の1つ前の場所に戻す。back()の位置は現在位置の可能性が高いため)
+				if(!m_route.empty()){
+					m_route.pop_back();
+					if(!m_route.empty()){
+						//もう要素がなければpop_back()をしない
+						RouteInfo info=m_route.back();
+						m_route.pop_back();
+						//ユニットを移動させる
+						m_operateUnit->Warp(info.pos);
+						//OPを回復させる
+						m_operateUnit->AddOP(info.OP-m_operateUnit->GetBattleStatus().OP);
+					}
+					//位置更新を行う
+					PositionUpdate(Vector2D());
+				}
 			}
 		}
 	} else{
@@ -362,13 +375,14 @@ int BattleScene::Calculate(){
 		const Vector2D beforeVec=m_operateUnit->getPos();
 		PositionUpdate(CalculateInputVec());
 		const float moveSqLength=(beforeVec-m_operateUnit->getPos()).sqSize();
+		const double processedTime=m_fpsMesuring.GetProcessedTime();
 		if(m_fpsMesuring.GetProcessedTime()>1.0){
 			//1秒経ったら行動する
-			if(m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0){
+			if(JudgeAttackCommandUsable()){
 				//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
 				ProcessAttack();//攻撃処理
 				FinishUnitOperation();//行動終了処理
-			} else if(m_operateUnit->GetBattleStatus().OP<2.0f || m_fpsMesuring.GetProcessedTime()>10.0 || moveSqLength<0.1f){
+			} else if(m_operateUnit->GetBattleStatus().OP<2.0f || processedTime>10.0 || (moveSqLength<0.1f && processedTime>2.0)){
 				//移動できなくなったら、または10秒経ったら、また移動距離が少ない場合は待機
 				FinishUnitOperation();
 			}
@@ -389,10 +403,15 @@ void BattleScene::Draw()const{
 	}
 
 	//狙っているユニットの描画
-	if(m_aimedUnit!=nullptr){
+	if(JudgeAttackCommandUsable()){
 		m_aimedUnit->BattleObject::VDraw();
 		Vector2D pos=m_aimedUnit->getPos();
 		DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
+	}
+
+	//経路の描画
+	for(size_t i=0,max=m_route.size();i+1<max;i++){
+		DrawLineAA(m_route[i].pos.x,m_route[i].pos.y,m_route[i+1].pos.x,m_route[i+1].pos.y,GetColor(255,255,0),1.0f);
 	}
 
 	//操作中ユニットの描画
@@ -411,10 +430,20 @@ void BattleScene::Draw()const{
 		}
 	}
 
+	//ユニットのオーダー順番を描画
+	int windowdx,windowdy;
+	GetWindowSize(&windowdx,&windowdy);
+	DrawBox(0,windowdy-(int)(Unit::unitCircleSize*1.5f),windowdx,windowdy,GetColor(128,128,128),TRUE);//背景の描画
+	for(size_t i=0,size=m_unitList.size();i<size;i++){
+		m_unitList[i]->DrawFacePic(Vector2D((i+1)*Unit::unitCircleSize*2.2f,(float)windowdy-Unit::unitCircleSize*1.1f));
+	}
+
 	//ユニット情報をデバッグ出力
+	/*
 	int i=0;
 	for(const Unit *u:m_unitList){
 		printfDx("(Unit[%d])HP:%d OP:%3.3f pos:(%.3f,%.3f)\n",i,u->GetBattleStatus().HP,u->GetBattleStatus().OP,u->getPos().x,u->getPos().y);
 		i++;
 	}
+	//*/
 }

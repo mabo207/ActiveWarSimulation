@@ -185,6 +185,14 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 
 }
 
+void Unit::DrawFacePic(Vector2D point)const{
+	//円の描画
+	const int x=(int)point.x,y=(int)point.y,r=25;
+	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team),TRUE);//背景の円の描画
+	DrawRotaGraph(x,y,1.0,0.0,m_gHandle,TRUE);//グラフィックの描画、暫定でマップ上のユニット絵を使用
+	DrawCircle(x,y,r,GetColor(255,255,255),FALSE,3);//背景の枠の描画
+}
+
 const Shape *Unit::GetHitJudgeShape()const{
 	if(m_penetratable){
 		//味方の行動フェイズならば、ユニット自身の当たり判定図形を返す
@@ -221,16 +229,16 @@ void Unit::VDraw(Vector2D point,Vector2D adjust)const{
 	}
 	//ユニットの当たり判定図形を描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-	GetHitJudgeShape()->Draw(adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+	GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
 	SetDrawBlendMode(mode,pal);
-	GetHitJudgeShape()->Draw(adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
+	GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
 	//ユニット自身の当たり判定の描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-	m_hitJudgeShape->Draw(adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+	m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
 	SetDrawBlendMode(mode,pal);
-	m_hitJudgeShape->Draw(adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
+	m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
 	//ユニットグラフィックを描画
-
+	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,0.0,m_gHandle,TRUE,FALSE);
 	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
 }
@@ -243,25 +251,30 @@ std::shared_ptr<BattleObject> Unit::VCopy()const{
 	return std::shared_ptr<BattleObject>(new Unit(m_hitJudgeShape->GetPosition(),m_gHandle,m_battleStatus.team));
 }
 
-Unit *Unit::CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,int gHandle,Team::Kind team){
+Unit *Unit::CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,Team::Kind team){
 	BaseStatus baseStatus;
 	std::shared_ptr<Weapon> weapon;
+	int gHandle=-1;
 	switch(profession){
 	case(Profession::e_lancer):
 		baseStatus=BaseStatus(lv,20+(int)(lv*0.8),5+(int)(lv*0.5),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),5+(int)(lv*0.5),4);
 		weapon=Weapon::GetWeapon("鉄の槍");
+		gHandle=LoadGraphEX("Graphic/soldier.png");
 		break;
 	case(Profession::e_archer):
 		baseStatus=BaseStatus(lv,18+(int)(lv*0.75),4+(int)(lv*0.45),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),3+(int)(lv*0.3),4);
 		weapon=Weapon::GetWeapon("鉄の弓");
+		gHandle=LoadGraphEX("Graphic/archer.png");
 		break;
 	case(Profession::e_armer):
-		baseStatus=BaseStatus(lv,25+(int)(lv*0.9),6+(int)(lv*0.6),8+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
+		baseStatus=BaseStatus(lv,25+(int)(lv*0.9),6+(int)(lv*0.6),8+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),2);
 		weapon=Weapon::GetWeapon("鉄の槍");
+		gHandle=LoadGraphEX("Graphic/armerknight.png");
 		break;
 	case(Profession::e_mage):
-		baseStatus=BaseStatus(lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
+		baseStatus=BaseStatus(lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),3);
 		weapon=Weapon::GetWeapon("ファイアー");
+		gHandle=LoadGraphEX("Graphic/mage.png");
 		break;
 	}
 	return new Unit(baseStatus,weapon,position,gHandle,team);

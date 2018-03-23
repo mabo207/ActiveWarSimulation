@@ -11,9 +11,15 @@
 class BattleScene:public GameScene{
 	//型・列挙体
 public:
+	struct RouteInfo{
+		const Vector2D pos;
+		const float OP;
+		RouteInfo(Vector2D i_pos,float i_OP):pos(i_pos),OP(i_OP){}
+	};
 
 	//定数
 protected:
+	static const float routeFrequency;//OPをどのくらい消費するたびにm_routeに記録するか
 
 public:
 
@@ -27,6 +33,7 @@ protected:
 	Unit *m_operateUnit;//現在操作できるユニット(静的ポインタ)
 	std::vector<Unit *> m_unitList;//フィールド上に生存しているユニット一覧。OPの順にソートされている。要素は全てm_fieldに格納されており、先頭はm_operateUnitになる。1ユニットの行動終了のタイミングでソートする。
 	Unit *m_aimedUnit;//現在の攻撃対象ユニット(静的ポインタ)
+	std::vector<RouteInfo> m_route;//操作ユニットが通った経路
 
 	//グラフィック関連の変数
 	std::shared_ptr<Terrain> m_Window;//ウインドウ全体を表す線分(対角線)
@@ -43,6 +50,7 @@ protected:
 	void FinishUnitOperation();//次のユニットへの遷移処理
 	void SetAimedUnit(float angle=0.0f,int turntimes=1);//m_aimedUnitを変更する。turntimesだけ時計回りに回転させる
 	void ProcessAttack();//攻撃処理を行う
+	bool JudgeAttackCommandUsable()const;//攻撃コマンドを使用可能かどうか
 
 public:
 	BattleScene(const char *stagename);
