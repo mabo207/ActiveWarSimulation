@@ -5,6 +5,8 @@
 #include<algorithm>
 
 //----------------------BattleScene----------------------
+const float BattleScene::routeFrequency=1.0f;
+
 BattleScene::BattleScene(const char *stagename)
 	:GameScene(),m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1280.0f,720.0f),Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring()
@@ -161,6 +163,11 @@ bool BattleScene::PositionUpdate(const Vector2D inputVec){
 		//対象ユニットの変更
 		SetAimedUnit(aimedUnitAngle,0);
 	}
+	//m_routeの追加
+	if(Unit::BattleStatus::maxOP-Unit::reduceStartActionCost-m_operateUnit->GetBattleStatus().OP>(float)(m_route.size()*routeFrequency)){
+		//m_routeの個数*routeFrequencyをそのターン中に消費したOPが越したら現在位置をm_routeに格納
+		m_route.push_back(m_operateUnit->getPos());
+	}
 
 	return inputFlag;
 }
@@ -189,20 +196,6 @@ void BattleScene::FinishUnitOperation(){
 	SortUnitList();
 	//先頭をm_operateUnitに格納
 	m_operateUnit=m_unitList.front();
-/*
-	//以下は、ユニットを動かさないでいると同じユニットに手番がずっと回ってしまう事への対策。
-	//しかし、OP差がほとんどない同チームのユニット２体が動かないでい続けると同チームでループしてしまい問題の解決にならなかったのでボツ。
-	//行動開始時にユニットのOPを一定量減らす事で対策する
-	if(m_unitList.size()<2 || m_operateUnit!=m_unitList.front()){
-		//次の行動するユニットが同じユニットでない場合は素直に格納
-		m_operateUnit=m_unitList.front();
-	} else{
-		//次も同じユニットが行動してしまう場合、OPを2番目に大きいユニットよりほんの少しだけ小さくなるまで減らしてソートし直す
-		m_operateUnit->AddOP(m_unitList[1]->GetBattleStatus().OP-m_operateUnit->GetBattleStatus().OP-0.001f);
-		SortUnitList();
-		m_operateUnit=m_unitList.front();
-	}
-//*/
 	//m_operateUnitのOPが最大になるようにm_unitList全員のOP値を変化
 	const float plusOP=Unit::BattleStatus::maxOP-m_operateUnit->GetBattleStatus().OP;
 	for(Unit *u:m_unitList){
@@ -214,8 +207,11 @@ void BattleScene::FinishUnitOperation(){
 	UpdateFix();
 	//m_aimedUnitの初期化
 	SetAimedUnit(0.0f,0);
+	//m_routeの初期化
+	m_route.clear();
 	//タイマーセット
 	m_fpsMesuring.RecordTime();
+
 }
 
 void BattleScene::SetAimedUnit(float angle,int turntimes){
@@ -393,6 +389,11 @@ void BattleScene::Draw()const{
 		m_aimedUnit->BattleObject::VDraw();
 		Vector2D pos=m_aimedUnit->getPos();
 		DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
+	}
+
+	//経路の描画
+	for(size_t i=0,max=m_route.size();i+1<max;i++){
+		DrawLineAA(m_route[i].x,m_route[i].y,m_route[i+1].x,m_route[i+1].y,GetColor(255,255,0),1.0f);
 	}
 
 	//操作中ユニットの描画
