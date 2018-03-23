@@ -230,7 +230,7 @@ void Unit::VDraw(Vector2D point,Vector2D adjust)const{
 	SetDrawBlendMode(mode,pal);
 	m_hitJudgeShape->Draw(adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
 	//ユニットグラフィックを描画
-
+	DrawRotaGraph((int)(getPos().x),(int)(getPos().y),1.0,0.0,m_gHandle,TRUE,FALSE);
 	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
 }
@@ -243,25 +243,30 @@ std::shared_ptr<BattleObject> Unit::VCopy()const{
 	return std::shared_ptr<BattleObject>(new Unit(m_hitJudgeShape->GetPosition(),m_gHandle,m_battleStatus.team));
 }
 
-Unit *Unit::CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,int gHandle,Team::Kind team){
+Unit *Unit::CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,Team::Kind team){
 	BaseStatus baseStatus;
 	std::shared_ptr<Weapon> weapon;
+	int gHandle=-1;
 	switch(profession){
 	case(Profession::e_lancer):
 		baseStatus=BaseStatus(lv,20+(int)(lv*0.8),5+(int)(lv*0.5),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),5+(int)(lv*0.5),4);
 		weapon=Weapon::GetWeapon("鉄の槍");
+		gHandle=LoadGraphEX("Graphic/soldier.png");
 		break;
 	case(Profession::e_archer):
 		baseStatus=BaseStatus(lv,18+(int)(lv*0.75),4+(int)(lv*0.45),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),3+(int)(lv*0.3),4);
 		weapon=Weapon::GetWeapon("鉄の弓");
+		gHandle=LoadGraphEX("Graphic/archer.png");
 		break;
 	case(Profession::e_armer):
 		baseStatus=BaseStatus(lv,25+(int)(lv*0.9),6+(int)(lv*0.6),8+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
 		weapon=Weapon::GetWeapon("鉄の槍");
+		gHandle=LoadGraphEX("Graphic/armerknight.png");
 		break;
 	case(Profession::e_mage):
 		baseStatus=BaseStatus(lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
 		weapon=Weapon::GetWeapon("ファイアー");
+		gHandle=LoadGraphEX("Graphic/mage.png");
 		break;
 	}
 	return new Unit(baseStatus,weapon,position,gHandle,team);

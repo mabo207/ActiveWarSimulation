@@ -50,6 +50,7 @@ protected:
 	void FinishUnitOperation();//次のユニットへの遷移処理
 	void SetAimedUnit(float angle=0.0f,int turntimes=1);//m_aimedUnitを変更する。turntimesだけ時計回りに回転させる
 	void ProcessAttack();//攻撃処理を行う
+	bool JudgeAttackCommandUsable()const;//攻撃コマンドを使用可能かどうか
 
 public:
 	BattleScene(const char *stagename);

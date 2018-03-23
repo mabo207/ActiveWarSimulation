@@ -126,7 +126,7 @@ public:
 
 	//静的関数
 public:
-	static Unit *CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,int gHandle,Team::Kind team);//モブユニットを動的生成する。
+	static Unit *CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,Team::Kind team);//モブユニットを動的生成する。
 
 };
 

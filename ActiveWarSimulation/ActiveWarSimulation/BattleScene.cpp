@@ -38,14 +38,14 @@ BattleScene::BattleScene(const char *stagename)
 	}
 	//ƒtƒ@ƒCƒ‹‚©‚çƒ†ƒjƒbƒg‚ð“Ç‚Ýž‚Ý
 	//“Ç‚Ýž‚Ý•û–@‚ªŠm—§‚µ‚Ä‚¢‚È‚¢‚Ì‚ÅŽb’è
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(196.0f,196.0f),-1,Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1024.0f,540.0f),-1,Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,1,Vector2D(296.0f,196.0f),-1,Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(524.0f,340.0f),-1,Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(196.0f,256.0f),-1,Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(624.0f,340.0f),-1,Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_mage,1,Vector2D(100.0f,346.0f),-1,Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1060.0f,440.0f),-1,Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(196.0f,196.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1024.0f,540.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,1,Vector2D(296.0f,196.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(524.0f,340.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(196.0f,256.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(624.0f,340.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_mage,1,Vector2D(100.0f,346.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1060.0f,440.0f),Unit::Team::e_enemy));
 	//m_unitList‚âm_operateUnit‚Ì‰Šú‰»
 	for(BattleObject *obj:m_field){
 		if(obj->GetType()==BattleObject::Type::e_unit){
@@ -303,6 +303,10 @@ void BattleScene::ProcessAttack(){
 	}
 }
 
+bool BattleScene::JudgeAttackCommandUsable()const{
+	return m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0;
+}
+
 int BattleScene::Calculate(){
 	if(m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 		//–¡•û‘€ìŽž
@@ -314,7 +318,7 @@ int BattleScene::Calculate(){
 			//ˆÚ“®‘€ì‚ð‚µ‚È‚©‚Á‚½Žž‚Í‚»‚Ì‘¼‚Ì“ü—Í‚ðŽó‚¯•t‚¯‚é
 			if(keyboard_get(KEY_INPUT_Z)==1){
 				//UŒ‚
-				if(m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0){
+				if(JudgeAttackCommandUsable()){
 					//UŒ‚‘ÎÛ‚ª‘¶Ý‚µAOP‚ª‘«‚è‚Ä‚¢‚éê‡‚Ì‚ÝUŒ‚ˆ—‚ðs‚¤
 					ProcessAttack();//UŒ‚ˆ—
 					FinishUnitOperation();//s“®I—¹ˆ—
@@ -371,13 +375,14 @@ int BattleScene::Calculate(){
 		const Vector2D beforeVec=m_operateUnit->getPos();
 		PositionUpdate(CalculateInputVec());
 		const float moveSqLength=(beforeVec-m_operateUnit->getPos()).sqSize();
+		const double processedTime=m_fpsMesuring.GetProcessedTime();
 		if(m_fpsMesuring.GetProcessedTime()>1.0){
 			//1•bŒo‚Á‚½‚çs“®‚·‚é
-			if(m_aimedUnit!=nullptr && m_operateUnit->GetBattleStatus().OP+m_operateUnit->CalculateAddOPNormalAttack()>=0){
+			if(JudgeAttackCommandUsable()){
 				//UŒ‚‘ÎÛ‚ª‘¶Ý‚µAOP‚ª‘«‚è‚Ä‚¢‚éê‡‚Ì‚ÝUŒ‚ˆ—‚ðs‚¤
 				ProcessAttack();//UŒ‚ˆ—
 				FinishUnitOperation();//s“®I—¹ˆ—
-			} else if(m_operateUnit->GetBattleStatus().OP<2.0f || m_fpsMesuring.GetProcessedTime()>10.0 || moveSqLength<0.1f){
+			} else if(m_operateUnit->GetBattleStatus().OP<2.0f || processedTime>10.0 || (moveSqLength<0.1f && processedTime>2.0)){
 				//ˆÚ“®‚Å‚«‚È‚­‚È‚Á‚½‚çA‚Ü‚½‚Í10•bŒo‚Á‚½‚çA‚Ü‚½ˆÚ“®‹——£‚ª­‚È‚¢ê‡‚Í‘Ò‹@
 				FinishUnitOperation();
 			}
@@ -398,7 +403,7 @@ void BattleScene::Draw()const{
 	}
 
 	//‘_‚Á‚Ä‚¢‚éƒ†ƒjƒbƒg‚Ì•`‰æ
-	if(m_aimedUnit!=nullptr){
+	if(JudgeAttackCommandUsable()){
 		m_aimedUnit->BattleObject::VDraw();
 		Vector2D pos=m_aimedUnit->getPos();
 		DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
