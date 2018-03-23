@@ -3,7 +3,9 @@
 
 //インクルード
 #include<string>
+#include<vector>
 #include<math.h>
+#include<type_traits>
 
 //一般的に用いることができる便利関数・構造体をここに書く
 //位置についての構造体
@@ -45,7 +47,7 @@ public:
 		return Vector2D(-x,-y);
 	}
 	bool operator==(const Vector2D &otherobj)const{
-		return (this->x==otherobj.x) && (this->y && otherobj.y);
+		return (this->x==otherobj.x) && (this->y==otherobj.y);
 	}
 	bool operator!=(const Vector2D &otherobj)const{
 		return !((*this)==otherobj);
@@ -139,11 +141,32 @@ std::string to_string_0d(int pal,unsigned int length);
 //ファイルが存在するかどうかを調べる。実行ファイルの存在するディレクトリ上に存在するかを調べる。
 bool JudgeFileExist(const std::string &str);
 
+//現在の背景色のカラーコードを取得する
+unsigned int GetBackgroundColor();
+
 //反転色のカラーコードを取得する
 unsigned int GetInvertedColor(unsigned int color);
 
 //pointがp1,p2,p3による三角形の内部にあるかを判定
 bool JudgeInTriangle(Vector2D point,Vector2D p1,Vector2D p2,Vector2D p3);
+
+//継承クラスのポインタのポインタを基底クラスのポインタのポインタにキャストする関数。継承先ポインタで作った配列を基底クラスのポインタで作った配列に変えたい時に使う
+template<typename T,typename FROM> std::enable_if_t<std::is_base_of_v<T,FROM>,T**> pointer_array_cast(FROM **arr){
+	//TがFROMを継承していないとコンパイルエラーになる。
+	//std::enable_if_t<bool Condition,class T> --- Conditionがtrueの時のみ型Tを表す
+	//std::is_base_of_v<class Base,class Derived> --- DerivedがBaseを継承しているか
+	//std::is_convertible_v<class From,class To> --- FromからToへ暗黙的に変換が可能かどうか
+	return reinterpret_cast<T**>(arr);
+}
+
+//継承クラスのポインタのポインタを基底クラスのポインタのポインタにキャストする関数。継承先ポインタで作った配列を基底クラスのポインタで作った配列に変えたい時に使う
+template<typename T,typename FROM> std::enable_if_t<std::is_convertible_v<FROM*,T*>,T**> pointer_array_cast2(FROM **arr){
+	//TがFROMを継承していないとコンパイルエラーになる。
+	//std::enable_if_t<bool Condition,class T> --- Conditionがtrueの時のみ型Tを表す
+	//std::is_base_of_v<class Base,class Derived> --- DerivedがBaseを継承しているか
+	//std::is_convertible_v<class From,class To> --- FromからToへ暗黙的に変換が可能かどうか
+	return reinterpret_cast<T**>(arr);
+}
 
 //数値の変化を様々な式で管理するクラス
 class Easing{
@@ -319,6 +342,45 @@ public:
 	bool SetTimer(int timeLength,bool secondFlag);//タイマーの設定をする。flame単位か秒単位で設定するか選べる。
 	void Update();
 	void EnforceEnd();
+};
+
+//文字列の分割・結合を行うクラス
+class StringBuilder{
+	//型・列挙体
+
+	//定数
+
+	//変数
+protected:
+	char m_spliter,m_beginer,m_ender;//それぞれ、区切り文字・集合の先頭文字・集合の終端文字
+	//以下はどちらかにしか用いない
+	std::string m_str;//区切りのない１つの文字列
+public:
+	std::vector<StringBuilder> m_vec;//区切られた複数文字列、トークンを途中で変えられるようにStringBuilderの配列にし、publicにする。
+protected:
+	//どちらに値が入っているか
+	bool m_splitFlag;
+
+	//関数
+public:
+	StringBuilder(const std::string &str,char spliter,char beginer,char ender,bool deepen,bool setSplit);
+	~StringBuilder();
+
+	char GetSpliter()const{
+		return m_spliter;
+	}
+	char GetBeginer()const{
+		return m_beginer;
+	}
+	char GetEnder()const{
+		return m_ender;
+	}
+	bool GetSplitFlag()const{
+		return m_splitFlag;
+	}
+	std::string GetString()const;
+	std::vector<StringBuilder> GetVector()const;
+	std::vector<std::string> GetStringVector()const;
 };
 
 

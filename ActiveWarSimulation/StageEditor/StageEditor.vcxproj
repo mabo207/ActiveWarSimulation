@@ -18,36 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\ActiveWarSimulation\GraphicControl.cpp" />
-    <ClCompile Include="..\ActiveWarSimulation\GraphicProgramming.cpp" />
-    <ClCompile Include="..\ActiveWarSimulation\input.cpp" />
-    <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp" />
-    <ClCompile Include="..\StageEditor\BattleObject.cpp" />
-    <ClCompile Include="..\StageEditor\Terrain.cpp" />
-    <ClCompile Include="Circle.cpp" />
-    <ClCompile Include="Edge.cpp" />
-    <ClCompile Include="FieldBaseMain.cpp" />
-    <ClCompile Include="Shape.cpp" />
-    <ClCompile Include="ShapeHaving.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\ActiveWarSimulation\GraphicControl.h" />
-    <ClInclude Include="..\ActiveWarSimulation\GraphicProgramming.h" />
-    <ClInclude Include="..\ActiveWarSimulation\input.h" />
-    <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h" />
-    <ClInclude Include="..\StageEditor\BattleObject.h" />
-    <ClInclude Include="..\StageEditor\Terrain.h" />
-    <ClInclude Include="Circle.h" />
-    <ClInclude Include="Edge.h" />
-    <ClInclude Include="Shape.h" />
-    <ClInclude Include="ShapeHaving.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{2C57A1B9-D72A-4343-A201-BDDB4667E9EB}</ProjectGuid>
+    <ProjectGuid>{4E49DB91-27F9-4345-B45A-8493981F8149}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>FieldBase</RootNamespace>
+    <RootNamespace>StageEditor</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -114,12 +89,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\DxLib\3.17-e\addfiles;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\ActiveWarSimulation;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\FieldBase;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\StageEditor;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>C:\DxLib\3.17-e\addfiles;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\FieldBase;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\ActiveWarSimulation;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>C:\DxLib\3.17-e\addfiles;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\ActiveWarSimulation;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\FieldBase;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\StageEditor;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\DxLib\3.17-e\addfiles;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\FieldBase;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\ActiveWarSimulation;%(AdditionalIncludeDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -143,14 +118,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\DxLib\3.17-e\addfiles;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\ActiveWarSimulation;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\FieldBase;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\StageEditor;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>C:\DxLib\3.17-e\addfiles;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\FieldBase;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\ActiveWarSimulation;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\DxLib\3.17-e\addfiles;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\ActiveWarSimulation;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\FieldBase;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\StageEditor;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\DxLib\3.17-e\addfiles;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\FieldBase;C:\Users\Masashi\Documents\GitHub\ActiveWarSimulation\ActiveWarSimulation\ActiveWarSimulation;%(AdditionalIncludeDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -169,6 +144,58 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ActiveWarSimulation\GraphicControl.h" />
+    <ClInclude Include="..\ActiveWarSimulation\GraphicProgramming.h" />
+    <ClInclude Include="..\ActiveWarSimulation\input.h" />
+    <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h" />
+    <ClInclude Include="..\FieldBase\Circle.h" />
+    <ClInclude Include="..\FieldBase\Edge.h" />
+    <ClInclude Include="..\FieldBase\Shape.h" />
+    <ClInclude Include="..\FieldBase\ShapeHaving.h" />
+    <ClInclude Include="BattleObject.h" />
+    <ClInclude Include="ButtonHaving.h" />
+    <ClInclude Include="CircleFactory.h" />
+    <ClInclude Include="ConstPosSet.h" />
+    <ClInclude Include="EdgeFactory.h" />
+    <ClInclude Include="EditAction.h" />
+    <ClInclude Include="EditActionSettings.h" />
+    <ClInclude Include="EditMove.h" />
+    <ClInclude Include="EditPut.h" />
+    <ClInclude Include="EditRemove.h" />
+    <ClInclude Include="EditResize.h" />
+    <ClInclude Include="StageEditor.h" />
+    <ClInclude Include="PosSetting.h" />
+    <ClInclude Include="ScrollBar.h" />
+    <ClInclude Include="ShapeFactory.h" />
+    <ClInclude Include="Terrain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\ActiveWarSimulation\GraphicControl.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\GraphicProgramming.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\input.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp" />
+    <ClCompile Include="..\FieldBase\Circle.cpp" />
+    <ClCompile Include="..\FieldBase\Edge.cpp" />
+    <ClCompile Include="..\FieldBase\Shape.cpp" />
+    <ClCompile Include="..\FieldBase\ShapeHaving.cpp" />
+    <ClCompile Include="BattleObject.cpp" />
+    <ClCompile Include="CircleFactory.cpp" />
+    <ClCompile Include="ConstPosSet.cpp" />
+    <ClCompile Include="EdgeFactory.cpp" />
+    <ClCompile Include="EditAction.cpp" />
+    <ClCompile Include="EditActionSettings.cpp" />
+    <ClCompile Include="EditMove.cpp" />
+    <ClCompile Include="EditPut.cpp" />
+    <ClCompile Include="EditRemove.cpp" />
+    <ClCompile Include="EditResize.cpp" />
+    <ClCompile Include="StageEditor.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="PosSetting.cpp" />
+    <ClCompile Include="ScrollBar.cpp" />
+    <ClCompile Include="ShapeFactory.cpp" />
+    <ClCompile Include="Terrain.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

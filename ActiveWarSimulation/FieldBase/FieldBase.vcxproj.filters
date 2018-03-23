@@ -19,15 +19,21 @@
     <Filter Include="ソース ファイル\Shape">
       <UniqueIdentifier>{9933f794-0886-4a41-848d-097a6743d0d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Tools">
+      <UniqueIdentifier>{eb2874c8-5f32-4289-8331-c61900031a7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Tools">
+      <UniqueIdentifier>{c6695e07-8ce9-4df1-b680-677c78fa04c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\FieldObject">
+      <UniqueIdentifier>{0dd8ad11-6687-498d-bb3f-56037cf0b8b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\FieldObject">
+      <UniqueIdentifier>{e583af0b-0461-4517-8cd9-3e879161c1e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FieldBaseMain.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ActiveWarSimulation\input.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Shape.cpp">
@@ -39,14 +45,29 @@
     <ClCompile Include="Edge.cpp">
       <Filter>ソース ファイル\Shape</Filter>
     </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\input.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StageEditor\BattleObject.cpp">
+      <Filter>ソース ファイル\FieldObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StageEditor\Terrain.cpp">
+      <Filter>ソース ファイル\FieldObject</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeHaving.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\GraphicControl.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\GraphicProgramming.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\ActiveWarSimulation\input.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Shape.h">
       <Filter>ヘッダー ファイル\Shape</Filter>
     </ClInclude>
@@ -55,6 +76,27 @@
     </ClInclude>
     <ClInclude Include="Edge.h">
       <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\input.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StageEditor\BattleObject.h">
+      <Filter>ヘッダー ファイル\FieldObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StageEditor\Terrain.h">
+      <Filter>ヘッダー ファイル\FieldObject</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeHaving.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\GraphicControl.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\GraphicProgramming.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,8 +8,12 @@ Circle::Circle(Vector2D position,float r,Fix::Kind fix)
 
 Circle::~Circle(){}
 
-void Circle::Draw(Vector2D adjust,unsigned int color,int fillFlag,float lineThickness)const{
-	Vector2D v=m_position+adjust;
+std::shared_ptr<Shape> Circle::VCopy()const{
+	return std::shared_ptr<Shape>(new Circle(this->m_position,this->m_r,this->m_fix));
+}
+
+void Circle::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness)const{
+	Vector2D v=point+adjust;
 	DrawCircleAA(v.x,v.y,m_r,36,color,fillFlag,lineThickness);
 }
 
@@ -49,4 +53,40 @@ Vector2D Circle::CalculatePushVec(const Shape *pShape)const{
 		break;
 	}
 	return ret;
+}
+
+bool Circle::VJudgePointInsideShape(Vector2D point)const{
+	//中心とpointまでの距離とm_rを調べれば良い
+	return (m_position-point).sqSize()<m_r*m_r;
+}
+
+Vector2D Circle::GetLeftTop()const{
+	return Vector2D(m_position.x-m_r,m_position.y-m_r);
+}
+
+Vector2D Circle::GetRightBottom()const{
+	return Vector2D(m_position.x+m_r,m_position.y+m_r);
+}
+
+Vector2D Circle::VGetNearEndpoint(Vector2D point,float capacity)const{
+	//円に端点は無いのでpointをそのまま返す
+	return point;
+}
+
+void Circle::Resize(Vector2D v){
+	//半径m_rをvの長さにする
+	m_r=v.size();
+}
+
+Vector2D Circle::GetRetResize()const{
+	//長さm_rのベクトルを返せばなんでもよい
+	return Vector2D(m_r,0);
+}
+
+void Circle::WriteOutShape(std::ofstream &ofs)const{
+	//"("→(種別)→(始点位置)→(半径)→(初期固定)→")"
+	ofs<<beginer<<Type::GetStr(m_type)<<spliter;//ofs<<"(Circle,";
+	ofs<<beginer<<m_position.x<<spliter<<m_position.y<<ender<<spliter;//ofs<<"("<<m_position.x<<","<<m_position.y<<"),";
+	ofs<<Fix::GetStr(m_fix)<<spliter;//ofs<<Fix::GetStr(m_fix)<<",";
+	ofs<<m_r<<ender;//ofs<<m_r<<")";
 }
