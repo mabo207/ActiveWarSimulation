@@ -12,8 +12,8 @@ std::shared_ptr<Shape> Circle::VCopy()const{
 	return std::shared_ptr<Shape>(new Circle(this->m_position,this->m_r,this->m_fix));
 }
 
-void Circle::Draw(Vector2D adjust,unsigned int color,int fillFlag,float lineThickness)const{
-	Vector2D v=m_position+adjust;
+void Circle::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness)const{
+	Vector2D v=point+adjust;
 	DrawCircleAA(v.x,v.y,m_r,36,color,fillFlag,lineThickness);
 }
 

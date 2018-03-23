@@ -430,6 +430,14 @@ void BattleScene::Draw()const{
 		}
 	}
 
+	//ユニットのオーダー順番を描画
+	int windowdx,windowdy;
+	GetWindowSize(&windowdx,&windowdy);
+	DrawBox(0,windowdy-(int)(Unit::unitCircleSize*1.5f),windowdx,windowdy,GetColor(128,128,128),TRUE);
+	for(size_t i=0,size=m_unitList.size();i<size;i++){
+		m_unitList[i]->VDraw(Vector2D((i+1)*Unit::unitCircleSize*2.2f,(float)windowdy-Unit::unitCircleSize*1.1f),Vector2D());
+	}
+
 	//ユニット情報をデバッグ出力
 	int i=0;
 	for(const Unit *u:m_unitList){

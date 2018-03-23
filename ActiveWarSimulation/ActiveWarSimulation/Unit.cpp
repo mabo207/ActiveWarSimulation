@@ -221,16 +221,16 @@ void Unit::VDraw(Vector2D point,Vector2D adjust)const{
 	}
 	//ユニットの当たり判定図形を描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-	GetHitJudgeShape()->Draw(adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+	GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
 	SetDrawBlendMode(mode,pal);
-	GetHitJudgeShape()->Draw(adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
+	GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
 	//ユニット自身の当たり判定の描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-	m_hitJudgeShape->Draw(adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+	m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
 	SetDrawBlendMode(mode,pal);
-	m_hitJudgeShape->Draw(adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
+	m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
 	//ユニットグラフィックを描画
-	DrawRotaGraph((int)(getPos().x),(int)(getPos().y),1.0,0.0,m_gHandle,TRUE,FALSE);
+	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,0.0,m_gHandle,TRUE,FALSE);
 	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
 }
