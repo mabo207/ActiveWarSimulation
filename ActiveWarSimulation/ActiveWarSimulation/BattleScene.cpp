@@ -164,9 +164,9 @@ bool BattleScene::PositionUpdate(const Vector2D inputVec){
 		SetAimedUnit(aimedUnitAngle,0);
 	}
 	//m_routeの追加
-	if(Unit::BattleStatus::maxOP-Unit::reduceStartActionCost-m_operateUnit->GetBattleStatus().OP>(float)(m_route.size()*routeFrequency)){
-		//m_routeの個数*routeFrequencyをそのターン中に消費したOPが越したら現在位置をm_routeに格納
-		m_route.push_back(m_operateUnit->getPos());
+	if(m_route.empty() || m_route.back().OP-m_operateUnit->GetBattleStatus().OP>routeFrequency){
+		//routeFrequencyを以前の計測以降に消費したOPが越したら現在位置と現在のOPをm_routeに格納
+		m_route.push_back(RouteInfo(m_operateUnit->getPos(),m_operateUnit->GetBattleStatus().OP));
 	}
 
 	return inputFlag;
@@ -319,7 +319,7 @@ int BattleScene::Calculate(){
 					ProcessAttack();//攻撃処理
 					FinishUnitOperation();//行動終了処理
 				}
-			} else if(keyboard_get(KEY_INPUT_X)==1){
+			} else if(keyboard_get(KEY_INPUT_D)==1){
 				//必殺技
 
 			} else if(keyboard_get(KEY_INPUT_A)==1){
@@ -346,9 +346,22 @@ int BattleScene::Calculate(){
 			} else if(keyboard_get(KEY_INPUT_V)==1){
 				//待機
 				FinishUnitOperation();
-			} else if(keyboard_get(KEY_INPUT_D)==1){
-				//移動やり直し
-
+			} else if(keyboard_get(KEY_INPUT_X)==1 || keyboard_get(KEY_INPUT_X)>30){
+				//移動やり直し(m_route.back()の1つ前の場所に戻す。back()の位置は現在位置の可能性が高いため)
+				if(!m_route.empty()){
+					m_route.pop_back();
+					if(!m_route.empty()){
+						//もう要素がなければpop_back()をしない
+						RouteInfo info=m_route.back();
+						m_route.pop_back();
+						//ユニットを移動させる
+						m_operateUnit->Warp(info.pos);
+						//OPを回復させる
+						m_operateUnit->AddOP(info.OP-m_operateUnit->GetBattleStatus().OP);
+					}
+					//位置更新を行う
+					PositionUpdate(Vector2D());
+				}
 			}
 		}
 	} else{
@@ -393,7 +406,7 @@ void BattleScene::Draw()const{
 
 	//経路の描画
 	for(size_t i=0,max=m_route.size();i+1<max;i++){
-		DrawLineAA(m_route[i].x,m_route[i].y,m_route[i+1].x,m_route[i+1].y,GetColor(255,255,0),1.0f);
+		DrawLineAA(m_route[i].pos.x,m_route[i].pos.y,m_route[i+1].pos.x,m_route[i+1].pos.y,GetColor(255,255,0),1.0f);
 	}
 
 	//操作中ユニットの描画
