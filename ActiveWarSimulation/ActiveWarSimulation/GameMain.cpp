@@ -63,6 +63,9 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 				//終了検出
 				if(keyboard_get(KEY_INPUT_ESCAPE)>0 || index!=0){
 					break;
+				} else if(keyboard_get(KEY_INPUT_F1)==10){
+					//F1を押したらステージを初期化
+					pGameScene=std::shared_ptr<GameScene>(new BattleScene(""));
 				}
 			}
 		}
