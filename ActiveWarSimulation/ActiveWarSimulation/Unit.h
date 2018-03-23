@@ -61,9 +61,7 @@ public:
 public:
 	static const float unitCircleSize;//ユニットそのものの大きさ
 	static const float rivalInpenetratableCircleSize;//敵対ユニットの進入不可領域
-	static const float closeAttackLength;//短距離攻撃の射程
-	static const float openAttackLength;//長距離攻撃の射程
-
+	
 	static const float attackCost;//攻撃のコストを実装(これは武器クラスに突っ込む可能性が高い)
 
 	static const int hpFontSize;//HPのフォントの大きさ
@@ -128,7 +126,7 @@ public:
 
 	//静的関数
 public:
-	Unit *CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,int gHandle,Team::Kind team);//モブユニットを動的生成する。
+	static Unit *CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,int gHandle,Team::Kind team);//モブユニットを動的生成する。
 
 };
 

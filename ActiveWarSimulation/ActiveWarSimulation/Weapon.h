@@ -20,6 +20,9 @@ public:
 	};
 
 	//’è”
+public:
+	static const float closeAttackLength;//’Z‹——£UŒ‚‚ÌË’ö
+	static const float openAttackLength;//’·‹——£UŒ‚‚ÌË’ö
 
 	//•Ï”
 protected:

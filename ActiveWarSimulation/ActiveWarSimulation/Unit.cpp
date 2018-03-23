@@ -62,8 +62,6 @@ const float Unit::BattleStatus::maxOP=100.0f+Unit::reduceStartActionCost+0.0001f
 //------------Unit---------------
 const float Unit::unitCircleSize=30.0f;
 const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
-const float Unit::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.3f;
-const float Unit::openAttackLength=Unit::closeAttackLength*2.0f;
 const float Unit::reduceStartActionCost=50.0f;
 
 const float Unit::attackCost=50.0f;
@@ -111,7 +109,7 @@ bool Unit::JudgeAttackable(const Unit *pUnit)const{
 		return false;
 	}
 	//攻撃の射程と位置関係による条件
-	std::shared_ptr<Shape> pWeapon(new Circle(getPos(),closeAttackLength,Shape::Fix::e_dynamic));
+	std::shared_ptr<Shape> pWeapon(new Circle(getPos(),m_battleStatus.weapon->GetLength(),Shape::Fix::e_dynamic));
 	if(pWeapon->CalculatePushVec(pUnit->GetUnitCircleShape())==Vector2D()){
 		//攻撃範囲に敵ユニット本体がいなければ
 		return false;
@@ -217,9 +215,9 @@ void Unit::VDraw(Vector2D point,Vector2D adjust)const{
 	if(GetFix()==Shape::Fix::e_dynamic){
 		//dynamicなキャラのみアクション範囲を表示。恐らく移動しているキャラのみ
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-		DrawCircleAA(pos.x,pos.y,closeAttackLength,100,Team::GetColor(m_battleStatus.team),TRUE);//面
+		DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),TRUE);//面
 		SetDrawBlendMode(mode,pal);
-		DrawCircleAA(pos.x,pos.y,closeAttackLength,100,Team::GetColor(m_battleStatus.team),FALSE);//枠
+		DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),FALSE);//枠
 	}
 	//ユニットの当たり判定図形を描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
