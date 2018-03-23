@@ -185,6 +185,14 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 
 }
 
+void Unit::DrawFacePic(Vector2D point)const{
+	//円の描画
+	const int x=(int)point.x,y=(int)point.y,r=25;
+	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team),TRUE);//背景の円の描画
+	DrawRotaGraph(x,y,1.0,0.0,m_gHandle,TRUE);//グラフィックの描画、暫定でマップ上のユニット絵を使用
+	DrawCircle(x,y,r,GetColor(255,255,255),FALSE,3);//背景の枠の描画
+}
+
 const Shape *Unit::GetHitJudgeShape()const{
 	if(m_penetratable){
 		//味方の行動フェイズならば、ユニット自身の当たり判定図形を返す

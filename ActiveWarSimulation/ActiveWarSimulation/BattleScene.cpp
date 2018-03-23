@@ -38,9 +38,9 @@ BattleScene::BattleScene(const char *stagename)
 	}
 	//ファイルからユニットを読み込み
 	//読み込み方法が確立していないので暫定
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(196.0f,196.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(296.0f,196.0f),Unit::Team::e_player));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1024.0f,540.0f),Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,1,Vector2D(296.0f,196.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,1,Vector2D(186.0f,196.0f),Unit::Team::e_player));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(524.0f,340.0f),Unit::Team::e_enemy));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(196.0f,256.0f),Unit::Team::e_player));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(624.0f,340.0f),Unit::Team::e_enemy));
@@ -433,15 +433,17 @@ void BattleScene::Draw()const{
 	//ユニットのオーダー順番を描画
 	int windowdx,windowdy;
 	GetWindowSize(&windowdx,&windowdy);
-	DrawBox(0,windowdy-(int)(Unit::unitCircleSize*1.5f),windowdx,windowdy,GetColor(128,128,128),TRUE);
+	DrawBox(0,windowdy-(int)(Unit::unitCircleSize*1.5f),windowdx,windowdy,GetColor(128,128,128),TRUE);//背景の描画
 	for(size_t i=0,size=m_unitList.size();i<size;i++){
-		m_unitList[i]->VDraw(Vector2D((i+1)*Unit::unitCircleSize*2.2f,(float)windowdy-Unit::unitCircleSize*1.1f),Vector2D());
+		m_unitList[i]->DrawFacePic(Vector2D((i+1)*Unit::unitCircleSize*2.2f,(float)windowdy-Unit::unitCircleSize*1.1f));
 	}
 
 	//ユニット情報をデバッグ出力
+	/*
 	int i=0;
 	for(const Unit *u:m_unitList){
 		printfDx("(Unit[%d])HP:%d OP:%3.3f pos:(%.3f,%.3f)\n",i,u->GetBattleStatus().HP,u->GetBattleStatus().OP,u->getPos().x,u->getPos().y);
 		i++;
 	}
+	//*/
 }
