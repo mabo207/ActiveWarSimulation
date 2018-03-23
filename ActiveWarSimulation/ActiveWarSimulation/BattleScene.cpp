@@ -326,8 +326,8 @@ int BattleScene::Calculate(){
 			} else if(keyboard_get(KEY_INPUT_D)==1){
 				//必殺技
 
-			} else if(keyboard_get(KEY_INPUT_A)==1){
-				//狙いのキャラの変更(反時計回り)
+			} else if(keyboard_get(KEY_INPUT_A)==1 && JudgeAttackCommandUsable()){
+				//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(反時計回り)
 				float angle;
 				if(m_aimedUnit!=nullptr){
 					angle=(m_aimedUnit->getPos()-m_operateUnit->getPos()).GetRadian();
@@ -335,8 +335,8 @@ int BattleScene::Calculate(){
 					angle=0.0f;
 				}
 				SetAimedUnit(angle,-1);
-			} else if(keyboard_get(KEY_INPUT_S)==1){
-				//狙いのキャラの変更(時計回り)
+			} else if(keyboard_get(KEY_INPUT_S)==1 && JudgeAttackCommandUsable()){
+				//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(時計回り)
 				float angle;
 				if(m_aimedUnit!=nullptr){
 					angle=(m_aimedUnit->getPos()-m_operateUnit->getPos()).GetRadian();
