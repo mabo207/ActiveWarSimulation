@@ -66,14 +66,14 @@ const float Unit::reduceStartActionCost=50.0f;
 
 const float Unit::attackCost=50.0f;
 
-const int Unit::hpFontSize=10;
+const int Unit::hpFontSize=14;
 
 Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
 	,m_baseStatus(2,20,5,3,2,3,5,4)
 	,m_battleStatus(20,0,team,Weapon::GetWeapon("鉄の槍"))
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
-	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,1,DX_FONTTYPE_EDGE))
+	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,2,DX_FONTTYPE_EDGE))
 {
 	//テスト用のコンストラクタ
 	m_battleStatus.HP=m_baseStatus.maxHP;
@@ -83,7 +83,7 @@ Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D positio
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
 	,m_baseStatus(baseStatus),m_battleStatus(100,Unit::BattleStatus::maxOP,team,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
-	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,1,DX_FONTTYPE_EDGE))
+	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,2,DX_FONTTYPE_EDGE))
 {
 	//テスト用のコンストラクタ
 	m_battleStatus.HP=m_baseStatus.maxHP;
