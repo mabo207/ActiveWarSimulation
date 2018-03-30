@@ -60,13 +60,13 @@ unsigned int Unit::Team::GetColor(Kind kind){
 const float Unit::BattleStatus::maxOP=100.0f+Unit::reduceStartActionCost+0.0001f;//ƒLƒŠ‚Ì—Ç‚¢®”‚æ‚è­‚µ‚¾‚¯‘å‚«‚­‚·‚é–‚ÅOP‚ğmaxOP‚Ü‚Å‘‚â‚·‚ÉOP‚ªŒvZŒë·‚Å”¼’[‚È®”‚É‚È‚ç‚È‚¢‚æ‚¤‚É‚·‚éB
 
 //------------Unit---------------
-const float Unit::unitCircleSize=30.0f;
+const float Unit::unitCircleSize=45.0f;
 const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
 const float Unit::reduceStartActionCost=50.0f;
 
 const float Unit::attackCost=50.0f;
 
-const int Unit::hpFontSize=10;
+const int Unit::hpFontSize=20;
 
 Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
@@ -187,7 +187,7 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 
 void Unit::DrawFacePic(Vector2D point)const{
 	//‰~‚Ì•`‰æ
-	const int x=(int)point.x,y=(int)point.y,r=25;
+	const int x=(int)point.x,y=(int)point.y,r=(int)unitCircleSize;
 	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team),TRUE);//”wŒi‚Ì‰~‚Ì•`‰æ
 	DrawRotaGraph(x,y,1.0,0.0,m_gHandle,TRUE);//ƒOƒ‰ƒtƒBƒbƒN‚Ì•`‰æAb’è‚Åƒ}ƒbƒvã‚Ìƒ†ƒjƒbƒgŠG‚ğg—p
 	DrawCircle(x,y,r,GetColor(255,255,255),FALSE,3);//”wŒi‚Ì˜g‚Ì•`‰æ
@@ -257,22 +257,22 @@ Unit *Unit::CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,T
 	int gHandle=-1;
 	switch(profession){
 	case(Profession::e_lancer):
-		baseStatus=BaseStatus(lv,20+(int)(lv*0.8),5+(int)(lv*0.5),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),5+(int)(lv*0.5),4);
+		baseStatus=BaseStatus(lv,20+(int)(lv*0.8),5+(int)(lv*0.5),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),5+(int)(lv*0.5),6);
 		weapon=Weapon::GetWeapon("“S‚Ì‘„");
 		gHandle=LoadGraphEX("Graphic/soldier.png");
 		break;
 	case(Profession::e_archer):
-		baseStatus=BaseStatus(lv,18+(int)(lv*0.75),4+(int)(lv*0.45),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),3+(int)(lv*0.3),4);
+		baseStatus=BaseStatus(lv,18+(int)(lv*0.75),4+(int)(lv*0.45),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),3+(int)(lv*0.3),6);
 		weapon=Weapon::GetWeapon("“S‚Ì‹|");
 		gHandle=LoadGraphEX("Graphic/archer.png");
 		break;
 	case(Profession::e_armer):
-		baseStatus=BaseStatus(lv,25+(int)(lv*0.9),6+(int)(lv*0.6),8+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),2);
+		baseStatus=BaseStatus(lv,25+(int)(lv*0.9),6+(int)(lv*0.6),8+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
 		weapon=Weapon::GetWeapon("“S‚Ì‘„");
 		gHandle=LoadGraphEX("Graphic/armerknight.png");
 		break;
 	case(Profession::e_mage):
-		baseStatus=BaseStatus(lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),3);
+		baseStatus=BaseStatus(lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
 		weapon=Weapon::GetWeapon("ƒtƒ@ƒCƒA[");
 		gHandle=LoadGraphEX("Graphic/mage.png");
 		break;

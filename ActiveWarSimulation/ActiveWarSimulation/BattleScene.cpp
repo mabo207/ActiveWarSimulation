@@ -8,7 +8,7 @@
 const float BattleScene::routeFrequency=1.0f;
 
 BattleScene::BattleScene(const char *stagename)
-	:GameScene(),m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1280.0f,720.0f),Shape::Fix::e_ignore)),-1,0,true))
+	:GameScene(),m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1960.0f,1080.0f),Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring()
 {
 	//ファイルからステージを読み込み
@@ -38,14 +38,14 @@ BattleScene::BattleScene(const char *stagename)
 	}
 	//ファイルからユニットを読み込み
 	//読み込み方法が確立していないので暫定
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,3,Vector2D(336.0f,196.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,3,Vector2D(236.0f,196.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_mage,3,Vector2D(150.0f,346.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,3,Vector2D(306.0f,296.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(524.0f,340.0f),Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1064.0f,110.0f),Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1160.0f,440.0f),Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(1024.0f,540.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,3,Vector2D(524.0f,324.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,3,Vector2D(354.0f,294.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_mage,3,Vector2D(225.0f,519.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,3,Vector2D(306.0f,441.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(786.0f,510.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1596.0f,165.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1740.0f,660.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(1536.0f,810.0f),Unit::Team::e_enemy));
 	//m_unitListやm_operateUnitの初期化
 	for(BattleObject *obj:m_field){
 		if(obj->GetType()==BattleObject::Type::e_unit){
@@ -435,7 +435,7 @@ void BattleScene::Draw()const{
 	GetWindowSize(&windowdx,&windowdy);
 	DrawBox(0,windowdy-(int)(Unit::unitCircleSize*1.5f),windowdx,windowdy,GetColor(128,128,128),TRUE);//背景の描画
 	for(size_t i=0,size=m_unitList.size();i<size;i++){
-		m_unitList[i]->DrawFacePic(Vector2D((i+1)*Unit::unitCircleSize*2.2f,(float)windowdy-Unit::unitCircleSize*1.1f));
+		m_unitList[i]->DrawFacePic(Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowdy-Unit::unitCircleSize*1.1f));
 	}
 
 	//ユニット情報をデバッグ出力

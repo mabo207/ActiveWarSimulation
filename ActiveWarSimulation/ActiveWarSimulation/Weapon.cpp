@@ -1,7 +1,7 @@
 #include"Weapon.h"
 
 //---------------Weapon----------------
-const float Weapon::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.3f;
+const float Weapon::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.15f;
 const float Weapon::openAttackLength=Weapon::closeAttackLength*2.0f;
 
 Weapon::AttackInfo Weapon::GetAttackInfo(const Unit *attacker,const Unit *defender)const{

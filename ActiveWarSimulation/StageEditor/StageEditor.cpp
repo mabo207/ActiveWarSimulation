@@ -24,8 +24,8 @@
 #include"ScrollBar.h"
 
 //定数の定義
-const int StageEditor::mapSizeX = 800;
-const int StageEditor::mapSizeY = 600;
+const int StageEditor::mapSizeX = 1920;
+const int StageEditor::mapSizeY = 1080;
 const int StageEditor::leftUpPosX = 25;
 const int StageEditor::leftUpPosY = 25;
 const int StageEditor::buttonWidth = 400;
@@ -39,7 +39,7 @@ const int StageEditor::posButtonHeight=StageEditor::buttonHeight/2;
 const int StageEditor::posButtonWidthNum=3;
 const int StageEditor::posButtonHeightNum=1;
 const std::string StageEditor::actButtonStr[actButtonHeightNum*actButtonWidthNum]={"put","remove","move","expand"};
-const int StageEditor::baseSize=32;
+const int StageEditor::baseSize=45;
 
 //関数定義
 //動的関数
@@ -140,7 +140,7 @@ StageEditor::StageEditor()
 	)));
 	pPosSettingButton=m_buttons.back();
 
-	//32px位置調整ボタン
+	//45px位置調整ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new ConstPosSet::ConstPosSetButton(
 		Vector2D(
 		(float)(leftUpPosX*2+mapSizeX+posButtonWidth/posButtonWidthNum*1)
