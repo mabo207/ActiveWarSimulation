@@ -111,6 +111,9 @@
     <ClCompile Include="DamageCalculators.cpp">
       <Filter>ソース ファイル\UnitHaving\Explain</Filter>
     </ClCompile>
+    <ClCompile Include="BattleSceneData.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -157,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="DamageCalculators.h">
       <Filter>ヘッダー ファイル\UnitHaving\Explain</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleSceneData.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
