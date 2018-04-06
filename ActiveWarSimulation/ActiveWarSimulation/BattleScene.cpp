@@ -266,28 +266,24 @@ int BattleScene::Calculate(){
 }
 
 void BattleScene::Draw()const{
-	//フィールドの描画
-	for(const BattleObject *obj:m_battleSceneData->m_field){
-		if((obj!=m_battleSceneData->m_operateUnit || obj!=m_aimedUnit) && m_battleSceneData->m_Window->JudgeInShapeRect(obj) && !(obj->GetFix()==Shape::Fix::e_ignore && obj->GetType()==BattleObject::Type::e_unit)){
-			//操作中ユニットと攻撃対象ユニットは最後に描画
-			//ウインドウに入っていない物は描画しない
-			//退却したユニット(typeがe_unitかつfixがe_ignore)は描画しない
-			obj->VDraw();
-		}
-	}
-
-	//狙っているユニットの描画
-	if(JudgeAttackCommandUsable()){
-		m_aimedUnit->BattleObject::VDraw();
-		Vector2D pos=m_aimedUnit->getPos();
-		DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
-	}
-
 	//経路の描画
 	for(size_t i=0,max=m_route.size();i+1<max;i++){
 		DrawLineAA(m_route[i].pos.x,m_route[i].pos.y,m_route[i+1].pos.x,m_route[i+1].pos.y,GetColor(255,255,0),1.0f);
 	}
+	
+	//フィールドの描画
+	m_battleSceneData->DrawField(std::set<const BattleObject *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
 
+	//狙っているユニットの描画
+	if(m_aimedUnit!=nullptr){
+		m_aimedUnit->BattleObject::VDraw();
+		if(JudgeAttackCommandUsable()){
+			//攻撃可能ならマーカーを描画
+			Vector2D pos=m_aimedUnit->getPos();
+			DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
+		}
+	}
+	
 	//操作中ユニットの描画
 	m_battleSceneData->m_operateUnit->BattleObject::VDraw();
 	m_battleSceneData->m_operateUnit->DrawMoveInfo();//移動情報の描画
@@ -296,21 +292,10 @@ void BattleScene::Draw()const{
 
 
 	//全ユニットのHPゲージの描画
-	for(const Unit *unit:m_battleSceneData->m_unitList){
-		if(m_battleSceneData->m_Window->JudgeInShapeRect(unit) && unit->GetFix()!=Shape::Fix::e_ignore){
-			//ウインドウに入っていない物は描画しない
-			//退却したユニット(typeがe_unitかつfixがe_ignore)は描画しない
-			unit->DrawHPGage();
-		}
-	}
+	m_battleSceneData->DrawHPGage();
 
 	//ユニットのオーダー順番を描画
-	int windowdx,windowdy;
-	GetWindowSize(&windowdx,&windowdy);
-	DrawBox(0,windowdy-(int)(Unit::unitCircleSize*1.5f),windowdx,windowdy,GetColor(128,128,128),TRUE);//背景の描画
-	for(size_t i=0,size=m_battleSceneData->m_unitList.size();i<size;i++){
-		m_battleSceneData->m_unitList[i]->DrawFacePic(Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowdy-Unit::unitCircleSize*1.1f));
-	}
+	m_battleSceneData->DrawOrder();
 
 	//ユニット情報をデバッグ出力
 	/*

@@ -2,6 +2,7 @@
 #define DEF_BATTLESCENEDATA_H
 
 #include<vector>
+#include<set>
 #include"Unit.h"
 #include"Terrain.h"
 #include"ToolsLib.h"
@@ -38,6 +39,11 @@ public:
 	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
 	void SortUnitList();//m_unitListをソートしなおす。
 	void FinishUnitOperation();//次のユニットへの遷移処理
+
+	//情報描画関数
+	void DrawField(const std::set<const BattleObject *> &notDraw)const;//フィールドの描画
+	void DrawHPGage()const;//全ユニットのHPゲージの描画
+	void DrawOrder()const;//ユニットのオーダー順番の描画
 };
 
 

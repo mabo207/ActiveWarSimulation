@@ -155,3 +155,36 @@ void BattleSceneData::FinishUnitOperation(){
 	m_fpsMesuring.RecordTime();
 
 }
+
+void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{
+	for(const BattleObject *obj:m_field){
+		if(m_Window->JudgeInShapeRect(obj)
+			&& !(obj->GetFix()==Shape::Fix::e_ignore && obj->GetType()==BattleObject::Type::e_unit)
+			&& notDraw.find(obj)==notDraw.end())
+		{
+			//ƒEƒCƒ“ƒhƒE‚É“ü‚Á‚Ä‚¢‚È‚¢•¨‚Í•`‰æ‚µ‚È‚¢
+			//‘Þ‹p‚µ‚½ƒ†ƒjƒbƒg(type‚ªe_unit‚©‚Âfix‚ªe_ignore)‚Í•`‰æ‚µ‚È‚¢
+			//•`‰æ‚µ‚È‚¢ƒ†ƒjƒbƒg(notDraw‚ÉŠi”[‚³‚ê‚Ä‚¢‚é‚à‚Ì)‚Í•`‰æ‚µ‚È‚¢
+			obj->VDraw();
+		}
+	}
+}
+
+void BattleSceneData::DrawHPGage()const{
+	for(const Unit *unit:m_unitList){
+		if(m_Window->JudgeInShapeRect(unit) && unit->GetFix()!=Shape::Fix::e_ignore){
+			//ƒEƒCƒ“ƒhƒE‚É“ü‚Á‚Ä‚¢‚È‚¢•¨‚Í•`‰æ‚µ‚È‚¢
+			//‘Þ‹p‚µ‚½ƒ†ƒjƒbƒg(type‚ªe_unit‚©‚Âfix‚ªe_ignore)‚Í•`‰æ‚µ‚È‚¢
+			unit->DrawHPGage();
+		}
+	}
+}
+
+void BattleSceneData::DrawOrder()const{
+	int windowdx,windowdy;
+	GetWindowSize(&windowdx,&windowdy);
+	DrawBox(0,windowdy-(int)(Unit::unitCircleSize*1.5f),windowdx,windowdy,GetColor(128,128,128),TRUE);//”wŒi‚Ì•`‰æ
+	for(size_t i=0,size=m_unitList.size();i<size;i++){
+		m_unitList[i]->DrawFacePic(Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowdy-Unit::unitCircleSize*1.1f));
+	}
+}
