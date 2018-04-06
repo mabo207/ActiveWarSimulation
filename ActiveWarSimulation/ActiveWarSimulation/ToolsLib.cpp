@@ -3,6 +3,7 @@
 #include"DxLib.h"
 #include<fstream>
 #include<iostream>
+#include<algorithm>
 #include<time.h>
 #include<Windows.h>
 #pragma comment(lib, "winmm.lib")
@@ -297,8 +298,8 @@ bool JudgeInTriangle(Vector2D point,Vector2D p1,Vector2D p2,Vector2D p3){
 
 //数値変化を様々な式で管理するクラス
 //---Easing---
-Easing::Easing(int i_x,int i_maxflame,TYPE i_type,FUNCTION i_function,double i_degree)
-	:flame(0),maxflame(i_maxflame),x(i_x),startx(i_x),endx(i_x),type(i_type),function(i_function),degree(i_degree){}
+Easing::Easing(int i_x,int i_endx,int i_maxflame,TYPE i_type,FUNCTION i_function,double i_degree)
+	:flame(0),maxflame(i_maxflame),x(i_x),startx(i_x),endx(i_endx),type(i_type),function(i_function),degree(i_degree){}
 
 void Easing::SetTarget(int i_endx,bool initflame){
 	startx=x;
@@ -349,15 +350,16 @@ void Easing::Update(){
 			ft=1.0;
 		}
 		x=startx+(int)((endx-startx)*ft);
-		flame++;
 	} else{
 		x=endx;
 	}
+	flame++;
 }
 
 void Easing::EnforceEnd(){
 	flame=maxflame;
 	Update();
+	flame=maxflame;//flameがmaxflameで止まるようにする。
 }
 
 void Easing::Retry(){
@@ -382,7 +384,6 @@ void Easing::SetMaxFlame(int flame,bool targetinitflag){
 bool Easing::GetEndFlag()const{
 	return (flame>=maxflame);
 }
-
 
 //位置を色々な式で管理するクラス
 //---PositionControl---
@@ -419,6 +420,91 @@ void PositionControl::SetMaxFlame(int flame,bool targetinitflag){
 bool PositionControl::GetEndFlag()const{
 	//xもyも同じフレーム管理なので、yのGetEndFlagもxのGetEndFlagも同じ
 	return x.GetEndFlag();
+}
+
+//位置を複数の式で管理するクラス
+//---PositionComplexControl---
+PositionComplexControl::PositionComplexControl(const std::vector<PositionControl> &controlgroup)
+	:indexX(0),indexY(0)
+{
+	//サイズ確保
+	const size_t size=controlgroup.size();
+	x.reserve(size);
+	y.reserve(size);
+	//形成
+	for(const PositionControl &control:controlgroup){
+		x.push_back(control.GetEasingX());
+		y.push_back(control.GetEasingY());
+	}
+
+}
+
+void PositionComplexControl::Update(){
+	x.at(indexX).Update();
+	y.at(indexY).Update();
+	//indexの更新
+	if(x.at(indexX).GetEndFlag() && indexX+1<x.size()){
+		indexX++;
+	}
+	if(y.at(indexY).GetEndFlag() && indexY+1<y.size()){
+		indexY++;
+	}
+}
+
+void PositionComplexControl::EnforceEnd(){
+	for(size_t size=x.size();;indexX++){
+		x.at(indexX).EnforceEnd();
+		if(indexX+1>=size){
+			break;
+		}
+	}
+	for(size_t size=y.size();;indexY++){
+		y.at(indexY).EnforceEnd();
+		if(indexY+1>=size){
+			break;
+		}
+	}
+}
+
+void PositionComplexControl::Retry(){
+	indexX=0;
+	indexY=0;
+	for(Easing &e:x){
+		e.Retry();
+	}
+	for(Easing &e:y){
+		e.Retry();
+	}
+
+}
+
+void PositionComplexControl::Retry(int i_startx,int i_starty){
+	indexX=0;
+	indexY=0;
+	for(Easing &e:x){
+		e.Retry();
+	}
+	for(Easing &e:y){
+		e.Retry();
+	}
+	x.at(indexX).Retry(i_startx);
+	y.at(indexY).Retry(i_starty);
+}
+
+bool PositionComplexControl::GetEndFlag()const{
+	//xもyも同じフレーム管理なので、yのGetEndFlagもxのGetEndFlagも同じ
+	return x.back().GetEndFlag() && y.back().GetEndFlag();
+}
+
+int PositionComplexControl::GetMaxFlame()const{
+	int maxflameX=0,maxflameY=0;
+	for(const Easing &easing:x){
+		maxflameX+=easing.GetMaxFlame();
+	}
+	for(const Easing &easing:y){
+		maxflameY+=easing.GetMaxFlame();
+	}
+	return (std::max)(maxflameX,maxflameY);
 }
 
 //大きさ調整しつつ並べて表示する位置を計算するクラス
