@@ -311,22 +311,36 @@ void Easing::SetTarget(int i_endx,bool initflame){
 
 void Easing::Update(){
 	double ft;//‘‰ÁŠ„‡
+	const double fullRate=flame/maxflame;
 	if(!GetEndFlag()){
 		if(maxflame>0){
 			switch(function){
 			case(FUNCTION_LINER):
-				ft=1.0*flame/maxflame;
+				ft=1.0*fullRate;
+				break;
+			case(FUNCTION_QUAD):
+				if(type==TYPE_IN){
+					ft=1.0*fullRate*fullRate;
+				} else if(type==TYPE_OUT){
+					ft=1.0*fullRate*(2.0-fullRate);
+				} else{
+					if(fullRate<0.5){
+						ft=2.0*fullRate*fullRate;
+					} else{
+						ft=2.0*fullRate*(2.0-fullRate)-1.0;
+					}
+				}
 				break;
 			case(FUNCTION_EXPO):
 				if(type==TYPE_IN){
-					ft=pow(2.0,degree*(1.0*flame/maxflame-1.0));
+					ft=pow(2.0,degree*(1.0*fullRate-1.0));
 				} else if(type==TYPE_OUT){
-					ft=1.0-pow(2.0,-degree*flame/maxflame);
+					ft=1.0-pow(2.0,-degree*fullRate);
 				} else if(type==TYPE_INOUT){
-					if(flame<maxflame/2){
-						ft=pow(2.0,degree*(flame*2.0/maxflame-1.0))/2.0;
+					if(fullRate<0.5){
+						ft=pow(2.0,degree*(fullRate*2.0-1.0))/2.0;
 					} else{
-						ft=1.0-pow(2.0,-degree*(flame*2.0/maxflame-1.0))/2.0;
+						ft=1.0-pow(2.0,-degree*(fullRate*2.0-1.0))/2.0;
 					}
 				}
 				break;
