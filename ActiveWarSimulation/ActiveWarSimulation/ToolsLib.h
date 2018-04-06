@@ -241,8 +241,10 @@ public:
 		:PositionControl(i_x,i_x,i_y,i_y,i_maxflame,i_type,i_function,i_degree){}//位置の初期化（最初のみ）
 	PositionControl(int i_x,int i_endx,int i_y,int i_endy,int i_maxflame,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
 		:x(i_x,i_endx,i_maxflame,i_type,i_function,i_degree),y(i_y,i_endy,i_maxflame,i_type,i_function,i_degree){}
-	PositionControl(Vector2D start,Vector2D end,int i_maxflame,Easing::TYPE i_typeX,Easing::FUNCTION i_functionX,double i_degreeX,Easing::TYPE i_typeY,Easing::FUNCTION i_functionY,double i_degreeY)
-		:x((int)start.x,(int)end.x,i_maxflame,i_typeX,i_functionX,i_degreeX),y((int)start.y,(int)end.y,i_maxflame,i_typeY,i_functionY,i_degreeY){}
+	PositionControl(Vector2D start,Vector2D end,int i_maxflameX,Easing::TYPE i_typeX,Easing::FUNCTION i_functionX,double i_degreeX,int i_maxflameY,Easing::TYPE i_typeY,Easing::FUNCTION i_functionY,double i_degreeY)
+		:x((int)start.x,(int)end.x,i_maxflameX,i_typeX,i_functionX,i_degreeX),y((int)start.y,(int)end.y,i_maxflameY,i_typeY,i_functionY,i_degreeY){}
+	PositionControl(Vector2D start,Vector2D end,int i_maxflame,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
+		:PositionControl(start,end,i_maxflame,i_type,i_function,i_degree,i_maxflame,i_type,i_function,i_degree){}
 	virtual ~PositionControl(){}//デストラクタ
 	virtual void Update();//位置更新
 	void SetTarget(int i_endx,int i_endy,bool initflame);//目標位置を決める
