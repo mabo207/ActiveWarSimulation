@@ -43,11 +43,14 @@ protected:
 	void ProcessAttack();//攻撃処理を行う
 	bool JudgeAttackCommandUsable()const;//攻撃コマンドを使用可能かどうか
 
+	//仮想関数のオーバーライド
+	int thisCalculate();
+	void thisDraw()const;
+	int UpdateNextScene(int index);
+
 public:
 	MoveScene(std::shared_ptr<BattleSceneData> battleSceneData);
 	~MoveScene();
-	int Calculate();
-	void Draw()const;
 };
 
 

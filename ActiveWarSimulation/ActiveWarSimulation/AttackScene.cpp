@@ -25,7 +25,7 @@ AttackScene::~AttackScene(){
 	DeleteFontToHandleEX(m_damageFont);
 }
 
-int AttackScene::Calculate(){
+int AttackScene::thisCalculate(){
 	//アニメーション更新
 	m_attackMotion.Update();
 	m_damageMotion.Update();
@@ -37,11 +37,16 @@ int AttackScene::Calculate(){
 		//ダメージ処理
 
 	}
+	//終了判定
+	if(m_attackMotion.GetEndFlag() && m_damageMotion.GetEndFlag()){
+		//ひとまず直前場面へ
+		return -1;
+	}
 
-	return 0;
+	return SceneKind::e_attackNormal;
 }
 
-void AttackScene::Draw()const{
+void AttackScene::thisDraw()const{
 	//フィールドの描画
 	m_battleSceneData->DrawField(std::set<const BattleObject *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
 
@@ -79,3 +84,7 @@ void AttackScene::Draw()const{
 	}
 }
 
+int AttackScene::UpdateNextScene(int index){
+	//特に何もしない
+	return index;
+}

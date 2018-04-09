@@ -182,7 +182,7 @@ bool MoveScene::JudgeAttackCommandUsable()const{
 	return m_aimedUnit!=nullptr && m_battleSceneData->m_operateUnit->GetBattleStatus().OP+m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack()>=0;
 }
 
-int MoveScene::Calculate(){
+int MoveScene::thisCalculate(){
 	if(m_battleSceneData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 		//味方操作時
 		//m_operateUnitの位置更新
@@ -196,7 +196,8 @@ int MoveScene::Calculate(){
 				if(JudgeAttackCommandUsable()){
 					//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
 					ProcessAttack();//攻撃処理
-					FinishUnitOperation();//行動終了処理
+					//FinishUnitOperation();//行動終了処理(あとで)
+					return SceneKind::e_attackNormal;//攻撃場面へ
 				}
 			} else if(keyboard_get(KEY_INPUT_D)==1){
 				//必殺技
@@ -256,17 +257,18 @@ int MoveScene::Calculate(){
 			if(JudgeAttackCommandUsable()){
 				//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
 				ProcessAttack();//攻撃処理
-				FinishUnitOperation();//行動終了処理
+				//FinishUnitOperation();//行動終了処理(あとで)
+				return SceneKind::e_attackNormal;//攻撃場面へ
 			} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f || processedTime>10.0 || (moveSqLength<0.1f && processedTime>2.0)){
 				//移動できなくなったら、または10秒経ったら、また移動距離が少ない場合は待機
 				FinishUnitOperation();
 			}
 		}
 	}
-	return 0;
+	return SceneKind::e_move;
 }
 
-void MoveScene::Draw()const{
+void MoveScene::thisDraw()const{
 	//経路の描画
 	for(size_t i=0,max=m_route.size();i+1<max;i++){
 		DrawLineAA(m_route[i].pos.x,m_route[i].pos.y,m_route[i+1].pos.x,m_route[i+1].pos.y,GetColor(255,255,0),1.0f);
@@ -298,4 +300,17 @@ void MoveScene::Draw()const{
 	//ユニットのオーダー順番を描画
 	m_battleSceneData->DrawOrder();
 
+}
+
+int MoveScene::UpdateNextScene(int index){
+	switch(index){
+	case(SceneKind::e_attackNormal):
+		m_nextScene=std::shared_ptr<BattleSceneElement>(new AttackScene(m_battleSceneData,m_aimedUnit));
+		FinishUnitOperation();//行動終了処理
+		return index;
+		break;
+	default:
+		return index;
+		break;
+	}
 }

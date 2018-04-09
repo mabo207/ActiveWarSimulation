@@ -33,13 +33,17 @@ protected:
 	int m_damageFont;//ダメージ描画に用いるフォント
 
 	//関数
+protected:
+
+	//仮想関数のオーバーライド
+	int thisCalculate();
+	void thisDraw()const;
+	int UpdateNextScene(int index);
+
 public:
 	AttackScene(std::shared_ptr<BattleSceneData> data,Unit *aimedUnit);
 	~AttackScene();
 
-	//仮想関数のオーバーライド
-	int Calculate();
-	void Draw()const;
 
 };
 

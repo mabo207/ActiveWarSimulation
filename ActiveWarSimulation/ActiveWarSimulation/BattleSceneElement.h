@@ -10,13 +10,15 @@ class BattleSceneElement:public GameScene{
 	//型・列挙体
 public:
 	struct SceneKind{
+		static const int start=1;
 		enum Kind{
-			e_move,
+			e_move=start,
 			e_attackNormal,
 			END
 		};
+		static const int kindNum=END-start;
 		static Kind link(int num){
-			if(num>=0 && num<=END){
+			if(num>=start && num<=END){
 				return static_cast<Kind>(num);
 			}
 			return END;
@@ -37,13 +39,14 @@ protected:
 	SceneKind::Kind GetSceneKind()const{
 		return m_sceneKind;
 	}
-	//virtual int thisCalculate()=0;
-	//virtual void thisDraw()const=0;
+	virtual int thisCalculate()=0;//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
+	virtual void thisDraw()const=0;
+	virtual int UpdateNextScene(int index)=0;//次場面の設定。indexに戻りたいが、実際に戻れるかは不明なので実際の戻り場所を示すint値を返し直す。基本的に返り値はindexに等しくなる。
 
 public:
 	virtual ~BattleSceneElement();
-	//int Calculate();
-	//void Draw();
+	int Calculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
+	void Draw()const;
 };
 
 
