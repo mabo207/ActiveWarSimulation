@@ -25,6 +25,29 @@ AttackScene::~AttackScene(){
 	DeleteFontToHandleEX(m_damageFont);
 }
 
+void AttackScene::ProcessAttack(){
+	//コストの消費
+	m_battleSceneData->m_operateUnit->AddOP(m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack());
+	//操作ユニット→対象ユニットへの攻撃情報の計算
+	Weapon::AttackInfo attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,m_aimedUnit);
+	//操作ユニット→対象ユニットへの攻撃処理
+	int aimedHP=m_aimedUnit->AddHP(-attackinfo.damage);
+	if(aimedHP<=0){
+		//対象ユニットのHPが0以下なら、ステージからユニットを取り除く
+		m_aimedUnit->SetFix(Shape::Fix::e_ignore);//当たり判定の対象から取り除く
+		//m_unitListからm_aimedUnitを取り除く
+		for(std::vector<Unit *>::const_iterator it=m_battleSceneData->m_unitList.begin(),ite=m_battleSceneData->m_unitList.end();it!=ite;it++){
+			if(*it==m_aimedUnit){
+				m_battleSceneData->m_unitList.erase(it);
+				break;
+			}
+		}
+	} else{
+		//対象ユニットが生き残っているなら反撃処理を行う
+		//未実装
+	}
+}
+
 int AttackScene::thisCalculate(){
 	//アニメーション更新
 	m_attackMotion.Update();
@@ -35,7 +58,7 @@ int AttackScene::thisCalculate(){
 		//アニメーションの初期化
 		m_damageMotion.Retry();
 		//ダメージ処理
-
+		ProcessAttack();
 	}
 	//終了判定
 	if(m_attackMotion.GetEndFlag() && m_damageMotion.GetEndFlag()){

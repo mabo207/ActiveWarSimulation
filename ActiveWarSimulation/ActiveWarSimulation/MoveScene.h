@@ -40,7 +40,6 @@ protected:
 	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
 	void FinishUnitOperation();//次のユニットへの遷移処理
 	void SetAimedUnit(float angle=0.0f,int turntimes=1);//m_aimedUnitを変更する。turntimesだけ時計回りに回転させる
-	void ProcessAttack();//攻撃処理を行う
 	bool JudgeAttackCommandUsable()const;//攻撃コマンドを使用可能かどうか
 
 	//仮想関数のオーバーライド

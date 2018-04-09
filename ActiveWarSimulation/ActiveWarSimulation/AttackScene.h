@@ -34,6 +34,7 @@ protected:
 
 	//関数
 protected:
+	void ProcessAttack();//攻撃処理を行う
 
 	//仮想関数のオーバーライド
 	int thisCalculate();

@@ -153,31 +153,6 @@ void MoveScene::SetAimedUnit(float angle,int turntimes){
 	}
 }
 
-void MoveScene::ProcessAttack(){
-	//コストの消費
-	m_battleSceneData->m_operateUnit->AddOP(m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack());
-	//操作ユニット→対象ユニットへの攻撃情報の計算
-	Weapon::AttackInfo attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,m_aimedUnit);
-	//操作ユニット→対象ユニットへの攻撃処理
-	int aimedHP=m_aimedUnit->AddHP(-attackinfo.damage);
-	if(aimedHP<=0){
-		//対象ユニットのHPが0以下なら、ステージからユニットを取り除く
-		m_aimedUnit->SetFix(Shape::Fix::e_ignore);//当たり判定の対象から取り除く
-												  //m_unitListからm_aimedUnitを取り除く
-		for(std::vector<Unit *>::const_iterator it=m_battleSceneData->m_unitList.begin(),ite=m_battleSceneData->m_unitList.end();it!=ite;it++){
-			if(*it==m_aimedUnit){
-				m_battleSceneData->m_unitList.erase(it);
-				break;
-			}
-		}
-		//m_aimedUnitをnullに
-		m_aimedUnit=nullptr;
-	} else{
-		//対象ユニットが生き残っているなら反撃処理を行う
-		//未実装
-	}
-}
-
 bool MoveScene::JudgeAttackCommandUsable()const{
 	return m_aimedUnit!=nullptr && m_battleSceneData->m_operateUnit->GetBattleStatus().OP+m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack()>=0;
 }
@@ -195,7 +170,6 @@ int MoveScene::thisCalculate(){
 				//攻撃
 				if(JudgeAttackCommandUsable()){
 					//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
-					ProcessAttack();//攻撃処理
 					//FinishUnitOperation();//行動終了処理(あとで)
 					return SceneKind::e_attackNormal;//攻撃場面へ
 				}
@@ -256,7 +230,6 @@ int MoveScene::thisCalculate(){
 			//1秒経ったら行動する
 			if(JudgeAttackCommandUsable()){
 				//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
-				ProcessAttack();//攻撃処理
 				//FinishUnitOperation();//行動終了処理(あとで)
 				return SceneKind::e_attackNormal;//攻撃場面へ
 			} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f || processedTime>10.0 || (moveSqLength<0.1f && processedTime>2.0)){
