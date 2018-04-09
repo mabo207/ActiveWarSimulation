@@ -1,12 +1,12 @@
 #ifndef DEF_ATTACKSCENE_H
 #define DEF_ATTACKSCENE_H
 
-#include"GameScene.h"
+#include"BattleSceneElement.h"
 #include"BattleSceneData.h"
 #include<memory>
 
 //ユニットを動かすゲーム場面
-class AttackScene:public GameScene{
+class AttackScene:public BattleSceneElement{
 	//型・列挙体
 public:
 

@@ -6,7 +6,7 @@ BattleScene::BattleScene(const char *stagename)
 	:GameScene(),m_battleSceneData(new BattleSceneData(stagename))
 {
 	//m_sceneDataの初期化、最初はひとまず移動で
-	m_sceneData=std::shared_ptr<GameScene>(new MoveScene(m_battleSceneData));
+	m_sceneData=std::shared_ptr<BattleSceneElement>(new MoveScene(m_battleSceneData));
 }
 
 BattleScene::~BattleScene(){}
@@ -20,7 +20,7 @@ int BattleScene::Calculate(){
 		index=1;
 	}
 	//状態遷移
-	if(index!=0){
+	if(index==BattleSceneElement::SceneKind::END){
 		//このクラスを監視するクラスにゲームプレイ場面の終了を伝える
 		return 1;
 	}

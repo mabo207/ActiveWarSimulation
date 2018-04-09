@@ -8,7 +8,8 @@ const int AttackScene::damageBeginFlame=50;
 const int AttackScene::damageEndFlame=80;
 
 AttackScene::AttackScene(std::shared_ptr<BattleSceneData> data,Unit *aimedUnit)
-	:m_battleSceneData(data),m_aimedUnit(aimedUnit)
+	:BattleSceneElement(SceneKind::e_attackNormal)
+	,m_battleSceneData(data),m_aimedUnit(aimedUnit)
 	,m_attackMotion({
 		PositionControl(data->m_operateUnit->getPos(),m_aimedUnit->getPos(),motionFlame/2,Easing::TYPE_OUT,Easing::FUNCTION_QUAD,1.0)
 		,PositionControl(m_aimedUnit->getPos(),data->m_operateUnit->getPos(),motionFlame/2,Easing::TYPE_IN,Easing::FUNCTION_QUAD,1.0)

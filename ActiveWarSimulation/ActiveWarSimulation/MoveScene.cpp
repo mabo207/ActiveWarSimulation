@@ -1,5 +1,6 @@
 #include"DxLib.h"
 #include"MoveScene.h"
+#include"AttackScene.h"
 #include"input.h"
 #include"Edge.h"
 #include<algorithm>
@@ -8,7 +9,7 @@
 const float MoveScene::routeFrequency=1.0f;
 
 MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
-	:GameScene(),m_battleSceneData(battleSceneData)
+	:BattleSceneElement(SceneKind::e_move),m_battleSceneData(battleSceneData)
 {
 	//m_aimedUnit“™‚Ì‰Šú‰»
 	FinishUnitOperation();

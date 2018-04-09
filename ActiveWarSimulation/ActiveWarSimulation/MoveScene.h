@@ -2,12 +2,12 @@
 #define DEF_MOVESCENE_H
 
 #include"BattleSceneData.h"
-#include"GameScene.h"
+#include"BattleSceneElement.h"
 #include"Unit.h"
 
 //バトルの移動場面についての記述
 //COMによる移動はこいつを継承して作ればラクそう
-class MoveScene:public GameScene{
+class MoveScene:public BattleSceneElement{
 	//型・列挙体
 public:
 	struct RouteInfo{
@@ -15,7 +15,7 @@ public:
 		const float OP;
 		RouteInfo(Vector2D i_pos,float i_OP):pos(i_pos),OP(i_OP){}
 	};
-
+	
 	//定数
 protected:
 	static const float routeFrequency;//OPをどのくらい消費するたびにm_routeに記録するか
@@ -25,7 +25,7 @@ public:
 	//変数
 protected:
 	//ゲームの進行を管理する変数
-
+	
 
 	//ゲームに使用する変数
 	std::shared_ptr<BattleSceneData> m_battleSceneData;//ゲーム内全体で使うデータ

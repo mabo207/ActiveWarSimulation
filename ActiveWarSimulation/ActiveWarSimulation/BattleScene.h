@@ -2,7 +2,7 @@
 #define DEF_BATTLESCENE_H
 
 #include"BattleSceneData.h"
-#include"GameScene.h"
+#include"BattleSceneElement.h"
 
 //バトルのゲームプレイ場面全般の管理を行うクラス
 class BattleScene:public GameScene{
@@ -17,7 +17,7 @@ public:
 	//変数
 protected:
 	//ゲームの進行を管理する変数
-	std::shared_ptr<GameScene> m_sceneData;//一番基底となるシーン
+	std::shared_ptr<BattleSceneElement> m_sceneData;//一番基底となるシーン
 
 	//ゲームに使用する変数
 	std::shared_ptr<BattleSceneData> m_battleSceneData;//ゲーム内全体で使うデータ
