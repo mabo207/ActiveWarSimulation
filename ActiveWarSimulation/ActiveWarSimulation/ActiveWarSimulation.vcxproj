@@ -161,6 +161,7 @@
     <ClCompile Include="GraphicProgramming.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="GameMain.cpp" />
+    <ClCompile Include="MoveScene.cpp" />
     <ClCompile Include="ToolsLib.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="AttackScene.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="MoveScene.h" />
     <ClInclude Include="ToolsLib.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="AttackScene.h" />
