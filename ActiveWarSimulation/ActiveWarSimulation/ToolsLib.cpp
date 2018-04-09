@@ -312,7 +312,7 @@ void Easing::SetTarget(int i_endx,bool initflame){
 
 void Easing::Update(){
 	double ft;//‘‰ÁŠ„‡
-	const double fullRate=flame/maxflame;
+	const double fullRate=(double)flame/maxflame;
 	if(!GetEndFlag()){
 		if(maxflame>0){
 			switch(function){
