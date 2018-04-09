@@ -42,6 +42,7 @@ protected:
 	virtual int thisCalculate()=0;//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
 	virtual void thisDraw()const=0;
 	virtual int UpdateNextScene(int index)=0;//次場面の設定。indexに戻りたいが、実際に戻れるかは不明なので実際の戻り場所を示すint値を返し直す。基本的に返り値はindexに等しくなる。
+	virtual void ReturnProcess()=0;//この場面に戻ってきた時の処理
 
 public:
 	virtual ~BattleSceneElement();

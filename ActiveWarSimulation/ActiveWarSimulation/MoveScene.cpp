@@ -306,11 +306,12 @@ int MoveScene::UpdateNextScene(int index){
 	switch(index){
 	case(SceneKind::e_attackNormal):
 		m_nextScene=std::shared_ptr<BattleSceneElement>(new AttackScene(m_battleSceneData,m_aimedUnit));
-		FinishUnitOperation();//行動終了処理
 		return index;
-		break;
 	default:
 		return index;
-		break;
 	}
+}
+
+void MoveScene::ReturnProcess(){
+	FinishUnitOperation();//行動終了処理
 }

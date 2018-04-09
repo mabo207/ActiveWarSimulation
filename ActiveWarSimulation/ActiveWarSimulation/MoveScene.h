@@ -47,6 +47,7 @@ protected:
 	int thisCalculate();
 	void thisDraw()const;
 	int UpdateNextScene(int index);
+	void ReturnProcess();
 
 public:
 	MoveScene(std::shared_ptr<BattleSceneData> battleSceneData);

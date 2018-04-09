@@ -88,3 +88,5 @@ int AttackScene::UpdateNextScene(int index){
 	//“Á‚É‰½‚à‚µ‚È‚¢
 	return index;
 }
+
+void AttackScene::ReturnProcess(){}

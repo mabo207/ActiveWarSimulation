@@ -18,6 +18,7 @@ int BattleSceneElement::Calculate(){
 	int ret=index;
 	if(index==0){
 		//この場面に戻ってきた場合
+		ReturnProcess();
 		m_nextScene.reset();
 	} else if(index==SceneKind::END){
 		//ゲームプレイが終わる時

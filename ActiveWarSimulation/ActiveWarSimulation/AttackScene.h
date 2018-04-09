@@ -39,6 +39,7 @@ protected:
 	int thisCalculate();
 	void thisDraw()const;
 	int UpdateNextScene(int index);
+	void ReturnProcess();
 
 public:
 	AttackScene(std::shared_ptr<BattleSceneData> data,Unit *aimedUnit);
