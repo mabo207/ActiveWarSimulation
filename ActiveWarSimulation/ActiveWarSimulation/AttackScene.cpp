@@ -40,7 +40,7 @@ int AttackScene::thisCalculate(){
 	//I—¹”»’è
 	if(m_attackMotion.GetEndFlag() && m_damageMotion.GetEndFlag()){
 		//‚Ğ‚Æ‚Ü‚¸’¼‘Oê–Ê‚Ö
-		return -1;
+		return 0;
 	}
 
 	return SceneKind::e_attackNormal;
