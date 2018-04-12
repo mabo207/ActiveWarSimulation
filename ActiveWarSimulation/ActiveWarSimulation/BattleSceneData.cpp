@@ -159,13 +159,27 @@ void BattleSceneData::FinishUnitOperation(){
 void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{
 	for(const BattleObject *obj:m_field){
 		if(m_Window->JudgeInShapeRect(obj)
-			&& !(obj->GetFix()==Shape::Fix::e_ignore && obj->GetType()==BattleObject::Type::e_unit)
+			&& obj->GetType()!=BattleObject::Type::e_unit
 			&& notDraw.find(obj)==notDraw.end())
 		{
 			//ƒEƒCƒ“ƒhƒE‚É“ü‚Á‚Ä‚¢‚È‚¢•¨‚Í•`‰æ‚µ‚È‚¢
-			//‘Þ‹p‚µ‚½ƒ†ƒjƒbƒg(type‚ªe_unit‚©‚Âfix‚ªe_ignore)‚Í•`‰æ‚µ‚È‚¢
-			//•`‰æ‚µ‚È‚¢ƒ†ƒjƒbƒg(notDraw‚ÉŠi”[‚³‚ê‚Ä‚¢‚é‚à‚Ì)‚Í•`‰æ‚µ‚È‚¢
+			//ƒ†ƒjƒbƒg(type‚ªe_unit)‚Í•`‰æ‚µ‚È‚¢
+			//•`‰æ‚µ‚È‚¢‚à‚Ì(notDraw‚ÉŠi”[‚³‚ê‚Ä‚¢‚é‚à‚Ì)‚Í•`‰æ‚µ‚È‚¢
 			obj->VDraw();
+		}
+	}
+}
+
+void BattleSceneData::DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &notDraw)const{
+	for(const Unit *obj:m_unitList){
+		if(m_Window->JudgeInShapeRect(obj)
+			&& obj->GetFix()!=Shape::Fix::e_ignore
+			&& notDraw.find(obj)==notDraw.end())
+		{
+			//ƒEƒCƒ“ƒhƒE‚É“ü‚Á‚Ä‚¢‚È‚¢•¨‚Í•`‰æ‚µ‚È‚¢
+			//‘Þ‹p‚µ‚½ƒ†ƒjƒbƒg(m_fix‚ªe_ignore)‚Í•`‰æ‚µ‚È‚¢
+			//•`‰æ‚µ‚È‚¢‚à‚Ì(notDraw‚ÉŠi”[‚³‚ê‚Ä‚¢‚é‚à‚Ì)‚Í•`‰æ‚µ‚È‚¢
+			obj->DrawUnit(obj->getPos(),Vector2D(),infoDrawFlag);
 		}
 	}
 }

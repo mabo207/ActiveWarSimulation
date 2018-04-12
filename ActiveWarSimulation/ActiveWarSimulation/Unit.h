@@ -116,7 +116,8 @@ public:
 	void DrawHPGage(Vector2D adjust=Vector2D())const;//HPゲージの描画
 	void DrawHPGage(Vector2D point,Vector2D adjust)const;//HPゲージの描画
 	void DrawFacePic(Vector2D point)const;//ユニットの顔グラフィックを用いたアイコンの描画を行う
-	
+	void DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const;//マップ上のユニットを描画
+
 	//仮想関数・純粋仮想関数のオーバーライド
 	const Shape *GetHitJudgeShape()const;//当たり判定図形を取得。
 	void Move(Vector2D v);//当たり判定図形の移動。２種類の当たり判定図形を共に移動させる。

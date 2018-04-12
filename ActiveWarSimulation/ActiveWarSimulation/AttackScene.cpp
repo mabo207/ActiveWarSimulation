@@ -75,15 +75,18 @@ int AttackScene::thisCalculate(){
 
 void AttackScene::thisDraw()const{
 	//フィールドの描画
-	m_battleSceneData->DrawField(std::set<const BattleObject *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
+	m_battleSceneData->DrawField();
+
+	//ユニットの描画
+	m_battleSceneData->DrawUnit(false,std::set<const Unit *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
 
 	//攻撃対象ユニットの描画
 	if(m_aimedUnit!=nullptr){
-		m_aimedUnit->BattleObject::VDraw();
+		m_aimedUnit->DrawUnit(m_aimedUnit->getPos(),Vector2D(),false);
 	}
 	
 	//攻撃を実行するユニットの描画
-	m_battleSceneData->m_operateUnit->VDraw(Vector2D((float)m_attackMotion.GetX(),(float)m_attackMotion.GetY()),Vector2D());
+	m_battleSceneData->m_operateUnit->DrawUnit(Vector2D((float)m_attackMotion.GetX(),(float)m_attackMotion.GetY()),Vector2D(),false);
 	
 	//全ユニットのHPゲージの描画
 	m_battleSceneData->DrawHPGage();

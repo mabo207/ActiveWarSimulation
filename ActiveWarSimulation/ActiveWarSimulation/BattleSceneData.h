@@ -41,7 +41,8 @@ public:
 	void FinishUnitOperation();//次のユニットへの遷移処理
 
 	//情報描画関数
-	void DrawField(const std::set<const BattleObject *> &notDraw)const;//フィールドの描画
+	void DrawField(const std::set<const BattleObject *> &notDraw={})const;//フィールドの描画、ユニットの描画は別
+	void DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &notDraw={})const;//ユニットの描画、情報表示UIを表示するかを設定できる
 	void DrawHPGage()const;//全ユニットのHPゲージの描画
 	void DrawOrder()const;//ユニットのオーダー順番の描画
 };

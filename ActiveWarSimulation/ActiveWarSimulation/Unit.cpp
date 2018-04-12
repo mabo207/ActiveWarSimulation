@@ -99,6 +99,37 @@ void Unit::WriteOutObjectPeculiarInfo(std::ofstream &ofs)const{
 	ofs<<"("<<Type::GetStr(m_type)<<")";
 }
 
+void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
+	Vector2D pos=point-adjust;
+	int mode,pal;
+	GetDrawBlendMode(&mode,&pal);
+	if(infoDrawFlag){
+		//アクションの効果範囲を半透明(弱)で描画
+		//ひとまず短射程で描画本来は武器クラスのDraw関数を使うのが望ましい。
+		if(GetFix()==Shape::Fix::e_dynamic){
+			//dynamicなキャラのみアクション範囲を表示。恐らく移動しているキャラのみ
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+			DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),TRUE);//面
+			SetDrawBlendMode(mode,pal);
+			DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),FALSE);//枠
+		}
+		//ユニットの当たり判定図形を描画
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+		SetDrawBlendMode(mode,pal);
+		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
+																					   //ユニット自身の当たり判定の描画
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+		SetDrawBlendMode(mode,pal);
+		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
+	}
+	//ユニットグラフィックを描画
+	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,0.0,m_gHandle,TRUE,FALSE);
+	//描画モードを元に戻す
+	SetDrawBlendMode(mode,pal);
+}
+
 bool Unit::SetPenetratable(Team::Kind nowPhase){
 	return (m_penetratable=(m_battleStatus.team==nowPhase));
 }
@@ -215,32 +246,7 @@ Shape::Fix::Kind Unit::SetFix(Shape::Fix::Kind fix)const{
 }
 
 void Unit::VDraw(Vector2D point,Vector2D adjust)const{
-	Vector2D pos=point-adjust;
-	int mode,pal;
-	GetDrawBlendMode(&mode,&pal);
-	//アクションの効果範囲を半透明(弱)で描画
-	//ひとまず短射程で描画本来は武器クラスのDraw関数を使うのが望ましい。
-	if(GetFix()==Shape::Fix::e_dynamic){
-		//dynamicなキャラのみアクション範囲を表示。恐らく移動しているキャラのみ
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-		DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),TRUE);//面
-		SetDrawBlendMode(mode,pal);
-		DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),FALSE);//枠
-	}
-	//ユニットの当たり判定図形を描画
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-	GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
-	SetDrawBlendMode(mode,pal);
-	GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
-	//ユニット自身の当たり判定の描画
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-	m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
-	SetDrawBlendMode(mode,pal);
-	m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
-	//ユニットグラフィックを描画
-	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,0.0,m_gHandle,TRUE,FALSE);
-	//描画モードを元に戻す
-	SetDrawBlendMode(mode,pal);
+	DrawUnit(point,adjust,true);
 }
 
 void Unit::VHitProcess(const BattleObject *potherobj){
