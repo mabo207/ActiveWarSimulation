@@ -22,6 +22,14 @@ Vector2D MoveScene::CalculateInputVec()const{
 	if(m_battleSceneData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 		//プレイヤー操作時
 		moveVec=analogjoypad_get(DX_INPUT_PAD1);
+		//アナログスティックの物理的なズレ等によるmoveVecの微入力を除く
+		const float gap=50.0f;
+		if(std::abs(moveVec.x)<gap){
+			moveVec.x=0.0f;
+		}
+		if(std::abs(moveVec.y)<gap){
+			moveVec.y=0.0f;
+		}
 	} else{
 		//コンピュータ操作時、AIが方向を決める
 		//ターン開始から1秒経ったらひとまず最近傍ユニットに単純に近づく
@@ -248,7 +256,10 @@ void MoveScene::thisDraw()const{
 	}
 
 	//フィールドの描画
-	m_battleSceneData->DrawField(std::set<const BattleObject *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
+	m_battleSceneData->DrawField();
+
+	//ユニットの描画
+	m_battleSceneData->DrawUnit(true,std::set<const Unit *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
 
 	//狙っているユニットの描画
 	if(m_aimedUnit!=nullptr){
