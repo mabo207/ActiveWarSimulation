@@ -3,18 +3,22 @@
 #include"GraphicControl.h"
 
 //-------------------AttackScene-------------------
-const int AttackScene::motionFlame=120;
-const int AttackScene::damageBeginFlame=50;
-const int AttackScene::damageEndFlame=80;
+const int AttackScene::motionFlame=20;
+const int AttackScene::damageBeginFlame=AttackScene::motionFlame/2;
+const int AttackScene::damageEndFlame=AttackScene::damageBeginFlame+30;
+const float AttackScene::moveLength=40.0;
 
 AttackScene::AttackScene(std::shared_ptr<BattleSceneData> data,Unit *aimedUnit)
 	:BattleSceneElement(SceneKind::e_attackNormal)
 	,m_battleSceneData(data),m_aimedUnit(aimedUnit)
 	,m_attackMotion({
-		PositionControl(data->m_operateUnit->getPos(),m_aimedUnit->getPos(),motionFlame/2,Easing::TYPE_OUT,Easing::FUNCTION_QUAD,1.0)
-		,PositionControl(m_aimedUnit->getPos(),data->m_operateUnit->getPos(),motionFlame/2,Easing::TYPE_IN,Easing::FUNCTION_QUAD,1.0)
+		PositionControl(data->m_operateUnit->getPos(),data->m_operateUnit->getPos()+(m_aimedUnit->getPos()-data->m_operateUnit->getPos()).norm()*moveLength,motionFlame/2,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
+		,PositionControl(data->m_operateUnit->getPos()+(m_aimedUnit->getPos()-data->m_operateUnit->getPos()).norm()*moveLength,data->m_operateUnit->getPos(),motionFlame/2,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0)
 	})
-	,m_damageMotion(0,0,0,-(int)Unit::unitCircleSize,damageEndFlame-damageBeginFlame,Easing::TYPE_OUT,Easing::FUNCTION_QUAD,9.0)
+	,m_damageMotion({
+		PositionControl(0,0,0,-(int)Unit::unitCircleSize,(damageEndFlame-damageBeginFlame)/2,Easing::TYPE_OUT,Easing::FUNCTION_EXPO,9.0)
+		,PositionControl(0,0,-(int)Unit::unitCircleSize,-(int)Unit::unitCircleSize,(damageEndFlame-damageBeginFlame)/2,Easing::TYPE_OUT,Easing::FUNCTION_QUAD,9.0)
+	})
 {
 	//UŒ‚î•ñ‚Ì‹L˜^
 	m_attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,m_aimedUnit);

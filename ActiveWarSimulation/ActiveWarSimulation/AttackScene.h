@@ -15,6 +15,7 @@ public:
 protected:
 	static const int motionFlame;//アニメーションする全体時間
 	static const int damageBeginFlame,damageEndFlame;//ダメージ文字が出現するタイミング、アニメーションが終わるタイミング
+	static const float moveLength;//アニメーション時に移動する距離
 
 	//変数
 protected:
@@ -26,7 +27,7 @@ protected:
 
 	//位置変更データ
 	PositionComplexControl m_attackMotion;//攻撃ユニット
-	PositionControl m_damageMotion;//ダメージ文字
+	PositionComplexControl m_damageMotion;//ダメージ文字
 
 	//攻撃情報についてのデータ
 	Weapon::AttackInfo m_attackinfo;//攻撃情報
