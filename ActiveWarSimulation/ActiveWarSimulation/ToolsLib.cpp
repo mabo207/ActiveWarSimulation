@@ -296,6 +296,19 @@ bool JudgeInTriangle(Vector2D point,Vector2D p1,Vector2D p2,Vector2D p3){
 	return (direction[0] & direction[1] & direction[2])|(!direction[0] & !direction[1] & !direction[2]);
 }
 
+//内部で使用している描画解像度を取得する(ウインドウの拡大縮小で左右されないサイズが手に入る)
+std::pair<int,int> GetWindowResolution(){
+	int dx,dy;
+	double rateX,rateY;
+	GetWindowSize(&dx,&dy);
+	GetWindowSizeExtendRate(&rateX,&rateY);
+	if(rateX==0.0 || rateY==0.0){
+		return std::pair<int,int>(0,0);
+	} else{
+		return std::pair<int,int>((int)(std::ceil(dx/rateX)),(int)(std::ceil(dy/rateY)));
+	}
+}
+
 //数値変化を様々な式で管理するクラス
 //---Easing---
 Easing::Easing(int i_x,int i_endx,int i_maxflame,TYPE i_type,FUNCTION i_function,double i_degree)

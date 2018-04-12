@@ -150,6 +150,9 @@ unsigned int GetInvertedColor(unsigned int color);
 //pointがp1,p2,p3による三角形の内部にあるかを判定
 bool JudgeInTriangle(Vector2D point,Vector2D p1,Vector2D p2,Vector2D p3);
 
+//内部で使用している描画解像度を取得する(ウインドウの拡大縮小で左右されないサイズが手に入る)
+std::pair<int,int> GetWindowResolution();
+
 //継承クラスのポインタのポインタを基底クラスのポインタのポインタにキャストする関数。継承先ポインタで作った配列を基底クラスのポインタで作った配列に変えたい時に使う
 template<typename T,typename FROM> std::enable_if_t<std::is_base_of_v<T,FROM>,T**> pointer_array_cast(FROM **arr){
 	//TがFROMを継承していないとコンパイルエラーになる。

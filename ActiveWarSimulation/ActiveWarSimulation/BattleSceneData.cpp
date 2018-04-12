@@ -181,10 +181,9 @@ void BattleSceneData::DrawHPGage()const{
 }
 
 void BattleSceneData::DrawOrder()const{
-	int windowdx,windowdy;
-	GetWindowSize(&windowdx,&windowdy);
-	DrawBox(0,windowdy-(int)(Unit::unitCircleSize*1.5f),windowdx,windowdy,GetColor(128,128,128),TRUE);//”wŒi‚Ì•`‰æ
+	std::pair<int,int> windowSize=GetWindowResolution();
+	DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//”wŒi‚Ì•`‰æ
 	for(size_t i=0,size=m_unitList.size();i<size;i++){
-		m_unitList[i]->DrawFacePic(Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowdy-Unit::unitCircleSize*1.1f));
+		m_unitList[i]->DrawFacePic(Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f));
 	}
 }
