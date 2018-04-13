@@ -314,9 +314,9 @@ int FontControlClass::DeleteFontToHandleEX(int handle){
 				//使用箇所がなくなったらフォントを削除し、m_fontからデータを取り除く
 				ret=DeleteFontToHandle(handle);
 				m_font.erase(it);
-				flag=true;
-				break;
 			}
+			flag=true;
+			break;
 		}
 	}
 	//handleがデータ一覧に存在していなければ、削除のみ行う
