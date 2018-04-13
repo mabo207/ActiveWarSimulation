@@ -52,6 +52,7 @@ public:
 	}
 
 	AttackInfo GetAttackInfo(const Unit *attacker,const Unit *defender)const;
+	bool JudgeWeild(const Unit *attacker,const Unit *defender)const;//attacker¨defender‚Ö‚Ì’ÊíUŒ‚‚ğÀs‰Â”\‚Å‚ ‚é‚©
 
 	//Ã“I•Ï”
 private:

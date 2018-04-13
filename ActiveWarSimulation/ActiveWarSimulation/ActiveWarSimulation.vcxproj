@@ -154,14 +154,18 @@
     <ClCompile Include="..\StageEditor\BattleObject.cpp" />
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
     <ClCompile Include="BattleScene.cpp" />
+    <ClCompile Include="BattleSceneData.cpp" />
+    <ClCompile Include="BattleSceneElement.cpp" />
     <ClCompile Include="DamageCalculators.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GraphicControl.cpp" />
     <ClCompile Include="GraphicProgramming.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="GameMain.cpp" />
+    <ClCompile Include="MoveScene.cpp" />
     <ClCompile Include="ToolsLib.cpp" />
     <ClCompile Include="Unit.cpp" />
+    <ClCompile Include="AttackScene.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,13 +176,17 @@
     <ClInclude Include="..\StageEditor\BattleObject.h" />
     <ClInclude Include="..\StageEditor\Terrain.h" />
     <ClInclude Include="BattleScene.h" />
+    <ClInclude Include="BattleSceneData.h" />
+    <ClInclude Include="BattleSceneElement.h" />
     <ClInclude Include="DamageCalculators.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="MoveScene.h" />
     <ClInclude Include="ToolsLib.h" />
     <ClInclude Include="Unit.h" />
+    <ClInclude Include="AttackScene.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

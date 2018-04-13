@@ -3,6 +3,7 @@
 #include"DxLib.h"
 #include<fstream>
 #include<iostream>
+#include<algorithm>
 #include<time.h>
 #include<Windows.h>
 #pragma comment(lib, "winmm.lib")
@@ -295,10 +296,23 @@ bool JudgeInTriangle(Vector2D point,Vector2D p1,Vector2D p2,Vector2D p3){
 	return (direction[0] & direction[1] & direction[2])|(!direction[0] & !direction[1] & !direction[2]);
 }
 
+//内部で使用している描画解像度を取得する(ウインドウの拡大縮小で左右されないサイズが手に入る)
+std::pair<int,int> GetWindowResolution(){
+	int dx,dy;
+	double rateX,rateY;
+	GetWindowSize(&dx,&dy);
+	GetWindowSizeExtendRate(&rateX,&rateY);
+	if(rateX==0.0 || rateY==0.0){
+		return std::pair<int,int>(0,0);
+	} else{
+		return std::pair<int,int>((int)(std::ceil(dx/rateX)),(int)(std::ceil(dy/rateY)));
+	}
+}
+
 //数値変化を様々な式で管理するクラス
 //---Easing---
-Easing::Easing(int i_x,int i_maxflame,TYPE i_type,FUNCTION i_function,double i_degree)
-	:flame(0),maxflame(i_maxflame),x(i_x),startx(i_x),endx(i_x),type(i_type),function(i_function),degree(i_degree){}
+Easing::Easing(int i_x,int i_endx,int i_maxflame,TYPE i_type,FUNCTION i_function,double i_degree)
+	:flame(0),maxflame(i_maxflame),x(i_x),startx(i_x),endx(i_endx),type(i_type),function(i_function),degree(i_degree){}
 
 void Easing::SetTarget(int i_endx,bool initflame){
 	startx=x;
@@ -311,22 +325,36 @@ void Easing::SetTarget(int i_endx,bool initflame){
 
 void Easing::Update(){
 	double ft;//増加割合
+	const double fullRate=(double)flame/maxflame;
 	if(!GetEndFlag()){
 		if(maxflame>0){
 			switch(function){
 			case(FUNCTION_LINER):
-				ft=1.0*flame/maxflame;
+				ft=1.0*fullRate;
+				break;
+			case(FUNCTION_QUAD):
+				if(type==TYPE_IN){
+					ft=1.0*fullRate*fullRate;
+				} else if(type==TYPE_OUT){
+					ft=1.0*fullRate*(2.0-fullRate);
+				} else{
+					if(fullRate<0.5){
+						ft=2.0*fullRate*fullRate;
+					} else{
+						ft=2.0*fullRate*(2.0-fullRate)-1.0;
+					}
+				}
 				break;
 			case(FUNCTION_EXPO):
 				if(type==TYPE_IN){
-					ft=pow(2.0,degree*(1.0*flame/maxflame-1.0));
+					ft=pow(2.0,degree*(1.0*fullRate-1.0));
 				} else if(type==TYPE_OUT){
-					ft=1.0-pow(2.0,-degree*flame/maxflame);
+					ft=1.0-pow(2.0,-degree*fullRate);
 				} else if(type==TYPE_INOUT){
-					if(flame<maxflame/2){
-						ft=pow(2.0,degree*(flame*2.0/maxflame-1.0))/2.0;
+					if(fullRate<0.5){
+						ft=pow(2.0,degree*(fullRate*2.0-1.0))/2.0;
 					} else{
-						ft=1.0-pow(2.0,-degree*(flame*2.0/maxflame-1.0))/2.0;
+						ft=1.0-pow(2.0,-degree*(fullRate*2.0-1.0))/2.0;
 					}
 				}
 				break;
@@ -335,15 +363,16 @@ void Easing::Update(){
 			ft=1.0;
 		}
 		x=startx+(int)((endx-startx)*ft);
-		flame++;
 	} else{
 		x=endx;
 	}
+	flame++;
 }
 
 void Easing::EnforceEnd(){
 	flame=maxflame;
 	Update();
+	flame=maxflame;//flameがmaxflameで止まるようにする。
 }
 
 void Easing::Retry(){
@@ -368,7 +397,6 @@ void Easing::SetMaxFlame(int flame,bool targetinitflag){
 bool Easing::GetEndFlag()const{
 	return (flame>=maxflame);
 }
-
 
 //位置を色々な式で管理するクラス
 //---PositionControl---
@@ -405,6 +433,91 @@ void PositionControl::SetMaxFlame(int flame,bool targetinitflag){
 bool PositionControl::GetEndFlag()const{
 	//xもyも同じフレーム管理なので、yのGetEndFlagもxのGetEndFlagも同じ
 	return x.GetEndFlag();
+}
+
+//位置を複数の式で管理するクラス
+//---PositionComplexControl---
+PositionComplexControl::PositionComplexControl(const std::vector<PositionControl> &controlgroup)
+	:indexX(0),indexY(0)
+{
+	//サイズ確保
+	const size_t size=controlgroup.size();
+	x.reserve(size);
+	y.reserve(size);
+	//形成
+	for(const PositionControl &control:controlgroup){
+		x.push_back(control.GetEasingX());
+		y.push_back(control.GetEasingY());
+	}
+
+}
+
+void PositionComplexControl::Update(){
+	x.at(indexX).Update();
+	y.at(indexY).Update();
+	//indexの更新
+	if(x.at(indexX).GetEndFlag() && indexX+1<x.size()){
+		indexX++;
+	}
+	if(y.at(indexY).GetEndFlag() && indexY+1<y.size()){
+		indexY++;
+	}
+}
+
+void PositionComplexControl::EnforceEnd(){
+	for(size_t size=x.size();;indexX++){
+		x.at(indexX).EnforceEnd();
+		if(indexX+1>=size){
+			break;
+		}
+	}
+	for(size_t size=y.size();;indexY++){
+		y.at(indexY).EnforceEnd();
+		if(indexY+1>=size){
+			break;
+		}
+	}
+}
+
+void PositionComplexControl::Retry(){
+	indexX=0;
+	indexY=0;
+	for(Easing &e:x){
+		e.Retry();
+	}
+	for(Easing &e:y){
+		e.Retry();
+	}
+
+}
+
+void PositionComplexControl::Retry(int i_startx,int i_starty){
+	indexX=0;
+	indexY=0;
+	for(Easing &e:x){
+		e.Retry();
+	}
+	for(Easing &e:y){
+		e.Retry();
+	}
+	x.at(indexX).Retry(i_startx);
+	y.at(indexY).Retry(i_starty);
+}
+
+bool PositionComplexControl::GetEndFlag()const{
+	//xもyも同じフレーム管理なので、yのGetEndFlagもxのGetEndFlagも同じ
+	return x.back().GetEndFlag() && y.back().GetEndFlag();
+}
+
+int PositionComplexControl::GetMaxFlame()const{
+	int maxflameX=0,maxflameY=0;
+	for(const Easing &easing:x){
+		maxflameX+=easing.GetMaxFlame();
+	}
+	for(const Easing &easing:y){
+		maxflameY+=easing.GetMaxFlame();
+	}
+	return (std::max)(maxflameX,maxflameY);
 }
 
 //大きさ調整しつつ並べて表示する位置を計算するクラス

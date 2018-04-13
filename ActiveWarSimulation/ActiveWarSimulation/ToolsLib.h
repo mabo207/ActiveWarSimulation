@@ -150,6 +150,9 @@ unsigned int GetInvertedColor(unsigned int color);
 //pointがp1,p2,p3による三角形の内部にあるかを判定
 bool JudgeInTriangle(Vector2D point,Vector2D p1,Vector2D p2,Vector2D p3);
 
+//内部で使用している描画解像度を取得する(ウインドウの拡大縮小で左右されないサイズが手に入る)
+std::pair<int,int> GetWindowResolution();
+
 //継承クラスのポインタのポインタを基底クラスのポインタのポインタにキャストする関数。継承先ポインタで作った配列を基底クラスのポインタで作った配列に変えたい時に使う
 template<typename T,typename FROM> std::enable_if_t<std::is_base_of_v<T,FROM>,T**> pointer_array_cast(FROM **arr){
 	//TがFROMを継承していないとコンパイルエラーになる。
@@ -179,18 +182,21 @@ public:
 	};
 	enum FUNCTION{
 		FUNCTION_LINER,
+		FUNCTION_QUAD,
 		FUNCTION_EXPO
 	};
 	//変数
 protected:
-	int flame,maxflame;//フレーム数の管理
+	int flame,maxflame;//フレーム数の管理。flameはmaxflameを超えて増加する。
 	int x,startx,endx;//数値xの管理
 	TYPE type;//変化形式
 	FUNCTION function;//使用する関数
 	double degree;//変化度合い
 	//関数
 public:
-	Easing(int i_x=0,int i_maxflame=0,TYPE i_type=TYPE_IN,FUNCTION i_function=FUNCTION_LINER,double i_degree=0.0);
+	Easing(int i_x=0,int i_maxflame=0,TYPE i_type=TYPE_IN,FUNCTION i_function=FUNCTION_LINER,double i_degree=0.0)
+		:Easing(i_x,i_x,i_maxflame,i_type,i_function,i_degree){}
+	Easing(int i_x,int i_endx,int i_maxflame,TYPE i_type,FUNCTION i_function,double i_degree);
 	virtual ~Easing(){}//デストラクタ
 	virtual void Update();//位置更新
 	void SetTarget(int i_endx,bool initflame);//目標位置を決める
@@ -235,7 +241,13 @@ protected:
 	//関数
 public:
 	PositionControl(int i_x=0,int i_y=0,int i_maxflame=0,Easing::TYPE i_type=Easing::TYPE_IN,Easing::FUNCTION i_function=Easing::FUNCTION_LINER,double i_degree=0.0)
-		:x(i_x,i_maxflame,i_type,i_function,i_degree),y(i_y,i_maxflame,i_type,i_function,i_degree){}//位置の初期化（最初のみ）
+		:PositionControl(i_x,i_x,i_y,i_y,i_maxflame,i_type,i_function,i_degree){}//位置の初期化（最初のみ）
+	PositionControl(int i_x,int i_endx,int i_y,int i_endy,int i_maxflame,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
+		:x(i_x,i_endx,i_maxflame,i_type,i_function,i_degree),y(i_y,i_endy,i_maxflame,i_type,i_function,i_degree){}
+	PositionControl(Vector2D start,Vector2D end,int i_maxflameX,Easing::TYPE i_typeX,Easing::FUNCTION i_functionX,double i_degreeX,int i_maxflameY,Easing::TYPE i_typeY,Easing::FUNCTION i_functionY,double i_degreeY)
+		:x((int)start.x,(int)end.x,i_maxflameX,i_typeX,i_functionX,i_degreeX),y((int)start.y,(int)end.y,i_maxflameY,i_typeY,i_functionY,i_degreeY){}
+	PositionControl(Vector2D start,Vector2D end,int i_maxflame,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
+		:PositionControl(start,end,i_maxflame,i_type,i_function,i_degree,i_maxflame,i_type,i_function,i_degree){}
 	virtual ~PositionControl(){}//デストラクタ
 	virtual void Update();//位置更新
 	void SetTarget(int i_endx,int i_endy,bool initflame);//目標位置を決める
@@ -285,6 +297,66 @@ public:
 	virtual bool GetEndFlag()const;//動作が終了しているかを判定する
 };
 
+//位置を複数の式で管理するクラス
+class PositionComplexControl{
+	//列挙体
+public:
+	//変数
+protected:
+	size_t indexX,indexY;
+	std::vector<Easing> x,y;
+
+	//関数
+public:
+	PositionComplexControl(int i_x=0,int i_endx=0,int i_y=0,int i_endy=0,int i_maxflame=0,Easing::TYPE i_type=Easing::TYPE_IN,Easing::FUNCTION i_function=Easing::FUNCTION_LINER,double i_degree=0.0)
+		:indexX(0),indexY(0),x{Easing(i_x,i_endx,i_maxflame,i_type,i_function,i_degree)},y{Easing(i_y,i_endy,i_maxflame,i_type,i_function,i_degree)}{}//位置の初期化（最初のみ）
+	PositionComplexControl(Vector2D start,Vector2D end,int i_maxflame,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
+		:PositionComplexControl((int)start.x,(int)end.x,(int)start.y,(int)end.y,i_maxflame,i_type,i_function,i_degree){}
+	PositionComplexControl(Vector2D start,Vector2D end,int i_maxflame,Easing::TYPE i_typeX,Easing::FUNCTION i_functionX,double i_degreeX,Easing::TYPE i_typeY,Easing::FUNCTION i_functionY,double i_degreeY)
+		:indexX(0),indexY(0),x{Easing((int)start.x,(int)end.x,i_maxflame,i_typeX,i_functionX,i_degreeX)},y{Easing((int)start.y,(int)end.y,i_maxflame,i_typeY,i_functionY,i_degreeY)}{}
+	PositionComplexControl(const std::vector<PositionControl> &controlgroup);//多用すると重い
+	PositionComplexControl(const std::vector<Easing> &i_x,const std::vector<Easing> &i_y)
+		:indexX(0),indexY(0),x(i_x),y(i_y){}
+	virtual ~PositionComplexControl(){}//デストラクタ
+	virtual void Update();//位置更新
+	void EnforceEnd();//強制的に動作後にする
+	void Retry();//動作をリセットしてやり直す
+	void Retry(int i_startx,int i_starty);//動作をリセットしてやり直す。スタート位置も変える
+	std::vector<Easing> GetEasingX()const{
+		return x;
+	}
+	std::vector<Easing> GetEasingY()const{
+		return y;
+	}
+	int GetX()const{
+		return x.at(indexX).GetX();
+	}
+	int GetstartX()const{
+		return x.front().GetstartX();
+	}
+	int GetendX()const{
+		return x.back().GetendX();
+	}
+	int GetY()const{
+		return y.at(indexY).GetX();
+	}
+	int GetstartY()const{
+		return y.front().GetstartX();
+	}
+	int GetendY()const{
+		return y.back().GetendX();
+	}
+	int GetFlame()const{
+		int flame=0;
+		for(const Easing &easing:x){
+			flame+=easing.GetFlame();
+		}
+		return flame;
+	}
+	virtual int GetMaxFlame()const;
+	virtual bool GetEndFlag()const;//動作が終了しているかを判定する
+};
+
 //大きさ調整しつつ並べて表示する位置を計算するクラス
 class LiningupScalingMechanism{
 	//型・列挙体
@@ -303,7 +375,7 @@ protected:
 	int startx,starty;//開始位置
 	PositionControl size;//拡大している物の調整
 
-						 //関数
+	//関数
 public:
 	LiningupScalingMechanism(int x,int y,DIRECTION side,PositionControl initsize);
 	~LiningupScalingMechanism();

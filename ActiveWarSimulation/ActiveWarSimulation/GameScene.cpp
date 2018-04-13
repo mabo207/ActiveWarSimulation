@@ -9,8 +9,7 @@ FadeInOutGameScene::FadeInOutGameScene(GameScene *pActivateClass,int fadeFlag,in
 	//フェードインの描画透明度の設定先を決める
 	if((m_fadeFlag & FADEIN)!=0){
 		//フェードインする場合
-		m_drawAlpha=Easing(255,flame,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
-		m_drawAlpha.SetTarget(0,true);
+		m_drawAlpha=Easing(255,0,flame,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
 	} else{
 		m_drawAlpha=Easing(0,flame,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
 	}
@@ -51,9 +50,8 @@ int FadeInOutGameScene::Calculate(){
 		if((m_fadeFlag & FADEOUT)!=0){
 			//フェードアウトを行う設定をしている場合
 			m_nowProcess=1;//これ以上場面クラスのCalculate()を行わない
-			m_drawAlpha=Easing(m_drawAlpha.GetX(),m_drawAlpha.GetMaxFlame()
+			m_drawAlpha=Easing(m_drawAlpha.GetX(),255,m_drawAlpha.GetMaxFlame()
 				,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
-			m_drawAlpha.SetTarget(255,true);
 		} else{
 			//フェードアウトを行わない設定をしている場合はそのままreturn
 			return index;

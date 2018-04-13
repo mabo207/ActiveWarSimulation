@@ -10,6 +10,7 @@ const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionM
 	,std::pair<std::string,Unit::Profession::Kind>("射手",Unit::Profession::e_archer)
 	,std::pair<std::string,Unit::Profession::Kind>("重装兵",Unit::Profession::e_armer)
 	,std::pair<std::string,Unit::Profession::Kind>("魔道士",Unit::Profession::e_mage)
+	,std::pair<std::string,Unit::Profession::Kind>("衛生兵",Unit::Profession::e_healer)
 };
 
 Unit::Profession::Kind Unit::Profession::link(int num){
@@ -104,8 +105,8 @@ bool Unit::SetPenetratable(Team::Kind nowPhase){
 }
 
 bool Unit::JudgeAttackable(const Unit *pUnit)const{
-	if(GetBattleStatus().team==pUnit->GetBattleStatus().team){
-		//同じチームなら攻撃できない
+	if(m_battleStatus.weapon.get()==nullptr || !m_battleStatus.weapon->JudgeWeild(this,pUnit)){
+		//各武器に設定されているチーム条件を満たさない場合は攻撃できない
 		return false;
 	}
 	//攻撃の射程と位置関係による条件
@@ -193,6 +194,37 @@ void Unit::DrawFacePic(Vector2D point)const{
 	DrawCircle(x,y,r,GetColor(255,255,255),FALSE,3);//背景の枠の描画
 }
 
+void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
+	Vector2D pos=point-adjust;
+	int mode,pal;
+	GetDrawBlendMode(&mode,&pal);
+	if(infoDrawFlag){
+		//アクションの効果範囲を半透明(弱)で描画
+		//ひとまず短射程で描画本来は武器クラスのDraw関数を使うのが望ましい。
+		if(GetFix()==Shape::Fix::e_dynamic){
+			//dynamicなキャラのみアクション範囲を表示。恐らく移動しているキャラのみ
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
+			DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),TRUE);//面
+			SetDrawBlendMode(mode,pal);
+			DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),FALSE);//枠
+		}
+		//ユニットの当たり判定図形を描画
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
+		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+		SetDrawBlendMode(mode,pal);
+		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
+		//ユニット自身の当たり判定の描画
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+		SetDrawBlendMode(mode,pal);
+		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
+	}
+	//ユニットグラフィックを描画
+	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,0.0,m_gHandle,TRUE,FALSE);
+	//描画モードを元に戻す
+	SetDrawBlendMode(mode,pal);
+}
+
 const Shape *Unit::GetHitJudgeShape()const{
 	if(m_penetratable){
 		//味方の行動フェイズならば、ユニット自身の当たり判定図形を返す
@@ -215,32 +247,7 @@ Shape::Fix::Kind Unit::SetFix(Shape::Fix::Kind fix)const{
 }
 
 void Unit::VDraw(Vector2D point,Vector2D adjust)const{
-	Vector2D pos=point-adjust;
-	int mode,pal;
-	GetDrawBlendMode(&mode,&pal);
-	//アクションの効果範囲を半透明(弱)で描画
-	//ひとまず短射程で描画本来は武器クラスのDraw関数を使うのが望ましい。
-	if(GetFix()==Shape::Fix::e_dynamic){
-		//dynamicなキャラのみアクション範囲を表示。恐らく移動しているキャラのみ
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-		DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),TRUE);//面
-		SetDrawBlendMode(mode,pal);
-		DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),FALSE);//枠
-	}
-	//ユニットの当たり判定図形を描画
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-	GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
-	SetDrawBlendMode(mode,pal);
-	GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
-	//ユニット自身の当たり判定の描画
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-	m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
-	SetDrawBlendMode(mode,pal);
-	m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//面
-	//ユニットグラフィックを描画
-	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,0.0,m_gHandle,TRUE,FALSE);
-	//描画モードを元に戻す
-	SetDrawBlendMode(mode,pal);
+	DrawUnit(point,adjust,true);
 }
 
 void Unit::VHitProcess(const BattleObject *potherobj){
@@ -267,14 +274,19 @@ Unit *Unit::CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,T
 		gHandle=LoadGraphEX("Graphic/archer.png");
 		break;
 	case(Profession::e_armer):
-		baseStatus=BaseStatus(lv,25+(int)(lv*0.9),6+(int)(lv*0.6),8+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
+		baseStatus=BaseStatus(lv,25+(int)(lv*0.9),6+(int)(lv*0.6),6+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
 		weapon=Weapon::GetWeapon("鉄の槍");
 		gHandle=LoadGraphEX("Graphic/armerknight.png");
 		break;
 	case(Profession::e_mage):
 		baseStatus=BaseStatus(lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
-		weapon=Weapon::GetWeapon("ファイアー");
+		weapon=Weapon::GetWeapon("ファイアーの書");
 		gHandle=LoadGraphEX("Graphic/mage.png");
+		break;
+	case(Profession::e_healer):
+		baseStatus=BaseStatus(lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),5+(int)(lv*0.55),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
+		weapon=Weapon::GetWeapon("ヒールの杖");
+		gHandle=LoadGraphEX("Graphic/healer.png");
 		break;
 	}
 	return new Unit(baseStatus,weapon,position,gHandle,team);
