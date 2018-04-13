@@ -12,6 +12,10 @@ Weapon::AttackInfo Weapon::GetAttackInfo(const Unit *attacker,const Unit *defend
 	return info;
 }
 
+bool Weapon::JudgeWeild(const Unit *attacker,const Unit *defender)const{
+	return m_calculator->VJudgeWeild(attacker,defender);
+}
+
 //以下静的変数
 const std::map<std::string,std::shared_ptr<Weapon>> Weapon::m_weaponMap=Weapon::InitWeaponMap();
 
@@ -24,7 +28,8 @@ std::map<std::string,std::shared_ptr<Weapon>> Weapon::InitWeaponMap(){
 	//以下列挙してmapに格納していく
 	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の槍",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator())))));
 	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の弓",2,Weapon::openAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator())))));
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ファイアー",5,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator())))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ファイアーの書",5,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator())))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ヒールの杖",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator())))));
 	//mapを返す
 	return map;
 }

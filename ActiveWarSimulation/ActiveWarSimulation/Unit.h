@@ -16,6 +16,7 @@ public:
 			e_archer,
 			e_armer,
 			e_mage,
+			e_healer,
 			END
 		};
 		static const std::map<std::string,Profession::Kind> professionMap;

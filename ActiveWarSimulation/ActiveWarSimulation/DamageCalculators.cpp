@@ -1,5 +1,7 @@
 #include"DamageCalculators.h"
 #include"Weapon.h"
+#include<algorithm>
+#pragma comment(lib, "winmm.lib")
 
 //---------------PhysicalCalculator-----------------
 PhysicalCalculator::PhysicalCalculator(double powerRate,double defRate,double weaponRate)
@@ -17,6 +19,16 @@ int PhysicalCalculator::VCalculateDamage(const Unit *attacker,const Unit *defend
 	return pal;
 }
 
+bool PhysicalCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)const{
+	switch(attacker->GetBattleStatus().team){
+	case(Unit::Team::e_player):
+		return defender->GetBattleStatus().team==Unit::Team::e_enemy;
+	case(Unit::Team::e_enemy):
+		return defender->GetBattleStatus().team==Unit::Team::e_player;
+	}
+	return false;
+}
+
 //---------------MagicCalculator-----------------
 MagicCalculator::MagicCalculator(double powerRate,double defRate,double weaponRate)
 	:DamageCalculator(),m_powerRate(powerRate),m_defRate(defRate),m_weaponRate(weaponRate){}
@@ -31,6 +43,40 @@ int MagicCalculator::VCalculateDamage(const Unit *attacker,const Unit *defender)
 		pal=0;
 	}
 	return pal;
+}
+
+bool MagicCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)const{
+	switch(attacker->GetBattleStatus().team){
+	case(Unit::Team::e_player):
+		return defender->GetBattleStatus().team==Unit::Team::e_enemy;
+	case(Unit::Team::e_enemy):
+		return defender->GetBattleStatus().team==Unit::Team::e_player;
+	}
+	return false;
+}
+
+//---------------RecoverCalculator-----------------
+RecoverCalculator::RecoverCalculator(double powerRate,double weaponRate)
+	:DamageCalculator(),m_powerRate(powerRate),m_weaponRate(weaponRate){}
+
+RecoverCalculator::~RecoverCalculator(){}
+
+int RecoverCalculator::VCalculateDamage(const Unit *healer,const Unit *receiver)const{
+	//「魔力」*倍率+「武器威力」*倍率で回復力は決定する。
+	int pal=(int)(healer->GetBaseStatus().mpower*m_powerRate)+(int)(healer->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	//被回復者の最大HPを上回るダメージは上回らないように。また、ダメージとして認識させるために負の値にする。
+	pal=-std::min(pal,receiver->GetBaseStatus().maxHP-receiver->GetBattleStatus().HP);
+	return pal;
+}
+
+bool RecoverCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)const{
+	switch(attacker->GetBattleStatus().team){
+	case(Unit::Team::e_player):
+		return defender->GetBattleStatus().team==Unit::Team::e_player;
+	case(Unit::Team::e_enemy):
+		return defender->GetBattleStatus().team==Unit::Team::e_enemy;
+	}
+	return false;
 }
 
 

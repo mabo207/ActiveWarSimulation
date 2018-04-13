@@ -10,6 +10,7 @@ const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionM
 	,std::pair<std::string,Unit::Profession::Kind>("射手",Unit::Profession::e_archer)
 	,std::pair<std::string,Unit::Profession::Kind>("重装兵",Unit::Profession::e_armer)
 	,std::pair<std::string,Unit::Profession::Kind>("魔道士",Unit::Profession::e_mage)
+	,std::pair<std::string,Unit::Profession::Kind>("衛生兵",Unit::Profession::e_healer)
 };
 
 Unit::Profession::Kind Unit::Profession::link(int num){
@@ -135,8 +136,8 @@ bool Unit::SetPenetratable(Team::Kind nowPhase){
 }
 
 bool Unit::JudgeAttackable(const Unit *pUnit)const{
-	if(GetBattleStatus().team==pUnit->GetBattleStatus().team){
-		//同じチームなら攻撃できない
+	if(m_battleStatus.weapon.get()==nullptr || !m_battleStatus.weapon->JudgeWeild(this,pUnit)){
+		//各武器に設定されているチーム条件を満たさない場合は攻撃できない
 		return false;
 	}
 	//攻撃の射程と位置関係による条件
@@ -279,8 +280,13 @@ Unit *Unit::CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,T
 		break;
 	case(Profession::e_mage):
 		baseStatus=BaseStatus(lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
-		weapon=Weapon::GetWeapon("ファイアー");
+		weapon=Weapon::GetWeapon("ファイアーの書");
 		gHandle=LoadGraphEX("Graphic/mage.png");
+		break;
+	case(Profession::e_healer):
+		baseStatus=BaseStatus(lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),5+(int)(lv*0.55),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
+		weapon=Weapon::GetWeapon("ヒールの杖");
+		gHandle=LoadGraphEX("Graphic/healer.png");
 		break;
 	}
 	return new Unit(baseStatus,weapon,position,gHandle,team);

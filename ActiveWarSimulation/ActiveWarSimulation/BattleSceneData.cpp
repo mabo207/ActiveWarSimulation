@@ -40,6 +40,7 @@ BattleSceneData::BattleSceneData(const char *stagename)
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,3,Vector2D(354.0f,294.0f),Unit::Team::e_player));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_mage,3,Vector2D(225.0f,519.0f),Unit::Team::e_player));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,3,Vector2D(306.0f,441.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_healer,3,Vector2D(106.0f,241.0f),Unit::Team::e_player));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(786.0f,510.0f),Unit::Team::e_enemy));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1596.0f,165.0f),Unit::Team::e_enemy));
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1740.0f,660.0f),Unit::Team::e_enemy));
