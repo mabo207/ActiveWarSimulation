@@ -1,7 +1,7 @@
 #include"Weapon.h"
 
 //---------------Weapon----------------
-const float Weapon::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.3f;
+const float Weapon::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.15f;
 const float Weapon::openAttackLength=Weapon::closeAttackLength*2.0f;
 
 Weapon::AttackInfo Weapon::GetAttackInfo(const Unit *attacker,const Unit *defender)const{
@@ -10,6 +10,10 @@ Weapon::AttackInfo Weapon::GetAttackInfo(const Unit *attacker,const Unit *defend
 	info.damage=m_calculator->VCalculateDamage(attacker,defender);
 	//結果を返す
 	return info;
+}
+
+bool Weapon::JudgeWeild(const Unit *attacker,const Unit *defender)const{
+	return m_calculator->VJudgeWeild(attacker,defender);
 }
 
 //以下静的変数
@@ -24,7 +28,8 @@ std::map<std::string,std::shared_ptr<Weapon>> Weapon::InitWeaponMap(){
 	//以下列挙してmapに格納していく
 	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の槍",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator())))));
 	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の弓",2,Weapon::openAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator())))));
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ファイアー",5,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator())))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ファイアーの書",5,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator())))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ヒールの杖",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator())))));
 	//mapを返す
 	return map;
 }
