@@ -34,6 +34,9 @@ protected:
 	Unit *m_aimedUnit;//現在の攻撃対象ユニット(静的ポインタ)
 	std::vector<RouteInfo> m_route;//操作ユニットが通った経路
 
+	//描画に用いる変数
+	int m_commandFont;
+
 	//関数
 protected:
 	Vector2D CalculateInputVec()const;//味方ターン時は入力されてるアナログスティックのベクトルを返す。敵ターン時はAIに従って移動方向のベクトルを返す。
