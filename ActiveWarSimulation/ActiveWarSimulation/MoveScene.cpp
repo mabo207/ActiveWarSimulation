@@ -1,4 +1,5 @@
 #include"DxLib.h"
+#include"GraphicControl.h"
 #include"MoveScene.h"
 #include"AttackScene.h"
 #include"input.h"
@@ -9,13 +10,15 @@
 const float MoveScene::routeFrequency=1.0f;
 
 MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
-	:BattleSceneElement(SceneKind::e_move),m_battleSceneData(battleSceneData)
+	:BattleSceneElement(SceneKind::e_move),m_battleSceneData(battleSceneData),m_commandFont(CreateFontToHandleEX("メイリオ",16,1,DX_FONTTYPE_EDGE))
 {
 	//m_aimedUnit等の初期化
 	FinishUnitOperation();
 }
 
-MoveScene::~MoveScene(){}
+MoveScene::~MoveScene(){
+	DeleteFontToHandleEX(m_commandFont);
+}
 
 Vector2D MoveScene::CalculateInputVec()const{
 	Vector2D moveVec;
@@ -257,6 +260,28 @@ void MoveScene::thisDraw()const{
 
 	//フィールドの描画
 	m_battleSceneData->DrawField();
+
+	//操作説明の描画
+	if(m_battleSceneData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
+		//味方操作時のみ描画
+		int mode,pal;
+		GetDrawBlendMode(&mode,&pal);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,(int)(std::sin(m_battleSceneData->m_fpsMesuring.GetProcessedTime())*100)+156);
+		auto f=[](bool usable)->unsigned int{
+			return usable?GetColor(255,255,255):GetColor(128,128,128);
+		};
+		int x=(int)m_battleSceneData->m_operateUnit->getPos().x+100
+			,y=(int)m_battleSceneData->m_operateUnit->getPos().y-60;
+		DrawCircle(x+30,y,15,f(JudgeAttackCommandUsable()),TRUE);//攻撃コマンドの描画
+		DrawStringToHandle(x+30+20,y,"攻撃",f(JudgeAttackCommandUsable()),m_commandFont,GetColor(0,0,0));
+		DrawCircle(x,y-30,15,f(true),TRUE);//待機コマンドの描画
+		DrawStringToHandle(x+20,y-30,"待機",f(true),m_commandFont,GetColor(0,0,0));
+		DrawCircle(x,y+30,15,f(true),TRUE);//巻き戻しコマンドの描画
+		DrawStringRightJustifiedToHandle(x-20,y+30,"巻き戻し",f(true),m_commandFont,GetColor(0,0,0));
+		DrawCircle(x-30,y,15,f(false),TRUE);//アイテムコマンドの描画
+		DrawStringRightJustifiedToHandle(x-30-20,y,"アイテム",f(false),m_commandFont,GetColor(0,0,0));
+		SetDrawBlendMode(mode,pal);
+	}
 
 	//ユニットの描画
 	m_battleSceneData->DrawUnit(true,std::set<const Unit *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
