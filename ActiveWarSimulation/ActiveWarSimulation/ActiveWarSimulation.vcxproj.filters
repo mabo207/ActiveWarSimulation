@@ -123,6 +123,12 @@
     <ClCompile Include="BattleSceneElement.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerMoveScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyMoveScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -180,6 +186,12 @@
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
     <ClInclude Include="BattleSceneElement.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerMoveScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputerMoveScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>

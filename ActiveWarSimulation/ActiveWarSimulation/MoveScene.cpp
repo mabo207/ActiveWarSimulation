@@ -17,41 +17,6 @@ MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 
 MoveScene::~MoveScene(){}
 
-Vector2D MoveScene::CalculateInputVec()const{
-	Vector2D moveVec;
-	if(m_battleSceneData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
-		//プレイヤー操作時
-		moveVec=analogjoypad_get(DX_INPUT_PAD1);
-		//アナログスティックの物理的なズレ等によるmoveVecの微入力を除く
-		const float gap=50.0f;
-		if(std::abs(moveVec.x)<gap){
-			moveVec.x=0.0f;
-		}
-		if(std::abs(moveVec.y)<gap){
-			moveVec.y=0.0f;
-		}
-	} else{
-		//コンピュータ操作時、AIが方向を決める
-		//ターン開始から1秒経ったらひとまず最近傍ユニットに単純に近づく
-		if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0){
-			const Unit *nearestUnit=nullptr;
-			for(const Unit *pu:m_battleSceneData->m_unitList){
-				if(pu->GetBattleStatus().team!=m_battleSceneData->m_operateUnit->GetBattleStatus().team){
-					if(nearestUnit==nullptr){
-						nearestUnit=pu;
-					} else if((pu->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize()<(nearestUnit->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize()){
-						nearestUnit=pu;
-					}
-				}
-			}
-			if(nearestUnit!=nullptr){
-				moveVec=nearestUnit->getPos()-m_battleSceneData->m_operateUnit->getPos();
-			}
-		}
-	}
-	return moveVec;
-}
-
 bool MoveScene::PositionUpdate(const Vector2D inputVec){
 	//バトルデータの更新
 	bool inputFlag=m_battleSceneData->PositionUpdate(inputVec);

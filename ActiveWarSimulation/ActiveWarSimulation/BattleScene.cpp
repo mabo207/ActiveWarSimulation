@@ -1,5 +1,6 @@
 #include"BattleScene.h"
-#include"MoveScene.h"
+#include"ComputerMoveScene.h"
+#include"PlayerMoveScene.h"
 
 //----------------------BattleScene----------------------
 BattleScene::BattleScene(const char *stagename)
