@@ -2,6 +2,10 @@
 #include"DxLib.h"
 #include"ComputerMoveScene.h"
 
+//---------------ComputerMoveScene------------------
+ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
+	:MoveScene(battleSceneData){}
+
 Vector2D ComputerMoveScene::CalculateInputVec()const{
 	Vector2D moveVec;
 	//コンピュータ操作時、AIが方向を決める

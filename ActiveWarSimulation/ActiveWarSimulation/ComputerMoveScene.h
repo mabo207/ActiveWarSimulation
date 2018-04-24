@@ -16,6 +16,9 @@ protected:
 
 	//仮想関数のオーバーライド
 	Vector2D CalculateInputVec()const;
+public:
+	ComputerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData);
+
 };
 
 #endif // !DEF_COMPUTERMOVESCENE_H

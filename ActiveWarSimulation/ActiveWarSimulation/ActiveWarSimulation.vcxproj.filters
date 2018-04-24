@@ -126,7 +126,10 @@
     <ClCompile Include="PlayerMoveScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyMoveScene.cpp">
+    <ClCompile Include="SwitchUnitScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputerMoveScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -192,6 +195,9 @@
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
     <ClInclude Include="ComputerMoveScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="SwitchUnitScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>

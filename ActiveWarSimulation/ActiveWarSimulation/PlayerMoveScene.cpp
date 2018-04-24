@@ -2,6 +2,10 @@
 #include"DxLib.h"
 #include"PlayerMoveScene.h"
 
+//----------------------PlayerMoveScene------------------------
+PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
+	:MoveScene(battleSceneData){}
+
 Vector2D PlayerMoveScene::CalculateInputVec()const{
 	Vector2D moveVec;
 	moveVec=analogjoypad_get(DX_INPUT_PAD1);

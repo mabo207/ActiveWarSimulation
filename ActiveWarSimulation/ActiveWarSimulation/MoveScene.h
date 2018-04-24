@@ -52,7 +52,7 @@ protected:
 
 public:
 	MoveScene(std::shared_ptr<BattleSceneData> battleSceneData);
-	~MoveScene();
+	virtual ~MoveScene();
 };
 
 

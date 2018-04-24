@@ -14,6 +14,7 @@ public:
 		enum Kind{
 			e_move=start,
 			e_attackNormal,
+			e_switch,
 			END
 		};
 		static const int kindNum=END-start;

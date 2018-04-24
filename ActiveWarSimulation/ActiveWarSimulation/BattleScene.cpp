@@ -1,13 +1,12 @@
 #include"BattleScene.h"
-#include"ComputerMoveScene.h"
-#include"PlayerMoveScene.h"
+#include"SwitchUnitScene.h"
 
 //----------------------BattleScene----------------------
 BattleScene::BattleScene(const char *stagename)
 	:GameScene(),m_battleSceneData(new BattleSceneData(stagename))
 {
 	//m_sceneData‚Ì‰Šú‰»AÅ‰‚Í‚Ğ‚Æ‚Ü‚¸ˆÚ“®‚Å
-	m_sceneData=std::shared_ptr<BattleSceneElement>(new MoveScene(m_battleSceneData));
+	m_sceneData=std::shared_ptr<BattleSceneElement>(new SwitchUnitScene(m_battleSceneData));
 }
 
 BattleScene::~BattleScene(){}
