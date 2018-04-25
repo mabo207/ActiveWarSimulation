@@ -54,7 +54,7 @@ bool MoveScene::PositionUpdate(const Vector2D inputVec){
 
 void MoveScene::FinishUnitOperation(){
 	//バトルデータの更新
-	m_battleSceneData->FinishUnitOperation();
+	//m_battleSceneData->FinishUnitOperation();
 	//m_aimedUnitの初期化
 	SetAimedUnit(0.0f,0);
 	//m_routeの初期化
@@ -173,6 +173,7 @@ int MoveScene::thisCalculate(){
 			} else if(keyboard_get(KEY_INPUT_V)==1){
 				//待機
 				FinishUnitOperation();
+				return 0;
 			} else if(keyboard_get(KEY_INPUT_X)==1 || keyboard_get(KEY_INPUT_X)>30){
 				//移動やり直し(m_route.back()の1つ前の場所に戻す。back()の位置は現在位置の可能性が高いため)
 				if(!m_route.empty()){
@@ -208,6 +209,7 @@ int MoveScene::thisCalculate(){
 			} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f || processedTime>10.0 || (moveSqLength<0.1f && processedTime>2.0)){
 				//移動できなくなったら、または10秒経ったら、また移動距離が少ない場合は待機
 				FinishUnitOperation();
+				return 0;
 			}
 		}
 	}

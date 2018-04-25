@@ -8,7 +8,7 @@ SwitchUnitScene::SwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	:BattleSceneElement(SceneKind::e_switch),m_battleSceneData(battleSceneData)
 {
 	m_battleSceneData->m_fpsMesuring.RecordTime();//タイマー初期化
-	//切り替え処理はMoveScene系統で行っているので、m_battleSceneDataはいじらなくてよい
+	m_battleSceneData->FinishUnitOperation();//ユニットの切り替え処理
 }
 
 SwitchUnitScene::~SwitchUnitScene(){}
@@ -52,4 +52,5 @@ int SwitchUnitScene::UpdateNextScene(int index){
 
 void SwitchUnitScene::ReturnProcess(){
 	m_battleSceneData->m_fpsMesuring.RecordTime();//タイマー初期化
+	m_battleSceneData->FinishUnitOperation();//ユニットの切り替え処理
 }
