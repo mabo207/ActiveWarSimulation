@@ -5,6 +5,7 @@
 #include<vector>
 #include"Shape.h"
 
+
 //当たり判定処理を持つ純粋仮想クラス、「当たり判定を持つ障害物」などを作る時に基底クラスにすると良い
 class ShapeHaving{
 	//定数

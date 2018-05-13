@@ -2,6 +2,7 @@
 #define DEF_CIRCLE_H
 
 #include"Shape.h"
+#include"ShapeHaving.h"
 
 //円を表すクラス
 class Circle:public Shape{
@@ -14,6 +15,9 @@ protected:
 	float m_r;//半径
 
 	//関数
+protected:
+	Vector2D CalculatePushVec(const Shape *pShape)const;//pShapeとthisが重なっているか判定し、押し出すベクトルを返す。重なっていない場合はVector2D(0,0)が返される。
+
 public:
 	Circle(Vector2D position,float r,Fix::Kind fix);
 	~Circle();
@@ -21,8 +25,11 @@ public:
 	float GetR()const{
 		return m_r;
 	}
+	
+	//純粋仮想関数のオーバーライド
 	void Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness=1.0f)const;
-	Vector2D CalculatePushVec(const Shape *pShape)const;//pShapeとthisが重なっているか判定し、押し出すベクトルを返す。重なっていない場合はVector2D(0,0)が返される。
+	bool PushParentObj(const Shape *pShape,ShapeHaving *parentObj,float pushRate)const;//thisとpShapeが重なっているか判定し、重なっている場合はparentObjを移動させtrueを返す。
+	bool JudgeInShape(const Shape *pShape)const;//this内にpShapeがあるかどうかの判定
 	Vector2D GetLeftTop()const;//左上の座標を求める
 	Vector2D GetRightBottom()const;//右下の座標を求める
 	//エディタ用

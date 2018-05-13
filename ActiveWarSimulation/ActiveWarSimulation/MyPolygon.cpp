@@ -45,7 +45,7 @@ void MyPolygon::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillF
 		for(const Vector2D &edge:GetAllEdgeVecs()){
 			//始点からもう一度始点に戻るまでの全ての辺の描画
 			next=pos+edge;
-			DrawLineAA(pos.x,pos.y,next.x,next.y,color,lineThickness);
+			DrawLineAA(pos.x,pos.y,next.x,next.y,GetColor(168,128,128),lineThickness);
 			pos=next;
 		}
 	} else{
@@ -54,15 +54,29 @@ void MyPolygon::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillF
 		for(const Vector2D &edge:GetAllEdgeVecs()){
 			//始点からもう一度始点に戻るまでの全ての辺の描画
 			next=pos+edge;
-			DrawLineAA(pos.x,pos.y,next.x,next.y,color,lineThickness);
+			DrawLineAA(pos.x,pos.y,next.x,next.y,GetColor(168,128,128),lineThickness);
 			pos=next;
 		}
 	}
 }
 
-Vector2D MyPolygon::CalculatePushVec(const Shape *pShape)const{
-	//今は実装できない。やるなら、各図形に当たり判定処理をどうするかを全て委ねる仕組みにした後、MyPolygonの全辺に対して「Edge生成→当たり判定処理」という事をするようにするのが無難
-	return Vector2D();
+bool MyPolygon::PushParentObj(const Shape *pShape,ShapeHaving *parentObj,float pushRate)const{
+	//押し出し距離の計算はできないが、辺が全て線分なので全ての辺をEdgeクラスにしそれとの押し出し処理を行わせる
+	bool ret=false;
+	Vector2D begin=m_position;
+	for(const Vector2D &vec:GetAllEdgeVecs()){
+		//全ての線分に対しての処理
+		Edge e(begin,vec,this->m_fix);
+		ret=e.PushParentObj(pShape,parentObj,pushRate) | ret;//線分による押し出し処理+当たったかどうかの更新処理
+		begin+=vec;
+	}
+	return ret;
+}
+
+bool MyPolygon::JudgeInShape(const Shape *pShape)const{
+	//三角形分割を行い、分割できた全ての三角形について内部判定処理を行う
+
+	return false;
 }
 
 Vector2D MyPolygon::GetLeftTop()const{

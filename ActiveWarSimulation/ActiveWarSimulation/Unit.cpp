@@ -111,7 +111,7 @@ bool Unit::JudgeAttackable(const Unit *pUnit)const{
 	}
 	//攻撃の射程と位置関係による条件
 	std::shared_ptr<Shape> pWeapon(new Circle(getPos(),m_battleStatus.weapon->GetLength(),Shape::Fix::e_dynamic));
-	if(pWeapon->CalculatePushVec(pUnit->GetUnitCircleShape())==Vector2D()){
+	if(pWeapon->JudgeInShape(pUnit->GetUnitCircleShape())){
 		//攻撃範囲に敵ユニット本体がいなければ
 		return false;
 	}

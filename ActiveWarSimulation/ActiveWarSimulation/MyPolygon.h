@@ -17,16 +17,18 @@ protected:
 
 	//関数
 protected:
-	std::vector<Vector2D> GetAllEdgeVecs()const;//m_edgeVecsに終点→始点へのベクトルを加え、全ての辺のベクトルを返す。
-
+	
 public:
 	MyPolygon(Vector2D begin,std::vector<Vector2D> points,Fix::Kind fix);
 	~MyPolygon();
+	std::vector<Vector2D> GetAllEdgeVecs()const;//m_edgeVecsに終点→始点へのベクトルを加え、全ての辺のベクトルを返す。
 
 	//純粋仮想関数
 	std::shared_ptr<Shape> VCopy()const;//内容が同じでポインタの位置のみが異なるオブジェクトのポインタを返す
 	void Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness=1.0f)const;
-	Vector2D CalculatePushVec(const Shape *pShape)const;//pShapeとthisが重なっているか判定し、押し出すベクトルを返す。重なっていない場合はVector2D(0,0)が返される。
+	//Vector2D CalculatePushVec(const Shape *pShape)const;//pShapeとthisが重なっているか判定し、押し出すベクトルを返す。重なっていない場合はVector2D(0,0)が返される。
+	bool PushParentObj(const Shape *pShape,ShapeHaving *parentObj,float pushRate)const;//thisとpShapeが重なっているか判定し、重なっている場合はparentObjを移動させtrueを返す。
+	bool JudgeInShape(const Shape *pShape)const;//this内にpShapeがあるかどうかの判定
 	Vector2D GetLeftTop()const;//左上の座標を求める
 	Vector2D GetRightBottom()const;//右下の座標を求める
 	//エディタ用の純粋仮想関数

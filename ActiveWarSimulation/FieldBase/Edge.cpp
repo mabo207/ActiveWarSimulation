@@ -1,5 +1,6 @@
 #include"Edge.h"
 #include"Circle.h"
+#include"MyPolygon.h"
 #include"DxLib.h"
 #include<cassert>
 
@@ -85,6 +86,48 @@ Vector2D Edge::CalculatePushVec(const Shape *pShape)const{
 		break;
 	}
 	return ret;
+}
+
+bool Edge::PushParentObj(const Shape *pShape,ShapeHaving *parentObj,float pushRate)const{
+	//自分とぶつかった相手の候補pShapeが何かによって押し出し処理が異なる
+	switch(pShape->GetType()){
+	case(Type::e_circle):
+	case(Type::e_edge):
+		{
+			//相手が円か線分の場合は押し出し距離が求められるので、それをそのまま使う
+			//押し出し距離の計算
+			Vector2D pushVec=this->CalculatePushVec(pShape);
+			//押し出し距離の一定の割合のベクトルだけ押し出す
+			parentObj->Move(pushVec*pushRate);
+			//押し出し距離の長さでtrueかfalseかを判断して返す
+			return pushVec.sqSize()!=0.0f;
+		}
+	case(Type::e_polygon):
+		{
+			//相手が多角形の場合は、線分に分解して処理を行う
+			const MyPolygon *ppolygon=dynamic_cast<const MyPolygon *>(pShape);
+			if(ppolygon!=nullptr){
+				bool ret=false;
+				Vector2D begin=ppolygon->GetPosition();
+				for(const Vector2D &vec:ppolygon->GetAllEdgeVecs()){
+					//全ての線分に対しての処理
+					Edge e(begin,vec,ppolygon->m_fix);
+					ret=e.PushParentObj(pShape,parentObj,pushRate) | ret;//線分による押し出し処理+当たったかどうかの更新処理
+					begin+=vec;
+				}
+				return ret;
+			} else{
+				//ここに来ることがあったら、なんかバグってる
+				assert(false);
+			}
+		}
+	}
+	return false;
+}
+
+bool Edge::JudgeInShape(const Shape *pShape)const{
+	//線分の場合は押し出し距離を求められるのでそれを用いる
+	return CalculatePushVec(pShape)!=Vector2D();
 }
 
 bool Edge::VJudgePointInsideShape(Vector2D point)const{
