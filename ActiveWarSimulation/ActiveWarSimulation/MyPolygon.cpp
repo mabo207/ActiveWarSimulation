@@ -2,6 +2,9 @@
 #include"DxLib.h"
 #include<cassert>
 #include<exception>
+#include<list>
+#include<array>
+#include<iterator>
 
 //--------------------MyPolygon--------------------
 MyPolygon::MyPolygon(Vector2D begin,std::vector<Vector2D> points,Fix::Kind fix)
@@ -41,20 +44,109 @@ void MyPolygon::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillF
 	//中を満たすかどうかで処理を変える。満たさない場合は三角形分割をしなくて良いので高速化できるため
 	if(fillFlag==TRUE){
 		//中を満たす場合
-		Vector2D pos=point+adjust,next;
-		for(const Vector2D &edge:GetAllEdgeVecs()){
-			//始点からもう一度始点に戻るまでの全ての辺の描画
-			next=pos+edge;
-			DrawLineAA(pos.x,pos.y,next.x,next.y,GetColor(168,128,128),lineThickness);
-			pos=next;
+		auto FuncNextIt=[](std::list<std::pair<Vector2D,size_t>>::iterator it,std::list<std::pair<Vector2D,size_t>> &list){
+			it++;
+			if(it==list.end()){
+				it=list.begin();
+			}
+			return it;
+		};
+		auto FuncBackIt=[](std::list<std::pair<Vector2D,size_t>>::iterator it,std::list<std::pair<Vector2D,size_t>> &list){
+			if(it==list.begin()){
+				it=list.end();
+			}
+			it--;
+			return it;
+		};
+		//三角形分割を行い、分割できた全ての三角形について内部判定処理を行う
+		//三角形分割初期化
+		std::vector<std::array<size_t,3>> triangleSet;//分割した三角形を構成する頂点番号を格納する
+		std::list<std::pair<Vector2D,size_t>> vertexList={std::pair<Vector2D,size_t>(m_position,0)};//消していない頂点一覧。初期値はPolygonの全ての頂点。リストの中を削除する行為が多いので双方向リストの方が趣旨に合っている。
+		for(size_t i=0,size=m_edgeVecs.size();i<size;i++){
+			vertexList.push_back(std::pair<Vector2D,size_t>(vertexList.back().first+m_edgeVecs[i],i+1));
 		}
+		size_t leftCount=vertexList.size();//残り個数
+		//三角形分割実行
+		while(leftCount>3){
+			//残り頂点数が3個以下になるまで頂点を1つずつ取り除く
+			//原点から最も遠い点を取り出す
+			std::list<std::pair<Vector2D,size_t>>::iterator baseIt=vertexList.begin();
+			for(std::list<std::pair<Vector2D,size_t>>::iterator it=vertexList.begin(),ite=vertexList.end();it!=ite;it++){
+				if(it->first.sqSize()>baseIt->first.sqSize()){
+					baseIt=it;
+				}
+			}
+			//その点と隣接する2点による三角形について、外積を求めておく
+			//最遠点を基準とする三角形は必ず多角形内部を含むため、三角形の向きを示す外積の向きを用いれば、「三角形が多角形の外部に存在する」というパターンを弾ける。
+			std::list<std::pair<Vector2D,size_t>>::iterator backIt,nextIt;
+			backIt=FuncBackIt(baseIt,vertexList),nextIt=FuncNextIt(baseIt,vertexList);
+			const float baseCross=((backIt->first)-(baseIt->first)).cross((nextIt->first)-(baseIt->first));
+			//最遠点からbaseItを++させる方向に順番に三角形分割できるか見ていく
+			while(true){
+				//三角形の向きの条件をクリアしているか
+				const float cross=((backIt->first)-(baseIt->first)).cross((nextIt->first)-(baseIt->first));
+				if(cross*baseCross>0.0f){
+					//三角形内部に他の多角形点がないかを判定
+					std::list<std::pair<Vector2D,size_t>>::iterator it=FuncNextIt(nextIt,vertexList);
+					bool noexist=true;
+					for(;it!=backIt;it=FuncNextIt(it,vertexList)){
+						if(JudgeInTriangle(it->first,backIt->first,baseIt->first,nextIt->first)){
+							//外積の符号がどれも同じなら点が内部にあるので、内部にある判定をしてforループ終了
+							noexist=false;
+							break;
+						}
+					}
+					if(noexist){
+						//三角形分割できる場合はループを脱出
+						triangleSet.push_back({backIt->second,baseIt->second,nextIt->second});
+						vertexList.erase(baseIt);
+						leftCount--;
+						break;
+					}
+				}
+				//分割できない場合は次の点へ
+				backIt=FuncNextIt(backIt,vertexList);
+				baseIt=FuncNextIt(baseIt,vertexList);
+				nextIt=FuncNextIt(nextIt,vertexList);
+			}
+		}
+		//最後に余った3点の三角形を格納
+		std::array<size_t,3> tri;
+		std::list<std::pair<Vector2D,size_t>>::iterator it=vertexList.begin();
+		for(size_t i=0;i<3;i++,it++){
+			tri[i]=it->second;
+		}
+		triangleSet.push_back(tri);
+
+		//分割した三角形の集合ができたので、全ての三角形に対して内部判定を行っていく
+		//再利用性を考えて、前では頂点番号で三角形集合を表現して、こちらでまた座標一覧を作っていく
+		std::vector<Vector2D> vertexVec={m_position};
+		Vector2D v=m_position;
+		for(const Vector2D &vec:m_edgeVecs){
+			v+=vec;
+			vertexVec.push_back(v);
+		}
+		//全ての分割三角形に対して、内部判定を実行
+		for(size_t i=0,size=triangleSet.size();i<size;i++){
+			DrawTriangleAA(vertexVec[triangleSet[i][0]].x,vertexVec[triangleSet[i][0]].y,
+				vertexVec[triangleSet[i][1]].x,vertexVec[triangleSet[i][1]].y,
+				vertexVec[triangleSet[i][2]].x,vertexVec[triangleSet[i][2]].y,
+				GetColor(168,128,128),TRUE,lineThickness);
+			//*
+			DrawTriangleAA(vertexVec[triangleSet[i][0]].x,vertexVec[triangleSet[i][0]].y,
+				vertexVec[triangleSet[i][1]].x,vertexVec[triangleSet[i][1]].y,
+				vertexVec[triangleSet[i][2]].x,vertexVec[triangleSet[i][2]].y,
+				GetColor(128,128,168),FALSE,lineThickness);
+			//*/
+		}
+
 	} else{
 		//辺のみ描画する場合
 		Vector2D pos=point+adjust,next;
 		for(const Vector2D &edge:GetAllEdgeVecs()){
 			//始点からもう一度始点に戻るまでの全ての辺の描画
 			next=pos+edge;
-			DrawLineAA(pos.x,pos.y,next.x,next.y,GetColor(168,128,128),lineThickness);
+			DrawLineAA(pos.x,pos.y,next.x,next.y,color,lineThickness);
 			pos=next;
 		}
 	}
@@ -102,8 +194,7 @@ Vector2D MyPolygon::GetRightBottom()const{
 }
 
 bool MyPolygon::VJudgePointInsideShape(Vector2D point)const{
-	//三角形分割を行い、分割できた全ての三角形について内部判定処理を行う
-
+	
 	return false;
 }
 
