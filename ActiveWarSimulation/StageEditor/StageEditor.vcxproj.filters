@@ -135,6 +135,9 @@
     <ClInclude Include="..\ActiveWarSimulation\GraphicProgramming.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\MyPolygon.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -208,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="..\ActiveWarSimulation\GraphicProgramming.cpp">
       <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\MyPolygon.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

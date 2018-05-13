@@ -165,6 +165,7 @@
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="MoveScene.cpp" />
     <ClCompile Include="PlayerMoveScene.cpp" />
+    <ClCompile Include="MyPolygon.cpp" />
     <ClCompile Include="SwitchUnitScene.cpp" />
     <ClCompile Include="ToolsLib.cpp" />
     <ClCompile Include="Unit.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="MoveScene.h" />
     <ClInclude Include="PlayerMoveScene.h" />
+    <ClInclude Include="MyPolygon.h" />
     <ClInclude Include="SwitchUnitScene.h" />
     <ClInclude Include="ToolsLib.h" />
     <ClInclude Include="Unit.h" />

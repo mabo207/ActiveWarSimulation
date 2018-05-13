@@ -52,7 +52,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 			BattleObject *pMoveCircle(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(100.0f,300.0f),30.0f,Shape::Fix::e_dynamic)),-1,GetColor(255,0,0),false));
 			std::vector<BattleObject *> field={pMoveCircle};
 			//ファイルを開きすべての文字列を書き出す
-			std::ifstream ifs("../StageEditor/SaveData/stage.txt");
+			std::ifstream ifs("../StageEditor/SaveData/stage2.txt");
 			if(!ifs){
 				return -1;
 			}

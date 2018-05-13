@@ -84,7 +84,7 @@ Vector2D Circle::GetRetResize()const{
 }
 
 void Circle::WriteOutShape(std::ofstream &ofs)const{
-	//"("→(種別)→(始点位置)→(半径)→(初期固定)→")"
+	//"("→(種別)→(始点位置)→(初期固定)→(半径)→")"
 	ofs<<beginer<<Type::GetStr(m_type)<<spliter;//ofs<<"(Circle,";
 	ofs<<beginer<<m_position.x<<spliter<<m_position.y<<ender<<spliter;//ofs<<"("<<m_position.x<<","<<m_position.y<<"),";
 	ofs<<Fix::GetStr(m_fix)<<spliter;//ofs<<Fix::GetStr(m_fix)<<",";
