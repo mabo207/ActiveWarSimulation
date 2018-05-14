@@ -14,10 +14,12 @@ public:
 	//変数
 protected:
 	std::vector<Vector2D> m_edgeVecs;//辺を表すベクトル。m_positionにm_edgeVecsの先頭から加算していくと、全ての点の座標を求められる。終端点->m_positionのベクトルは自明なため、点の数より要素数が1少ない。
+	std::vector<std::array<size_t,3>> m_triangleSet;//三角形分割の結果が格納されている。回転・拡大縮小しても変更する必要はない。
 
 	//関数
 protected:
-	
+	void DivideTriangle(std::vector<std::array<size_t,3>> *triangleSet)const;
+
 public:
 	MyPolygon(Vector2D begin,std::vector<Vector2D> points,Fix::Kind fix);
 	~MyPolygon();
