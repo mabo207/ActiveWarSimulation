@@ -15,6 +15,8 @@ public:
 
 	//変数
 protected:
+	//多角形構成のための変数
+	std::vector<Vector2D> m_pointVec;
 
 	//関数
 protected:
@@ -24,7 +26,7 @@ public:
 	~PolygonFactory();
 
 	std::shared_ptr<Shape> CreateShape(Vector2D point)const;
-	EditPut::PosSetKind VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const;
+	EditPut::PosSetKind VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings);
 	void VPutNotPressAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const;//EditPutの非クリックの際に行う処理(デフォルトはResize()をしていくだけ)
 };
 

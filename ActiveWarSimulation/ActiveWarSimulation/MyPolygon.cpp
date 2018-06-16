@@ -142,13 +142,13 @@ void MyPolygon::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillF
 		//全ての分割三角形に対して、内部判定を実行
 		unsigned int c=VJudgePointInsideShape(GetMousePointVector2D())?GetColor(168,128,128):GetColor(128,168,128);
 		for(size_t i=0,size=m_triangleSet.size();i<size;i++){
-			DrawTriangleAA(vertexVec[m_triangleSet[i][0]].x,vertexVec[m_triangleSet[i][0]].y,
-				vertexVec[m_triangleSet[i][1]].x,vertexVec[m_triangleSet[i][1]].y,
-				vertexVec[m_triangleSet[i][2]].x,vertexVec[m_triangleSet[i][2]].y,
+			DrawTriangleAA(vertexVec[m_triangleSet[i][0]].x+adjust.x,vertexVec[m_triangleSet[i][0]].y+adjust.y,
+				vertexVec[m_triangleSet[i][1]].x+adjust.x,vertexVec[m_triangleSet[i][1]].y+adjust.y,
+				vertexVec[m_triangleSet[i][2]].x+adjust.x,vertexVec[m_triangleSet[i][2]].y+adjust.y,
 				c,TRUE,lineThickness);
-			DrawTriangleAA(vertexVec[m_triangleSet[i][0]].x,vertexVec[m_triangleSet[i][0]].y,
-				vertexVec[m_triangleSet[i][1]].x,vertexVec[m_triangleSet[i][1]].y,
-				vertexVec[m_triangleSet[i][2]].x,vertexVec[m_triangleSet[i][2]].y,
+			DrawTriangleAA(vertexVec[m_triangleSet[i][0]].x+adjust.x,vertexVec[m_triangleSet[i][0]].y+adjust.y,
+				vertexVec[m_triangleSet[i][1]].x+adjust.x,vertexVec[m_triangleSet[i][1]].y+adjust.y,
+				vertexVec[m_triangleSet[i][2]].x+adjust.x,vertexVec[m_triangleSet[i][2]].y+adjust.y,
 				color,FALSE,lineThickness);
 		}
 

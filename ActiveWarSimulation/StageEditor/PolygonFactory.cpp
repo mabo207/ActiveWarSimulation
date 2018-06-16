@@ -1,6 +1,7 @@
 #include"DxLib.h"
 #include"PolygonFactory.h"
 #include"MyPolygon.h"
+#include"Edge.h"
 #include"EditActionSettings.h"
 #include"BattleObject.h"
 #include"StageEditor.h"
@@ -37,21 +38,53 @@ PolygonFactory::PolygonFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned i
 PolygonFactory::~PolygonFactory(){}
 
 std::shared_ptr<Shape> PolygonFactory::CreateShape(Vector2D point)const{
-	//return std::shared_ptr<Shape>(new MyPolygon((float)StageEditor::baseSize));
-	return std::shared_ptr<Shape>(new MyPolygon(point,std::vector<Vector2D>{},Shape::Fix::e_static));
+	//ひとまず最初は線分を作る
+	return std::shared_ptr<Shape>(new Edge(point,Vector2D(3.0f,3.0f),Shape::Fix::e_static));
 }
 
-EditPut::PosSetKind PolygonFactory::VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const{
+EditPut::PosSetKind PolygonFactory::VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings){
 	if(pskind==EditPut::PosSetKind::BASENONEXIST){
 		//置く場所を決めている時
-		settings.m_pBattleObject->Warp(point);//位置を確定
-		return EditPut::PosSetKind::BASEEXIST;//図形の大きさの決定へ
+		//位置を確定
+		settings.m_pBattleObject->Warp(point);
+		//頂点を初期化
+		m_pointVec.clear();
+		m_pointVec.push_back(point);
+		//図形の頂点の決定へ
+		return EditPut::PosSetKind::BASEEXIST;
 	} else if(pskind==EditPut::PosSetKind::BASEEXIST){
-		//置く図形の大きさを決めている時
-		Vector2D pos=settings.m_pBattleObject->getPos();
-		settings.m_pBattleObject->Resize(point);//大きさを確定
-		settings.PutObject(pos);
-		return EditPut::PosSetKind::BASENONEXIST;//図形の位置の決定へ
+		//図形の頂点を決めている時
+		if((point-settings.m_pBattleObject->getPos()).sqSize()>25.0f){
+			//開始点よりマウスが遠くにある時、点を追加する
+			bool flag=true;
+			for(const Vector2D v:m_pointVec){
+				if((v-point).sqSize()==0.0f){
+					//いずれかの点と重なってたら点の追加は認めない
+					flag=false;
+					break;
+				}
+			}
+			if(flag){
+				//点の追加
+				m_pointVec.push_back(point);
+				//図形の変更
+				if(m_pointVec.size()==2){
+					//点が2つの時は線分になる
+					settings.m_pBattleObject->ChangeShape(std::shared_ptr<Shape>(new Edge(m_pointVec[0],m_pointVec[1]-m_pointVec[0],settings.m_pBattleObject->GetFix())));
+				} else if(m_pointVec.size()>=3){
+					//点が3つ以上の時は多角形になる
+					std::vector<Vector2D> noTop=m_pointVec;
+					noTop.erase(noTop.begin());//先頭は別に用意するので除く
+					settings.m_pBattleObject->ChangeShape(std::shared_ptr<Shape>(new MyPolygon(m_pointVec[0],noTop,settings.m_pBattleObject->GetFix())));
+				}
+			}
+			return EditPut::PosSetKind::BASEEXIST;//図形の頂点の決定へ
+		} else{
+			//マウスが開始点の近くにある時に図形を確定する			
+			settings.PutObject(settings.m_pBattleObject->getPos());
+			settings.m_pBattleObject->ChangeShape(CreateShape(point));//多角形そのままにすると見づらいので線分に戻しておく
+			return EditPut::PosSetKind::BASENONEXIST;//図形の位置の決定へ
+		}
 	}
 	return EditPut::PosSetKind::NONEDIT;//例外的な処理
 
@@ -62,7 +95,12 @@ void PolygonFactory::VPutNotPressAction(EditPut::PosSetKind pskind,Vector2D poin
 		//置く場所を決めている時
 		settings.m_pBattleObject.get()->Warp(point);//図形の位置を変える
 	} else if(pskind==EditPut::PosSetKind::BASEEXIST){
-		//置く図形の大きさを決めている時
-		settings.m_pBattleObject->Resize(point);//図形の大きさを変える
+		//置く図形の頂点を決めている時
+		if(settings.m_pBattleObject->GetHitJudgeShape()->GetType()==Shape::Type::e_edge){
+			//m_pBattleObjectが線分であれば(初期化の際は線分である)
+			settings.m_pBattleObject->Resize(point);//図形の大きさを変える
+		} else if(settings.m_pBattleObject->GetHitJudgeShape()->GetType()==Shape::Type::e_polygon){
+			//多角形になっている時は特に何もしない
+		}
 	}
 }

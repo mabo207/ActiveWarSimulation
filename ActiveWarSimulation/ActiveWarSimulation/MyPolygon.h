@@ -19,12 +19,12 @@ protected:
 	//関数
 protected:
 	void DivideTriangle(std::vector<std::array<size_t,3>> *triangleSet)const;
-	void CalculateAllPointPosition(std::vector<Vector2D> *vertexPos)const;
-
+	
 public:
 	MyPolygon(Vector2D begin,std::vector<Vector2D> points,Fix::Kind fix);
 	~MyPolygon();
 	std::vector<Vector2D> GetAllEdgeVecs()const;//m_edgeVecsに終点→始点へのベクトルを加え、全ての辺のベクトルを返す。
+	void CalculateAllPointPosition(std::vector<Vector2D> *vertexPos)const;//全ての頂点の座標をvertexPosに格納する
 
 	//純粋仮想関数
 	std::shared_ptr<Shape> VCopy()const;//内容が同じでポインタの位置のみが異なるオブジェクトのポインタを返す

@@ -30,7 +30,7 @@ void ShapeFactory::DrawPushedButtonLight()const{
 	DrawBox((int)m_buttonPos.x,(int)m_buttonPos.y,(int)v.x,(int)v.y,m_buttonLightColor,TRUE);
 }
 
-EditPut::PosSetKind ShapeFactory::VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const{
+EditPut::PosSetKind ShapeFactory::VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings){
 	if(pskind==EditPut::PosSetKind::BASENONEXIST){
 		//’u‚­êŠ‚ğŒˆ‚ß‚Ä‚¢‚é
 		settings.m_pBattleObject->Warp(point);//ˆÊ’u‚ğŠm’è
