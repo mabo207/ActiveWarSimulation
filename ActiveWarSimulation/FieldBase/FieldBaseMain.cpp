@@ -97,6 +97,21 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					}
 				}
 				pMoveCircle->VDraw(Vector2D(0.0f,0.0f));
+				//全ての格子点の描画(図形内にあるかの判定を含む)
+				if(keyboard_get(KEY_INPUT_SPACE)>0){
+					for(int x=0;x<1920;x+=32){
+						for(int y=0;y<1080;y+=32){
+							bool inflag=false;
+							for(const BattleObject *pObject:field){
+								if(pObject->JudgePointInsideShape(Vector2D((float)x,(float)y))){
+									inflag=true;
+									break;
+								}
+							}
+							DrawCircle(x,y,2,inflag?GetColor(255,255,0):GetColor(0,0,255),TRUE);
+						}
+					}
+				}
 				printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000);
 
 				//位置更新
