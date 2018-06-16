@@ -25,6 +25,7 @@ public:
 
 	std::shared_ptr<Shape> CreateShape(Vector2D point)const;
 	EditPut::PosSetKind VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const;
+	void VPutNotPressAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const;//EditPutの非クリックの際に行う処理(デフォルトはResize()をしていくだけ)
 };
 
 #endif // !DEF_POLYGONFACTORY_H

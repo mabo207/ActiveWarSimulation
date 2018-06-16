@@ -41,18 +41,3 @@ EdgeFactory::~EdgeFactory(){}
 std::shared_ptr<Shape> EdgeFactory::CreateShape(Vector2D point)const{
 	return std::shared_ptr<Shape>(new Edge(point,baseVec,Shape::Fix::e_static));
 }
-
-EditPut::PosSetKind EdgeFactory::VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const{
-	if(pskind==EditPut::PosSetKind::BASENONEXIST){
-		//置く場所を決めている時
-		settings.m_pBattleObject->Warp(point);//位置を確定
-		return EditPut::PosSetKind::BASEEXIST;//図形の大きさの決定へ
-	} else if(pskind==EditPut::PosSetKind::BASEEXIST){
-		//置く図形の大きさを決めている時
-		Vector2D pos=settings.m_pBattleObject->getPos();
-		settings.m_pBattleObject->Resize(point);//大きさを確定
-		settings.PutObject(pos);
-		return EditPut::PosSetKind::BASENONEXIST;//図形の位置の決定へ
-	}
-	return EditPut::PosSetKind::NONEDIT;//例外的な処理
-}

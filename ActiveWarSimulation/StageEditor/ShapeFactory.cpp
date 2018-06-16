@@ -1,5 +1,7 @@
 #include"DxLib.h"
 #include"ShapeFactory.h"
+#include"EditActionSettings.h"
+#include"BattleObject.h"
 
 #include"input.h"
 
@@ -26,4 +28,29 @@ ShapeFactory::~ShapeFactory(){}
 void ShapeFactory::DrawPushedButtonLight()const{
 	Vector2D v=m_buttonPos+m_buttonSize;
 	DrawBox((int)m_buttonPos.x,(int)m_buttonPos.y,(int)v.x,(int)v.y,m_buttonLightColor,TRUE);
+}
+
+EditPut::PosSetKind ShapeFactory::VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const{
+	if(pskind==EditPut::PosSetKind::BASENONEXIST){
+		//置く場所を決めている時
+		settings.m_pBattleObject->Warp(point);//位置を確定
+		return EditPut::PosSetKind::BASEEXIST;//図形の大きさの決定へ
+	} else if(pskind==EditPut::PosSetKind::BASEEXIST){
+		//置く図形の大きさを決めている時
+		Vector2D pos=settings.m_pBattleObject->getPos();
+		settings.m_pBattleObject->Resize(point);//大きさを確定
+		settings.PutObject(pos);
+		return EditPut::PosSetKind::BASENONEXIST;//図形の位置の決定へ
+	}
+	return EditPut::PosSetKind::NONEDIT;//例外的な処理
+}
+
+void ShapeFactory::VPutNotPressAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const{
+	if(pskind==EditPut::PosSetKind::BASENONEXIST){
+		//置く場所を決めている時
+		settings.m_pBattleObject.get()->Warp(point);//図形の位置を変える
+	} else if(pskind==EditPut::PosSetKind::BASEEXIST){
+		//置く図形の大きさを決めている時
+		settings.m_pBattleObject->Resize(point);//図形の大きさを変える
+	}
 }

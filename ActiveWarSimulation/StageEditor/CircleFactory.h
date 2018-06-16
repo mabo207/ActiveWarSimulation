@@ -25,7 +25,6 @@ public:
 	~CircleFactory();
 
 	std::shared_ptr<Shape> CreateShape(Vector2D point)const;
-	EditPut::PosSetKind VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const;
 };
 
 

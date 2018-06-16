@@ -27,12 +27,17 @@ EditPut::EditPut(int buttonX,int buttonY,int buttonDX,int buttonDY,unsigned int 
 	:EditAction(buttonX,buttonY,buttonDX,buttonDY,pushedColor),m_setKind(PosSetKind::BASENONEXIST){}
 
 void EditPut::VNonPressEditing(Vector2D point,EditActionSettings &settings)const{
+/*
 	if(m_setKind==PosSetKind::BASENONEXIST){
 		//’u‚­êŠ‚ðŒˆ‚ß‚Ä‚¢‚éŽž
 		settings.m_pBattleObject.get()->Warp(point);//}Œ`‚ÌˆÊ’u‚ð•Ï‚¦‚é
 	} else if(m_setKind==PosSetKind::BASEEXIST){
 		//’u‚­}Œ`‚Ì‘å‚«‚³‚ðŒˆ‚ß‚Ä‚¢‚éŽž
 		settings.m_pBattleObject->Resize(point);//}Œ`‚Ì‘å‚«‚³‚ð•Ï‚¦‚é
+	}
+//*/
+	if(settings.m_pShapeFactory.get()!=nullptr){
+		settings.m_pShapeFactory->VPutNotPressAction(m_setKind,point,settings);
 	}
 }
 

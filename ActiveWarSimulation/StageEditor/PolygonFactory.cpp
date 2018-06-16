@@ -56,3 +56,13 @@ EditPut::PosSetKind PolygonFactory::VPutAction(EditPut::PosSetKind pskind,Vector
 	return EditPut::PosSetKind::NONEDIT;//例外的な処理
 
 }
+
+void PolygonFactory::VPutNotPressAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const{
+	if(pskind==EditPut::PosSetKind::BASENONEXIST){
+		//置く場所を決めている時
+		settings.m_pBattleObject.get()->Warp(point);//図形の位置を変える
+	} else if(pskind==EditPut::PosSetKind::BASEEXIST){
+		//置く図形の大きさを決めている時
+		settings.m_pBattleObject->Resize(point);//図形の大きさを変える
+	}
+}
