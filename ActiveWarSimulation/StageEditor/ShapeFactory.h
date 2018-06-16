@@ -3,6 +3,7 @@
 #include<memory>
 #include"Shape.h"
 #include"ButtonHaving.h"
+#include"EditPut.h"
 
 //当たり判定図形を作るクラス
 class ShapeFactory:public ButtonHaving{
@@ -37,6 +38,7 @@ public:
 	virtual ~ShapeFactory();
 	void DrawPushedButtonLight()const;//現在選択されている当たり判定図形に相当するボタンの背後に長方形を描画する
 	virtual std::shared_ptr<Shape> CreateShape(Vector2D point)const=0;//当たり判定図形を作り出す
+	virtual EditPut::PosSetKind VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const=0;//EditPutのクリックの際に行う処理(Polygonかそれ以外で変わる)
 };
 
 

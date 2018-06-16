@@ -165,6 +165,7 @@
     <ClInclude Include="EditPut.h" />
     <ClInclude Include="EditRemove.h" />
     <ClInclude Include="EditResize.h" />
+    <ClInclude Include="PolygonFactory.h" />
     <ClInclude Include="StageEditor.h" />
     <ClInclude Include="PosSetting.h" />
     <ClInclude Include="ScrollBar.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="EditPut.cpp" />
     <ClCompile Include="EditRemove.cpp" />
     <ClCompile Include="EditResize.cpp" />
+    <ClCompile Include="PolygonFactory.cpp" />
     <ClCompile Include="StageEditor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PosSetting.cpp" />

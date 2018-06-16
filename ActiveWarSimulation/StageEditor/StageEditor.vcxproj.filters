@@ -138,6 +138,9 @@
     <ClInclude Include="..\ActiveWarSimulation\MyPolygon.h">
       <Filter>ヘッダー ファイル\Shape</Filter>
     </ClInclude>
+    <ClInclude Include="PolygonFactory.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -214,6 +217,9 @@
     </ClCompile>
     <ClCompile Include="..\ActiveWarSimulation\MyPolygon.cpp">
       <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="PolygonFactory.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

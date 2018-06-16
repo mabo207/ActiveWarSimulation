@@ -37,6 +37,7 @@ void EditPut::VNonPressEditing(Vector2D point,EditActionSettings &settings)const
 }
 
 void EditPut::VProcessAction(Vector2D point,EditActionSettings &settings){
+/*
 	if(m_setKind==PosSetKind::BASENONEXIST){
 		//置く場所を決めている時
 		settings.m_pBattleObject->Warp(point);//位置を確定
@@ -47,6 +48,10 @@ void EditPut::VProcessAction(Vector2D point,EditActionSettings &settings){
 		settings.m_pBattleObject->Resize(point);//大きさを確定
 		settings.PutObject(pos);
 		m_setKind=PosSetKind::BASENONEXIST;//図形の位置の決定へ
+	}
+//*/
+	if(settings.m_pShapeFactory.get()!=nullptr){
+		m_setKind=settings.m_pShapeFactory->VPutAction(m_setKind,point,settings);
 	}
 }
 

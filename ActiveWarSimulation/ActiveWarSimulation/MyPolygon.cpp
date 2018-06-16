@@ -209,7 +209,6 @@ void MyPolygon::RecordLatticePointInShape(std::vector<int> &latticeInShape,const
 	//三角形分割を行い、分割できた全ての三角形について格子点検出を行う
 	std::vector<Vector2D> vertexVec;
 	CalculateAllPointPosition(&vertexVec);
-	int i=0;
 	for(const std::array<size_t,3> &indexVec:m_triangleSet){
 		//格子点を求める処理を行う
 		//三角形頂点をxが小さい順に列挙
@@ -281,11 +280,10 @@ void MyPolygon::RecordLatticePointInShape(std::vector<int> &latticeInShape,const
 				}
 				for(size_t y=yMin;y<=yMax;y++){
 					//ここに来れば無条件で三角形内部
-					latticeInShape[x+y*xNum]=i+2;
+					latticeInShape[x+y*xNum]=index;
 				}
 			}
 		}
-		i++;
 	}
 
 }

@@ -18,6 +18,7 @@
 
 #include"CircleFactory.h"
 #include"EdgeFactory.h"
+#include"PolygonFactory.h"
 
 #include"ConstPosSet.h"
 
@@ -31,8 +32,8 @@ const int StageEditor::leftUpPosY = 25;
 const int StageEditor::buttonWidth = 400;
 const int StageEditor::buttonHeight=(leftUpPosY*2+mapSizeY)/4;
 const int StageEditor::shapeButtonHeightNum=1;
-const int StageEditor::shapeButtonWidthNum=2;
-const int StageEditor::shapeButtonHeight=StageEditor::buttonHeight/2;
+const int StageEditor::shapeButtonWidthNum=3;
+const int StageEditor::shapeButtonHeight=StageEditor::buttonHeight/3;
 const int StageEditor::shapeButtonWidth=StageEditor::buttonWidth;
 const int StageEditor::posButtonWidth=StageEditor::buttonWidth;
 const int StageEditor::posButtonHeight=StageEditor::buttonHeight/2;
@@ -129,6 +130,15 @@ StageEditor::StageEditor()
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 	)));
 	
+	//PolygonFactoryボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new PolygonFactory::PolygonFactoryButton(
+		Vector2D(
+		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*2)
+			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*0)
+		)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+	)));
+
 	//1px位置調整ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new ConstPosSet::ConstPosSetButton(
 		Vector2D(
