@@ -40,6 +40,7 @@ public:
 	virtual std::shared_ptr<Shape> CreateShape(Vector2D point)const=0;//当たり判定図形を作り出す
 	virtual EditPut::PosSetKind VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings);//EditPutのクリックの際に行う処理(デフォルトは位置確定と大きさ設定を入れ替えるやり方)
 	virtual void VPutNotPressAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const;//EditPutの非クリックの際に行う処理(デフォルトはResize()をしていくだけ)
+	virtual void FactoryDraw(const Vector2D adjust,const EditActionSettings &settings)const;//図形配置がしやすいような描画をする。多くは設置前のBattleObjectを置くが、Polygonは別処理をする。
 };
 
 

@@ -54,3 +54,13 @@ void ShapeFactory::VPutNotPressAction(EditPut::PosSetKind pskind,Vector2D point,
 		settings.m_pBattleObject->Resize(point);//}Œ`‚Ì‘å‚«‚³‚ð•Ï‚¦‚é
 	}
 }
+
+void ShapeFactory::FactoryDraw(const Vector2D adjust,const EditActionSettings &settings)const{
+	if(settings.GetMPOriginObject()!=nullptr){
+		int mode,pal;
+		GetDrawBlendMode(&mode,&pal);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
+		settings.GetMPOriginObject()->VDraw(adjust);
+		SetDrawBlendMode(mode,pal);
+	}
+}

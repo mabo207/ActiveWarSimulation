@@ -277,6 +277,9 @@ void StageEditor::Draw() {
 		}
 	}
 	
+	//編集のためのデータを描画。図形描画が主
+	m_actionSettings.m_pEditAction->ActionDraw(adjust,m_actionSettings);
+/*	
 	//編集前のBattleObjectをマップに仮想的に描画
 	if(m_actionSettings.GetMPOriginObject()!=nullptr){
 		int mode,pal;
@@ -285,6 +288,8 @@ void StageEditor::Draw() {
 		m_actionSettings.GetMPOriginObject()->VDraw(adjust);
 		SetDrawBlendMode(mode,pal);
 	}
+//*/
+
 	SetDrawAreaFull();
 
 	//位置設定ガイドの描画

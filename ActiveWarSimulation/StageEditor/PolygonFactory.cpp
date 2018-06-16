@@ -32,6 +32,8 @@ void PolygonFactory::PolygonFactoryButton::PushedProcess(EditActionSettings &set
 }
 
 //-----------------------PolygonFactory-----------------------
+const float PolygonFactory::pointCapacity=5.0f;
+
 PolygonFactory::PolygonFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned int lightcolor)
 	:ShapeFactory(buttonPos,buttonSize,lightcolor){}
 
@@ -54,7 +56,7 @@ EditPut::PosSetKind PolygonFactory::VPutAction(EditPut::PosSetKind pskind,Vector
 		return EditPut::PosSetKind::BASEEXIST;
 	} else if(pskind==EditPut::PosSetKind::BASEEXIST){
 		//図形の頂点を決めている時
-		if((point-settings.m_pBattleObject->getPos()).sqSize()>25.0f){
+		if((point-settings.m_pBattleObject->getPos()).sqSize()>pointCapacity*pointCapacity){
 			//開始点よりマウスが遠くにある時、点を追加する
 			bool flag=true;
 			for(const Vector2D v:m_pointVec){
@@ -83,6 +85,7 @@ EditPut::PosSetKind PolygonFactory::VPutAction(EditPut::PosSetKind pskind,Vector
 			//マウスが開始点の近くにある時に図形を確定する			
 			settings.PutObject(settings.m_pBattleObject->getPos());
 			settings.m_pBattleObject->ChangeShape(CreateShape(point));//多角形そのままにすると見づらいので線分に戻しておく
+			m_pointVec.clear();//描画に影響が出るのでクリアしておく
 			return EditPut::PosSetKind::BASENONEXIST;//図形の位置の決定へ
 		}
 	}
@@ -103,4 +106,31 @@ void PolygonFactory::VPutNotPressAction(EditPut::PosSetKind pskind,Vector2D poin
 			//多角形になっている時は特に何もしない
 		}
 	}
+}
+
+void PolygonFactory::FactoryDraw(const Vector2D adjust,const EditActionSettings &settings)const{
+	//通常と同じく図形を描画
+	int mode,pal;
+	GetDrawBlendMode(&mode,&pal);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
+	if(settings.GetMPOriginObject()!=nullptr){
+		settings.GetMPOriginObject()->VDraw(adjust);
+	}
+	//通常と異なり、m_pointVecを全て結んだものを、現在の位置とともに表示
+	const size_t size=m_pointVec.size();
+	if(size>0){
+		const unsigned int lineColor=GetColor(255,0,255);
+		for(size_t i=0;i+1<size;i++){
+			Vector2D p[2]={m_pointVec[i]+adjust,m_pointVec[i+1]+adjust};
+			DrawLineAA(p[0].x,p[0].y,p[1].x,p[1].y,lineColor,1.0f);
+		}
+		const Vector2D mouse=GetMousePointVector2D();
+		const Vector2D lastpoint=m_pointVec[size-1]+adjust;
+		DrawLineAA(lastpoint.x,lastpoint.y,mouse.x,mouse.y,lineColor,1.0f);
+		//始点にはcapacityの大きさの円を
+		const Vector2D beginpoint=m_pointVec[0]+adjust;
+		DrawCircleAA(beginpoint.x,beginpoint.y,pointCapacity,20,lineColor,TRUE);
+	}
+	//設定を元に戻す
+	SetDrawBlendMode(mode,pal);
 }

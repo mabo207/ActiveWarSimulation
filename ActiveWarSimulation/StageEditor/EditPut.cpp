@@ -41,3 +41,8 @@ void EditPut::VProcessAction(Vector2D point,EditActionSettings &settings){
 EditAction::PosSetKind EditPut::VGetPosSetKind(const EditActionSettings &settings)const{
 	return m_setKind;
 }
+
+void EditPut::ActionDraw(const Vector2D adjust,const EditActionSettings &settings)const{
+	//•\Ž¦•û–@‚ªì¬}Œ`‚É‚æ‚Á‚Ä•Ï‚í‚é
+	settings.m_pShapeFactory->FactoryDraw(adjust,settings);
+}

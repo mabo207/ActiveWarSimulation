@@ -12,6 +12,8 @@ public:
 		void PushedProcess(EditActionSettings &settings)const;//ボタンが押された時に行う処理
 	};
 	//定数
+protected:
+	static const float pointCapacity;
 
 	//変数
 protected:
@@ -28,6 +30,7 @@ public:
 	std::shared_ptr<Shape> CreateShape(Vector2D point)const;
 	EditPut::PosSetKind VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings);
 	void VPutNotPressAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const;//EditPutの非クリックの際に行う処理(デフォルトはResize()をしていくだけ)
+	void FactoryDraw(const Vector2D adjust,const EditActionSettings &settings)const;//図形配置がしやすいような描画をする。
 };
 
 #endif // !DEF_POLYGONFACTORY_H
