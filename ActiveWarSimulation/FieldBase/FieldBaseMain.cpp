@@ -52,7 +52,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 			BattleObject *pMoveCircle(new Terrain(std::shared_ptr<Shape>(new Circle(Vector2D(100.0f,300.0f),30.0f,Shape::Fix::e_dynamic)),-1,GetColor(255,0,0),false));
 			std::vector<BattleObject *> field={pMoveCircle};
 			//ファイルを開きすべての文字列を書き出す
-			std::ifstream ifs("../StageEditor/SaveData/stage2.txt");
+			std::ifstream ifs("../StageEditor/SaveData/stage3.txt");
 			if(!ifs){
 				return -1;
 			}
@@ -75,7 +75,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 				}
 			}
 			//ウインドウの設定
-			std::shared_ptr<ShapeHaving> pSharedWindow(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1280.0f,720.0f),Shape::Fix::e_ignore)),-1,0,false));//画面を表すベクトル
+			std::shared_ptr<ShapeHaving> pSharedWindow(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1920.0f,1080.0f),Shape::Fix::e_ignore)),-1,0,false));//画面を表すベクトル
 			const ShapeHaving *pWindow=pSharedWindow.get();
 
 			//実行
@@ -99,9 +99,24 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 				pMoveCircle->VDraw(Vector2D(0.0f,0.0f));
 				
 				//格子点の内部判定を伴う描画
-				if(keyboard_get(KEY_INPUT_SPACE)>0){
+				if(keyboard_get(KEY_INPUT_SPACE)>=0){
 					//ここに実装をする
-
+					const size_t squareSize=32;
+					const size_t xNum=1920/squareSize+1,yNum=1080/squareSize+1;//格子点の個数
+					std::vector<int> latticeInShape(xNum*yNum,0);
+					//各図形が内部にある格子点を全て抽出する
+					for(const BattleObject *pObject:field){
+						pObject->GetHitJudgeShape()->RecordLatticePointInShape(latticeInShape,xNum,yNum,squareSize,squareSize,1);//pObject内部にある格子点の配列を全て1にする
+					}
+					for(size_t i=0,size=latticeInShape.size();i<size;i++){
+						const int x=(i%xNum)*squareSize,y=(i/xNum)*squareSize;
+						DrawCircle(x,y,2,(latticeInShape[i]==0)?GetColor(255,255,0):GetColor(0,0,255),TRUE);
+						/*
+						if(latticeInShape[i]!=0){
+							DrawCircle(x,y,2,GetColor(255-(latticeInShape[i]%8)*16,255-((latticeInShape[i]/8)%8)*16,255-((latticeInShape[i]/64)%8)*16),TRUE);
+						}
+						*/
+					}
 				}
 				
 				printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000);

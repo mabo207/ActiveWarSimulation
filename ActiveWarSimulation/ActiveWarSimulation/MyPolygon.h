@@ -34,6 +34,7 @@ public:
 	bool JudgeInShape(const Shape *pShape)const;//this内にpShapeがあるかどうかの判定
 	Vector2D GetLeftTop()const;//左上の座標を求める
 	Vector2D GetRightBottom()const;//右下の座標を求める
+	void RecordLatticePointInShape(std::vector<int> &latticeInShape,const size_t xNum,const size_t yNum,const size_t squareWidth,const size_t squareHeight,int index)const;//この図形内部にある格子点の配列を全てindexにする
 	//エディタ用の純粋仮想関数
 	bool VJudgePointInsideShape(Vector2D point)const;//図形内に点があるかどうかの判定、CalculatePushVecを用いるより高速に実装できるので関数を分ける
 	Vector2D VGetNearEndpoint(Vector2D point,float capacity)const;//pointが端点に近い(距離がcapacity以内)場合、その端点を返す
