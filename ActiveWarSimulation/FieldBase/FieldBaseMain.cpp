@@ -97,6 +97,13 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					}
 				}
 				pMoveCircle->VDraw(Vector2D(0.0f,0.0f));
+				
+				//格子点の内部判定を伴う描画
+				if(keyboard_get(KEY_INPUT_SPACE)>0){
+					//ここに実装をする
+
+				}
+				
 				printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000);
 
 				//位置更新
