@@ -118,6 +118,7 @@ void MyPolygon::DivideTriangle(std::vector<std::array<size_t,3>> *triangleSet)co
 
 void MyPolygon::CalculateAllPointPosition(std::vector<Vector2D> *vertexPos)const{
 	vertexPos->clear();
+	vertexPos->reserve(m_edgeVecs.size()+1);
 	vertexPos->push_back(m_position);
 	Vector2D v=m_position;
 	for(const Vector2D &vec:m_edgeVecs){
