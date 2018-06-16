@@ -205,6 +205,91 @@ Vector2D MyPolygon::GetRightBottom()const{
 	return rightBottom;
 }
 
+void MyPolygon::RecordLatticePointInShape(std::vector<int> &latticeInShape,const size_t xNum,const size_t yNum,const size_t squareWidth,const size_t squareHeight,int index)const{
+	//三角形分割を行い、分割できた全ての三角形について格子点検出を行う
+	std::vector<Vector2D> vertexVec;
+	CalculateAllPointPosition(&vertexVec);
+	int i=0;
+	for(const std::array<size_t,3> &indexVec:m_triangleSet){
+		//格子点を求める処理を行う
+		//三角形頂点をxが小さい順に列挙
+		Vector2D p[3]={vertexVec[indexVec[0]],vertexVec[indexVec[1]],vertexVec[indexVec[2]]};//p[3]には、三角形3点がxの小さい順に格納される
+		if(p[0].x>p[1].x){
+			Vector2D v=p[0];
+			p[0]=p[1];
+			p[1]=v;
+		}
+		if(p[1].x>p[2].x){
+			Vector2D v=p[1];
+			if(p[0].x<=p[2].x){
+				p[1]=p[2];
+				p[2]=v;
+			} else{
+				p[1]=p[0];
+				p[0]=p[2];
+				p[2]=v;
+			}
+		}
+		if(p[2].x-p[0].x==0.0f){
+			//3点が一直線上にあったら何もしない
+			continue;
+		}
+		//探索用indexの設定(x基準)
+		const size_t xMin=(size_t)ceilf(std::fmax(p[0].x,0.0f)/(float)squareWidth),xCenter=(size_t)std::fmax(p[1].x,0.0f)/squareWidth,xMax=(size_t)std::fmax(p[2].x,0.0f)/squareWidth;
+		//格子点配列の要素の変更
+		const Vector2D vertex[3]={p[1]-p[0],p[2]-p[1],p[2]-p[0]};
+		for(size_t x=xMin;x<=xMax;x++){
+			size_t yIndex[2]={};//変更する格子点の最大最小
+			const float pointX=(float)(x*squareWidth);
+			//直線x=pointXが三角形と交わる点を求める
+			float pointY[2];
+			if(x<=xCenter){
+				//真ん中の点より左側の時(xCenterは切り下げで求めているので、x==xCenterの時もこちらを用いる)
+				if(vertex[0].x!=0.0f){
+					//p[0],p[1]がy軸平行線上にない場合
+					pointY[0]=(p[0].y*(p[2].x-pointX)+p[2].y*(pointX-p[0].x))/vertex[2].x;
+					pointY[1]=(p[0].y*(p[1].x-pointX)+p[1].y*(pointX-p[0].x))/vertex[0].x;
+				} else{
+					//p[0],p[1]がy軸平行線上にある場合
+					pointY[0]=p[0].y;
+					pointY[1]=p[1].y;
+				}
+			} else{
+				//真ん中の点より右側の時
+				if(vertex[1].x!=0.0f){
+					//p[2],p[1]がy軸平行線上にない場合
+					pointY[0]=(p[0].y*(p[2].x-pointX)+p[2].y*(pointX-p[0].x))/vertex[2].x;
+					pointY[1]=(p[1].y*(p[2].x-pointX)+p[2].y*(pointX-p[1].x))/vertex[1].x;
+				} else{
+					//p[0],p[1]がy軸平行線上にある場合
+					pointY[0]=p[2].y;
+					pointY[1]=p[1].y;
+				}
+			}
+			//交点y座標をソート
+			if(pointY[0]>pointY[1]){
+				float f=pointY[0];
+				pointY[0]=pointY[1];
+				pointY[1]=f;
+			}
+			//格子点の要素変更
+			if(pointY[1]>=0.0f){
+				const size_t yMin=(size_t)ceilf(std::fmax(pointY[0],0.0f)/(float)squareHeight);
+				size_t yMax=(size_t)pointY[1]/squareWidth;
+				if(yMax>=yNum){
+					yMax=yNum-1;
+				}
+				for(size_t y=yMin;y<=yMax;y++){
+					//ここに来れば無条件で三角形内部
+					latticeInShape[x+y*xNum]=i+2;
+				}
+			}
+		}
+		i++;
+	}
+
+}
+
 bool MyPolygon::VJudgePointInsideShape(Vector2D point)const{
 	//三角形分割を行い、分割できた全ての三角形について内部判定処理を行う
 	std::vector<Vector2D> vertexVec;

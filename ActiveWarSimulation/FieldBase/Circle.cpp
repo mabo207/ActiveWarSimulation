@@ -122,6 +122,29 @@ Vector2D Circle::GetRightBottom()const{
 	return Vector2D(m_position.x+m_r,m_position.y+m_r);
 }
 
+void Circle::RecordLatticePointInShape(std::vector<int> &latticeInShape,const size_t xNum,const size_t yNum,const size_t squareWidth,const size_t squareHeight,int index)const{
+	//îÕàÕÇçiÇÈ
+	const size_t xIndexMin=(size_t)(std::fmax(GetLeftTop().x,0.0f))/squareWidth;
+	size_t xIndexMax=(size_t)(std::fmax(GetRightBottom().x,0.0f))/squareWidth;
+	if(xIndexMax>=xNum){
+		xIndexMax=xNum-1;
+	}
+	const size_t yIndexMin=(size_t)(std::fmax(GetLeftTop().y,0.0f))/squareHeight;
+	size_t yIndexMax=(size_t)(std::fmax(GetRightBottom().y,0.0f))/squareHeight;
+	if(yIndexMax>=yNum){
+		yIndexMax=yNum-1;
+	}
+	//äiéqì_åvéZ
+	for(size_t x=xIndexMin;x<=xIndexMax;x++){
+		for(size_t y=yIndexMin;y<=yIndexMax;y++){
+			if((Vector2D((float)(x*squareWidth),(float)(y*squareHeight))-m_position).sqSize()<=m_r*m_r){
+				//äiéqì_Ç™â~ÇÃì‡ïîÇ…Ç†ÇÈéû
+				latticeInShape[x+y*xNum]=index;
+			}
+		}
+	}
+}
+
 Vector2D Circle::VGetNearEndpoint(Vector2D point,float capacity)const{
 	//â~Ç…í[ì_ÇÕñ≥Ç¢ÇÃÇ≈pointÇÇªÇÃÇ‹Ç‹ï‘Ç∑
 	return point;

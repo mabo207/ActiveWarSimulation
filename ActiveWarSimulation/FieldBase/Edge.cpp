@@ -171,6 +171,10 @@ Vector2D Edge::GetRightBottom()const{
 	return ret;
 }
 
+void Edge::RecordLatticePointInShape(std::vector<int> &latticeInShape,const size_t xNum,const size_t yNum,const size_t squareWidth,const size_t squareHeight,int index)const{
+	//線分内は格子点処理を行わない（行えない）ので、このまま放置
+}
+
 Vector2D Edge::VGetNearEndpoint(Vector2D point,float capacity)const{
 	const float sqCapacity=capacity*capacity;
 	if((m_position-point).sqSize()<sqCapacity){
