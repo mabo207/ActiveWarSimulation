@@ -116,6 +116,16 @@ void MyPolygon::DivideTriangle(std::vector<std::array<size_t,3>> *triangleSet)co
 	triangleSet->push_back(tri);
 }
 
+void MyPolygon::CalculateAllPointPosition(std::vector<Vector2D> *vertexPos)const{
+	vertexPos->clear();
+	vertexPos->push_back(m_position);
+	Vector2D v=m_position;
+	for(const Vector2D &vec:m_edgeVecs){
+		v+=vec;
+		vertexPos->push_back(v);
+	}
+}
+
 void MyPolygon::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness)const{
 	//中を満たすかどうかで処理を変える。満たさない場合は三角形分割をしなくて良いので高速化できるため
 	if(fillFlag==TRUE){
@@ -126,22 +136,19 @@ void MyPolygon::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillF
 
 		//分割した三角形の集合ができたので、全ての三角形に対して内部判定を行っていく
 		//再利用性を考えて、前では頂点番号で三角形集合を表現して、こちらでまた座標一覧を作っていく
-		std::vector<Vector2D> vertexVec={m_position};
-		Vector2D v=m_position;
-		for(const Vector2D &vec:m_edgeVecs){
-			v+=vec;
-			vertexVec.push_back(v);
-		}
+		std::vector<Vector2D> vertexVec;
+		CalculateAllPointPosition(&vertexVec);
 		//全ての分割三角形に対して、内部判定を実行
+		unsigned int c=VJudgePointInsideShape(GetMousePointVector2D())?GetColor(168,128,128):GetColor(128,168,128);
 		for(size_t i=0,size=m_triangleSet.size();i<size;i++){
 			DrawTriangleAA(vertexVec[m_triangleSet[i][0]].x,vertexVec[m_triangleSet[i][0]].y,
 				vertexVec[m_triangleSet[i][1]].x,vertexVec[m_triangleSet[i][1]].y,
 				vertexVec[m_triangleSet[i][2]].x,vertexVec[m_triangleSet[i][2]].y,
-				GetColor(168,128,128),TRUE,lineThickness);
+				c,TRUE,lineThickness);
 			DrawTriangleAA(vertexVec[m_triangleSet[i][0]].x,vertexVec[m_triangleSet[i][0]].y,
 				vertexVec[m_triangleSet[i][1]].x,vertexVec[m_triangleSet[i][1]].y,
 				vertexVec[m_triangleSet[i][2]].x,vertexVec[m_triangleSet[i][2]].y,
-				GetColor(128,128,168),FALSE,lineThickness);
+				color,FALSE,lineThickness);
 		}
 
 	} else{
@@ -198,7 +205,16 @@ Vector2D MyPolygon::GetRightBottom()const{
 }
 
 bool MyPolygon::VJudgePointInsideShape(Vector2D point)const{
-	
+	//三角形分割を行い、分割できた全ての三角形について内部判定処理を行う
+	std::vector<Vector2D> vertexVec;
+	CalculateAllPointPosition(&vertexVec);
+	for(const std::array<size_t,3> &index:m_triangleSet){
+		if(JudgeInTriangle(point,vertexVec[index[0]],vertexVec[index[1]],vertexVec[index[2]])){
+			//どれか1つの三角形に入っていれば多角形内部に入っている
+			return true;
+		}
+	}
+
 	return false;
 }
 

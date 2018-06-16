@@ -19,6 +19,7 @@ protected:
 	//ä÷êî
 protected:
 	void DivideTriangle(std::vector<std::array<size_t,3>> *triangleSet)const;
+	void CalculateAllPointPosition(std::vector<Vector2D> *vertexPos)const;
 
 public:
 	MyPolygon(Vector2D begin,std::vector<Vector2D> points,Fix::Kind fix);
