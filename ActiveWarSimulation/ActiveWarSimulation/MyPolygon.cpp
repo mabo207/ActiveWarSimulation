@@ -5,6 +5,8 @@
 #include<list>
 #include<array>
 #include<iterator>
+#include"Circle.h"
+#include"Edge.h"
 
 //--------------------MyPolygon--------------------
 MyPolygon::MyPolygon(Vector2D begin,std::vector<Vector2D> points,Fix::Kind fix)
@@ -178,8 +180,39 @@ bool MyPolygon::PushParentObj(const Shape *pShape,ShapeHaving *parentObj,float p
 }
 
 bool MyPolygon::JudgeInShape(const Shape *pShape)const{
-	//三角形分割を行い、分割できた全ての三角形について内部判定処理を行う
-
+	//図形に応じて最適な内部判定アルゴリズムを適用する
+	switch(pShape->GetType()){
+	case(Shape::Type::e_circle):
+		//円との内部判定は、すべての分割三角形について「三角形内部に中心が存在する」「３辺と円が交点を持つ＝押し出し距離が0より大きい」のどちらも満たさないかどうかで行う
+		{
+			const Circle *c=dynamic_cast<const Circle *>(pShape);
+			if(c!=nullptr){
+				std::vector<Vector2D> pointPos;
+				CalculateAllPointPosition(&pointPos);
+				for(const std::array<size_t,3> triangle:m_triangleSet){
+					//3つのEdgeを作る
+					Edge edges[3]={Edge(pointPos[triangle[0]],pointPos[triangle[1]],pShape->m_fix),Edge(pointPos[triangle[1]],pointPos[triangle[2]],pShape->m_fix),Edge(pointPos[triangle[2]],pointPos[triangle[0]],pShape->m_fix)};
+					if(!JudgeInTriangle(c->GetPosition(),pointPos[triangle[0]],pointPos[triangle[1]],pointPos[triangle[2]])){
+						//中心が三角形外にある場合は辺と円の当たり判定をする
+						for(size_t i=0;i<3;i++){
+							c->JudgeInShape(&edges[i]);
+						}
+					} else{
+						//中心が三角形内にある場合は多角形内部に円があると見なせる
+						return true;
+					}
+				}
+			} else{
+				//ここに来ることはないはず
+				assert(false);
+			}
+		}
+		break;
+	case(Shape::Type::e_edge):
+		//直線との内部判定は「始点と終点がどちらも多角形外」「どの辺ともedgeが交差しない」を調べれば良い
+		//使わないから実装しない
+		break;
+	}
 	return false;
 }
 

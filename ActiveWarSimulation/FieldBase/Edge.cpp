@@ -70,10 +70,18 @@ Vector2D Edge::CalculatePushVec(const Shape *pShape)const{
 	case Type::e_edge:
 		{
 			//pShapeをEdgeにキャストする
-			const Edge *pcircle=dynamic_cast<const Edge *>(pShape);
-			if(pcircle!=nullptr){
+			const Edge *pedge=dynamic_cast<const Edge *>(pShape);
+			if(pedge!=nullptr){
 				//この実装では線と線の当たり判定はできない。なお、実装するなら移動前後の位置が分かる必要がある。
-				//使わないので実装しない。
+				//ひとまず当たったかどうかの判定ができるように、Vector2D(0.001f,0.001f)だけ押し出すことにする。
+				if(this->m_vec!=pedge->m_vec){
+					//平行でない場合
+					//連立方程式を解けば良い
+					//使わないので実装しない
+				} else{
+					//平行である場合
+					//使わないので実装しない
+				}
 			} else{
 				//ここに来ることは無いはず。取り敢えず当たってないことにする。
 				assert(false);
