@@ -42,7 +42,7 @@ protected:
 	bool JudgeAttackCommandUsable()const;//攻撃コマンドを使用可能かどうか
 
 	//仮想関数のオーバーライド
-	int thisCalculate();
+	//int thisCalculate();//プレイヤーか敵かで異なるので
 	void thisDraw()const;
 	int UpdateNextScene(int index);
 	void ReturnProcess();

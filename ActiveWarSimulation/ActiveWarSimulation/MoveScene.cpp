@@ -130,6 +130,7 @@ bool MoveScene::JudgeAttackCommandUsable()const{
 	return m_aimedUnit!=nullptr && m_battleSceneData->m_operateUnit->GetBattleStatus().OP+m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack()>=0;
 }
 
+/*
 int MoveScene::thisCalculate(){
 	if(m_battleSceneData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 		//–¡•û‘€ìŽž
@@ -194,7 +195,6 @@ int MoveScene::thisCalculate(){
 		}
 	} else{
 		//“G‘€ìŽž
-		//–¡•û‘€ìŽž
 		//m_operateUnit‚ÌˆÊ’uXV
 		const Vector2D beforeVec=m_battleSceneData->m_operateUnit->getPos();
 		PositionUpdate(CalculateInputVec());
@@ -215,6 +215,7 @@ int MoveScene::thisCalculate(){
 	}
 	return SceneKind::e_move;
 }
+//*/
 
 void MoveScene::thisDraw()const{
 	//Œo˜H‚Ì•`‰æ

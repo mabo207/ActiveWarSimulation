@@ -28,3 +28,23 @@ Vector2D ComputerMoveScene::CalculateInputVec()const{
 	return moveVec;
 }
 
+int ComputerMoveScene::thisCalculate(){
+	//m_operateUnitの位置更新
+	const Vector2D beforeVec=m_battleSceneData->m_operateUnit->getPos();
+	PositionUpdate(CalculateInputVec());
+	const float moveSqLength=(beforeVec-m_battleSceneData->m_operateUnit->getPos()).sqSize();
+	const double processedTime=m_battleSceneData->m_fpsMesuring.GetProcessedTime();
+	if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0){
+		//1秒経ったら行動する
+		if(JudgeAttackCommandUsable()){
+			//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
+			//FinishUnitOperation();//行動終了処理(あとで)
+			return SceneKind::e_attackNormal;//攻撃場面へ
+		} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f || processedTime>10.0 || (moveSqLength<0.1f && processedTime>2.0)){
+			//移動できなくなったら、または10秒経ったら、また移動距離が少ない場合は待機
+			FinishUnitOperation();
+			return 0;
+		}
+	}
+	return SceneKind::e_move;
+}
