@@ -43,7 +43,7 @@ protected:
 
 	//仮想関数のオーバーライド
 	//int thisCalculate();//プレイヤーか敵かで異なるので
-	void thisDraw()const;
+	virtual void thisDraw()const;//AIのデバッグのための描画ができるようにする
 	int UpdateNextScene(int index);
 	void ReturnProcess();
 

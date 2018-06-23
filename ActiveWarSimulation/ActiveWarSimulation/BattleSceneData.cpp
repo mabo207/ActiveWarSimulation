@@ -6,7 +6,7 @@
 
 //----------------------BattleSceneData----------------------
 BattleSceneData::BattleSceneData(const char *stagename)
-	:m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1960.0f,1080.0f),Shape::Fix::e_ignore)),-1,0,true))
+	:m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1920.0f,1080.0f),Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr)
 {
 	//ファイルからステージを読み込み
@@ -34,6 +34,9 @@ BattleSceneData::BattleSceneData(const char *stagename)
 			}
 		}
 	}
+	//ファイルからステージのグラフィックデータの読み込み
+	m_stageSize=Vector2D(1920.0f,1080.0f);//本来はステージの大きさはグラフィックデータの縦横の大きさで決める
+
 	//ファイルからユニットを読み込み
 	//読み込み方法が確立していないので暫定
 	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,3,Vector2D(224.0f,124.0f),Unit::Team::e_player));
