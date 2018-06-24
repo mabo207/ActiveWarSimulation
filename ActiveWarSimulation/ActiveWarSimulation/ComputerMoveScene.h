@@ -29,18 +29,20 @@ protected:
 	const size_t m_xLatticeNum,m_yLatticeNum;//格子点が横・縦に何個存在するか。ステージの外にあっても動作としては問題ない。計算を楽に行うために用いる。
 
 	//AIのための情報
-	std::vector<Vector2D> m_route;//通る格子点
+	std::vector<Vector2D> m_latticeRoute;//通る格子点
 
-	std::vector<LatticeDistanceInfo> distvec;
+	std::vector<LatticeDistanceInfo> distvec;//デバッグ用距離可視化変数
 
 	//関数
 protected:
+	std::pair<size_t,Vector2D> DecideTargetPoint(const std::vector<LatticeDistanceInfo> &distanceInfo)const;//目標とする格子点とその格子点に到着したあとに狙う位置を決める
 
 	//仮想関数のオーバーライド
 	Vector2D CalculateInputVec()const;
 
 public:
 	ComputerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData);
+	~ComputerMoveScene();
 
 	//仮想関数のオーバーライド
 	int thisCalculate();

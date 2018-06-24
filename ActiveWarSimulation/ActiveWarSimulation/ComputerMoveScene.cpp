@@ -2,6 +2,9 @@
 #include"DxLib.h"
 #include"ComputerMoveScene.h"
 
+#include"Circle.h"
+
+
 //---------------ComputerMoveScene::LatticeDistanceInfo------------------
 bool ComputerMoveScene::LatticeDistanceInfo::operator<(const LatticeDistanceInfo &otherobj)const{
 	//評価の優先順位は「距離」→「インデックス」の順。近いところから処理していきたいので
@@ -121,17 +124,78 @@ ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleScen
 		}
 	}
 
-	int a=0;
 
-	distvec=latticeDistanceInfo;
+	distvec=latticeDistanceInfo;//デバッグ用
 
+	//目標地点の決定
+	const std::pair<size_t,Vector2D> targetPoint=DecideTargetPoint(latticeDistanceInfo);//ここはAIの行動傾向によって異なるので
+
+	//ルートの選定と格納
+	m_latticeRoute.push_back(targetPoint.second);//最終目標の格子点についた後に向かう位置を最初に格納しておく（これは恐らくユニット内部で入れない）
+	for(size_t point=targetPoint.first;point<latticeNum;point=latticeDistanceInfo[point].from){
+		//latticeDistanceInfo[point].fromを辿っていけば最短距離となる
+		Vector2D v;
+		if(point<latticeNum){
+			//格子点が存在するならその位置に
+			v=Vector2D((float)((point%m_xLatticeNum)*squareSize),(float)((point/m_xLatticeNum)*squareSize));
+		} else{
+			//格子点が存在しないならその場に(point==latticeNumの時のみ。これは「操作ユニットの位置にいること」を表す)
+			v=m_battleSceneData->m_operateUnit->getPos();
+		}
+		m_latticeRoute.insert(m_latticeRoute.begin(),v);
+	}
+
+}
+
+ComputerMoveScene::~ComputerMoveScene(){}
+
+std::pair<size_t,Vector2D> ComputerMoveScene::DecideTargetPoint(const std::vector<LatticeDistanceInfo> &distanceInfo)const{
+	const Unit *targetUnit=nullptr;
+	for(const Unit *pu:m_battleSceneData->m_unitList){
+		if(pu->GetBattleStatus().team!=m_battleSceneData->m_operateUnit->GetBattleStatus().team){
+			if(targetUnit==nullptr){
+				targetUnit=pu;
+			} else if((pu->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize()<(targetUnit->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize()){
+				targetUnit=pu;
+			}
+		}
+	}
+	//格子点探し
+	const size_t vecSize=m_latticeInShape.size();
+	if(targetUnit!=nullptr){
+		//狙うユニットを決めたら、そのユニットを攻撃できる格子点を探す
+		//貪欲法でいく
+		Unit copiedUnit(*dynamic_cast<Unit *>(m_battleSceneData->m_operateUnit->VCopy().get()));//作業用にコピーを作る
+		size_t target=vecSize;
+		for(size_t y=0;y<m_yLatticeNum;y++){
+			for(size_t x=0;x<m_xLatticeNum;x++){
+				const size_t index=x+y*m_xLatticeNum;
+				if(distanceInfo[index].dist>=0.0f && (target>=vecSize || distanceInfo[index]<distanceInfo[target])){
+					//既に別のより近い目標地点候補が存在するなら新しい目標地点になる事はない
+					const Vector2D pos((float)(x*squareSize),(float)(y*squareSize));
+					copiedUnit.Warp(pos);
+					if(copiedUnit.JudgeAttackable(targetUnit)){
+						//攻撃可能ならこの位置を暫定の目標地点とする
+						target=index;
+					}
+				}
+			}
+		}
+		if(target!=vecSize){
+			return std::pair<size_t,Vector2D>(target,targetUnit->getPos());
+		}
+	} else{
+		//狙うユニットが無いなら、その場で待機する
+	}
+	return std::pair<size_t,Vector2D>(vecSize,m_battleSceneData->m_operateUnit->getPos());
 }
 
 Vector2D ComputerMoveScene::CalculateInputVec()const{
 	Vector2D moveVec;
 	//コンピュータ操作時、AIが方向を決める
-	//ターン開始から1秒経ったらひとまず最近傍ユニットに単純に近づく
+	//ターン開始から1秒経ったら動く
 	if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0){
+/*		//ひとまず最近傍ユニットに単純に近づく
 		const Unit *nearestUnit=nullptr;
 		for(const Unit *pu:m_battleSceneData->m_unitList){
 			if(pu->GetBattleStatus().team!=m_battleSceneData->m_operateUnit->GetBattleStatus().team){
@@ -145,6 +209,11 @@ Vector2D ComputerMoveScene::CalculateInputVec()const{
 		if(nearestUnit!=nullptr){
 			moveVec=nearestUnit->getPos()-m_battleSceneData->m_operateUnit->getPos();
 		}
+//*/
+		//m_latticeRouteの先頭に向かって動く
+		if(!m_latticeRoute.empty()){
+			moveVec=m_latticeRoute.front()-m_battleSceneData->m_operateUnit->getPos();
+		}
 	}
 	return moveVec;
 }
@@ -155,16 +224,23 @@ int ComputerMoveScene::thisCalculate(){
 	PositionUpdate(CalculateInputVec());
 	const float moveSqLength=(beforeVec-m_battleSceneData->m_operateUnit->getPos()).sqSize();
 	const double processedTime=m_battleSceneData->m_fpsMesuring.GetProcessedTime();
-	if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0){
+	if(processedTime>1.0){
 		//1秒経ったら行動する
 		if(JudgeAttackCommandUsable()){
 			//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
 			//FinishUnitOperation();//行動終了処理(あとで)
 			return SceneKind::e_attackNormal;//攻撃場面へ
-		} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f || processedTime>10.0 || (moveSqLength<0.1f && processedTime>2.0)){
-			//移動できなくなったら、または10秒経ったら、また移動距離が少ない場合は待機
+		} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f
+//			|| processedTime>10.0
+			|| keyboard_get(KEY_INPUT_Q)==1
+			|| (moveSqLength<0.1f && m_latticeRoute.size()<2 && processedTime>2.0))
+		{
+			//移動できなくなったら、または10秒経ったら、またもう進む場所がないまたは最後の1点にたどり着かず移動距離も少ない場合は待機
 			FinishUnitOperation();
 			return 0;
+		} else if(!m_latticeRoute.empty() && m_battleSceneData->m_operateUnit->JudgePointInsideShape(m_latticeRoute.front())){
+			//m_latticeRouteの先頭の点がユニットの当たり判定図形に入ったらそこまでは簡単に動けるということなので移動先を変える
+			m_latticeRoute.erase(m_latticeRoute.begin());
 		}
 	}
 	return SceneKind::e_move;
@@ -193,11 +269,19 @@ void ComputerMoveScene::thisDraw()const{
 		}
 //*/
 		if(distvec[i].dist<0.0f){
-			color=GetColor(0,255,255);
+			color=GetColor(0,0,255);
 		} else{
-			int level=(int)distvec[i].dist/10;
-			color=GetColor(level,40,40);
+			int level=(int)distvec[i].dist/3;
+			color=GetColor(level%256,255-level%256,0);
 		}
 		DrawCircleAA((float)(x),(float)(y),2,6,color,TRUE);
+	}
+	//ルートを描画
+	if(!m_latticeRoute.empty()){
+		DrawCircleAA(m_latticeRoute.front().x,m_latticeRoute.front().y,5,15,GetColor(255,255,0),FALSE);
+		for(size_t i=0,size=m_latticeRoute.size();i+1<size;i++){
+			DrawCircleAA(m_latticeRoute[i+1].x,m_latticeRoute[i+1].y,5,15,GetColor(255,255,0),FALSE);
+			DrawLineAA(m_latticeRoute[i].x,m_latticeRoute[i].y,m_latticeRoute[i+1].x,m_latticeRoute[i+1].y,GetColor(255,255,0));
+		}
 	}
 }
