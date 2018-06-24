@@ -7,6 +7,16 @@
 //AIがユニットを動かす際に使う関数
 class ComputerMoveScene:public MoveScene{
 	//型・列挙体
+protected:
+	//距離マップ作成時に用いる
+	struct LatticeDistanceInfo{
+		size_t index;//格子点番号
+		size_t from;//どの格子点から到達できるか(大小関係、同値関係に用いない)
+		float dist;//indexの格子点までの推定距離
+		LatticeDistanceInfo(size_t i_index,size_t i_from,float i_dist):index(i_index),from(i_from),dist(i_dist){}
+		bool operator<(const LatticeDistanceInfo &otherobj)const;
+		bool operator==(const LatticeDistanceInfo &otherobj)const;
+	};
 
 	//定数
 protected:

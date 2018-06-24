@@ -2,6 +2,22 @@
 #include"DxLib.h"
 #include"ComputerMoveScene.h"
 
+//---------------ComputerMoveScene::LatticeDistanceInfo------------------
+bool ComputerMoveScene::LatticeDistanceInfo::operator<(const LatticeDistanceInfo &otherobj)const{
+	//評価の優先順位は「距離」→「インデックス」の順。近いところから処理していきたいので
+	if(this->dist<otherobj.dist){
+		return true;
+	} else if(this->dist>otherobj.dist){
+		return false;
+	}
+	return (this->index<otherobj.index);
+}
+
+bool ComputerMoveScene::LatticeDistanceInfo::operator==(const LatticeDistanceInfo &otherobj)const{
+	return (this->index==otherobj.index) && (this->dist==otherobj.dist);
+}
+
+
 //---------------ComputerMoveScene------------------
 const size_t ComputerMoveScene::squareSize=(size_t)Unit::unitCircleSize;
 
@@ -60,6 +76,53 @@ ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleScen
 			}
 		}
 	}
+
+	//各格子点への距離マップの作成
+	const size_t latticeNum=m_latticeInShape.size();
+	std::vector<LatticeDistanceInfo> latticeDistanceInfo(latticeNum,LatticeDistanceInfo(latticeNum,latticeNum,-0.1f));//各格子点に進むための最小距離と、どの格子点から移動すればよいかが格納されている。
+	std::set<LatticeDistanceInfo> latticeSet;//探索していく格子点のリスト。近い順から探すためにsetを用いる。
+	auto SearchUpdate=[&latticeSet,&latticeDistanceInfo](const size_t from,const float dist,const size_t x,const size_t y,const size_t width,const size_t height,const std::vector<int> &latticeInShape){
+		//latticeDistanceInfoを更新し、latticeSetに格納する。
+		if(x>=0 && x<width && y>=0 && y<height){
+			size_t index=x+y*width;
+			int po=latticeInShape[index];
+			if(latticeInShape[index]!=1 && (latticeDistanceInfo[index].dist<0.0f || dist<latticeDistanceInfo[index].dist)){
+				//進入不可ではなく、なおかつ今見つけたルートよりも短いルートが発見されていなければ
+				//距離マップの更新を行う
+				LatticeDistanceInfo info(index,from,dist);
+				latticeDistanceInfo[index]=info;
+				if(latticeInShape[index]==0){
+					//探索する格子点の追加は、m_latticeInShape[index]が0（すなわち通れる場所）を表す
+					latticeSet.insert(info);
+				}
+			}
+		}
+	};
+	//初期位置に近い4点を探す
+	const size_t initX=(size_t)(m_battleSceneData->m_operateUnit->getPos().x/squareSize),initY=(size_t)(m_battleSceneData->m_operateUnit->getPos().y/squareSize);
+	SearchUpdate(latticeNum,(m_battleSceneData->m_operateUnit->getPos()-Vector2D((float)(initX*squareSize),(float)(initY*squareSize))).size(),initX,initY,m_xLatticeNum,m_yLatticeNum,m_latticeInShape);
+	SearchUpdate(latticeNum,(m_battleSceneData->m_operateUnit->getPos()-Vector2D((float)((initX+1)*squareSize),(float)(initY*squareSize))).size(),initX+1,initY,m_xLatticeNum,m_yLatticeNum,m_latticeInShape);
+	SearchUpdate(latticeNum,(m_battleSceneData->m_operateUnit->getPos()-Vector2D((float)(initX*squareSize),(float)((initY+1)*squareSize))).size(),initX,initY+1,m_xLatticeNum,m_yLatticeNum,m_latticeInShape);
+	SearchUpdate(latticeNum,(m_battleSceneData->m_operateUnit->getPos()-Vector2D((float)((initX+1)*squareSize),(float)((initY+1)*squareSize))).size(),initX+1,initY+1,m_xLatticeNum,m_yLatticeNum,m_latticeInShape);
+	//通れる可能性のある部分を全て探索
+	const int dx[8]={-1,0,1,-1,1,-1,0,1};
+	const int dy[8]={-1,-1,-1,0,0,1,1,1};
+	const float slantingdist=Vector2D((float)(squareSize),(float)(squareSize)).size();
+	const float horizondist=(float)squareSize;
+	const float dis[8]={slantingdist,horizondist,slantingdist,horizondist,horizondist,slantingdist,horizondist,slantingdist};
+	while(!latticeSet.empty()){
+		std::set<LatticeDistanceInfo>::iterator beginIt=latticeSet.begin();
+		LatticeDistanceInfo beginInfo(*beginIt);
+		latticeSet.erase(beginIt);//探索を今後行わないのでsetから取り除いておく
+		//周囲8個の格子点について更新を行う
+		const size_t x=beginInfo.index%m_xLatticeNum,y=beginInfo.index/m_xLatticeNum;
+		for(size_t i=0;i<8;i++){
+			SearchUpdate(beginInfo.index,beginInfo.dist+dis[i],x+dx[i],y+dy[i],m_xLatticeNum,m_yLatticeNum,m_latticeInShape);
+		}
+	}
+
+	int a=0;
+
 }
 
 Vector2D ComputerMoveScene::CalculateInputVec()const{
