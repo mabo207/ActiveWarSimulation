@@ -123,6 +123,8 @@ ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleScen
 
 	int a=0;
 
+	distvec=latticeDistanceInfo;
+
 }
 
 Vector2D ComputerMoveScene::CalculateInputVec()const{
@@ -177,6 +179,7 @@ void ComputerMoveScene::thisDraw()const{
 	for(size_t i=0,size=m_latticeInShape.size();i<size;i++){
 		const int x=(i%m_xLatticeNum)*squareSize,y=(i/m_xLatticeNum)*squareSize;
 		unsigned int color;
+/*
 		switch(m_latticeInShape[i]){
 		case(0):
 			color=GetColor(255,255,0);
@@ -187,6 +190,13 @@ void ComputerMoveScene::thisDraw()const{
 		case(2):
 			color=GetColor(255,0,255);
 			break;
+		}
+//*/
+		if(distvec[i].dist<0.0f){
+			color=GetColor(0,255,255);
+		} else{
+			int level=(int)distvec[i].dist/10;
+			color=GetColor(level,40,40);
 		}
 		DrawCircleAA((float)(x),(float)(y),2,6,color,TRUE);
 	}

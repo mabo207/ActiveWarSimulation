@@ -31,6 +31,8 @@ protected:
 	//AI‚Ì‚½‚ß‚Ìî•ñ
 	std::vector<Vector2D> m_route;//’Ê‚éŠiq“_
 
+	std::vector<LatticeDistanceInfo> distvec;
+
 	//ŠÖ”
 protected:
 
