@@ -34,9 +34,11 @@ ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleScen
 	//操作するユニットが通れない場所に1を格納していく
 	//「障害物の中＝中にいないとユニットは通れない」という考え方を用いる
 	for(const BattleObject *object:m_battleSceneData->m_field){
-		
 		if(object==m_battleSceneData->m_operateUnit){
 			//操作ユニットは通れるか否かに影響を与えない
+
+		} else if(object->GetFix()==Shape::Fix::e_ignore){
+			//当たり判定のないオブジェクトは通れるか否かに影響を与えない
 
 		} else if(object->JudgePointInsideShape(m_battleSceneData->m_operateUnit->getPos())){
 			//object内部にユニットがいるなら、その外部を通れないようにする
@@ -195,21 +197,6 @@ Vector2D ComputerMoveScene::CalculateInputVec()const{
 	//コンピュータ操作時、AIが方向を決める
 	//ターン開始から1秒経ったら動く
 	if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0){
-/*		//ひとまず最近傍ユニットに単純に近づく
-		const Unit *nearestUnit=nullptr;
-		for(const Unit *pu:m_battleSceneData->m_unitList){
-			if(pu->GetBattleStatus().team!=m_battleSceneData->m_operateUnit->GetBattleStatus().team){
-				if(nearestUnit==nullptr){
-					nearestUnit=pu;
-				} else if((pu->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize()<(nearestUnit->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize()){
-					nearestUnit=pu;
-				}
-			}
-		}
-		if(nearestUnit!=nullptr){
-			moveVec=nearestUnit->getPos()-m_battleSceneData->m_operateUnit->getPos();
-		}
-//*/
 		//m_latticeRouteの先頭に向かって動く
 		if(!m_latticeRoute.empty()){
 			moveVec=m_latticeRoute.front()-m_battleSceneData->m_operateUnit->getPos();
