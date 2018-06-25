@@ -1,6 +1,7 @@
 #include"Shape.h"
 #include"Circle.h"
 #include"Edge.h"
+#include"MyPolygon.h"
 
 //---------------------Shape::Type---------------------
 std::string Shape::Type::GetStr(Kind kind){
@@ -9,6 +10,8 @@ std::string Shape::Type::GetStr(Kind kind){
 		return "Circle";
 	case(e_edge):
 		return "Edge";
+	case(e_polygon):
+		return "Polygon";
 	default:
 		return "";
 	}
@@ -77,6 +80,16 @@ std::shared_ptr<Shape> Shape::CreateShape(const std::string &infostr){
 			//線分の生成を行う。m_vec[3]の中身は(x,y)形式の座標のみ。
 			Vector2D vec(std::stof(sb.m_vec.at(3).m_vec.at(0).GetString()),std::stof(sb.m_vec.at(3).m_vec.at(1).GetString()));
 			pShape=std::shared_ptr<Shape>(new Edge(pos,vec,fix));
+		} else if(sb.m_vec.at(0).GetString()==Type::GetStr(Type::e_polygon)){
+			//多角形の生成を行う。m_vec[3]の中身は()で全体が囲われ、その中に(x,y)形式の座標が格納されている
+			const size_t size=sb.m_vec.at(3).m_vec.size();
+			std::vector<Vector2D> points;
+			points.reserve(size);
+			for(size_t i=0;i<size;i++){
+				//頂点座標を全て格納
+				points.push_back(Vector2D(std::stof(sb.m_vec.at(3).m_vec.at(i).m_vec.at(0).GetString()),std::stof(sb.m_vec.at(3).m_vec.at(i).m_vec.at(1).GetString())));
+			}
+			pShape=std::shared_ptr<Shape>(new MyPolygon(pos,points,fix));
 		}
 	} catch(std::invalid_argument){
 		//string→floatの初期化をミスった時

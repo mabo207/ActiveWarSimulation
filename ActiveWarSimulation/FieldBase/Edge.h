@@ -16,7 +16,7 @@ protected:
 	//関数
 protected:
 	Vector2D CalculateParpendicularVec(Vector2D point)const;//pointからこの直線に垂線を下ろした時、直線からpointに向けた方向の垂線ベクトルを求める
-
+	
 public:
 	Edge(Vector2D begin,Vector2D vec,Fix::Kind fix);
 	~Edge();
@@ -28,10 +28,15 @@ public:
 		//終点の位置を返す
 		return m_position+m_vec;
 	}
-	void Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness=1.0f)const;
 	Vector2D CalculatePushVec(const Shape *pShape)const;//pShapeとthisが重なっているか判定し、押し出すベクトルを返す。重なっていない場合はVector2D(0,0)が返される。
+
+	//純粋仮想関数のオーバーライド
+	void Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness=1.0f)const;
+	bool PushParentObj(const Shape *pShape,ShapeHaving *parentObj,float pushRate)const;//thisとpShapeが重なっているか判定し、重なっている場合はparentObjを移動させtrueを返す。
+	bool JudgeInShape(const Shape *pShape)const;//this内にpShapeがあるかどうかの判定
 	Vector2D GetLeftTop()const;//左上の座標を求める
 	Vector2D GetRightBottom()const;//右下の座標を求める
+	void RecordLatticePointInShape(std::vector<int> &latticeInShape,const size_t xNum,const size_t yNum,const size_t squareWidth,const size_t squareHeight,int index)const;//この図形内部にある格子点の配列を全てindexにする
 	//エディタ用
 	bool VJudgePointInsideShape(Vector2D point)const;//図形内に点があるかどうかの判定、CalculatePushVecを用いるより高速に実装できるので関数を分ける
 	Vector2D VGetNearEndpoint(Vector2D point,float capacity)const;//pointが端点に近い(距離がcapacity以内)場合、その端点を返す

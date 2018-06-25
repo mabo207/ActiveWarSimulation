@@ -26,6 +26,7 @@ public:
 
 	//グラフィック関連の変数
 	std::shared_ptr<Terrain> m_Window;//ウインドウ全体を表す線分(対角線)
+	Vector2D m_stageSize;//ステージの大きさ(なお、ステージで一番左上にある点は(0,0)とする)
 
 	//その他の変数
 	FpsMeasuring m_fpsMesuring;//fps計測器。タイマーの意味合いも兼ねる。

@@ -36,21 +36,23 @@ protected:
 
 	//関数
 protected:
-	Vector2D CalculateInputVec()const;//味方ターン時は入力されてるアナログスティックのベクトルを返す。敵ターン時はAIに従って移動方向のベクトルを返す。
 	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
 	void FinishUnitOperation();//次のユニットへの遷移処理
 	void SetAimedUnit(float angle=0.0f,int turntimes=1);//m_aimedUnitを変更する。turntimesだけ時計回りに回転させる
 	bool JudgeAttackCommandUsable()const;//攻撃コマンドを使用可能かどうか
 
 	//仮想関数のオーバーライド
-	int thisCalculate();
-	void thisDraw()const;
+	//int thisCalculate();//プレイヤーか敵かで異なるので
+	virtual void thisDraw()const;//AIのデバッグのための描画ができるようにする
 	int UpdateNextScene(int index);
 	void ReturnProcess();
 
+	//仮想関数
+	virtual Vector2D CalculateInputVec()const=0;//味方ターン時は入力されてるアナログスティックのベクトルを返す。敵ターン時はAIに従って移動方向のベクトルを返す。
+
 public:
 	MoveScene(std::shared_ptr<BattleSceneData> battleSceneData);
-	~MoveScene();
+	virtual ~MoveScene();
 };
 
 

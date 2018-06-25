@@ -39,3 +39,4 @@ std::shared_ptr<Shape> CircleFactory::CreateShape(Vector2D point)const{
 	//return std::shared_ptr<Shape>(new MyCircle((float)StageEditor::baseSize));
 	return std::shared_ptr<Shape>(new Circle(point,(float)StageEditor::baseSize,Shape::Fix::e_static));
 }
+

@@ -123,6 +123,18 @@
     <ClCompile Include="BattleSceneElement.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerMoveScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="SwitchUnitScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputerMoveScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="MyPolygon.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -181,6 +193,18 @@
     </ClInclude>
     <ClInclude Include="BattleSceneElement.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerMoveScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputerMoveScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="SwitchUnitScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="MyPolygon.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

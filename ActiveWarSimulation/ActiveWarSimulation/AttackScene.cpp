@@ -66,8 +66,8 @@ int AttackScene::thisCalculate(){
 	}
 	//終了判定
 	if(m_attackMotion.GetEndFlag() && m_damageMotion.GetEndFlag()){
-		//ひとまず直前場面へ
-		return 0;
+		//ユニット切り替え場面へ
+		return SceneKind::e_switch;
 	}
 
 	return SceneKind::e_attackNormal;

@@ -148,6 +148,7 @@
     <ClInclude Include="..\ActiveWarSimulation\GraphicControl.h" />
     <ClInclude Include="..\ActiveWarSimulation\GraphicProgramming.h" />
     <ClInclude Include="..\ActiveWarSimulation\input.h" />
+    <ClInclude Include="..\ActiveWarSimulation\MyPolygon.h" />
     <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h" />
     <ClInclude Include="..\FieldBase\Circle.h" />
     <ClInclude Include="..\FieldBase\Edge.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="EditPut.h" />
     <ClInclude Include="EditRemove.h" />
     <ClInclude Include="EditResize.h" />
+    <ClInclude Include="PolygonFactory.h" />
     <ClInclude Include="StageEditor.h" />
     <ClInclude Include="PosSetting.h" />
     <ClInclude Include="ScrollBar.h" />
@@ -174,6 +176,7 @@
     <ClCompile Include="..\ActiveWarSimulation\GraphicControl.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\GraphicProgramming.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\input.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\MyPolygon.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp" />
     <ClCompile Include="..\FieldBase\Circle.cpp" />
     <ClCompile Include="..\FieldBase\Edge.cpp" />
@@ -189,6 +192,7 @@
     <ClCompile Include="EditPut.cpp" />
     <ClCompile Include="EditRemove.cpp" />
     <ClCompile Include="EditResize.cpp" />
+    <ClCompile Include="PolygonFactory.cpp" />
     <ClCompile Include="StageEditor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PosSetting.cpp" />
