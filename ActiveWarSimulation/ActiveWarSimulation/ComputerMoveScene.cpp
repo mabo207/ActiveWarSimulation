@@ -62,22 +62,7 @@ ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleScen
 			const size_t index=x+y*m_xLatticeNum;
 			if(m_latticeInShape[index]==1){
 				//全ての1である格子点に隣接する格子点を2にする。
-				if(y>0){
-					//上の隣接点
-					Input2Only0(m_latticeInShape[index-m_xLatticeNum]);
-				}
-				if(x>0){
-					//左の隣接点
-					Input2Only0(m_latticeInShape[index-1]);
-				}
-				if(x+1<m_xLatticeNum){
-					//上の隣接点
-					Input2Only0(m_latticeInShape[index+1]);
-				}
-				if(y+1<m_yLatticeNum){
-					//上の隣接点
-					Input2Only0(m_latticeInShape[index+m_xLatticeNum]);
-				}
+				ImpassableLatticeInShape(x,y);//m_latticeInShape[index]を1とする処理も含むが、元々1なので問題ない
 			}
 		}
 	}
@@ -218,6 +203,36 @@ Vector2D ComputerMoveScene::CalculateInputVec()const{
 	return moveVec;
 }
 
+void ComputerMoveScene::ImpassableLatticeInShape(const size_t index){
+	const size_t x=index%m_xLatticeNum,y=index/m_xLatticeNum;
+	ImpassableLatticeInShape(x,y);
+}
+
+void ComputerMoveScene::ImpassableLatticeInShape(const size_t x,const size_t y){
+	const size_t index=x+y*m_xLatticeNum;
+	if(x<m_xLatticeNum && y<m_yLatticeNum){
+		m_latticeInShape[index]=1;
+	}
+	//全ての1である格子点に隣接する格子点を2にする。
+	auto Input2Only0=[](int &a){if(a==0){ a=2; }};
+	if(y>0){
+		//上の隣接点
+		Input2Only0(m_latticeInShape[index-m_xLatticeNum]);
+	}
+	if(x>0){
+		//左の隣接点
+		Input2Only0(m_latticeInShape[index-1]);
+	}
+	if(x+1<m_xLatticeNum){
+		//上の隣接点
+		Input2Only0(m_latticeInShape[index+1]);
+	}
+	if(y+1<m_yLatticeNum){
+		//上の隣接点
+		Input2Only0(m_latticeInShape[index+m_xLatticeNum]);
+	}
+}
+
 int ComputerMoveScene::thisCalculate(){
 	//m_operateUnitの位置更新
 	const Vector2D beforeVec=m_battleSceneData->m_operateUnit->getPos();
@@ -231,13 +246,25 @@ int ComputerMoveScene::thisCalculate(){
 			//FinishUnitOperation();//行動終了処理(あとで)
 			return SceneKind::e_attackNormal;//攻撃場面へ
 		} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f
-//			|| processedTime>10.0
-			|| keyboard_get(KEY_INPUT_Q)==1
-			|| (moveSqLength<0.1f && m_latticeRoute.size()<2 && processedTime>2.0))
-		{
-			//移動できなくなったら、または10秒経ったら、またもう進む場所がないまたは最後の1点にたどり着かず移動距離も少ない場合は待機
+//			|| processedTime>10.0//デバッグのために一度省いている
+			|| keyboard_get(KEY_INPUT_Q)==1//時間制限がない際にゲームに戻れるようにするため
+		){
+			//移動できなくなったら、または10秒経ったら待機
 			FinishUnitOperation();
 			return 0;
+		} else if((moveSqLength<0.1f && processedTime>2.0)){
+			//移動距離も少ない場合は移動先の変更
+			if(m_latticeRoute.size()<2){
+				//進む場所がないまたは最後の1点にたどり着かずに止まっている場合は待機でよい
+				FinishUnitOperation();
+				return 0;
+			} else{
+				//経由点で行き詰まっている場合、そのルートは間違っていると考えられるのでルート変更をする
+				if(m_latticeRoute.front().first<m_latticeInShape.size()){
+					ImpassableLatticeInShape(m_latticeRoute.front().first);//今通ろうとしている格子点を通れなくする
+					CalculateLatticeRoute();//ルート変更処理
+				}
+			}
 		} else if(!m_latticeRoute.empty() && m_battleSceneData->m_operateUnit->JudgePointInsideShape(m_latticeRoute.front().second)){
 			//m_latticeRouteの先頭の点がユニットの当たり判定図形に入ったらそこまでは簡単に動けるということなので移動先を変える
 			m_latticeRoute.erase(m_latticeRoute.begin());
