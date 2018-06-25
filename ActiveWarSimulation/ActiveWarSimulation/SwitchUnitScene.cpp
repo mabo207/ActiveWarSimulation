@@ -19,6 +19,7 @@ int SwitchUnitScene::thisCalculate(){
 	//【ひとまず】一定時間経ったらユニット移動へ
 	if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0f){
 		//ユニット移行処理へ
+		m_battleSceneData->m_fpsMesuring.RecordTime();//タイマー初期化
 		return SceneKind::e_move;
 	}
 	return SceneKind::e_switch;
