@@ -29,7 +29,7 @@ protected:
 	const size_t m_xLatticeNum,m_yLatticeNum;//格子点が横・縦に何個存在するか。ステージの外にあっても動作としては問題ない。計算を楽に行うために用いる。
 
 	//AIのための情報
-	std::vector<Vector2D> m_latticeRoute;//通る格子点
+	std::vector<std::pair<size_t,Vector2D>> m_latticeRoute;//通る格子点(size_t:格子点番号(m_latticeInShape.size()をオーバーする場合は格子点ではないことを示す),Vector2D:その位置。誤差によって計算が位置から正しい格子点番号を求められない懸念があるのでこうした。)
 
 	std::vector<LatticeDistanceInfo> distvec;//デバッグ用距離可視化変数
 

@@ -189,7 +189,7 @@ void ComputerMoveScene::CalculateLatticeRoute(){
 	const std::pair<size_t,Vector2D> targetPoint=DecideTargetPoint(latticeDistanceInfo);//ここはAIの行動傾向によって異なるので
 
 	//ルートの選定と格納
-	m_latticeRoute.push_back(targetPoint.second);//最終目標の格子点についた後に向かう位置を最初に格納しておく（これは恐らくユニット内部で入れない）
+	m_latticeRoute.push_back(std::pair<size_t,Vector2D>(latticeNum,targetPoint.second));//最終目標の格子点についた後に向かう位置を最初に格納しておく（これは恐らくユニット内部で入れない）
 	for(size_t point=targetPoint.first;point<latticeNum;point=latticeDistanceInfo[point].from){
 		//latticeDistanceInfo[point].fromを辿っていけば最短距離となる
 		Vector2D v;
@@ -200,7 +200,7 @@ void ComputerMoveScene::CalculateLatticeRoute(){
 			//格子点が存在しないならその場に(point==latticeNumの時のみ。これは「操作ユニットの位置にいること」を表す)
 			v=m_battleSceneData->m_operateUnit->getPos();
 		}
-		m_latticeRoute.insert(m_latticeRoute.begin(),v);
+		m_latticeRoute.insert(m_latticeRoute.begin(),std::pair<size_t,Vector2D>(point,v));
 	}
 
 }
@@ -212,7 +212,7 @@ Vector2D ComputerMoveScene::CalculateInputVec()const{
 	if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0){
 		//m_latticeRouteの先頭に向かって動く
 		if(!m_latticeRoute.empty()){
-			moveVec=m_latticeRoute.front()-m_battleSceneData->m_operateUnit->getPos();
+			moveVec=m_latticeRoute.front().second-m_battleSceneData->m_operateUnit->getPos();
 		}
 	}
 	return moveVec;
@@ -238,7 +238,7 @@ int ComputerMoveScene::thisCalculate(){
 			//移動できなくなったら、または10秒経ったら、またもう進む場所がないまたは最後の1点にたどり着かず移動距離も少ない場合は待機
 			FinishUnitOperation();
 			return 0;
-		} else if(!m_latticeRoute.empty() && m_battleSceneData->m_operateUnit->JudgePointInsideShape(m_latticeRoute.front())){
+		} else if(!m_latticeRoute.empty() && m_battleSceneData->m_operateUnit->JudgePointInsideShape(m_latticeRoute.front().second)){
 			//m_latticeRouteの先頭の点がユニットの当たり判定図形に入ったらそこまでは簡単に動けるということなので移動先を変える
 			m_latticeRoute.erase(m_latticeRoute.begin());
 		}
@@ -278,10 +278,10 @@ void ComputerMoveScene::thisDraw()const{
 	}
 	//ルートを描画
 	if(!m_latticeRoute.empty()){
-		DrawCircleAA(m_latticeRoute.front().x,m_latticeRoute.front().y,5,15,GetColor(255,255,0),FALSE);
+		DrawCircleAA(m_latticeRoute.front().second.x,m_latticeRoute.front().second.y,5,15,GetColor(255,255,0),FALSE);
 		for(size_t i=0,size=m_latticeRoute.size();i+1<size;i++){
-			DrawCircleAA(m_latticeRoute[i+1].x,m_latticeRoute[i+1].y,5,15,GetColor(255,255,0),FALSE);
-			DrawLineAA(m_latticeRoute[i].x,m_latticeRoute[i].y,m_latticeRoute[i+1].x,m_latticeRoute[i+1].y,GetColor(255,255,0));
+			DrawCircleAA(m_latticeRoute[i+1].second.x,m_latticeRoute[i+1].second.y,5,15,GetColor(255,255,0),FALSE);
+			DrawLineAA(m_latticeRoute[i].second.x,m_latticeRoute[i].second.y,m_latticeRoute[i+1].second.x,m_latticeRoute[i+1].second.y,GetColor(255,255,0));
 		}
 	}
 }
