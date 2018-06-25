@@ -36,6 +36,8 @@ protected:
 	//関数
 protected:
 	std::pair<size_t,Vector2D> DecideTargetPoint(const std::vector<LatticeDistanceInfo> &distanceInfo)const;//目標とする格子点とその格子点に到着したあとに狙う位置を決める
+	void CalculateLatticeDistanceInfo(std::vector<LatticeDistanceInfo> &latticeDistanceInfo)const;//各格子点までの距離と行き方を計算する関数。情報量が多いので情報の格納先を引数で渡す。
+	void CalculateLatticeRoute();//m_latticeInShapeからm_latticeRouteを計算する
 
 	//仮想関数のオーバーライド
 	Vector2D CalculateInputVec()const;
