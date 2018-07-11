@@ -115,7 +115,7 @@ std::pair<size_t,Vector2D> ComputerMoveScene::DecideTargetPoint(const std::vecto
 				const size_t index=x+y*m_xLatticeNum;
 				if(distanceInfo[index].dist>=0.0f && (target>=vecSize || distanceInfo[index]<distanceInfo[target])){
 					//既に別のより近い目標地点候補が存在するなら新しい目標地点になる事はない
-					const Vector2D pos((float)(x*squareSize),(float)(y*squareSize));
+					const Vector2D pos=CalculateLatticePointPos(x,y);
 					copiedUnit.Warp(pos);
 					if(copiedUnit.JudgeAttackable(targetUnit)){
 						//攻撃可能ならこの位置を暫定の目標地点とする
@@ -199,7 +199,7 @@ void ComputerMoveScene::CalculateLatticeRoute(){
 		Vector2D v;
 		if(point<latticeNum){
 			//格子点が存在するならその位置に
-			v=Vector2D((float)((point%m_xLatticeNum)*squareSize),(float)((point/m_xLatticeNum)*squareSize));
+			v=CalculateLatticePointPos(point);
 		} else{
 			//格子点が存在しないならその場に(point==latticeNumの時のみ。これは「操作ユニットの位置にいること」を表す)
 			v=m_battleSceneData->m_operateUnit->getPos();
