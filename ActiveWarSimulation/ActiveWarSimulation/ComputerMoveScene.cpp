@@ -73,14 +73,33 @@ ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleScen
 
 ComputerMoveScene::~ComputerMoveScene(){}
 
+Vector2D ComputerMoveScene::CalculateLatticePointPos(size_t x,size_t y)const{
+	return Vector2D((float)(x*squareSize),(float)(y*squareSize));
+}
+
+Vector2D ComputerMoveScene::CalculateLatticePointPos(size_t index)const{
+	return CalculateLatticePointPos(index%m_xLatticeNum,index/m_xLatticeNum);
+}
+
 std::pair<size_t,Vector2D> ComputerMoveScene::DecideTargetPoint(const std::vector<LatticeDistanceInfo> &distanceInfo)const{
+	//狙うユニットを決める
 	const Unit *targetUnit=nullptr;
+	float point=0.0f;
 	for(const Unit *pu:m_battleSceneData->m_unitList){
 		if(pu->GetBattleStatus().team!=m_battleSceneData->m_operateUnit->GetBattleStatus().team){
+			//攻撃対象となるユニットを見つけたら
 			if(targetUnit==nullptr){
-				targetUnit=pu;
-			} else if((pu->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize()<(targetUnit->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize()){
-				targetUnit=pu;
+				//まだ候補がいない場合は
+				targetUnit=pu;//そのユニットを候補にする
+				point=CalculateEvaluate(targetUnit,distanceInfo);//そのユニットの攻撃対象としての評価値を計算する
+			} else{
+				//既に候補がいる場合は評価値を計算する
+				const float tmpPoint=CalculateEvaluate(pu,distanceInfo);
+				if(tmpPoint>point){
+					//評価値が高ければいま検索しているユニットを攻撃対象とする
+					targetUnit=pu;
+					point=tmpPoint;
+				}
 			}
 		}
 	}
@@ -201,6 +220,41 @@ Vector2D ComputerMoveScene::CalculateInputVec()const{
 		}
 	}
 	return moveVec;
+}
+
+float ComputerMoveScene::CalculateEvaluate(const Unit *punit,const std::vector<LatticeDistanceInfo> &distanceInfo)const{
+	//const float sqDistance=-(punit->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize();//ユニット間の距離の2乗値。
+	//punitに攻撃が届く位置までの距離についての評価値
+	float distanceEvaluate=-50000.0f;//ひとまず酷い点数をつける
+	if(punit->GetHitJudgeShape()->GetType()==Shape::Type::e_circle){
+		const Circle *pcircle=dynamic_cast<const Circle *>(punit->GetHitJudgeShape());//作業用のユニット図形の確保
+		if(pcircle!=nullptr){
+			Circle c(pcircle->GetPosition(),pcircle->GetR()+m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetLength(),pcircle->m_fix);//攻撃可能範囲
+			//攻撃可能範囲の中にある格子点の中で最近点を求める
+			const size_t size=distanceInfo.size();
+			size_t nearestIndex=size;//これがsizeである間は
+			for(size_t i=0;i<size;i++){
+				if(distanceInfo[i].dist>=0.0f && c.VJudgePointInsideShape(CalculateLatticePointPos(i)) && (nearestIndex>=size || distanceInfo[i].dist<distanceInfo[nearestIndex].dist)){
+					//点iが侵入可能で、攻撃可能範囲内にあり、尚且つ現在の最近点より近いのであれば
+					nearestIndex=i;//最近点の更新
+				}
+			}
+			if(nearestIndex<size){
+				//最近点が存在するならば(=何度か動けばpunitに攻撃できるのであれば)まともな点数をつける
+				if(m_battleSceneData->m_operateUnit->GetMoveDistance()<distanceInfo[nearestIndex].dist){
+					//1ターンの間にたどり着ける場所でないなら、距離が遠くなるほどに点数を下げる
+					distanceEvaluate=-distanceInfo[nearestIndex].dist;
+				} else{
+					//1ターンの間にたどり着ける場所であるなら、一律でそこそこ良い点をつける
+					distanceEvaluate=0.0f;
+				}
+			}
+
+		}
+	}
+	//行動した際の影響度についての評価値
+
+	return distanceEvaluate;
 }
 
 void ComputerMoveScene::ImpassableLatticeInShape(const size_t index){
