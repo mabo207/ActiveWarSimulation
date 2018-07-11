@@ -149,7 +149,7 @@ void Unit::DrawMoveInfo(Vector2D adjust)const{
 void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
 	Vector2D pos=point-adjust;
 	//ユニットの移動限界距離を緑を描画
-	DrawCircleAA(pos.x,pos.y,m_battleStatus.OP*m_baseStatus.move,100,DxLib::GetColor(0,255,0),FALSE);//枠
+	DrawCircleAA(pos.x,pos.y,GetMoveDistance(),100,DxLib::GetColor(0,255,0),FALSE);//枠
 	//ユニットの攻撃可能な移動限界距離を水色で描画(攻撃可能な場合のみ)
 	if(m_battleStatus.OP>Unit::attackCost){
 		DrawCircleAA(pos.x,pos.y,(m_battleStatus.OP-Unit::attackCost)*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//枠
@@ -223,6 +223,11 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
 	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,0.0,m_gHandle,TRUE,FALSE);
 	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
+}
+
+float Unit::GetMoveDistance()const{
+	//残りOPで移動可能な直線距離を求める。
+	return m_battleStatus.OP*m_baseStatus.move;
 }
 
 const Shape *Unit::GetHitJudgeShape()const{

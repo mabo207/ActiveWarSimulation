@@ -118,6 +118,7 @@ public:
 	void DrawHPGage(Vector2D point,Vector2D adjust)const;//HPゲージの描画
 	void DrawFacePic(Vector2D point)const;//ユニットの顔グラフィックを用いたアイコンの描画を行う
 	void DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const;//マップ上のユニットを描画
+	float GetMoveDistance()const;//移動可能な直線距離を返す。定式化しておくとラクになるため
 
 	//仮想関数・純粋仮想関数のオーバーライド
 	const Shape *GetHitJudgeShape()const;//当たり判定図形を取得。
