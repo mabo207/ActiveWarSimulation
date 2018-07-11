@@ -57,6 +57,18 @@ unsigned int Unit::Team::GetColor(Kind kind){
 	return DxLib::GetColor(128,128,128);
 }
 
+bool Unit::Team::JudgeFriend(Kind team1,Kind team2){
+	if(team1==team2){
+		//チーム名が同じなら味方
+		return true;
+	}
+	//その他味方である組み合わせを列挙
+
+
+	//いずれでもないなら敵
+	return false;
+}
+
 //------------Unit::BattleStatus---------------
 const float Unit::BattleStatus::maxOP=100.0f+Unit::reduceStartActionCost+0.0001f;//キリの良い整数より少しだけ大きくする事でOPをmaxOPまで増やす時にOPが計算誤差で半端な整数にならないようにする。
 
@@ -101,7 +113,7 @@ void Unit::WriteOutObjectPeculiarInfo(std::ofstream &ofs)const{
 }
 
 bool Unit::SetPenetratable(Team::Kind nowPhase){
-	return (m_penetratable=(m_battleStatus.team==nowPhase));
+	return (m_penetratable=Team::JudgeFriend(m_battleStatus.team,nowPhase));
 }
 
 bool Unit::JudgeAttackable(const Unit *pUnit)const{

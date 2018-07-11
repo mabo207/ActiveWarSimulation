@@ -32,6 +32,7 @@ public:
 		};
 		static Kind link(int num);
 		static unsigned int GetColor(Kind kind);
+		static bool JudgeFriend(Kind team1,Kind team2);//2‚Â‚Ìƒ`[ƒ€‚ª–¡•ûŠÖŒW‚©‚Ç‚¤‚©‚ğ”»’è‚·‚é
 	};
 	struct BaseStatus{
 		int lv;
