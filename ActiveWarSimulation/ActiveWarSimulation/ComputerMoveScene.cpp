@@ -84,9 +84,9 @@ Vector2D ComputerMoveScene::CalculateLatticePointPos(size_t index)const{
 std::pair<size_t,Vector2D> ComputerMoveScene::DecideTargetPoint(const std::vector<LatticeDistanceInfo> &distanceInfo)const{
 	//狙うユニットを決める
 	const Unit *targetUnit=nullptr;
-	float point=0.0f;
+	float point=-50000.0f;
 	for(const Unit *pu:m_battleSceneData->m_unitList){
-		if(pu->GetBattleStatus().team!=m_battleSceneData->m_operateUnit->GetBattleStatus().team){
+		if(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->JudgeWeild(m_battleSceneData->m_operateUnit,pu)){
 			//攻撃対象となるユニットを見つけたら
 			if(targetUnit==nullptr){
 				//まだ候補がいない場合は
@@ -234,8 +234,8 @@ float ComputerMoveScene::CalculateEvaluate(const Unit *punit,const std::vector<L
 			const size_t size=distanceInfo.size();
 			size_t nearestIndex=size;//これがsizeである間は
 			for(size_t i=0;i<size;i++){
-				if(distanceInfo[i].dist>=0.0f && c.VJudgePointInsideShape(CalculateLatticePointPos(i)) && (nearestIndex>=size || distanceInfo[i].dist<distanceInfo[nearestIndex].dist)){
-					//点iが侵入可能で、攻撃可能範囲内にあり、尚且つ現在の最近点より近いのであれば
+				if(m_latticeInShape[i]==0 && distanceInfo[i].dist>=0.0f && c.VJudgePointInsideShape(CalculateLatticePointPos(i)) && (nearestIndex>=size || distanceInfo[i].dist<distanceInfo[nearestIndex].dist)){
+					//点iが侵入可能かつ到達可能で、攻撃可能範囲内にあり、尚且つ現在の最近点より近いのであれば
 					nearestIndex=i;//最近点の更新
 				}
 			}
@@ -252,9 +252,18 @@ float ComputerMoveScene::CalculateEvaluate(const Unit *punit,const std::vector<L
 
 		}
 	}
-	//行動した際の影響度についての評価値
 
-	return distanceEvaluate;
+	//行動した際の影響度についての評価値
+	float actionEvaluate=-50000.0f;
+	//2ユニットが敵同士だとして評価値を計算し、味方であれば最後に評価値の正負を反転させる
+	Weapon::AttackInfo attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,punit);
+	actionEvaluate=m_battleSceneData->m_operateUnit->GetMoveDistance()*std::fminf(1.0f,(float)(1.0*attackinfo.damage/punit->GetBattleStatus().HP));//基本的にピンチの敵に攻撃・ピンチの味方に回復をした方が評価が高い。正規化も行う。
+	if(Unit::Team::JudgeFriend(m_battleSceneData->m_operateUnit->GetBattleStatus().team,punit->GetBattleStatus().team)){
+		actionEvaluate=-actionEvaluate;
+	}
+
+	//合計の評価値を返す
+	return distanceEvaluate+actionEvaluate;
 }
 
 void ComputerMoveScene::ImpassableLatticeInShape(const size_t index){
