@@ -142,6 +142,17 @@ bool BattleSceneData::PositionUpdate(const Vector2D inputVec){
 
 void BattleSceneData::SortUnitList(){
 	std::vector<Unit *> list=m_unitList;//元の配列をコピー
+	//現在のユニットを一番後ろまで持っていく
+	//現在のユニットと同一OPのユニットを、現在のユニットより先に動かせるようにするため
+	for(std::vector<Unit *>::const_iterator it=list.begin(),ite=list.end();it!=ite;it++){
+		//初期化の時などm_operateUnitがnullptrの時は後ろに持っていくのは起こらない
+		if((*it)==m_operateUnit){
+			list.erase(it);
+			list.push_back(m_operateUnit);
+			break;
+		}
+	}
+	//m_unitListはclearして、listから順番にどんどん格納していく
 	m_unitList.clear();
 	//m_unitListにソート結果を格納。O(n^2)の実装なので直せるのなら直したいが、同じOPのオブジェクトは前後で同じ順番にしたい。
 	while(!list.empty()){
@@ -241,8 +252,11 @@ void BattleSceneData::DrawOrder()const{
 	const size_t arrowNum=2;
 	Vector2D arrowPos[arrowNum]={calDrawPoint(0),calDrawPoint(0)};//矢印の先端位置(先頭:行動しない時 後ろ:行動する時)
 	bool flag[arrowNum]={false,false};//位置設定が終わったか(先頭:行動しない時 後ろ:行動する時)
-	float op[arrowNum]={m_operateUnit->GetBattleStatus().OP,m_operateUnit->ConsumeOPVirtualByCost(m_operateUnit->GetBattleStatus().weapon->GetCost())};//今の位置で行動終了した時のOP(先頭:行動しない時 後ろ:行動する時)
+	float op[arrowNum]={CalculateOperateUnitFinishOP(),CalculateOperateUnitFinishOP(m_operateUnit->ConsumeOPVirtualByCost(m_operateUnit->GetBattleStatus().weapon->GetCost()))};//今の位置で行動終了した時のOP(先頭:行動しない時 後ろ:行動する時)
 	for(size_t i=1,size=m_unitList.size();i+1<size;i++){
-		
+		if(op[0]<=m_unitList[i]->GetBattleStatus().OP && op[0]>m_unitList[i+1]->GetBattleStatus().OP){
+			//ユニットが入るであろう区間を求める
+			//等号位置に注意！
+		}
 	}
 }
