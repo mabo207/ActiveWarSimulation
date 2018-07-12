@@ -7,7 +7,7 @@
 //----------------------BattleSceneData----------------------
 BattleSceneData::BattleSceneData(const char *stagename)
 	:m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1920.0f,1080.0f),Shape::Fix::e_ignore)),-1,0,true))
-	,m_fpsMesuring(),m_operateUnit(nullptr)
+	,m_fpsMesuring(),m_operateUnit(nullptr),m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
 {
 	//ファイルからステージを読み込み
 	//ファイルを開きすべての文字列を書き出す
@@ -62,6 +62,7 @@ BattleSceneData::BattleSceneData(const char *stagename)
 }
 
 BattleSceneData::~BattleSceneData(){
+	DeleteFontToHandle(m_orderFont);
 	//オブジェクト一覧を開放
 	for(BattleObject *obj:m_field){
 		delete obj;
@@ -200,8 +201,15 @@ void BattleSceneData::DrawHPGage()const{
 
 void BattleSceneData::DrawOrder()const{
 	std::pair<int,int> windowSize=GetWindowResolution();
+	//オーダー画面の背景を描画
 	DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
+	//ユニットのオーダー情報を順番に描画
 	for(size_t i=0,size=m_unitList.size();i<size;i++){
-		m_unitList[i]->DrawFacePic(Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f));
+		//ユニットアイコン(描画基準点は真ん中)
+		const Vector2D centerPoint((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f);
+		m_unitList[i]->DrawFacePic(centerPoint);
+		//残りOP
+		const int x=(int)centerPoint.x,y=((int)centerPoint.y)-60;		
+		DrawStringCenterBaseToHandle(x,y,std::to_string((int)m_unitList[i]->GetBattleStatus().OP).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
 	}
 }
