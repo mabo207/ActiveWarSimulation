@@ -31,7 +31,8 @@ AttackScene::~AttackScene(){
 
 void AttackScene::ProcessAttack(){
 	//コストの消費
-	m_battleSceneData->m_operateUnit->AddOP(m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack());
+	//m_battleSceneData->m_operateUnit->AddOP(m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack());
+	m_battleSceneData->m_operateUnit->ConsumeOPByCost(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetCost());
 	//操作ユニット→対象ユニットへの攻撃情報の計算
 	Weapon::AttackInfo attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,m_aimedUnit);
 	//操作ユニット→対象ユニットへの攻撃処理

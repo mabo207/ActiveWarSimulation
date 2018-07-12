@@ -91,6 +91,7 @@ public:
 	//関数
 protected:
 	void WriteOutObjectPeculiarInfo(std::ofstream &ofs)const;//オブジェクト特有の情報を返す
+	float CalculateConsumeOP(float cost)const;//costに対して消費するOPを計算する
 
 public:
 	//コンストラクタ系
@@ -111,8 +112,10 @@ public:
 	bool JudgeAttackable(const Unit *pUnit)const;//pUnitに攻撃可能か
 	const Shape *GetUnitCircleShape()const;//ユニット自身を示す円を取得
 	int AddHP(int pal);//HPを増減させる関数、増減後のHPを返す
-	void AddOP(float cost);//OPを増減させる関数
-	float CalculateAddOPNormalAttack()const;//通常攻撃によって増加するOPを計算する。負値が返る。
+	//void AddOP(float cost);//OPを増減させる関数(意味合いが2つあるので分割)
+	float ConsumeOPByCost(float cost);//costを指定してOPを消費する関数。消費OP増加などの実装があったらここを弄れば良い。基本的にこの関数を用いてOP操作をする。
+	float ConsumeOPVirtualByCost(float cost)const;//もしConsumeOPByCost()をしたらOPはどんな値になるかを返す
+	float SetOP(float op);//Unit::OPをopの値にする。移動巻き戻しや行動順制御など、ConsumeOPByCost()を用いることができない時に用いる。
 	void DrawMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)
 	void DrawMoveInfo(Vector2D point,Vector2D adjust)const;//移動範囲関連の情報を描画する関数
 	void DrawHPGage(Vector2D adjust=Vector2D())const;//HPゲージの描画

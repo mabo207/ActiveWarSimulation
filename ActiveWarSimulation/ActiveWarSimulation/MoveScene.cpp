@@ -127,7 +127,7 @@ void MoveScene::SetAimedUnit(float angle,int turntimes){
 }
 
 bool MoveScene::JudgeAttackCommandUsable()const{
-	return m_aimedUnit!=nullptr && m_battleSceneData->m_operateUnit->GetBattleStatus().OP+m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack()>=0;
+	return m_aimedUnit!=nullptr && m_battleSceneData->m_operateUnit->ConsumeOPVirtualByCost(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetCost())>=0.0f;
 }
 
 /*

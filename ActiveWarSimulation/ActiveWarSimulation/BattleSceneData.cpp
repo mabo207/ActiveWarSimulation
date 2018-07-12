@@ -118,7 +118,8 @@ bool BattleSceneData::PositionUpdate(const Vector2D inputVec){
 	}
 	//移動距離の計測とOP減少
 	const float moveCost=(m_operateUnit->getPos()-beforePos).size()/speed;
-	m_operateUnit->AddOP(-moveCost);//減少なのでcostをマイナスしたものを加算する
+	//m_operateUnit->AddOP(-moveCost);//減少なのでcostをマイナスしたものを加算する
+	m_operateUnit->ConsumeOPByCost(moveCost);
 
 	return inputFlag;
 }
@@ -150,10 +151,12 @@ void BattleSceneData::FinishUnitOperation(){
 	//m_operateUnitのOPが最大になるようにm_unitList全員のOP値を変化
 	const float plusOP=Unit::BattleStatus::maxOP-m_operateUnit->GetBattleStatus().OP;
 	for(Unit *u:m_unitList){
-		u->AddOP(plusOP);
+		//u->AddOP(plusOP);
+		u->SetOP(u->GetBattleStatus().OP+plusOP);
 	}
-	//m_operateUnitのOPを一定値減らす
-	m_operateUnit->AddOP(-Unit::reduceStartActionCost);
+	//m_operateUnitのOPを減らす(コストとして消費するので消費OP増加等の影響を受ける仕様となる)
+	//m_operateUnit->AddOP(-Unit::reduceStartActionCost);
+	m_operateUnit->ConsumeOPByCost(Unit::reduceStartActionCost);
 	//当たり判定図形の変化
 	UpdateFix();
 	//タイマーセット
@@ -201,15 +204,24 @@ void BattleSceneData::DrawHPGage()const{
 
 void BattleSceneData::DrawOrder()const{
 	std::pair<int,int> windowSize=GetWindowResolution();
+	auto calDrawPoint=[windowSize](size_t i){return Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f);};
 	//オーダー画面の背景を描画
 	DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
 	//ユニットのオーダー情報を順番に描画
 	for(size_t i=0,size=m_unitList.size();i<size;i++){
 		//ユニットアイコン(描画基準点は真ん中)
-		const Vector2D centerPoint((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f);
+		const Vector2D centerPoint=calDrawPoint(i);
 		m_unitList[i]->DrawFacePic(centerPoint);
 		//残りOP
-		const int x=(int)centerPoint.x,y=((int)centerPoint.y)-60;		
+		const int x=(int)centerPoint.x,y=((int)centerPoint.y)-(int)(Unit::unitCircleSize)-20;
 		DrawStringCenterBaseToHandle(x,y,std::to_string((int)m_unitList[i]->GetBattleStatus().OP).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
+	}
+	//行動終了時のユニットのオーダー位置予測の矢印の描画
+	const size_t arrowNum=2;
+	Vector2D arrowPos[arrowNum]={calDrawPoint(0),calDrawPoint(0)};//矢印の先端位置(先頭:行動しない時 後ろ:行動する時)
+	bool flag[arrowNum]={false,false};//位置設定が終わったか(先頭:行動しない時 後ろ:行動する時)
+	float op[arrowNum]={m_operateUnit->GetBattleStatus().OP,m_operateUnit->ConsumeOPVirtualByCost(m_operateUnit->GetBattleStatus().weapon->GetCost())};//今の位置で行動終了した時のOP(先頭:行動しない時 後ろ:行動する時)
+	for(size_t i=1,size=m_unitList.size();i+1<size;i++){
+		
 	}
 }

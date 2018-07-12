@@ -112,6 +112,10 @@ void Unit::WriteOutObjectPeculiarInfo(std::ofstream &ofs)const{
 	ofs<<"("<<Type::GetStr(m_type)<<")";
 }
 
+float Unit::CalculateConsumeOP(float cost)const{
+	return cost;
+}
+
 bool Unit::SetPenetratable(Team::Kind nowPhase){
 	return (m_penetratable=Team::JudgeFriend(m_battleStatus.team,nowPhase));
 }
@@ -145,13 +149,23 @@ int Unit::AddHP(int pal){
 	return m_battleStatus.HP;
 }
 
+/*
 void Unit::AddOP(float cost){
 	m_battleStatus.OP+=cost;
 }
+//*/
 
-float Unit::CalculateAddOPNormalAttack()const{
-	//武器によって決まるが、ひとまず決め打ちの値を返す
-	return -attackCost;
+float Unit::ConsumeOPByCost(float cost){
+	//ひとまずこれで。costに倍率をかけたりする。
+	return (m_battleStatus.OP=ConsumeOPVirtualByCost(cost));
+}
+
+float Unit::ConsumeOPVirtualByCost(float cost)const{
+	return m_battleStatus.OP-CalculateConsumeOP(cost);
+}
+
+float Unit::SetOP(float op){
+	return m_battleStatus.OP=op;
 }
 
 void Unit::DrawMoveInfo(Vector2D adjust)const{
@@ -239,7 +253,7 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
 
 float Unit::GetMoveDistance()const{
 	//残りOPで移動可能な直線距離を求める。
-	return m_battleStatus.OP*m_baseStatus.move;
+	return m_battleStatus.OP/CalculateConsumeOP(1.0f)*m_baseStatus.move;
 }
 
 const Shape *Unit::GetHitJudgeShape()const{

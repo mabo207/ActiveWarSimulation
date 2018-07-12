@@ -87,7 +87,8 @@ int PlayerMoveScene::thisCalculate(){
 					//ユニットを移動させる
 					m_battleSceneData->m_operateUnit->Warp(info.pos);
 					//OPを回復させる
-					m_battleSceneData->m_operateUnit->AddOP(info.OP-m_battleSceneData->m_operateUnit->GetBattleStatus().OP);
+					//m_battleSceneData->m_operateUnit->AddOP(info.OP-m_battleSceneData->m_operateUnit->GetBattleStatus().OP);
+					m_battleSceneData->m_operateUnit->SetOP(info.OP);
 				}
 				//位置更新を行う
 				PositionUpdate(Vector2D());
