@@ -92,9 +92,6 @@ void AttackScene::thisDraw()const{
 	//全ユニットのHPゲージの描画
 	m_battleSceneData->DrawHPGage();
 
-	//ユニットのオーダー順番を描画
-	m_battleSceneData->DrawOrder();
-
 	//ダメージの描画
 	if(m_attackMotion.GetFlame()>damageBeginFlame){
 		//表示するフレームより前は描画処理を行わない
