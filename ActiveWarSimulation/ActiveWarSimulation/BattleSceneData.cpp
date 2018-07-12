@@ -237,8 +237,49 @@ void BattleSceneData::DrawHPGage()const{
 void BattleSceneData::DrawOrder()const{
 	std::pair<int,int> windowSize=GetWindowResolution();
 	auto calDrawPoint=[windowSize](size_t i){return Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f);};
+	
 	//オーダー画面の背景を描画
 	DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
+	
+	//行動終了時のユニットのオーダー位置予測の矢印の描画
+	const size_t arrowNum=2;
+	Vector2D arrowPos[arrowNum]={calDrawPoint(0),calDrawPoint(0)};//矢印の先端位置(先頭:行動しない時 後ろ:行動する時)
+	float op[arrowNum]={CalculateOperateUnitFinishOP(),CalculateOperateUnitFinishOP(m_operateUnit->ConsumeOPVirtualByCost(m_operateUnit->GetBattleStatus().weapon->GetCost()))};//今の位置で行動終了した時のOP(先頭:行動しない時 後ろ:行動する時)
+	const size_t listsize=m_unitList.size();
+	for(size_t j=0;j<arrowNum;j++){
+		bool flag=false;//位置設定が終わったか
+		for(size_t i=1;i+1<listsize;i++){
+			if(!flag && op[j]<=m_unitList[i]->GetBattleStatus().OP && op[j]>m_unitList[i+1]->GetBattleStatus().OP){
+				//ユニットが入るであろう区間を求める(既に求まっている場合:flag[j]==trueは計算の必要はない)
+				//等号位置に注意！現在のユニットと同一OPのユニットを、現在のユニットより先に動かせるようにするようにしているから、次ユニットよりOPが等しい場合はその区間は間違っているようにしないといけない。
+				//また、同一OPのユニットが存在する場合は、等号を条件に入れないと入るべき区間を見逃す可能性があるので等号は入れる。
+				const float pal=(m_unitList[i]->GetBattleStatus().OP-op[j])/(m_unitList[i]->GetBattleStatus().OP-m_unitList[i+1]->GetBattleStatus().OP);//条件式より0除算にならないことが保証されている
+				arrowPos[j]=calDrawPoint(i)*(1.0f-pal)+calDrawPoint(i+1)*pal;//内分点の算出式:p=ap0+bp1(a+b=1,a>=0,b>=0)
+				//計算し終わったからflagをtrueにして計算終了
+				flag=true;
+				break;
+			}
+		}
+		//区間が見つからなかったら一番後ろということ
+		if(!flag){
+			arrowPos[j]=calDrawPoint(listsize);
+			arrowPos[j].x+=(float)(j*8);//ズレさせてあげることで2矢印が完全に被る事を防ぐ
+		}
+	}
+	//矢印を描画
+	for(size_t j=0;j<2;j++){
+		const float width[2]={8.0f,6.0f};
+		const unsigned int color[2]={GetColor(0,0,0),GetColor(255,255,255)};//下地は黒、上は白
+		for(size_t i=0;i<arrowNum;i++){
+			const float height=Unit::unitCircleSize*0.6f;
+			const Vector2D v=calDrawPoint(0)-Vector2D(0.0f,width[0]*2.0f+Unit::unitCircleSize*0.9f);//先頭ユニットの描画基準位置(下地・中抜き部分ともに同じ位置にしたいのでwidth[0]を用いる)
+			DrawBoxAA(v.x-width[j],v.y-height-width[j],v.x+width[j],v.y,color[j],TRUE);
+			DrawBoxAA(v.x-width[j],v.y-height-width[j],arrowPos[i].x+width[j],v.y-height+width[j],color[j],TRUE);
+			DrawBoxAA(arrowPos[i].x-width[j],v.y-height-width[j],arrowPos[i].x+width[j],v.y,color[j],TRUE);
+			DrawTriangleAA(arrowPos[i].x,v.y+width[j]*2.0f,arrowPos[i].x-width[j]*2.0f,v.y,arrowPos[i].x+width[j]*2.0f,v.y,color[j],TRUE);
+		}
+	}
+
 	//ユニットのオーダー情報を順番に描画
 	for(size_t i=0,size=m_unitList.size();i<size;i++){
 		//ユニットアイコン(描画基準点は真ん中)
@@ -247,16 +288,5 @@ void BattleSceneData::DrawOrder()const{
 		//残りOP
 		const int x=(int)centerPoint.x,y=((int)centerPoint.y)-(int)(Unit::unitCircleSize)-20;
 		DrawStringCenterBaseToHandle(x,y,std::to_string((int)m_unitList[i]->GetBattleStatus().OP).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
-	}
-	//行動終了時のユニットのオーダー位置予測の矢印の描画
-	const size_t arrowNum=2;
-	Vector2D arrowPos[arrowNum]={calDrawPoint(0),calDrawPoint(0)};//矢印の先端位置(先頭:行動しない時 後ろ:行動する時)
-	bool flag[arrowNum]={false,false};//位置設定が終わったか(先頭:行動しない時 後ろ:行動する時)
-	float op[arrowNum]={CalculateOperateUnitFinishOP(),CalculateOperateUnitFinishOP(m_operateUnit->ConsumeOPVirtualByCost(m_operateUnit->GetBattleStatus().weapon->GetCost()))};//今の位置で行動終了した時のOP(先頭:行動しない時 後ろ:行動する時)
-	for(size_t i=1,size=m_unitList.size();i+1<size;i++){
-		if(op[0]<=m_unitList[i]->GetBattleStatus().OP && op[0]>m_unitList[i+1]->GetBattleStatus().OP){
-			//ユニットが入るであろう区間を求める
-			//等号位置に注意！
-		}
 	}
 }
