@@ -69,6 +69,22 @@ BattleSceneData::~BattleSceneData(){
 	}
 }
 
+float BattleSceneData::CalculateOperateUnitFinishOP()const{
+	return CalculateOperateUnitFinishOP(m_operateUnit->GetBattleStatus().OP);
+}
+
+float BattleSceneData::CalculateOperateUnitFinishOP(float op)const{
+	//2番目の先頭ユニットと比較する
+	if(m_unitList.size()<2 || m_unitList[1]->GetBattleStatus().OP>op){
+		//1体しかユニットがいなければ補正は行わない
+		//次の操作ユニットのOPよりopが小さいなら補正は行わない
+		return op;
+	} else{
+		//そうでないなら補正を行う
+		return m_unitList[1]->GetBattleStatus().OP-1.0f;
+	}
+}
+
 void BattleSceneData::UpdateFix(){
 	//m_fieldの各オブジェクトのm_fixを更新する
 	//e_ignoreはそのまま、それ以外は全てe_staticにし、m_operateUnitだけはe_dynamicにする
@@ -144,6 +160,11 @@ void BattleSceneData::SortUnitList(){
 }
 
 void BattleSceneData::FinishUnitOperation(){
+	//次の操作ユニットがm_operateUnitのままにならないようにOPを補正する
+	//初期化の際(m_operateUnitがnullptrである)にも用いられるので、nullptrの時は補正は必要ないのでしない。
+	if(m_operateUnit!=nullptr){
+		m_operateUnit->SetOP(CalculateOperateUnitFinishOP());
+	}
 	//m_unitListソートをし直す
 	SortUnitList();
 	//先頭をm_operateUnitに格納

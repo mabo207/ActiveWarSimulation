@@ -33,6 +33,10 @@ public:
 	const int m_orderFont;//オーダー表示の際のフォント
 	
 	//関数
+protected:
+	float CalculateOperateUnitFinishOP()const;//m_operateUnitが行動終了した際、opはいくらになるかを計算する関数(行動終了しても先頭ユニットであれば2番目になるまでOPを消費させる必要があるため)
+	float CalculateOperateUnitFinishOP(float op)const;//OPの消費を踏まえた計算をできるようにするために、引数から計算する関数を用意した
+
 public:
 	BattleSceneData(const char *stagename);
 	~BattleSceneData();
