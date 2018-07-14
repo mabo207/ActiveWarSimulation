@@ -93,6 +93,9 @@ int PlayerMoveScene::thisCalculate(){
 				//位置更新を行う
 				PositionUpdate(Vector2D());
 			}
+		} else if(keyboard_get(KEY_INPUT_F)==1){
+			//マップ調べモードへ
+			return SceneKind::e_research;
 		}
 	}
 	return SceneKind::e_move;
