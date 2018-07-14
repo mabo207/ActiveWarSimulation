@@ -265,5 +265,5 @@ int MoveScene::UpdateNextScene(int index){
 }
 
 void MoveScene::ReturnProcess(){
-	FinishUnitOperation();//s“®I—¹ˆ—
+	//“Á‚É‰½‚à‚µ‚È‚¢
 }
