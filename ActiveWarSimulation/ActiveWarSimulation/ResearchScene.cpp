@@ -1,12 +1,13 @@
 #include"ResearchScene.h"
 #include"DxLib.h"
 #include"input.h"
+#include"GraphicControl.h"
 
 //-------------------ResearchScene---------------------
 ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_research)
-	,m_palFont(CreateFontToHandle("メイリオ",16,1,-1))
-	,m_palBackPic(-1)
+	,m_palFont(CreateFontToHandle("メイリオ",28,1,-1))
+	,m_palBackPic(LoadGraphEX("Graphic/researchInfoBack.png"))
 	,m_battleSceneData(battleSceneData)
 {
 	//操作ユニット等の初期化
@@ -63,6 +64,22 @@ void ResearchScene::thisDraw()const{
 	//ユニットのオーダー順番を描画
 	m_battleSceneData->DrawOrder();
 
+	//パラメータの描画
+	if(m_researchUnit!=nullptr){
+		//パラメータの表示
+		const int gx=1200,gy=140;
+		DrawGraph(gx,gy,m_palBackPic,TRUE);
+		const Unit::BaseStatus base=m_researchUnit->GetBaseStatus();
+		const Unit::BattleStatus battle=m_researchUnit->GetBattleStatus();
+		DrawFormatStringToHandle(gx+68,gy+159,GetColor(255,255,255),m_palFont,"%d/%d",battle.HP,base.maxHP);
+		DrawFormatStringToHandle(gx+68,gy+203,GetColor(255,255,255),m_palFont,"%.0f/%.0f",battle.OP,battle.maxOP);
+		DrawFormatStringToHandle(gx+94,gy+247,GetColor(255,255,255),m_palFont,"%d",base.power);
+		DrawFormatStringToHandle(gx+94,gy+291,GetColor(255,255,255),m_palFont,"%d",base.def);
+		DrawFormatStringToHandle(gx+94,gy+335,GetColor(255,255,255),m_palFont,"%d",base.mpower);
+		DrawFormatStringToHandle(gx+94,gy+379,GetColor(255,255,255),m_palFont,"%d",base.mdef);
+		DrawFormatStringToHandle(gx+94,gy+423,GetColor(255,255,255),m_palFont,"%d",base.speed);
+		DrawFormatStringToHandle(gx+94,gy+467,GetColor(255,255,255),m_palFont,"%d",base.move);
+	}
 }
 
 int ResearchScene::UpdateNextScene(int index){
