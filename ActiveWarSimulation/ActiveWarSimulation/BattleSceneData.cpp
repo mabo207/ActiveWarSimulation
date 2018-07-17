@@ -39,15 +39,15 @@ BattleSceneData::BattleSceneData(const char *stagename)
 
 	//ファイルからユニットを読み込み
 	//読み込み方法が確立していないので暫定
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,3,Vector2D(224.0f,124.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,3,Vector2D(354.0f,294.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_mage,3,Vector2D(225.0f,519.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,3,Vector2D(306.0f,441.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_healer,3,Vector2D(106.0f,241.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(786.0f,510.0f),Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1596.0f,165.0f),Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1740.0f,660.0f),Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(1536.0f,810.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit("アインス",Unit::Profession::e_lancer,3,Vector2D(224.0f,124.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit("ツヴァイ",Unit::Profession::e_archer,3,Vector2D(354.0f,294.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit("ドライ",Unit::Profession::e_mage,3,Vector2D(225.0f,519.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit("フィーア",Unit::Profession::e_armer,3,Vector2D(306.0f,441.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit("フンフ",Unit::Profession::e_healer,3,Vector2D(106.0f,241.0f),Unit::Team::e_player));
+	m_field.push_back(Unit::CreateMobUnit("敵兵",Unit::Profession::e_lancer,1,Vector2D(786.0f,510.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit("敵兵",Unit::Profession::e_lancer,1,Vector2D(1596.0f,165.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit("敵兵",Unit::Profession::e_lancer,1,Vector2D(1740.0f,660.0f),Unit::Team::e_enemy));
+	m_field.push_back(Unit::CreateMobUnit("敵兵",Unit::Profession::e_armer,1,Vector2D(1536.0f,810.0f),Unit::Team::e_enemy));
 	//m_unitListやm_operateUnitの初期化
 	for(BattleObject *obj:m_field){
 		if(obj->GetType()==BattleObject::Type::e_unit){
