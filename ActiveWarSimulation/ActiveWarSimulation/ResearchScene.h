@@ -22,6 +22,7 @@ protected:
 	Vector2D m_pointerVec;//調べている場所
 
 	const int m_palFont;//パラメータ表示のためのフォント
+	const int m_nameFont;//名前表示のためのフォント
 	const int m_palBackPic;//パラメータ表示のための背景絵
 
 

@@ -6,7 +6,8 @@
 //-------------------ResearchScene---------------------
 ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_research)
-	,m_palFont(CreateFontToHandle("メイリオ",28,1,-1))
+	,m_palFont(CreateFontToHandleEX("メイリオ",28,1,-1))
+	,m_nameFont(CreateFontToHandleEX("メイリオ",32,1,-1))
 	,m_palBackPic(LoadGraphEX("Graphic/researchInfoBack.png"))
 	,m_battleSceneData(battleSceneData)
 {
@@ -15,7 +16,8 @@ ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 }
 
 ResearchScene::~ResearchScene(){
-	DeleteFontToHandle(m_palFont);
+	DeleteFontToHandleEX(m_palFont);
+	DeleteFontToHandleEX(m_nameFont);
 	DeleteGraph(m_palBackPic);
 }
 
@@ -71,6 +73,11 @@ void ResearchScene::thisDraw()const{
 		DrawGraph(gx,gy,m_palBackPic,TRUE);
 		const Unit::BaseStatus base=m_researchUnit->GetBaseStatus();
 		const Unit::BattleStatus battle=m_researchUnit->GetBattleStatus();
+		//ネームプレート部分
+		m_researchUnit->DrawFacePic(Vector2D((float)(gx+70),(float)(gy+60)));
+		DrawStringToHandle(gx+150,gy+12,base.name.c_str(),GetColor(255,255,255),m_nameFont);
+		DrawFormatStringToHandle(gx+180,gy+65,GetColor(255,255,255),m_palFont,"%s Lv%d",Unit::Profession::GetName(base.profession).c_str(),base.lv);
+		//パラメータ部分
 		DrawFormatStringToHandle(gx+68,gy+159,GetColor(255,255,255),m_palFont,"%d/%d",battle.HP,base.maxHP);
 		DrawFormatStringToHandle(gx+68,gy+203,GetColor(255,255,255),m_palFont,"%.0f/%.0f",battle.OP,battle.maxOP);
 		DrawFormatStringToHandle(gx+94,gy+247,GetColor(255,255,255),m_palFont,"%d",base.power);
