@@ -135,6 +135,9 @@
     <ClCompile Include="MyPolygon.cpp">
       <Filter>ソース ファイル\Shape</Filter>
     </ClCompile>
+    <ClCompile Include="ResearchScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -205,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="MyPolygon.h">
       <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="ResearchScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

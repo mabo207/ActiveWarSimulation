@@ -44,6 +44,7 @@ public:
 	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
 	void SortUnitList();//m_unitListをソートしなおす。
 	void FinishUnitOperation();//次のユニットへの遷移処理
+	Unit *GetUnitPointer(Vector2D pos)const;//pos(マップ上の座標)にいるユニットを返す。このユニットに攻撃する可能性がある事を考慮してconstはつけない。
 
 	//情報描画関数
 	void DrawField(const std::set<const BattleObject *> &notDraw={})const;//フィールドの描画、ユニットの描画は別

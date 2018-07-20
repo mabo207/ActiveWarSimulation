@@ -15,6 +15,7 @@ public:
 			e_move=start,
 			e_attackNormal,
 			e_switch,
+			e_research,
 			END
 		};
 		static const int kindNum=END-start;

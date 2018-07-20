@@ -35,6 +35,8 @@ public:
 		static bool JudgeFriend(Kind team1,Kind team2);//2つのチームが味方関係かどうかを判定する
 	};
 	struct BaseStatus{
+		std::string name;
+		Profession::Kind profession;
 		int lv;
 		int maxHP;
 		int power;
@@ -44,8 +46,8 @@ public:
 		int speed;
 		int move;
 		BaseStatus(){}
-		BaseStatus(int i_lv,int i_maxHP,int i_power,int i_def,int i_mpower,int i_mdef,int i_speed,int i_move)
-			:lv(i_lv),maxHP(i_maxHP),power(i_power),def(i_def),mpower(i_mpower),mdef(i_mdef),speed(i_speed),move(i_move){}
+		BaseStatus(std::string i_name,Profession::Kind i_profession,int i_lv,int i_maxHP,int i_power,int i_def,int i_mpower,int i_mdef,int i_speed,int i_move)
+			:name(i_name),profession(i_profession),lv(i_lv),maxHP(i_maxHP),power(i_power),def(i_def),mpower(i_mpower),mdef(i_mdef),speed(i_speed),move(i_move){}
 	};
 	struct BattleStatus{
 		//定数
@@ -134,7 +136,7 @@ public:
 
 	//静的関数
 public:
-	static Unit *CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,Team::Kind team);//モブユニットを動的生成する。
+	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team);//モブユニットを動的生成する。
 
 };
 

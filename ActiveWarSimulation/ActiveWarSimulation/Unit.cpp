@@ -83,7 +83,7 @@ const int Unit::hpFontSize=20;
 
 Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
-	,m_baseStatus(2,20,5,3,2,3,5,4)
+	,m_baseStatus("Ç‡Ç‘",Profession::e_lancer,2,20,5,3,2,3,5,4)
 	,m_battleStatus(20,0,team,Weapon::GetWeapon("ìSÇÃëÑ"))
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
 	,m_hpFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",hpFontSize,1,DX_FONTTYPE_EDGE))
@@ -289,33 +289,33 @@ std::shared_ptr<BattleObject> Unit::VCopy()const{
 	return std::shared_ptr<BattleObject>(new Unit(m_hitJudgeShape->GetPosition(),m_gHandle,m_battleStatus.team));
 }
 
-Unit *Unit::CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,Team::Kind team){
+Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team){
 	BaseStatus baseStatus;
 	std::shared_ptr<Weapon> weapon;
 	int gHandle=-1;
 	switch(profession){
 	case(Profession::e_lancer):
-		baseStatus=BaseStatus(lv,20+(int)(lv*0.8),5+(int)(lv*0.5),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),5+(int)(lv*0.5),6);
+		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),5+(int)(lv*0.5),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),5+(int)(lv*0.5),6);
 		weapon=Weapon::GetWeapon("ìSÇÃëÑ");
 		gHandle=LoadGraphEX("Graphic/soldier.png");
 		break;
 	case(Profession::e_archer):
-		baseStatus=BaseStatus(lv,18+(int)(lv*0.75),4+(int)(lv*0.45),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),3+(int)(lv*0.3),6);
+		baseStatus=BaseStatus(name,profession,lv,18+(int)(lv*0.75),4+(int)(lv*0.45),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),3+(int)(lv*0.3),6);
 		weapon=Weapon::GetWeapon("ìSÇÃã|");
 		gHandle=LoadGraphEX("Graphic/archer.png");
 		break;
 	case(Profession::e_armer):
-		baseStatus=BaseStatus(lv,25+(int)(lv*0.9),6+(int)(lv*0.6),6+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
+		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),6+(int)(lv*0.6),6+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
 		weapon=Weapon::GetWeapon("ìSÇÃëÑ");
 		gHandle=LoadGraphEX("Graphic/armerknight.png");
 		break;
 	case(Profession::e_mage):
-		baseStatus=BaseStatus(lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
+		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
 		weapon=Weapon::GetWeapon("ÉtÉ@ÉCÉAÅ[ÇÃèë");
 		gHandle=LoadGraphEX("Graphic/mage.png");
 		break;
 	case(Profession::e_healer):
-		baseStatus=BaseStatus(lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),5+(int)(lv*0.55),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
+		baseStatus=BaseStatus(name,profession,lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),5+(int)(lv*0.55),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
 		weapon=Weapon::GetWeapon("ÉqÅ[ÉãÇÃèÒ");
 		gHandle=LoadGraphEX("Graphic/healer.png");
 		break;

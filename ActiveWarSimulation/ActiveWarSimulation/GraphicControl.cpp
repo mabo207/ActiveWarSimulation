@@ -236,8 +236,8 @@ GraphicControlClass::~GraphicControlClass(){
 static FontControlClass *pFontControler=nullptr;
 
 //クラスの関数
-FontControlClass::FontData::FontData(std::string i_fontname,int i_size,int i_thick,int i_fonttype)
-	:fontname(i_fontname),size(i_size),thick(i_thick),fonttype(i_fonttype){}
+FontControlClass::FontData::FontData(std::string i_fontname,int i_size,int i_thick,int i_fonttype,int i_edgeSize)
+	:fontname(i_fontname),size(i_size),thick(i_thick),fonttype(i_fonttype),edgeSize(i_edgeSize){}
 
 bool FontControlClass::FontData::operator<(const FontData &otherobj)const{
 	//size
@@ -264,12 +264,18 @@ bool FontControlClass::FontData::operator<(const FontData &otherobj)const{
 	} else if(fontname>otherobj.fontname){
 		return false;
 	}
+	//edgeSize
+	if(edgeSize<otherobj.edgeSize){
+		return true;
+	} else if(edgeSize>otherobj.edgeSize){
+		return false;
+	}
 
 	return false;
 }
 
 bool FontControlClass::FontData::operator==(const FontData &otherobj)const{
-	return (fontname==otherobj.fontname && size==otherobj.size && thick==otherobj.thick && fonttype==otherobj.fonttype);
+	return (fontname==otherobj.fontname && size==otherobj.size && thick==otherobj.thick && fonttype==otherobj.fonttype && edgeSize==otherobj.edgeSize);
 }
 
 FontControlClass::FontControlClass(){}
@@ -281,9 +287,9 @@ FontControlClass::~FontControlClass(){
 	}
 }
 
-int FontControlClass::CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype){
+int FontControlClass::CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype,int CharSet,int EdgeSize,int Italic,int Handle){
 	//同一フォントが存在しているかの調査
-	FontData fontdata(fontname,size,thick,fonttype);
+	FontData fontdata(fontname,size,thick,fonttype,EdgeSize);
 	std::map<FontData,MapValue>::iterator it=m_font.find(fontdata);
 	//フォントの作成処理
 	int handle;
@@ -293,7 +299,7 @@ int FontControlClass::CreateFontToHandleEX(std::string fontname,int size,int thi
 		handle=it->second.handle;
 	} else{
 		//まだフォントが作られていない場合
-		handle=CreateFontToHandle(fontname.c_str(),size,thick,fonttype);
+		handle=CreateFontToHandle(fontname.c_str(),size,thick,fonttype,CharSet,EdgeSize,Italic,Handle);
 		if(handle!=-1){
 			//フォント生成が成功した場合はm_fontに情報を格納
 			m_font.insert(std::pair<FontData,MapValue>(fontdata,MapValue(handle,1)));
@@ -339,12 +345,12 @@ void FontControler_End(){
 	}
 }
 
-int CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype){
+int CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype,int CharSet,int EdgeSize,int Italic,int Handle){
 	int handle;
 	if(pFontControler!=nullptr){
-		handle=pFontControler->CreateFontToHandleEX(fontname,size,thick,fonttype);
+		handle=pFontControler->CreateFontToHandleEX(fontname,size,thick,fonttype,CharSet,EdgeSize,Italic,Handle);
 	} else{
-		handle=CreateFontToHandle(fontname.c_str(),size,thick,fonttype);
+		handle=CreateFontToHandle(fontname.c_str(),size,thick,fonttype,CharSet,EdgeSize,Italic,Handle);
 	}
 	return handle;
 }

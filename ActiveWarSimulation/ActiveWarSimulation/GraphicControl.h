@@ -89,11 +89,13 @@ class FontControlClass{
 	//Œ^E—ñ‹“‘Ì
 private:
 	struct FontData{
+		//Œµ–§‚É‚Í‚à‚¤­‚µ‘½‚¢‚ªA‚±‚ê‚Å–â‘è‚È‚¢‚¾‚ë‚¤
 		std::string fontname;
 		int size;
 		int thick;
 		int fonttype;
-		FontData(std::string i_fontname,int i_size,int i_thick,int i_fonttype);
+		int edgeSize;
+		FontData(std::string i_fontname,int i_size,int i_thick,int i_fonttype,int i_edgeSize);
 		bool operator<(const FontData &otherobj)const;
 		bool operator==(const FontData &otherobj)const;
 	};
@@ -113,7 +115,7 @@ private:
 public:
 	FontControlClass();
 	~FontControlClass();
-	int CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype=-1);
+	int CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype,int CharSet,int EdgeSize,int Italic,int Handle);
 	int DeleteFontToHandleEX(int handle);
 };
 
@@ -121,7 +123,7 @@ void FontControler_Init();
 
 void FontControler_End();
 
-int CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype=-1);
+int CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype=-1,int CharSet=-1,int EdgeSize=-1,int Italic=0,int Handle=-1);
 
 int DeleteFontToHandleEX(int handle);
 

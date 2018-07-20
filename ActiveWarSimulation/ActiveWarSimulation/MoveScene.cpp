@@ -1,6 +1,7 @@
 #include"DxLib.h"
 #include"MoveScene.h"
 #include"AttackScene.h"
+#include"ResearchScene.h"
 #include"input.h"
 #include"Edge.h"
 #include<algorithm>
@@ -277,11 +278,14 @@ int MoveScene::UpdateNextScene(int index){
 	case(SceneKind::e_attackNormal):
 		m_nextScene=std::shared_ptr<BattleSceneElement>(new AttackScene(m_battleSceneData,m_aimedUnit));
 		return index;
+	case(SceneKind::e_research):
+		m_nextScene=std::shared_ptr<BattleSceneElement>(new ResearchScene(m_battleSceneData));
+		return index;
 	default:
 		return index;
 	}
 }
 
 void MoveScene::ReturnProcess(){
-	FinishUnitOperation();//s“®I—¹ˆ—
+	//“Á‚É‰½‚à‚µ‚È‚¢
 }
