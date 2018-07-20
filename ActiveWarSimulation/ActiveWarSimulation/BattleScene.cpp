@@ -13,6 +13,7 @@ BattleScene::~BattleScene(){}
 
 int BattleScene::Calculate(){
 	//更新
+	m_battleSceneData->m_fpsMesuring.Update();//タイマーの更新
 	int index;
 	if(m_sceneData.get()!=nullptr){
 		index=m_sceneData->Calculate();

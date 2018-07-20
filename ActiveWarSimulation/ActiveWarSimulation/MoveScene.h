@@ -34,6 +34,10 @@ protected:
 	Unit *m_aimedUnit;//現在の攻撃対象ユニット(静的ポインタ)
 	std::vector<RouteInfo> m_route;//操作ユニットが通った経路
 
+	//グラフィック関連
+	static const size_t attackedCursorPicNum=4;//分割数
+	int m_attackedCursor[attackedCursorPicNum];//m_aimedUnitの上に乗せるカーソルの描画
+
 	//関数
 protected:
 	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
