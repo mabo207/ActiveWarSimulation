@@ -18,7 +18,7 @@ ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 ResearchScene::~ResearchScene(){
 	DeleteFontToHandleEX(m_palFont);
 	DeleteFontToHandleEX(m_nameFont);
-	DeleteGraph(m_palBackPic);
+	DeleteGraphEX(m_palBackPic);
 }
 
 void ResearchScene::UpdatePointer(){
@@ -69,7 +69,15 @@ void ResearchScene::thisDraw()const{
 	//パラメータの描画
 	if(m_researchUnit!=nullptr){
 		//パラメータの表示
-		const int gx=1200,gy=140;
+		int gx=1200,gy=140;//パラメータ画面全体の描画位置
+		std::pair<int,int> windowSize=GetWindowResolution();
+		if(m_researchUnit->getPos().x<(int)windowSize.first/2){
+			//ユニットの位置が画面左半分にいるなら
+			gx=1200;
+		} else{
+			//右半分なら
+			gx=120;
+		}
 		DrawGraph(gx,gy,m_palBackPic,TRUE);
 		const Unit::BaseStatus base=m_researchUnit->GetBaseStatus();
 		const Unit::BattleStatus battle=m_researchUnit->GetBattleStatus();
