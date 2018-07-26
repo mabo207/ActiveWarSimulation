@@ -14,6 +14,7 @@ protected:
 public:
 	virtual int VCalculateDamage(const Unit *attacker,const Unit *defender)const=0;//ダメージを計算する関数
 	virtual bool VJudgeWeild(const Unit *attacker,const Unit *defender)const=0;//attacker→defenderへの通常攻撃を実行可能であるか
+	virtual std::string VGetPowerString(const Unit *attacker)const=0;//attackerがこの行動をした時の効果の説明文を出力する
 };
 
 //物理攻撃
@@ -30,6 +31,7 @@ public:
 	~PhysicalCalculator();
 	int VCalculateDamage(const Unit *attacker,const Unit *defender)const;
 	bool VJudgeWeild(const Unit *attacker,const Unit *defender)const;//attacker→defenderへの通常攻撃を実行可能であるか
+	std::string VGetPowerString(const Unit *attacker)const;//attackerがこの行動をした時の効果の説明文を出力する
 };
 
 //魔法攻撃
@@ -46,6 +48,7 @@ public:
 	~MagicCalculator();
 	int VCalculateDamage(const Unit *attacker,const Unit *defender)const;
 	bool VJudgeWeild(const Unit *attacker,const Unit *defender)const;//attacker→defenderへの通常攻撃を実行可能であるか
+	std::string VGetPowerString(const Unit *attacker)const;//attackerがこの行動をした時の効果の説明文を出力する
 };
 
 //回復魔法
@@ -60,7 +63,8 @@ public:
 	RecoverCalculator(double powerRate=1.0,double weaponRate=1.0);
 	~RecoverCalculator();
 	int VCalculateDamage(const Unit *healer,const Unit *receiver)const;
-	bool VJudgeWeild(const Unit *attacker,const Unit *defender)const;//attacker→defenderへの通常攻撃を実行可能であるか
+	bool VJudgeWeild(const Unit *healer,const Unit *defender)const;//attacker→defenderへの通常攻撃を実行可能であるか
+	std::string VGetPowerString(const Unit *healer)const;//attackerがこの行動をした時の効果の説明文を出力する
 };
 
 #endif // !DEF_DAMAGECALCULATORS_H

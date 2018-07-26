@@ -26,10 +26,10 @@ std::pair<std::string,std::shared_ptr<Weapon>> Weapon::CreateWeaponMapElement(st
 std::map<std::string,std::shared_ptr<Weapon>> Weapon::InitWeaponMap(){
 	std::map<std::string,std::shared_ptr<Weapon>> map;
 	//以下列挙してmapに格納していく
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の槍",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator())))));
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の弓",2,Weapon::openAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator())))));
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ファイアーの書",5,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator())))));
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ヒールの杖",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator())))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の槍",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格で扱いやすい標準的な槍。"))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の弓",2,Weapon::openAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格で扱いやすい標準的な弓。"))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ファイアーの書",5,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator()),"魔道の基本が詰まっている標準的な魔法。"))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ヒールの杖",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator()),"回復の力を強める標準的な杖。"))));
 	//mapを返す
 	return map;
 }
@@ -41,4 +41,13 @@ const std::shared_ptr<Weapon> Weapon::GetWeapon(const std::string &name){
 	} else{
 		return nullptr;
 	}
+}
+
+std::string Weapon::GetEffectivenessString(const Unit *attacker)const{
+	//1行目に武器攻撃力と合計攻撃力（効果によって文面が異なる）、2行目に射程とコストを出力する。
+	std::string ret;
+	ret+=m_calculator->VGetPowerString(attacker);
+	ret+="\n";
+	ret+="射程："+std::to_string(m_length)+"　コスト："+std::to_string(m_cost);
+	return ret;
 }

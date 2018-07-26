@@ -24,6 +24,12 @@ bool PhysicalCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)c
 	return !Unit::Team::JudgeFriend(attacker->GetBattleStatus().team,defender->GetBattleStatus().team);
 }
 
+std::string PhysicalCalculator::VGetPowerString(const Unit *attacker)const{
+	const int weaponPower=(int)(attacker->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	const int totalPower=(int)(attacker->GetBaseStatus().power*m_powerRate)+(int)(attacker->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	return "武器威力："+std::to_string(weaponPower)+"　合計威力："+std::to_string(totalPower);
+}
+
 //---------------MagicCalculator-----------------
 MagicCalculator::MagicCalculator(double powerRate,double defRate,double weaponRate)
 	:DamageCalculator(),m_powerRate(powerRate),m_defRate(defRate),m_weaponRate(weaponRate){}
@@ -45,6 +51,12 @@ bool MagicCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)cons
 	return !Unit::Team::JudgeFriend(attacker->GetBattleStatus().team,defender->GetBattleStatus().team);
 }
 
+std::string MagicCalculator::VGetPowerString(const Unit *attacker)const{
+	const int weaponPower=(int)(attacker->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	const int totalPower=(int)(attacker->GetBaseStatus().power*m_powerRate)+(int)(attacker->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	return "武器威力："+std::to_string(weaponPower)+"　合計威力："+std::to_string(totalPower);
+}
+
 //---------------RecoverCalculator-----------------
 RecoverCalculator::RecoverCalculator(double powerRate,double weaponRate)
 	:DamageCalculator(),m_powerRate(powerRate),m_weaponRate(weaponRate){}
@@ -59,9 +71,15 @@ int RecoverCalculator::VCalculateDamage(const Unit *healer,const Unit *receiver)
 	return pal;
 }
 
-bool RecoverCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)const{
+bool RecoverCalculator::VJudgeWeild(const Unit *healer,const Unit *defender)const{
 	//味方関係であれば攻撃できる
-	return Unit::Team::JudgeFriend(attacker->GetBattleStatus().team,defender->GetBattleStatus().team);
+	return Unit::Team::JudgeFriend(healer->GetBattleStatus().team,defender->GetBattleStatus().team);
+}
+
+std::string RecoverCalculator::VGetPowerString(const Unit *healer)const{
+	const int weaponPower=(int)(healer->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	const int totalPower=(int)(healer->GetBaseStatus().power*m_powerRate)+(int)(healer->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	return "武器回復量："+std::to_string(weaponPower)+"　合計回復量："+std::to_string(totalPower);
 }
 
 
