@@ -4,10 +4,13 @@
 #include"GraphicControl.h"
 
 //-------------------ResearchScene---------------------
+const int ResearchScene::explainFontSize=16;
+
 ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_research)
 	,m_palFont(CreateFontToHandleEX("メイリオ",28,1,-1))
 	,m_nameFont(CreateFontToHandleEX("メイリオ",32,1,-1))
+	,m_explainFont(CreateFontToHandleEX("メイリオ",explainFontSize,1,-1))
 	,m_palBackPic(LoadGraphEX("Graphic/researchInfoBack.png"))
 	,m_battleSceneData(battleSceneData)
 {
@@ -18,6 +21,7 @@ ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 ResearchScene::~ResearchScene(){
 	DeleteFontToHandleEX(m_palFont);
 	DeleteFontToHandleEX(m_nameFont);
+	DeleteFontToHandleEX(m_explainFont);
 	DeleteGraphEX(m_palBackPic);
 }
 
@@ -94,6 +98,11 @@ void ResearchScene::thisDraw()const{
 		DrawFormatStringToHandle(gx+94,gy+379,GetColor(255,255,255),m_palFont,"%d",base.mdef);
 		DrawFormatStringToHandle(gx+94,gy+423,GetColor(255,255,255),m_palFont,"%d",base.speed);
 		DrawFormatStringToHandle(gx+94,gy+467,GetColor(255,255,255),m_palFont,"%d",base.move);
+		//装備説明部分
+		//通常装備
+		DrawStringToHandle(gx+261,gy+159,m_researchUnit->GetBattleStatus().weapon->GetName().c_str(),GetColor(255,255,255),m_palFont);
+		DrawStringNewLineToHandle(gx+272,gy+192,gx+272,gy+192,310,36,GetColor(255,255,255),m_explainFont,explainFontSize+2,m_researchUnit->GetBattleStatus().weapon->GetExplain().c_str());
+		DrawStringNewLineToHandle(gx+272,gy+240,gx+272,gy+240,310,36,GetColor(255,255,255),m_explainFont,explainFontSize+2,m_researchUnit->GetBattleStatus().weapon->GetEffectivenessString(m_researchUnit).c_str());
 	}
 }
 
