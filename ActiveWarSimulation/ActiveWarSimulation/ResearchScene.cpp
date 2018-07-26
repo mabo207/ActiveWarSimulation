@@ -101,8 +101,8 @@ void ResearchScene::thisDraw()const{
 		//‘•”õà–¾•”•ª
 		//’Êí‘•”õ
 		DrawStringToHandle(gx+261,gy+159,m_researchUnit->GetBattleStatus().weapon->GetName().c_str(),GetColor(255,255,255),m_palFont);
-		DrawStringNewLineToHandle(gx+272,gy+192,gx+272,gy+192,310,36,GetColor(255,255,255),m_explainFont,explainFontSize+2,m_researchUnit->GetBattleStatus().weapon->GetExplain().c_str());
-		DrawStringNewLineToHandle(gx+272,gy+240,gx+272,gy+240,310,36,GetColor(255,255,255),m_explainFont,explainFontSize+2,m_researchUnit->GetBattleStatus().weapon->GetEffectivenessString(m_researchUnit).c_str());
+		DrawStringNewLineToHandle(gx+272,gy+192,310,36,m_researchUnit->GetBattleStatus().weapon->GetExplain().c_str(),GetColor(255,255,255),m_explainFont,2);
+		DrawStringNewLineToHandle(gx+272,gy+240,310,36,m_researchUnit->GetBattleStatus().weapon->GetEffectivenessString(m_researchUnit).c_str(),GetColor(255,255,255),m_explainFont,2);
 	}
 }
 
