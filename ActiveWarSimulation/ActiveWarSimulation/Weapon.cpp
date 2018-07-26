@@ -48,6 +48,6 @@ std::string Weapon::GetEffectivenessString(const Unit *attacker)const{
 	std::string ret;
 	ret+=m_calculator->VGetPowerString(attacker);
 	ret+="\n";
-	ret+="射程："+std::to_string(m_length)+"　コスト："+std::to_string(m_cost);
+	ret+="射程："+std::to_string((int)m_length)+"　コスト："+std::to_string((int)m_cost);
 	return ret;
 }
