@@ -10,6 +10,7 @@ class ResearchScene:public BattleSceneElement{
 	//型・列挙体
 
 	//定数
+	static const int explainFontSize;
 
 	//変数
 protected:
@@ -23,6 +24,7 @@ protected:
 
 	const int m_palFont;//パラメータ表示のためのフォント
 	const int m_nameFont;//名前表示のためのフォント
+	const int m_explainFont;//説明文表示のためのフォント
 	const int m_palBackPic;//パラメータ表示のための背景絵
 
 
