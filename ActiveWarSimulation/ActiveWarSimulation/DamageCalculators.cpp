@@ -53,7 +53,7 @@ bool MagicCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)cons
 
 std::string MagicCalculator::VGetPowerString(const Unit *attacker)const{
 	const int weaponPower=(int)(attacker->GetBattleStatus().weapon->GetPower()*m_weaponRate);
-	const int totalPower=(int)(attacker->GetBaseStatus().power*m_powerRate)+(int)(attacker->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	const int totalPower=(int)(attacker->GetBaseStatus().mpower*m_powerRate)+(int)(attacker->GetBattleStatus().weapon->GetPower()*m_weaponRate);
 	return "武器威力："+std::to_string(weaponPower)+"　合計威力："+std::to_string(totalPower);
 }
 
@@ -78,7 +78,7 @@ bool RecoverCalculator::VJudgeWeild(const Unit *healer,const Unit *defender)cons
 
 std::string RecoverCalculator::VGetPowerString(const Unit *healer)const{
 	const int weaponPower=(int)(healer->GetBattleStatus().weapon->GetPower()*m_weaponRate);
-	const int totalPower=(int)(healer->GetBaseStatus().power*m_powerRate)+(int)(healer->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	const int totalPower=(int)(healer->GetBaseStatus().mpower*m_powerRate)+(int)(healer->GetBattleStatus().weapon->GetPower()*m_weaponRate);
 	return "武器回復量："+std::to_string(weaponPower)+"　合計回復量："+std::to_string(totalPower);
 }
 
