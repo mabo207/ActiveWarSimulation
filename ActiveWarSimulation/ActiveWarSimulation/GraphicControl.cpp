@@ -308,9 +308,21 @@ int FontControlClass::CreateFontToHandleEX(std::string fontname,int size,int thi
 	return handle;
 }
 
+int FontControlClass::CopyFontToHandle(int handle){
+	//m_fontをすべて検索
+	for(std::map<FontData,MapValue>::iterator it=m_font.begin(),ite=m_font.end();it!=ite;it++){
+		if(it->second.handle==handle){
+			//同じフォントを見つけたら
+			it->second.count++;
+			return handle;
+		}
+	}
+	return -1;//該当フォントが見つからないときは-1を返す
+}
+
 int FontControlClass::DeleteFontToHandleEX(int handle){
 	//handleの検索
-	bool flag=false;//handleをDelete下かどうか
+	bool flag=false;//handleをDeleteしたかどうか
 	int ret=-1;
 	for(std::map<FontData,MapValue>::iterator it=m_font.begin(),ite=m_font.end();it!=ite;it++){
 		if(it->second.handle==handle){
@@ -320,9 +332,9 @@ int FontControlClass::DeleteFontToHandleEX(int handle){
 				//使用箇所がなくなったらフォントを削除し、m_fontからデータを取り除く
 				ret=DeleteFontToHandle(handle);
 				m_font.erase(it);
-				flag=true;
-				break;
 			}
+			flag=true;//delete作業はしたことになるのでtrueに
+			break;
 		}
 	}
 	//handleがデータ一覧に存在していなければ、削除のみ行う
@@ -353,6 +365,16 @@ int CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype,in
 		handle=CreateFontToHandle(fontname.c_str(),size,thick,fonttype,CharSet,EdgeSize,Italic,Handle);
 	}
 	return handle;
+}
+
+int CopyFontToHandle(int handle){
+	int ret;
+	if(pFontControler!=nullptr){
+		ret=pFontControler->CopyFontToHandle(handle);
+	} else{
+		ret=handle;
+	}
+	return ret;
 }
 
 int DeleteFontToHandleEX(int handle){
