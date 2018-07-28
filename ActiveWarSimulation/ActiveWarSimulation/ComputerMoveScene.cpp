@@ -81,11 +81,11 @@ Vector2D ComputerMoveScene::CalculateLatticePointPos(size_t index)const{
 	return CalculateLatticePointPos(index%m_xLatticeNum,index/m_xLatticeNum);
 }
 
-std::pair<size_t,Vector2D> ComputerMoveScene::DecideTargetPoint(const std::vector<LatticeDistanceInfo> &distanceInfo)const{
+std::pair<std::pair<size_t,Vector2D>,Unit *> ComputerMoveScene::DecideTargetPoint(const std::vector<LatticeDistanceInfo> &distanceInfo)const{
 	//狙うユニットを決める
-	const Unit *targetUnit=nullptr;
+	Unit *targetUnit=nullptr;//この関数内では変更されない
 	float point=-50000.0f;
-	for(const Unit *pu:m_battleSceneData->m_unitList){
+	for(Unit *pu:m_battleSceneData->m_unitList){
 		if(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->JudgeWeild(m_battleSceneData->m_operateUnit,pu)){
 			//攻撃対象となるユニットを見つけたら
 			if(targetUnit==nullptr){
@@ -125,12 +125,12 @@ std::pair<size_t,Vector2D> ComputerMoveScene::DecideTargetPoint(const std::vecto
 			}
 		}
 		if(target!=vecSize){
-			return std::pair<size_t,Vector2D>(target,targetUnit->getPos());
+			return std::pair<std::pair<size_t,Vector2D>,Unit *>(std::pair<size_t,Vector2D>(target,targetUnit->getPos()),targetUnit);
 		}
 	} else{
 		//狙うユニットが無いなら、その場で待機する
 	}
-	return std::pair<size_t,Vector2D>(vecSize,m_battleSceneData->m_operateUnit->getPos());
+	return std::pair<std::pair<size_t,Vector2D>,Unit *>(std::pair<size_t,Vector2D>(vecSize,m_battleSceneData->m_operateUnit->getPos()),targetUnit);
 }
 
 void ComputerMoveScene::CalculateLatticeDistanceInfo(std::vector<LatticeDistanceInfo> &latticeDistanceInfo)const{
@@ -190,11 +190,12 @@ void ComputerMoveScene::CalculateLatticeRoute(){
 	distvec=latticeDistanceInfo;//デバッグ用
 
 	//目標地点の決定
-	const std::pair<size_t,Vector2D> targetPoint=DecideTargetPoint(latticeDistanceInfo);//ここはAIの行動傾向によって異なるので
+	const std::pair<std::pair<size_t,Vector2D>,Unit *> targetPoint=DecideTargetPoint(latticeDistanceInfo);//ここはAIの行動傾向によって異なるので
+	m_targetUnit=targetPoint.second;
 
 	//ルートの選定と格納
-	m_latticeRoute.push_back(std::pair<size_t,Vector2D>(latticeNum,targetPoint.second));//最終目標の格子点についた後に向かう位置を最初に格納しておく（これは恐らくユニット内部で入れない）
-	for(size_t point=targetPoint.first;point<latticeNum;point=latticeDistanceInfo[point].from){
+	m_latticeRoute.push_back(std::pair<size_t,Vector2D>(latticeNum,targetPoint.first.second));//最終目標の格子点についた後に向かう位置を最初に格納しておく（これは恐らくユニット内部で入れない）
+	for(size_t point=targetPoint.first.first;point<latticeNum;point=latticeDistanceInfo[point].from){
 		//latticeDistanceInfo[point].fromを辿っていけば最短距離となる
 		Vector2D v;
 		if(point<latticeNum){
@@ -304,10 +305,13 @@ int ComputerMoveScene::thisCalculate(){
 	const double processedTime=m_battleSceneData->m_fpsMesuring.GetProcessedTime();
 	if(processedTime>1.0){
 		//1秒経ったら行動する
-		if(JudgeAttackCommandUsable()){
-			//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
+		if(JudgeAttackCommandUsable() && m_aimedUnit==m_targetUnit){
+			//m_aimerUnitがAIが決めていた攻撃対象に一致した時、攻撃処理を行う
 			//FinishUnitOperation();//行動終了処理(あとで)
 			return SceneKind::e_attackNormal;//攻撃場面へ
+		}else if(m_battleSceneData->m_operateUnit->JudgeAttackable(m_targetUnit) && m_aimedUnit!=m_targetUnit){
+			//AIが決めていた攻撃対象が攻撃範囲内にいるが、m_aimedUnitがそれに一致しないときは、攻撃対象を動かす
+			SetAimedUnit(1);
 		} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f
 //			|| processedTime>10.0//デバッグのために一度省いている
 			|| keyboard_get(KEY_INPUT_Q)==1//時間制限がない際にゲームに戻れるようにするため

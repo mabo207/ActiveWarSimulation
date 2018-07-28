@@ -30,6 +30,7 @@ protected:
 
 	//AIのための情報
 	std::vector<std::pair<size_t,Vector2D>> m_latticeRoute;//通る格子点(size_t:格子点番号(m_latticeInShape.size()をオーバーする場合は格子点ではないことを示す),Vector2D:その位置。誤差によって計算が位置から正しい格子点番号を求められない懸念があるのでこうした。)
+	Unit *m_targetUnit;//狙おうとしているユニット
 
 	std::vector<LatticeDistanceInfo> distvec;//デバッグ用距離可視化変数
 
@@ -37,7 +38,7 @@ protected:
 protected:
 	Vector2D CalculateLatticePointPos(size_t x,size_t y)const;
 	Vector2D CalculateLatticePointPos(size_t index)const;
-	std::pair<size_t,Vector2D> DecideTargetPoint(const std::vector<LatticeDistanceInfo> &distanceInfo)const;//目標とする格子点とその格子点に到着したあとに狙う位置を決める
+	std::pair<std::pair<size_t,Vector2D>,Unit *> DecideTargetPoint(const std::vector<LatticeDistanceInfo> &distanceInfo)const;//目標とする格子点とその格子点に到着したあとに狙う位置を決める
 	void CalculateLatticeDistanceInfo(std::vector<LatticeDistanceInfo> &latticeDistanceInfo)const;//各格子点までの距離と行き方を計算する関数。情報量が多いので情報の格納先を引数で渡す。
 	void CalculateLatticeRoute();//m_latticeInShapeからm_latticeRouteを計算する
 	void ImpassableLatticeInShape(const size_t index);//indexの格子点を通れないようにする(1にする)。尚且つその隣接点が0であれば2にする。

@@ -69,6 +69,16 @@ void MoveScene::FinishUnitOperation(){
 
 }
 
+void MoveScene::SetAimedUnit(int turntimes){
+	float angle;
+	if(m_aimedUnit!=nullptr){
+		angle=(m_aimedUnit->getPos()-m_battleSceneData->m_operateUnit->getPos()).GetRadian();
+	} else{
+		angle=0.0f;
+	}
+	SetAimedUnit(angle,turntimes);
+}
+
 void MoveScene::SetAimedUnit(float angle,int turntimes){
 	//”ÍˆÍ“à‚Ìƒ†ƒjƒbƒgˆê——‚Ìì¬
 	std::vector<Unit *> list;
