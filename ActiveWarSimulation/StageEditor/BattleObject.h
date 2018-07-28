@@ -47,7 +47,7 @@ public:
 	//コンストラクタとデストラクタ
 	BattleObject(Type::Kind type,const std::shared_ptr<Shape> hitJudgeShape,int gHandle)
 		:ShapeHaving(hitJudgeShape),m_gHandle(gHandle),m_type(type){}
-	virtual ~BattleObject() {}
+	virtual ~BattleObject();
 
 	
 	//仮想関数

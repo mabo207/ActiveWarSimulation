@@ -102,6 +102,13 @@ Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D positio
 	m_battleStatus.HP=m_baseStatus.maxHP;
 }
 
+Unit::Unit(const Unit &u)
+	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(u.m_hitJudgeShape->GetPosition(),unitCircleSize,Shape::Fix::e_static)),CopyGraph(u.m_gHandle))
+	,m_baseStatus(u.m_baseStatus),m_battleStatus(u.m_battleStatus)
+	,m_rivalInpenetratableCircle(u.m_rivalInpenetratableCircle->VCopy())
+	,m_hpFont(CopyFontToHandle(u.m_hpFont))
+{}
+
 Unit::~Unit(){
 	//ƒtƒHƒ“ƒg‚Ì‰ð•ú
 	DeleteFontToHandleEX(m_hpFont);
@@ -177,8 +184,8 @@ void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
 	//ƒ†ƒjƒbƒg‚ÌˆÚ“®ŒÀŠE‹——£‚ð—Î‚ð•`‰æ
 	DrawCircleAA(pos.x,pos.y,GetMoveDistance(),100,DxLib::GetColor(0,255,0),FALSE);//˜g
 	//ƒ†ƒjƒbƒg‚ÌUŒ‚‰Â”\‚ÈˆÚ“®ŒÀŠE‹——£‚ð…F‚Å•`‰æ(UŒ‚‰Â”\‚Èê‡‚Ì‚Ý)
-	if(m_battleStatus.OP>Unit::attackCost){
-		DrawCircleAA(pos.x,pos.y,(m_battleStatus.OP-Unit::attackCost)*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//˜g
+	if((ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))>=0.0f){
+		DrawCircleAA(pos.x,pos.y,(ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//˜g
 	}
 
 }
@@ -286,7 +293,7 @@ void Unit::VHitProcess(const BattleObject *potherobj){
 }
 
 std::shared_ptr<BattleObject> Unit::VCopy()const{
-	return std::shared_ptr<BattleObject>(new Unit(m_hitJudgeShape->GetPosition(),m_gHandle,m_battleStatus.team));
+	return std::shared_ptr<BattleObject>(new Unit(*this));
 }
 
 Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team){

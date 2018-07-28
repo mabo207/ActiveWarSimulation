@@ -99,6 +99,7 @@ public:
 	//コンストラクタ系
 	Unit(Vector2D position,int gHandle,Team::Kind team);
 	Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team);
+	Unit(const Unit &u);
 	~Unit();
 	//演算子オーバーロード
 

@@ -1,7 +1,12 @@
 #include"DxLib.h"
 #include"BattleObject.h"
+#include"GraphicControl.h"
 
 #include"Terrain.h"
+
+BattleObject::~BattleObject(){
+	DeleteGraphEX(m_gHandle);
+}
 
 std::string BattleObject::Type::GetStr(Kind kind){
 	switch(kind){
