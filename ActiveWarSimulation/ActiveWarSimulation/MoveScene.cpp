@@ -134,7 +134,8 @@ void MoveScene::SetAimedUnit(float angle,int turntimes){
 }
 
 bool MoveScene::JudgeAttackCommandUsable()const{
-	return m_aimedUnit!=nullptr && m_battleSceneData->m_operateUnit->ConsumeOPVirtualByCost(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetCost())>=0.0f;
+	//return m_aimedUnit!=nullptr && m_battleSceneData->m_operateUnit->ConsumeOPVirtualByCost(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetCost())>=0.0f;//「攻撃するには攻撃コスト分のOPを残さないといけない」という仕様が消滅したため、コメントアウト
+	return m_aimedUnit!=nullptr;
 }
 
 /*

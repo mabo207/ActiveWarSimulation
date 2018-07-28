@@ -81,17 +81,6 @@ const float Unit::attackCost=50.0f;
 
 const int Unit::hpFontSize=20;
 
-Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
-	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
-	,m_baseStatus("もぶ",Profession::e_lancer,2,20,5,3,2,3,5,4)
-	,m_battleStatus(20,0,team,Weapon::GetWeapon("鉄の槍"))
-	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
-	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,1,DX_FONTTYPE_EDGE))
-{
-	//テスト用のコンストラクタ
-	m_battleStatus.HP=m_baseStatus.maxHP;
-}
-
 Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
 	,m_baseStatus(baseStatus),m_battleStatus(100,Unit::BattleStatus::maxOP,team,weapon)
@@ -183,11 +172,12 @@ void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
 	Vector2D pos=point-adjust;
 	//ユニットの移動限界距離を緑を描画
 	DrawCircleAA(pos.x,pos.y,GetMoveDistance(),100,DxLib::GetColor(0,255,0),FALSE);//枠
+/*(仕様消滅のためコメントアウト)
 	//ユニットの攻撃可能な移動限界距離を水色で描画(攻撃可能な場合のみ)
 	if((ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))>=0.0f){
 		DrawCircleAA(pos.x,pos.y,(ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//枠
 	}
-
+//*/
 }
 
 void Unit::DrawHPGage(Vector2D adjust)const{
