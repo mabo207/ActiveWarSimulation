@@ -238,13 +238,13 @@ void StageEditor::Draw() {
 	//デバッグ描画
 	clsDx();
 	Vector2D v=GetMousePointVector2D();
-	printfDx("(%f,%f)\n",v.x,v.y);//素の座標
+	//printfDx("(%f,%f)\n",v.x,v.y);//素の座標
 	v=m_actionSettings.m_pPosSetting->CalculatePos(v,m_actionSettings);
-	printfDx("(%f,%f)\n",v.x,v.y);//位置調整後の座標
+	//printfDx("(%f,%f)\n",v.x,v.y);//位置調整後の座標
 	for(auto o:*m_actionSettings.GetPMObject()){
-		printfDx("%d\n",o.get());
+	//	printfDx("%d\n",o.get());
 	}
-	printfDx("m_pBattleObject:%d\n",m_actionSettings.m_pBattleObject.get());
+	//printfDx("m_pBattleObject:%d\n",m_actionSettings.m_pBattleObject.get());
 
 	//マップの描画
 	//マップ描画出来る範囲を制限
