@@ -13,7 +13,7 @@ const float MoveScene::routeFrequency=1.0f;
 MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_move),m_battleSceneData(battleSceneData)
 {
-	LoadDivGraphEX("Graphic/attackedCursor.png",attackedCursorPicNum,attackedCursorPicNum,1,40,44,m_attackedCursor);
+	LoadDivGraphEX("Graphic/attackedCursor.png",attackedCursorPicNum,attackedCursorPicNum,1,60,66,m_attackedCursor);
 	//m_aimedUnit“™‚Ì‰Šú‰»
 	FinishUnitOperation();
 }
