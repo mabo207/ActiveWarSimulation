@@ -12,6 +12,7 @@
 
 EditActionSettings::EditActionSettings(std::shared_ptr<EditAction> pEditAction, std::shared_ptr<BattleObject> pBattleObject,std::shared_ptr<ShapeFactory> pShapeFactory,std::shared_ptr<PosSetting> pPosSetting)
 	:m_adjust(0,0),m_pEditAction(pEditAction),m_pBattleObject(pBattleObject),m_pShapeFactory(pShapeFactory),m_pPosSetting(pPosSetting),m_pOriginObject(std::shared_ptr<BattleObject>(nullptr))
+	,m_mouseObjectDepth(0,Vector2D(0.0f,0.0f))
 {
 	
 }
@@ -20,10 +21,16 @@ EditActionSettings::~EditActionSettings() {}
 
 std::vector<std::shared_ptr<BattleObject>>::const_iterator EditActionSettings::GetMousePointedObject(Vector2D point)const{
 	std::vector<std::shared_ptr<BattleObject>>::const_iterator it=m_objects.begin(),ite=m_objects.end();
+	size_t count=0;
 	for(;it!=ite;it++) {
-		//マウスが被っている図形には枠を描画しフォーカスを表現
+		//マウスが被っている図形には枠を描画しフォーカスを表現。ただしm_mouseobjectDepth.firstコ目に見つけたもののみ
 		if(it->get()->JudgePointInsideShape(point)){
-			break;
+			if(count==m_mouseObjectDepth.first){
+				break;
+			} else{
+				//個数に達していない場合はそのイテレータを返さない
+				count++;
+			}
 		}
 	}
 	return it;
@@ -126,6 +133,19 @@ void EditActionSettings::CancelEditing(){
 void EditActionSettings::InitEditObject(){
 	m_pBattleObject=std::shared_ptr<BattleObject>(nullptr);
 	m_pOriginObject=std::shared_ptr<BattleObject>(nullptr);
+}
+
+void EditActionSettings::UpdateMouseObjectDepth(const int keyinputright){
+	const Vector2D vec=GetMousePointVector2D();//マウスの位置はマップ基準である必要はない
+	if(keyinputright==1){
+		//右クリックで回数を増やす
+		m_mouseObjectDepth.first++;
+		m_mouseObjectDepth.second=vec;
+	}else if((vec-m_mouseObjectDepth.second).sqSize()>=100.0f){
+		//前に右クリックした位置から10px以上離れていれば
+		m_mouseObjectDepth.first=0;
+		m_mouseObjectDepth.second=vec;
+	}
 }
 
 //制作データの書き出し

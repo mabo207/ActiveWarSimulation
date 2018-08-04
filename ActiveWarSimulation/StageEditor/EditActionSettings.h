@@ -22,6 +22,7 @@ protected:
 	//編集データ
 	std::vector<std::shared_ptr<BattleObject>> m_objects;//マップ上に設置しているオブジェクト一覧
 	Vector2D m_adjust;//描画の左右補正値(実際のステージのm_adjustの座標点を左上に合わせてエディタに表示)
+	std::pair<size_t,Vector2D> m_mouseObjectDepth;//編集行為を行う際、マウス点を内部点として持つような図形の何個目を編集するか。右クリックでdepthを増やし、右クリックを押した位置から10px離れると0になる。
 
 	//編集やり直し用データ(編集データにこの変数使って編集してやれば治るよ)
 	std::shared_ptr<BattleObject> m_pOriginObject;//編集前のオブジェクトのコピー
@@ -68,6 +69,7 @@ public:
 	void CancelEditing();//編集をキャンセルする。編集対象を編集の変更前の状態に戻す
 	void InitEditObject();//編集行為を行う際の初期化。m_pBattleObjectとm_pOriginObjectをnullptrに。
 	const BattleObject *GetMousePointedObjectPointer(Vector2D point)const;//イテレータを返すGetMousePointedObject()をクラス外部から使えるようにした
+	void UpdateMouseObjectDepth(const int keyinputright);//m_mouseObjectDepthを更新する
 	//制作データの書き出し
 	void WriteOutStage(const char *filename)const;
 	//ステージの読み込み

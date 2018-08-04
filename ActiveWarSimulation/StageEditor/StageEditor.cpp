@@ -225,6 +225,9 @@ int StageEditor::Calculate() {
 		}
 	}
 
+	//右クリックされたら
+	m_actionSettings.UpdateMouseObjectDepth(mouse_get(MOUSE_INPUT_RIGHT));//押してない時でも更新することがあるので、押しているフレーム数を渡す。
+
 	//キーボード入力受付
 	if(keyboard_get(KEY_INPUT_S)==10){
 		//Sキー長押しで保存
@@ -268,10 +271,11 @@ void StageEditor::Draw() {
 		SetDrawBlendMode(mode,pal);
 	}
 	//マップに存在しているものを全て描画
+	const BattleObject *mouseObj=m_actionSettings.GetMousePointedObjectPointer(mouse);
 	for (const std::shared_ptr<BattleObject> &obj : *m_actionSettings.GetPMObject()) {
 		obj.get()->VDraw(adjust);
 		//マウスが被っている図形には黄色い枠を描画しフォーカスを表現
-		if(firstflag && obj.get()->JudgePointInsideShape(mouse)){
+		if(firstflag && obj.get()==mouseObj){
 			obj.get()->ShapeDraw(GetColor(255,255,0),FALSE,1.0f,adjust);
 			obj.get()->PosDraw(GetColor(255,255,0),TRUE,2.0f,adjust);
 			firstflag=false;
