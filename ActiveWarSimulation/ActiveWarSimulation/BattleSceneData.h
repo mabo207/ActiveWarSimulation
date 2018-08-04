@@ -35,6 +35,10 @@ public:
 	//グラフィックデータ
 	const int m_mapPic;//マップ全体のグラフィック
 	
+	//デバッグ用変数
+public:
+	bool m_drawObjectShapeFlag;//フィールドオブジェクトの当たり判定図形を描画するかどうか
+
 	//関数
 protected:
 	float CalculateOperateUnitFinishOP()const;//m_operateUnitが行動終了した際、opはいくらになるかを計算する関数(行動終了しても先頭ユニットであれば2番目になるまでOPを消費させる必要があるため)

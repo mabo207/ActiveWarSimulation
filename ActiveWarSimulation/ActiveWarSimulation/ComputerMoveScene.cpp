@@ -343,27 +343,28 @@ int ComputerMoveScene::thisCalculate(){
 void ComputerMoveScene::thisDraw()const{
 	//プレイヤーのと同じ描画処理
 	MoveScene::thisDraw();
-/*
+
 	//デバッグ用描画
-	//格子点を描画
-	for(size_t i=0,size=m_latticeInShape.size();i<size;i++){
-		const int x=(i%m_xLatticeNum)*squareSize,y=(i/m_xLatticeNum)*squareSize;
-		unsigned int color;
-		if(distvec[i].dist<0.0f){
-			color=GetColor(0,0,255);
-		} else{
-			int level=(int)distvec[i].dist/3;
-			color=GetColor(level%256,255-level%256,0);
+	if(m_battleSceneData->m_drawObjectShapeFlag){
+		//格子点を描画
+		for(size_t i=0,size=m_latticeInShape.size();i<size;i++){
+			const int x=(i%m_xLatticeNum)*squareSize,y=(i/m_xLatticeNum)*squareSize;
+			unsigned int color;
+			if(distvec[i].dist<0.0f){
+				color=GetColor(0,0,255);
+			} else{
+				int level=(int)distvec[i].dist/3;
+				color=GetColor(level%256,255-level%256,0);
+			}
+			DrawCircleAA((float)(x),(float)(y),2,6,color,TRUE);
 		}
-		DrawCircleAA((float)(x),(float)(y),2,6,color,TRUE);
-	}
-	//ルートを描画
-	if(!m_latticeRoute.empty()){
-		DrawCircleAA(m_latticeRoute.front().second.x,m_latticeRoute.front().second.y,5,15,GetColor(255,255,0),FALSE);
-		for(size_t i=0,size=m_latticeRoute.size();i+1<size;i++){
-			DrawCircleAA(m_latticeRoute[i+1].second.x,m_latticeRoute[i+1].second.y,5,15,GetColor(255,255,0),FALSE);
-			DrawLineAA(m_latticeRoute[i].second.x,m_latticeRoute[i].second.y,m_latticeRoute[i+1].second.x,m_latticeRoute[i+1].second.y,GetColor(255,255,0));
+		//ルートを描画
+		if(!m_latticeRoute.empty()){
+			DrawCircleAA(m_latticeRoute.front().second.x,m_latticeRoute.front().second.y,5,15,GetColor(255,255,0),FALSE);
+			for(size_t i=0,size=m_latticeRoute.size();i+1<size;i++){
+				DrawCircleAA(m_latticeRoute[i+1].second.x,m_latticeRoute[i+1].second.y,5,15,GetColor(255,255,0),FALSE);
+				DrawLineAA(m_latticeRoute[i].second.x,m_latticeRoute[i].second.y,m_latticeRoute[i+1].second.x,m_latticeRoute[i+1].second.y,GetColor(255,255,0));
+			}
 		}
 	}
-//*/
 }
