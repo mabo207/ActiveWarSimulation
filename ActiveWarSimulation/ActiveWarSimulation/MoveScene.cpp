@@ -284,7 +284,7 @@ void MoveScene::thisDraw()const{
 
 		//ユニットのオーダー順番を描画
 		m_battleSceneData->DrawOrder();
-	} else if(keyboard_get(KEY_INPUT_0)<=0){
+	} else if(keyboard_get(KEY_INPUT_0)==60){
 		int x,y;
 		GetWindowSize(&x,&y);
 		SaveDrawScreenToPNG(0,0,x,y,"screenshot.png");

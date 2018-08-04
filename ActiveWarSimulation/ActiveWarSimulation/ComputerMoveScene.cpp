@@ -343,25 +343,12 @@ int ComputerMoveScene::thisCalculate(){
 void ComputerMoveScene::thisDraw()const{
 	//プレイヤーのと同じ描画処理
 	MoveScene::thisDraw();
-
+/*
 	//デバッグ用描画
 	//格子点を描画
 	for(size_t i=0,size=m_latticeInShape.size();i<size;i++){
 		const int x=(i%m_xLatticeNum)*squareSize,y=(i/m_xLatticeNum)*squareSize;
 		unsigned int color;
-/*
-		switch(m_latticeInShape[i]){
-		case(0):
-			color=GetColor(255,255,0);
-			break;
-		case(1):
-			color=GetColor(0,255,255);
-			break;
-		case(2):
-			color=GetColor(255,0,255);
-			break;
-		}
-//*/
 		if(distvec[i].dist<0.0f){
 			color=GetColor(0,0,255);
 		} else{
@@ -378,4 +365,5 @@ void ComputerMoveScene::thisDraw()const{
 			DrawLineAA(m_latticeRoute[i].second.x,m_latticeRoute[i].second.y,m_latticeRoute[i+1].second.x,m_latticeRoute[i+1].second.y,GetColor(255,255,0));
 		}
 	}
+//*/
 }

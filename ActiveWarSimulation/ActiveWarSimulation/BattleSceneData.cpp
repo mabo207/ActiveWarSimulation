@@ -214,6 +214,7 @@ void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)co
 	//背景データをそのまま描画
 	//背景をアニメーションするとかなったらここで処理を記述
 	DrawGraph(0,0,m_mapPic,TRUE);
+/*
 	//フィールドオブジェクトの当たり判定図形の描画
 	for(const BattleObject *obj:m_field){
 		if(m_Window->JudgeInShapeRect(obj)
@@ -226,6 +227,7 @@ void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)co
 			obj->VDraw();
 		}
 	}
+//*/
 }
 
 void BattleSceneData::DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &notDraw)const{
