@@ -37,6 +37,7 @@ protected:
 	//グラフィック関連
 	static const size_t attackedCursorPicNum=4;//分割数
 	int m_attackedCursor[attackedCursorPicNum];//m_aimedUnitの上に乗せるカーソルの描画
+	int m_operatedCursor[attackedCursorPicNum];//m_operatedUnitの上に乗せるカーソルの描画
 
 	//関数
 protected:

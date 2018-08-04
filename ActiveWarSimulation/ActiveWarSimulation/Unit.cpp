@@ -170,8 +170,9 @@ void Unit::DrawMoveInfo(Vector2D adjust)const{
 
 void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
 	Vector2D pos=point-adjust;
-	//ƒ†ƒjƒbƒg‚ÌˆÚ“®ŒÀŠE‹——£‚ð—Î‚ð•`‰æ
-	DrawCircleAA(pos.x,pos.y,GetMoveDistance(),100,DxLib::GetColor(0,255,0),FALSE);//˜g
+	//ƒ†ƒjƒbƒg‚ÌˆÚ“®ŒÀŠE‹——£‚ð…F‚É•`‰æ
+	DrawCircleAA(pos.x,pos.y,GetMoveDistance(),100,DxLib::GetColor(64,192,192),FALSE,3.0f);//˜g
+	DrawCircleAA(pos.x,pos.y,GetMoveDistance(),100,DxLib::GetColor(0,255,255),FALSE,1.0f);//˜g
 /*(Žd—lÁ–Å‚Ì‚½‚ßƒRƒƒ“ƒgƒAƒEƒg)
 	//ƒ†ƒjƒbƒg‚ÌUŒ‚‰Â”\‚ÈˆÚ“®ŒÀŠE‹——£‚ð…F‚Å•`‰æ(UŒ‚‰Â”\‚Èê‡‚Ì‚Ý)
 	if((ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))>=0.0f){
