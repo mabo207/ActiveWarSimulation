@@ -169,6 +169,9 @@ StageEditor::StageEditor()
 	//フォント
 	m_font=CreateFontToHandle("メイリオ",16,1);
 
+	//背景グラフィック
+	m_mapPic=LoadGraph("Savedata/stage.png");
+
 	//図形の読み込み
 	m_actionSettings.ReadStage("Savedata/stage.txt");
 }
@@ -176,6 +179,8 @@ StageEditor::StageEditor()
 StageEditor::~StageEditor() {
 	//フォント
 	DeleteFontToHandle(m_font);
+	//画像
+	DeleteGraph(m_mapPic);
 }
 
 //マウスを左クリックした時の動作群
@@ -253,6 +258,7 @@ void StageEditor::Draw() {
 	bool firstflag=true;
 	Vector2D mouse=GetMousePointVector2D()-Vector2D((float)leftUpPosX,(float)leftUpPosY)+m_actionSettings.GetMAdjust();//マウスの位置(補正値を考慮しマップ上の座標で表す)
 	Vector2D adjust=Vector2D((float)leftUpPosX,(float)leftUpPosY)-m_actionSettings.GetMAdjust();//描画の全体調整位置
+	DrawGraph((int)adjust.x,(int)adjust.y,m_mapPic,TRUE);
 	//現在の編集対象図形を描画
 	if(m_actionSettings.m_pBattleObject.get()!=nullptr){
 		int mode,pal;
