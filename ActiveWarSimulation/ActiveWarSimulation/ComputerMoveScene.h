@@ -44,6 +44,8 @@ protected:
 	void ImpassableLatticeInShape(const size_t index);//indexの格子点を通れないようにする(1にする)。尚且つその隣接点が0であれば2にする。
 	void ImpassableLatticeInShape(const size_t x,const size_t y);
 	float CalculateEvaluate(const Unit *punit,const std::vector<LatticeDistanceInfo> &distanceInfo)const;
+	float CalculateActionEvaluate(const Unit *punit)const;//行動した際の影響度についての評価値、CalculateEvaluate()の他にも、その場待機するかどうかの判定に用いることがあるので分離。
+	int BranchingWaitingProcess();//AI行動中にその場待機することになった時、その場で攻撃できるキャラがいるなら攻撃するように処理を分岐するための関数
 
 	//仮想関数のオーバーライド
 	Vector2D CalculateInputVec()const;

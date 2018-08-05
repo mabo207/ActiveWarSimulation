@@ -45,6 +45,7 @@ protected:
 	void SetAimedUnit(int turntimes);//m_aimedUnitとm_operatedUnitの位置からangleを自動的に求めるSetAimedUnit
 	void SetAimedUnit(float angle,int turntimes);//m_aimedUnitを変更する。turntimesだけ時計回りに回転させる
 	bool JudgeAttackCommandUsable()const;//攻撃コマンドを使用可能かどうか
+	bool JudgeBecomeAimedUnit(const Unit *punit)const;//punitはm_aimedUnitになることが出来るかどうかを判定する
 
 	//仮想関数のオーバーライド
 	//int thisCalculate();//プレイヤーか敵かで異なるので

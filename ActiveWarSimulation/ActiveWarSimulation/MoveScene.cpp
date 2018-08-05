@@ -69,6 +69,10 @@ void MoveScene::FinishUnitOperation(){
 
 }
 
+bool MoveScene::JudgeBecomeAimedUnit(const Unit *punit)const{
+	return m_battleSceneData->m_operateUnit->JudgeAttackable(punit);
+}
+
 void MoveScene::SetAimedUnit(int turntimes){
 	float angle;
 	if(m_aimedUnit!=nullptr){
@@ -83,7 +87,7 @@ void MoveScene::SetAimedUnit(float angle,int turntimes){
 	//範囲内のユニット一覧の作成
 	std::vector<Unit *> list;
 	for(Unit *pUnit:m_battleSceneData->m_unitList){
-		if(m_battleSceneData->m_operateUnit->JudgeAttackable(pUnit)){
+		if(JudgeBecomeAimedUnit(pUnit)){
 			//異なるチームかつ一定距離内にいれば追加
 			list.push_back(pUnit);
 		}

@@ -255,6 +255,14 @@ float ComputerMoveScene::CalculateEvaluate(const Unit *punit,const std::vector<L
 	}
 
 	//行動した際の影響度についての評価値
+	const float actionEvaluate=CalculateActionEvaluate(punit);
+
+	//合計の評価値を返す
+	return distanceEvaluate+actionEvaluate;
+}
+
+float ComputerMoveScene::CalculateActionEvaluate(const Unit *punit)const{
+	//行動した際の影響度についての評価値
 	float actionEvaluate=-50000.0f;
 	//2ユニットが敵同士だとして評価値を計算し、味方であれば最後に評価値の正負を反転させる
 	Weapon::AttackInfo attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,punit);
@@ -262,9 +270,7 @@ float ComputerMoveScene::CalculateEvaluate(const Unit *punit,const std::vector<L
 	if(Unit::Team::JudgeFriend(m_battleSceneData->m_operateUnit->GetBattleStatus().team,punit->GetBattleStatus().team)){
 		actionEvaluate=-actionEvaluate;
 	}
-
-	//合計の評価値を返す
-	return distanceEvaluate+actionEvaluate;
+	return actionEvaluate;
 }
 
 void ComputerMoveScene::ImpassableLatticeInShape(const size_t index){
@@ -297,6 +303,32 @@ void ComputerMoveScene::ImpassableLatticeInShape(const size_t x,const size_t y){
 	}
 }
 
+int ComputerMoveScene::BranchingWaitingProcess(){
+	//自分が今いる地点から行動対象にできるキャラがいるかを調べる。複数いる場合は評価値の高いキャラを対象とする。
+	float evaluate=-50000.0f;
+	Unit *pActedUnit=nullptr;
+	for(Unit *pUnit:m_battleSceneData->m_unitList){
+		if(JudgeBecomeAimedUnit(pUnit)){
+			//行動対象にできた場合は、更新するか判定して場合によっては更新する
+			const float pal=CalculateActionEvaluate(pUnit);
+			if(pActedUnit==nullptr || evaluate<pal){
+				pActedUnit=pUnit;
+				evaluate=pal;
+			}
+		}
+	}
+	//攻撃するか待機するかの分岐
+	if(pActedUnit==nullptr){
+		//行動対象がいなければ待機
+		FinishUnitOperation();
+		return 0;
+	} else{
+		//行動対象がいればそのユニットを対象にして行動場面へ
+		m_aimedUnit=pActedUnit;
+		return SceneKind::e_attackNormal;
+	}
+}
+
 int ComputerMoveScene::thisCalculate(){
 	//m_operateUnitの位置更新
 	const Vector2D beforeVec=m_battleSceneData->m_operateUnit->getPos();
@@ -317,14 +349,17 @@ int ComputerMoveScene::thisCalculate(){
 			|| keyboard_get(KEY_INPUT_Q)==1//時間制限がない際にゲームに戻れるようにするため
 		){
 			//移動できなくなったら、または10秒経ったら待機
-			FinishUnitOperation();
-			return 0;
+//			FinishUnitOperation();
+//			return 0;
+			return BranchingWaitingProcess();//行動対象がいれば行動する
 		} else if((moveSqLength<0.1f && processedTime>2.0)){
 			//移動距離も少ない場合は移動先の変更
 			if(m_latticeRoute.size()<2){
 				//進む場所がないまたは最後の1点にたどり着かずに止まっている場合は待機でよい
-				FinishUnitOperation();
-				return 0;
+				//最後の1点の場合も待機を行う理由は、先頭点を進入不可にする事でルート変更を行うが、最後の1点は大抵は元々進入不可でルートが変わらず、無限ループとなってしまうから。
+//				FinishUnitOperation();
+//				return 0;
+				return BranchingWaitingProcess();//行動対象がいれば行動する
 			} else{
 				//経由点で行き詰まっている場合、そのルートは間違っていると考えられるのでルート変更をする
 				if(m_latticeRoute.front().first<m_latticeInShape.size()){
