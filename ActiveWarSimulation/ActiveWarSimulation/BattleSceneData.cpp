@@ -11,11 +11,12 @@
 BattleSceneData::BattleSceneData(const char *stagename)
 	:m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1920.0f,1080.0f),Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr),m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
-	,m_mapPic(LoadGraphEX(("Graphic/"+std::string(stagename)+"/map.png").c_str())),m_drawObjectShapeFlag(false)
+	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/map.png").c_str())),m_drawObjectShapeFlag(false)
 {
 	//ファイルからステージを読み込み
+	const std::string stagedir("Stage/"+std::string(stagename)+"/");
 	//ファイルを開きすべての文字列を書き出す
-	std::ifstream ifs("SaveData/stage.txt");
+	std::ifstream ifs((stagedir+"stage.txt").c_str());
 	if(!ifs){
 
 	} else{
@@ -54,7 +55,7 @@ BattleSceneData::BattleSceneData(const char *stagename)
 	m_field.push_back(Unit::CreateMobUnit("敵兵",Unit::Profession::e_lancer,1,Vector2D(1740.0f,660.0f),Unit::Team::e_enemy));
 	m_field.push_back(Unit::CreateMobUnit("敵兵",Unit::Profession::e_armer,1,Vector2D(1536.0f,810.0f),Unit::Team::e_enemy));
 //*/
-	StringBuilder unitlist(FileStrRead("Stage/tutorial1/unitlist.txt"),'\n','{','}',false,true);
+	StringBuilder unitlist(FileStrRead((stagedir+"unitlist.txt").c_str()),'\n','{','}',false,true);
 	for(const StringBuilder &unitdata:unitlist.m_vec){
 		const StringBuilder sb(unitdata.GetString(),',','(',')',true,true);
 		//まずモブ用の設定をするか固定ユニット用の設定をするかを判定する
