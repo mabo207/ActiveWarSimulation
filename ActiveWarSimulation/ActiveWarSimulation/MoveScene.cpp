@@ -14,15 +14,15 @@ MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_move),m_battleSceneData(battleSceneData)
 {
 	LoadDivGraphEX("Graphic/attackedCursor.png",attackedCursorPicNum,attackedCursorPicNum,1,60,66,m_attackedCursor);
-	LoadDivGraphEX("Graphic/operatedCursor.png",attackedCursorPicNum,attackedCursorPicNum,1,40,40,m_operatedCursor);
+	m_operatedCursor=LoadGraphEX("Graphic/operatedCursor.png");
 	//m_aimedUnit等の初期化
 	FinishUnitOperation();
 }
 
 MoveScene::~MoveScene(){
+	DeleteGraphEX(m_operatedCursor);
 	for(size_t i=0;i<attackedCursorPicNum;i++){
 		DeleteGraphEX(m_attackedCursor[i]);
-		DeleteGraphEX(m_operatedCursor[i]);
 	}
 }
 
@@ -286,10 +286,9 @@ void MoveScene::thisDraw()const{
 		//操作ユニット
 		{
 			pos=m_battleSceneData->m_operateUnit->getPos();
-			size_t index=(m_battleSceneData->m_fpsMesuring.GetFlame()/15)%attackedCursorPicNum;
 			float dx,dy;
-			GetGraphSizeF(m_operatedCursor[index],&dx,&dy);
-			DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_operatedCursor[index],TRUE);
+			GetGraphSizeF(m_operatedCursor,&dx,&dy);
+			DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_operatedCursor,TRUE);
 		}
 
 		//ユニットのオーダー順番を描画
