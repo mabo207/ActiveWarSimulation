@@ -316,6 +316,15 @@ std::pair<int,int> GetWindowResolution(){
 	}
 }
 
+//マウスがウインドウ内に入っているかの判定
+bool JudgeMouseInWindow(){
+	std::pair<int,int> resolution=GetWindowResolution();
+	int x,y;
+	GetMousePoint(&x,&y);
+	//ウインドウの大きさが分かれば、長方形と点の内部判定
+	return (x>=0 && x<resolution.first && y>=0 && y<resolution.second);
+}
+
 //数値変化を様々な式で管理するクラス
 //---Easing---
 Easing::Easing(int i_x,int i_endx,int i_maxflame,TYPE i_type,FUNCTION i_function,double i_degree)

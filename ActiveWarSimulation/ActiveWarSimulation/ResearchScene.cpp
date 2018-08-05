@@ -14,6 +14,8 @@ ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_palBackPic(LoadGraphEX("Graphic/researchInfoBack.png"))
 	,m_battleSceneData(battleSceneData)
 	,m_researchPic(LoadGraphEX("Graphic/operatedCursor.png"))
+	,m_mousePosJustBefore(GetMousePointVector2D())
+	,m_pointerVec(battleSceneData->m_operateUnit->getPos())
 {
 	//操作ユニット等の初期化
 	UpdatePointer();
@@ -29,7 +31,52 @@ ResearchScene::~ResearchScene(){
 
 void ResearchScene::UpdatePointer(){
 	//ひとまずマウスを使って操作するのを想定する
-	m_pointerVec=GetMousePointVector2D();
+	const Vector2D mouseVec=GetMousePointVector2D();
+	if(JudgeMouseInWindow() && (mouseVec-m_mousePosJustBefore).sqSize()>1.0f){
+		//マウスの移動が大きいならば、マウスの位置を調査場所とする
+		//マウスがウインドウに入っていない時は更新しないほうが無難
+		//誤差許容が大きすぎるとマウスを動かしてもカーソルが動かず気持ち悪い
+		m_pointerVec=mouseVec;
+	} else if(analogjoypad_get(DX_INPUT_PAD1)!=Vector2D()){
+		//ジョイスティックが動いたならば、それを参考に調査場所を移動する
+		Vector2D stick=analogjoypad_get(DX_INPUT_PAD1);
+		//アナログスティックの物理的なズレ等によるstickの微入力を除く
+		const float gap=50.0f;
+		if(std::abs(stick.x)<gap){
+			stick.x=0.0f;
+		}
+		if(std::abs(stick.y)<gap){
+			stick.y=0.0f;
+		}
+		m_pointerVec+=stick/64.0f;
+	} else{
+		//これ以外はキー入力
+		//キーボード入力しているなら、それを用いる
+		Vector2D moveVec=Vector2D();
+		if(keyboard_get(KEY_INPUT_UP)>4){
+			moveVec+=Vector2D(0.0f,-15.0f);
+		}else if(keyboard_get(KEY_INPUT_UP)>0){
+			moveVec+=Vector2D(0.0f,-1.0f);
+		}
+		if(keyboard_get(KEY_INPUT_LEFT)>4){
+			moveVec+=Vector2D(-15.0f,0.0f);
+		}else if(keyboard_get(KEY_INPUT_LEFT)>0){
+			moveVec+=Vector2D(-1.0f,0.0f);
+		}
+		if(keyboard_get(KEY_INPUT_RIGHT)>4){
+			moveVec+=Vector2D(15.0f,0.0f);
+		}else if(keyboard_get(KEY_INPUT_RIGHT)>0){
+			moveVec+=Vector2D(1.0f,0.0f);
+		}
+		if(keyboard_get(KEY_INPUT_DOWN)>4){
+			moveVec+=Vector2D(0.0f,15.0f);
+		}else if(keyboard_get(KEY_INPUT_DOWN)>0){
+			moveVec+=Vector2D(0.0f,1.0f);
+		}
+		m_pointerVec+=moveVec;
+	}
+	//マウスの直前位置の更新
+	m_mousePosJustBefore=mouseVec;
 	//ポインターの位置にいるユニットをm_researchUnitに格納する
 	m_researchUnit=m_battleSceneData->GetUnitPointer(m_pointerVec);
 }
@@ -39,8 +86,8 @@ int ResearchScene::thisCalculate(){
 	UpdatePointer();
 
 	//遷移処理
-	if(keyboard_get(KEY_INPUT_F)==1){
-		return 0;//マップ調べモード切替ボタン入力で直前場面へ
+	if(keyboard_get(KEY_INPUT_F)==1 || keyboard_get(KEY_INPUT_X)==1){
+		return 0;//マップ調べモード切替ボタンまたは戻るボタン入力で直前場面へ
 	}
 
 	return SceneKind::e_research;
@@ -57,11 +104,6 @@ void ResearchScene::thisDraw()const{
 	if(m_researchUnit!=nullptr){
 		m_researchUnit->BattleObject::VDraw();
 		m_researchUnit->GetHitJudgeShape()->Draw(Vector2D(),GetColor(255,255,255),FALSE);//調べてるよってことを強調
-		//矢印指ししてさらに強調
-		Vector2D pos=m_researchUnit->getPos();
-		float dx,dy;
-		GetGraphSizeF(m_researchPic,&dx,&dy);
-		DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_researchPic,TRUE);
 	}
 
 	//操作中ユニットの描画(m_researchUnitとかぶっていたら描画する必要はない)
@@ -69,6 +111,15 @@ void ResearchScene::thisDraw()const{
 		m_battleSceneData->m_operateUnit->BattleObject::VDraw();
 		Vector2D pos=m_battleSceneData->m_operateUnit->getPos();
 		//DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
+	}
+
+	//調べている場所がどこかを描画
+	{
+		//矢印指ししてさらに強調
+		const Vector2D pos=m_pointerVec;
+		float dx,dy;
+		GetGraphSizeF(m_researchPic,&dx,&dy);
+		DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy),m_researchPic,TRUE);
 	}
 
 	//全ユニットのHPゲージの描画

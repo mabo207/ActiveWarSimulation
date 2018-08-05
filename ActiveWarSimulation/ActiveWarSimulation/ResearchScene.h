@@ -21,6 +21,7 @@ protected:
 	//調査モードで用いる変数
 	const Unit *m_researchUnit;//情報を表示するユニット
 	Vector2D m_pointerVec;//調べている場所
+	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 
 	const int m_palFont;//パラメータ表示のためのフォント
 	const int m_nameFont;//名前表示のためのフォント
