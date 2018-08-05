@@ -13,6 +13,7 @@ ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_explainFont(CreateFontToHandleEX("メイリオ",explainFontSize,1,-1))
 	,m_palBackPic(LoadGraphEX("Graphic/researchInfoBack.png"))
 	,m_battleSceneData(battleSceneData)
+	,m_researchPic(LoadGraphEX("Graphic/operatedCursor.png"))
 {
 	//操作ユニット等の初期化
 	UpdatePointer();
@@ -23,6 +24,7 @@ ResearchScene::~ResearchScene(){
 	DeleteFontToHandleEX(m_nameFont);
 	DeleteFontToHandleEX(m_explainFont);
 	DeleteGraphEX(m_palBackPic);
+	DeleteGraphEX(m_researchPic);
 }
 
 void ResearchScene::UpdatePointer(){
@@ -55,13 +57,18 @@ void ResearchScene::thisDraw()const{
 	if(m_researchUnit!=nullptr){
 		m_researchUnit->BattleObject::VDraw();
 		m_researchUnit->GetHitJudgeShape()->Draw(Vector2D(),GetColor(255,255,255),FALSE);//調べてるよってことを強調
+		//矢印指ししてさらに強調
+		Vector2D pos=m_researchUnit->getPos();
+		float dx,dy;
+		GetGraphSizeF(m_researchPic,&dx,&dy);
+		DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_researchPic,TRUE);
 	}
 
 	//操作中ユニットの描画(m_researchUnitとかぶっていたら描画する必要はない)
 	if(m_battleSceneData->m_operateUnit!=m_researchUnit){
 		m_battleSceneData->m_operateUnit->BattleObject::VDraw();
 		Vector2D pos=m_battleSceneData->m_operateUnit->getPos();
-		DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
+		//DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
 	}
 
 	//全ユニットのHPゲージの描画

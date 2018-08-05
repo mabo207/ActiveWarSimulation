@@ -26,7 +26,7 @@ protected:
 	const int m_nameFont;//名前表示のためのフォント
 	const int m_explainFont;//説明文表示のためのフォント
 	const int m_palBackPic;//パラメータ表示のための背景絵
-
+	const int m_researchPic;//情報表示しているユニットの上に描画する絵
 
 	//関数
 protected:

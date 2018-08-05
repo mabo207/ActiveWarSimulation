@@ -306,7 +306,7 @@ void BattleSceneData::DrawHPGage()const{
 
 void BattleSceneData::DrawOrder()const{
 	std::pair<int,int> windowSize=GetWindowResolution();
-	auto calDrawPoint=[windowSize](size_t i){return Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f);};
+	auto calDrawPoint=[windowSize](size_t i){return Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f);};//描画位置をそのまま計算する関数
 	
 	//オーダー画面の背景を描画
 	DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
@@ -352,8 +352,14 @@ void BattleSceneData::DrawOrder()const{
 
 	//ユニットのオーダー情報を順番に描画
 	for(size_t i=0,size=m_unitList.size();i<size;i++){
-		//ユニットアイコン(描画基準点は真ん中)
 		const Vector2D centerPoint=calDrawPoint(i);
+		//マウスが重なっていれば、対応キャラまで線を伸ばす
+		if((GetMousePointVector2D()-centerPoint).sqSize()<Unit::unitCircleSize*Unit::unitCircleSize){
+			const Vector2D unitDrawPos=m_unitList[i]->getPos()-Vector2D();
+			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(196,196,196),3.0f);
+			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(255,255,255));
+		}
+		//ユニットアイコン(描画基準点は真ん中)
 		m_unitList[i]->DrawFacePic(centerPoint);
 		//残りOP
 		const int x=(int)centerPoint.x,y=((int)centerPoint.y)-(int)(Unit::unitCircleSize)-20;
