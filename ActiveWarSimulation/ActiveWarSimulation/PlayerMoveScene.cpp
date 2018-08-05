@@ -4,7 +4,11 @@
 
 //----------------------PlayerMoveScene------------------------
 PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
-	:MoveScene(battleSceneData),m_waitButton(1520,980,80,80,LoadGraphEX("")),m_researchButton(1620,980,80,80,LoadGraphEX("")){}
+	:MoveScene(battleSceneData)
+	,m_waitButton(1520,980,80,80,LoadGraphEX(""))
+	,m_researchButton(1620,980,80,80,LoadGraphEX(""))
+	,m_mousePosJustBefore(GetMousePointVector2D())
+{}
 
 Vector2D PlayerMoveScene::CalculateInputVec()const{
 	Vector2D moveVec;
@@ -56,13 +60,17 @@ int PlayerMoveScene::thisCalculate(){
 	}
 	
 	//キー入力受付
-	if(keyboard_get(KEY_INPUT_Z)==1){
+	const Vector2D mousePos=GetMousePointVector2D();
+	if(JudgeAttackCommandUsable()
+		&& (keyboard_get(KEY_INPUT_Z)==1
+			|| (m_aimedUnit->GetUnitCircleShape()->VJudgePointInsideShape(mousePos) && mouse_get(MOUSE_INPUT_LEFT)==1)
+			)
+		)
+	{
 		//攻撃
-		if(JudgeAttackCommandUsable()){
-			//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
-			//FinishUnitOperation();//行動終了処理(あとで)
-			return SceneKind::e_attackNormal;//攻撃場面へ
-		}
+		//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
+		//FinishUnitOperation();//行動終了処理(あとで)
+		return SceneKind::e_attackNormal;//攻撃場面へ
 	} else if(keyboard_get(KEY_INPUT_D)==1){
 		//必殺技
 
@@ -72,6 +80,13 @@ int PlayerMoveScene::thisCalculate(){
 	} else if(keyboard_get(KEY_INPUT_S)==1 && JudgeAttackCommandUsable()){
 		//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(時計回り)
 		SetAimedUnit(1);
+	} else if((m_mousePosJustBefore-mousePos).sqSize()>=1.0f
+		&& JudgeAttackCommandUsable()
+		&& JudgeBecomeAimedUnit(m_battleSceneData->GetUnitPointer(mousePos))
+		)
+	{
+		//攻撃コマンド使用可能の時にマウスを大きく動かしたときのみ、狙いのキャラの変更
+		m_aimedUnit=m_battleSceneData->GetUnitPointer(mousePos);
 	} else if(keyboard_get(KEY_INPUT_C)==1){
 		//アイテムの使用
 
@@ -105,6 +120,8 @@ int PlayerMoveScene::thisCalculate(){
 
 	}
 
+	//次フレームに、本フレームにおけるマウスの位置が分かるようにする
+	m_mousePosJustBefore=mousePos;
 	
 	return SceneKind::e_move;
 }

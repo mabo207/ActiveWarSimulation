@@ -13,6 +13,7 @@ class PlayerMoveScene:public MoveScene{
 	//変数
 protected:
 	const MouseButtonUI m_waitButton,m_researchButton;
+	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 
 	//関数
 protected:

@@ -72,7 +72,7 @@ void MoveScene::FinishUnitOperation(){
 }
 
 bool MoveScene::JudgeBecomeAimedUnit(const Unit *punit)const{
-	return m_battleSceneData->m_operateUnit->JudgeAttackable(punit);
+	return punit!=nullptr && m_battleSceneData->m_operateUnit->JudgeAttackable(punit);
 }
 
 void MoveScene::SetAimedUnit(int turntimes){
