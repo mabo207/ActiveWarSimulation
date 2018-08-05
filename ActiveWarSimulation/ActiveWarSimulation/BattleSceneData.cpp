@@ -266,6 +266,15 @@ void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)co
 	DrawGraph(0,0,m_mapPic,TRUE);
 	//フィールドオブジェクトの当たり判定図形の描画（デバッグ機能としてデフォルトはOFF、コマンド入力でONになる）
 	if(m_drawObjectShapeFlag){
+		//数値情報をprintfDx()
+		{
+			Vector2D v=GetMousePointVector2D();
+			int wx,wy;
+			GetWindowSize(&wx,&wy);
+			std::pair<int,int> ori=GetWindowResolution();
+			printfDx("mouse:(%f,%f)\nwindowsize:(%d,%d)\nresolution:(%d,%d)",v.x,v.y,wx,wy,ori.first,ori.second);
+		}
+		//当たり判定図形の描画
 		for(const BattleObject *obj:m_field){
 			if(m_Window->JudgeInShapeRect(obj)
 				&& obj->GetType()!=BattleObject::Type::e_unit
