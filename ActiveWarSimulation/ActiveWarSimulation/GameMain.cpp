@@ -6,6 +6,7 @@
 #include"BattleScene.h"
 #include<memory>
 #include"GraphicControl.h"
+#include"ToolsLib.h"
 
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
@@ -47,23 +48,40 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 			//場面変数
 			std::shared_ptr<GameScene> pGameScene(new BattleScene("tutorial1"));
 
+			FpsMeasuring fpsMeasuring;
+			bool fpsdisp=false;
+
 			//実行
 			while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
 				//ゲーム本体
 				//キー情報更新
 				input_update();
 
+				fpsMeasuring.Update();
+				if(keyboard_get(KEY_INPUT_K)==60){
+					fpsdisp=!fpsdisp;
+				}
+
 				//描画
 				clsDx();
+				if(fpsdisp){ printfDx("FPS : %.1f/60\n",fpsMeasuring.GetFps()); }
+				fpsMeasuring.RecordTime();
+
 				pGameScene->Draw();
 
+				if(fpsdisp){ printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }
+
 				//情報更新
+				fpsMeasuring.RecordTime();
+
 				int index=pGameScene->Calculate();
 
 				//終了検出
 				if(keyboard_get(KEY_INPUT_ESCAPE)>0 || index!=0){
 					break;
 				}
+
+				if(fpsdisp){ printfDx("Update : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }
 			}
 		}
 

@@ -272,7 +272,7 @@ void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)co
 			int wx,wy;
 			GetWindowSize(&wx,&wy);
 			std::pair<int,int> ori=GetWindowResolution();
-			printfDx("mouse:(%f,%f)\nwindowsize:(%d,%d)\nresolution:(%d,%d)",v.x,v.y,wx,wy,ori.first,ori.second);
+			printfDx("mouse:(%f,%f)\nwindowsize:(%d,%d)\nresolution:(%d,%d)\n",v.x,v.y,wx,wy,ori.first,ori.second);
 		}
 		//ìñÇΩÇËîªíËê}å`ÇÃï`âÊ
 		for(const BattleObject *obj:m_field){
