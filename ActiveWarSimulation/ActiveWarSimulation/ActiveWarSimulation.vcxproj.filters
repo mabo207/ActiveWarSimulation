@@ -138,6 +138,9 @@
     <ClCompile Include="ResearchScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
+    <ClCompile Include="FileRead.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -211,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="ResearchScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="FileRead.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

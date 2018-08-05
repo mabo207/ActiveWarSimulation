@@ -158,6 +158,7 @@
     <ClCompile Include="BattleSceneElement.cpp" />
     <ClCompile Include="DamageCalculators.cpp" />
     <ClCompile Include="ComputerMoveScene.cpp" />
+    <ClCompile Include="FileRead.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GraphicControl.cpp" />
     <ClCompile Include="GraphicProgramming.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="BattleSceneElement.h" />
     <ClInclude Include="ComputerMoveScene.h" />
     <ClInclude Include="DamageCalculators.h" />
+    <ClInclude Include="FileRead.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />

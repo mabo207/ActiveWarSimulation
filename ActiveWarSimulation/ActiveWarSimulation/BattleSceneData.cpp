@@ -4,6 +4,8 @@
 #include"Edge.h"
 #include<algorithm>
 #include"GraphicControl.h"
+#include"ToolsLib.h"
+#include"FileRead.h"
 
 //----------------------BattleSceneData----------------------
 BattleSceneData::BattleSceneData(const char *stagename)
@@ -40,6 +42,7 @@ BattleSceneData::BattleSceneData(const char *stagename)
 	m_stageSize=Vector2D(1920.0f,1080.0f);//本来はステージの大きさはグラフィックデータの縦横の大きさで決める
 
 	//ファイルからユニットを読み込み
+/*
 	//読み込み方法が確立していないので暫定
 	m_field.push_back(Unit::CreateMobUnit("アインス",Unit::Profession::e_lancer,3,Vector2D(224.0f,124.0f),Unit::Team::e_player));
 	m_field.push_back(Unit::CreateMobUnit("ツヴァイ",Unit::Profession::e_archer,3,Vector2D(354.0f,294.0f),Unit::Team::e_player));
@@ -50,6 +53,64 @@ BattleSceneData::BattleSceneData(const char *stagename)
 	m_field.push_back(Unit::CreateMobUnit("敵兵",Unit::Profession::e_lancer,1,Vector2D(1596.0f,165.0f),Unit::Team::e_enemy));
 	m_field.push_back(Unit::CreateMobUnit("敵兵",Unit::Profession::e_lancer,1,Vector2D(1740.0f,660.0f),Unit::Team::e_enemy));
 	m_field.push_back(Unit::CreateMobUnit("敵兵",Unit::Profession::e_armer,1,Vector2D(1536.0f,810.0f),Unit::Team::e_enemy));
+//*/
+	StringBuilder unitlist(FileStrRead("Stage/tutorial1/unitlist.txt"),'\n','{','}',false,true);
+	for(const StringBuilder &unitdata:unitlist.m_vec){
+		const StringBuilder sb(unitdata.GetString(),',','(',')',true,true);
+		//まずモブ用の設定をするか固定ユニット用の設定をするかを判定する
+		bool uniqueFlag=false;
+		for(const StringBuilder &ssb:sb.m_vec){
+			if(ssb.m_vec.size()>=2 && ssb.m_vec[0].GetString()=="definition"){
+				//設定方法はdefinitionに記載されている
+				uniqueFlag=(ssb.m_vec[1].GetString()=="unique");
+				break;
+			}
+		}
+		//モブか固定かで分岐
+		if(uniqueFlag){
+			//固定ユニット
+
+		} else{
+			//モブ
+			//各値を宣言。設定したかどうかをpairのsecondに格納
+			std::pair<std::string,bool> name;
+			name.second=false;
+			std::pair<Vector2D,bool> pos;
+			pos.second=false;
+			std::pair<int,bool> lv;
+			lv.second=false;
+			std::pair<Unit::Profession::Kind,bool> prof;
+			prof.second=false;
+			std::pair<Unit::Team::Kind,bool> team;
+			team.second=false;
+			//各値の読み取り
+			for(const StringBuilder &ssb:sb.m_vec){
+				if(!ssb.m_vec.empty()){
+					//先頭文字列があることを保障
+					if(ssb.m_vec[0].GetString()=="name" && ssb.m_vec.size()>=2){
+						name.first=ssb.m_vec[1].GetString();
+						name.second=true;
+					} else if(ssb.m_vec[0].GetString()=="profession" && ssb.m_vec.size()>=2){
+						prof.first=Unit::Profession::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
+						prof.second=true;
+					} else if(ssb.m_vec[0].GetString()=="lv" && ssb.m_vec.size()>=2){
+						lv.first=std::atoi(ssb.m_vec[1].GetString().c_str());
+						lv.second=true;
+					} else if(ssb.m_vec[0].GetString()=="pos" && ssb.m_vec.size()>=3){
+						pos.first=Vector2D((float)std::atoi(ssb.m_vec[1].GetString().c_str()),(float)std::atoi(ssb.m_vec[2].GetString().c_str()));
+						pos.second=true;
+					} else if(ssb.m_vec[0].GetString()=="team" && ssb.m_vec.size()>=2){
+						team.first=Unit::Team::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
+						team.second=true;
+					}
+				}
+			}
+			//各値からユニットを格納
+			if(name.second && prof.second && lv.second && pos.second && team.second){
+				m_field.push_back(Unit::CreateMobUnit(name.first,prof.first,lv.first,pos.first,team.first));
+			}
+		}
+	}
 	//m_unitListやm_operateUnitの初期化
 	for(BattleObject *obj:m_field){
 		if(obj->GetType()==BattleObject::Type::e_unit){
