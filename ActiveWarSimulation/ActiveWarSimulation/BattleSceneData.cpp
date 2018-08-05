@@ -304,7 +304,7 @@ void BattleSceneData::DrawHPGage()const{
 	}
 }
 
-void BattleSceneData::DrawOrder()const{
+void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)const{
 	std::pair<int,int> windowSize=GetWindowResolution();
 	auto calDrawPoint=[windowSize](size_t i){return Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f);};//描画位置をそのまま計算する関数
 	
@@ -354,7 +354,8 @@ void BattleSceneData::DrawOrder()const{
 	for(size_t i=0,size=m_unitList.size();i<size;i++){
 		const Vector2D centerPoint=calDrawPoint(i);
 		//マウスが重なっていれば、対応キャラまで線を伸ばす
-		if((GetMousePointVector2D()-centerPoint).sqSize()<Unit::unitCircleSize*Unit::unitCircleSize){
+		//lineDrawに入っていても線を伸ばす
+		if((GetMousePointVector2D()-centerPoint).sqSize()<Unit::unitCircleSize*Unit::unitCircleSize || lineDraw.find(m_unitList[i])!=lineDraw.end()){
 			const Vector2D unitDrawPos=m_unitList[i]->getPos()-Vector2D();
 			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(196,196,196),3.0f);
 			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(255,255,255));

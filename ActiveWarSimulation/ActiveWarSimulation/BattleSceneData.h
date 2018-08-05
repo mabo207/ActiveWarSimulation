@@ -57,7 +57,7 @@ public:
 	void DrawField(const std::set<const BattleObject *> &notDraw={})const;//フィールドの描画、ユニットの描画は別。こいつより前に描画したものはマップ絵で全て消えるはず。
 	void DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &notDraw={})const;//ユニットの描画、情報表示UIを表示するかを設定できる
 	void DrawHPGage()const;//全ユニットのHPゲージの描画
-	void DrawOrder()const;//ユニットのオーダー順番の描画
+	void DrawOrder(const std::set<const BattleObject *> &lineDraw={})const;//ユニットのオーダー順番の描画。lineDrawに含まれるユニットは、必ずマップ上の位置とオーダーが線で結ばれる
 };
 
 

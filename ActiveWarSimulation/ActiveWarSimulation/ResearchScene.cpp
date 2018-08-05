@@ -75,7 +75,7 @@ void ResearchScene::thisDraw()const{
 	m_battleSceneData->DrawHPGage();
 
 	//ユニットのオーダー順番を描画
-	m_battleSceneData->DrawOrder();
+	m_battleSceneData->DrawOrder(std::set<const BattleObject*>{m_researchUnit});
 
 	//パラメータの描画
 	if(m_researchUnit!=nullptr){
