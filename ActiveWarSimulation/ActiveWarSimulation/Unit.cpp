@@ -213,9 +213,14 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 void Unit::DrawFacePic(Vector2D point)const{
 	//‰~‚Ì•`‰æ
 	const int x=(int)point.x,y=(int)point.y,r=(int)unitCircleSize;
+	DrawCircle(x,y,r,GetColor(255,255,255),TRUE);//”wŒi‚Ì‰~‚Ì•`‰æ
+	int mode,pal;
+	GetDrawBlendMode(&mode,&pal);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
 	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team),TRUE);//”wŒi‚Ì‰~‚Ì•`‰æ
+	SetDrawBlendMode(mode,pal);
 	DrawRotaGraph(x,y,1.0,0.0,m_gHandle,TRUE);//ƒOƒ‰ƒtƒBƒbƒN‚Ì•`‰æAb’è‚Åƒ}ƒbƒvã‚Ìƒ†ƒjƒbƒgŠG‚ğg—p
-	DrawCircle(x,y,r,GetColor(255,255,255),FALSE,3);//”wŒi‚Ì˜g‚Ì•`‰æ
+	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team),FALSE,3);//”wŒi‚Ì˜g‚Ì•`‰æ
 }
 
 void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{

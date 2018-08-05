@@ -318,7 +318,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 	auto calDrawPoint=[windowSize](size_t i){return Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f);};//描画位置をそのまま計算する関数
 	
 	//オーダー画面の背景を描画
-	DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
+	//DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
 	
 	//行動終了時のユニットのオーダー位置予測の矢印の描画
 	const size_t arrowNum=2;

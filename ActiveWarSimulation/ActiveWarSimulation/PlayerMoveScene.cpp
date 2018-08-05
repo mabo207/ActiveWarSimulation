@@ -5,8 +5,8 @@
 //----------------------PlayerMoveScene------------------------
 PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:MoveScene(battleSceneData)
-	,m_waitButton(1520,980,80,80,LoadGraphEX(""))
-	,m_researchButton(1620,980,80,80,LoadGraphEX(""))
+	,m_waitButton(1520,980,80,80,LoadGraphEX("Graphic/nextButton.png"))
+	,m_researchButton(1620,980,80,80,LoadGraphEX("Graphic/researchButton.png"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 {}
 

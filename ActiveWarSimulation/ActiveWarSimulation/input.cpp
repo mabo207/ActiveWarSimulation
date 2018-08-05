@@ -613,6 +613,6 @@ bool MouseButtonUI::JudgePushed()const{
 }
 
 void MouseButtonUI::DrawButton()const{
-	DrawBox(m_x,m_y,m_x+m_dx,m_y+m_dy,GetColor(255,255,0),TRUE);//デバッグ用
+	//DrawBox(m_x,m_y,m_x+m_dx,m_y+m_dy,GetColor(255,255,0),TRUE);//デバッグ用
 	DrawGraph(m_x,m_y,m_graphic,TRUE);
 }

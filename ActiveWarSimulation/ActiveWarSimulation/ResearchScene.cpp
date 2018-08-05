@@ -15,7 +15,7 @@ ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_researchPic(LoadGraphEX("Graphic/operatedCursor.png"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_pointerVec(battleSceneData->m_operateUnit->getPos())
-	,m_moveButton(1620,980,80,80,LoadGraphEX(""))
+	,m_moveButton(1620,980,80,80,LoadGraphEX("Graphic/backButton.png"))
 {
 	//‘€ìƒ†ƒjƒbƒg“™‚Ì‰Šú‰»
 	UpdatePointer();
