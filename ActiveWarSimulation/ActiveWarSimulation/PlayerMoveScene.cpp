@@ -35,6 +35,11 @@ Vector2D PlayerMoveScene::CalculateInputVec()const{
 }
 
 int PlayerMoveScene::thisCalculate(){
+	//デバッグコマンドの入力
+	if(keyboard_get(KEY_INPUT_LSHIFT)==60){
+		m_battleSceneData->m_drawObjectShapeFlag=!m_battleSceneData->m_drawObjectShapeFlag;
+	}
+
 	//m_operateUnitの位置更新
 	if(PositionUpdate(CalculateInputVec())){
 		//位置更新をした時の処理

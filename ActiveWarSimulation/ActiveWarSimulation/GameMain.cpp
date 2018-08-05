@@ -45,7 +45,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		{
 			//èÍñ ïœêî
-			std::shared_ptr<GameScene> pGameScene(new BattleScene(""));
+			std::shared_ptr<GameScene> pGameScene(new BattleScene("tutorial"));
 
 			//é¿çs
 			while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {

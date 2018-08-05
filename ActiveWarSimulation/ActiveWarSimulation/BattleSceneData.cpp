@@ -3,11 +3,13 @@
 #include"input.h"
 #include"Edge.h"
 #include<algorithm>
+#include"GraphicControl.h"
 
 //----------------------BattleSceneData----------------------
 BattleSceneData::BattleSceneData(const char *stagename)
 	:m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1920.0f,1080.0f),Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr),m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
+	,m_mapPic(LoadGraphEX(("Graphic/"+std::string(stagename)+"/map.png").c_str())),m_drawObjectShapeFlag(false)
 {
 	//ファイルからステージを読み込み
 	//ファイルを開きすべての文字列を書き出す
@@ -62,6 +64,9 @@ BattleSceneData::BattleSceneData(const char *stagename)
 }
 
 BattleSceneData::~BattleSceneData(){
+	//グラフィック開放
+	DeleteGraphEX(m_mapPic);
+	//フォント開放
 	DeleteFontToHandle(m_orderFont);
 	//オブジェクト一覧を開放
 	for(BattleObject *obj:m_field){
@@ -206,15 +211,21 @@ Unit *BattleSceneData::GetUnitPointer(Vector2D pos)const{
 }
 
 void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{
-	for(const BattleObject *obj:m_field){
-		if(m_Window->JudgeInShapeRect(obj)
-			&& obj->GetType()!=BattleObject::Type::e_unit
-			&& notDraw.find(obj)==notDraw.end())
-		{
-			//ウインドウに入っていない物は描画しない
-			//ユニット(typeがe_unit)は描画しない
-			//描画しないもの(notDrawに格納されているもの)は描画しない
-			obj->VDraw();
+	//背景データをそのまま描画
+	//背景をアニメーションするとかなったらここで処理を記述
+	DrawGraph(0,0,m_mapPic,TRUE);
+	//フィールドオブジェクトの当たり判定図形の描画（デバッグ機能としてデフォルトはOFF、コマンド入力でONになる）
+	if(m_drawObjectShapeFlag){
+		for(const BattleObject *obj:m_field){
+			if(m_Window->JudgeInShapeRect(obj)
+				&& obj->GetType()!=BattleObject::Type::e_unit
+				&& notDraw.find(obj)==notDraw.end())
+			{
+				//ウインドウに入っていない物は描画しない
+				//ユニット(typeがe_unit)は描画しない
+				//描画しないもの(notDrawに格納されているもの)は描画しない
+				obj->VDraw();
+			}
 		}
 	}
 }

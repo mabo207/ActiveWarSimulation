@@ -41,7 +41,7 @@ protected:
 	
 	//描画用データ
 	int m_font;//フォント
-
+	int m_mapPic;//背景グラフィック
 
 
 	//関数
