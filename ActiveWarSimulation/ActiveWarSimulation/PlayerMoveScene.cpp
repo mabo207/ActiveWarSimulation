@@ -19,8 +19,8 @@ Vector2D PlayerMoveScene::CalculateInputVec()const{
 		if(std::abs(moveVec.y)<gap){
 			moveVec.y=0.0f;
 		}
-	} else{
-		//通常はアナログスティック入力
+	} else if(analogjoypad_get(DX_INPUT_PAD1)!=Vector2D()){
+		//アナログスティック入力があればそれを用いる
 		moveVec=analogjoypad_get(DX_INPUT_PAD1);
 		//アナログスティックの物理的なズレ等によるmoveVecの微入力を除く
 		const float gap=50.0f;
@@ -29,6 +29,21 @@ Vector2D PlayerMoveScene::CalculateInputVec()const{
 		}
 		if(std::abs(moveVec.y)<gap){
 			moveVec.y=0.0f;
+		}
+	} else{
+		//キーボード入力しているなら、それを用いる
+		moveVec=Vector2D();
+		if(keyboard_get(KEY_INPUT_UP)>0){
+			moveVec+=Vector2D(0.0f,-100.0f);
+		}
+		if(keyboard_get(KEY_INPUT_LEFT)>0){
+			moveVec+=Vector2D(-100.0f,0.0f);
+		}
+		if(keyboard_get(KEY_INPUT_RIGHT)>0){
+			moveVec+=Vector2D(100.0f,0.0f);
+		}
+		if(keyboard_get(KEY_INPUT_DOWN)>0){
+			moveVec+=Vector2D(0.0f,100.0f);
 		}
 	}
 	return moveVec;
