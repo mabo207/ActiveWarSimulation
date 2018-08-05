@@ -20,8 +20,8 @@ int PhysicalCalculator::VCalculateDamage(const Unit *attacker,const Unit *defend
 }
 
 bool PhysicalCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)const{
-	//“G‘ÎŠÖŒW‚Å‚ ‚ê‚ÎUŒ‚‚Å‚«‚é
-	return !Unit::Team::JudgeFriend(attacker->GetBattleStatus().team,defender->GetBattleStatus().team);
+	//“G‘ÎŠÖŒW‚©‚Â“¯ˆêƒ†ƒjƒbƒg‚Å‚È‚¯‚ê‚ÎUŒ‚‚Å‚«‚é
+	return (!Unit::Team::JudgeFriend(attacker->GetBattleStatus().team,defender->GetBattleStatus().team)) && (attacker!=defender);
 }
 
 std::string PhysicalCalculator::VGetPowerString(const Unit *attacker)const{
@@ -47,8 +47,8 @@ int MagicCalculator::VCalculateDamage(const Unit *attacker,const Unit *defender)
 }
 
 bool MagicCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)const{
-	//“G‘ÎŠÖŒW‚Å‚ ‚ê‚ÎUŒ‚‚Å‚«‚é
-	return !Unit::Team::JudgeFriend(attacker->GetBattleStatus().team,defender->GetBattleStatus().team);
+	//“G‘ÎŠÖŒW‚©‚Â“¯ˆêƒ†ƒjƒbƒg‚Å‚È‚¯‚ê‚ÎUŒ‚‚Å‚«‚é
+	return (!Unit::Team::JudgeFriend(attacker->GetBattleStatus().team,defender->GetBattleStatus().team)) && (attacker!=defender);
 }
 
 std::string MagicCalculator::VGetPowerString(const Unit *attacker)const{
@@ -72,8 +72,8 @@ int RecoverCalculator::VCalculateDamage(const Unit *healer,const Unit *receiver)
 }
 
 bool RecoverCalculator::VJudgeWeild(const Unit *healer,const Unit *defender)const{
-	//–¡•ûŠÖŒW‚Å‚ ‚ê‚ÎUŒ‚‚Å‚«‚é
-	return Unit::Team::JudgeFriend(healer->GetBattleStatus().team,defender->GetBattleStatus().team);
+	//–¡•ûŠÖŒW‚©‚Â“¯ˆêƒ†ƒjƒbƒg‚Å‚È‚¯‚ê‚Î‰ñ•œ‚Å‚«‚é
+	return Unit::Team::JudgeFriend(healer->GetBattleStatus().team,defender->GetBattleStatus().team) && (healer!=defender);
 }
 
 std::string RecoverCalculator::VGetPowerString(const Unit *healer)const{
