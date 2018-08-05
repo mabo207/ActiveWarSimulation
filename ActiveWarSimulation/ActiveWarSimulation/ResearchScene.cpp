@@ -32,48 +32,76 @@ ResearchScene::~ResearchScene(){
 void ResearchScene::UpdatePointer(){
 	//ひとまずマウスを使って操作するのを想定する
 	const Vector2D mouseVec=GetMousePointVector2D();
-	if(JudgeMouseInWindow() && (mouseVec-m_mousePosJustBefore).sqSize()>1.0f){
-		//マウスの移動が大きいならば、マウスの位置を調査場所とする
-		//マウスがウインドウに入っていない時は更新しないほうが無難
-		//誤差許容が大きすぎるとマウスを動かしてもカーソルが動かず気持ち悪い
-		m_pointerVec=mouseVec;
-	} else if(analogjoypad_get(DX_INPUT_PAD1)!=Vector2D()){
-		//ジョイスティックが動いたならば、それを参考に調査場所を移動する
-		Vector2D stick=analogjoypad_get(DX_INPUT_PAD1);
-		//アナログスティックの物理的なズレ等によるstickの微入力を除く
-		const float gap=50.0f;
-		if(std::abs(stick.x)<gap){
-			stick.x=0.0f;
+	if(keyboard_get(KEY_INPUT_A)==1 || keyboard_get(KEY_INPUT_S)==1){
+		//A:オーダーの末尾から先頭へ調べるユニットを進める
+		//S:オーダーの先頭から末尾へ調べるユニットを進める
+		//今何番目のユニットを調べているかを判定
+		size_t researchIndex=0;
+		const size_t size=m_battleSceneData->m_unitList.size();
+		for(;researchIndex<size;researchIndex++){
+			if(m_battleSceneData->m_unitList[researchIndex]==m_researchUnit){
+				break;
+			}
 		}
-		if(std::abs(stick.y)<gap){
-			stick.y=0.0f;
+		//オーダー見て進める
+		size_t index=researchIndex;//進めた先。sizeならオーダーの誰でもないことを意味する。
+		if(keyboard_get(KEY_INPUT_A)==1){
+			index=(researchIndex+size)%(size+1);//もどる
+		} else if(keyboard_get(KEY_INPUT_S)==1){
+			index=(researchIndex+1)%(size+1);//すすむ
 		}
-		m_pointerVec+=stick/64.0f;
-	} else{
-		//これ以外はキー入力
-		//キーボード入力しているなら、それを用いる
-		Vector2D moveVec=Vector2D();
-		if(keyboard_get(KEY_INPUT_UP)>4){
-			moveVec+=Vector2D(0.0f,-15.0f);
-		}else if(keyboard_get(KEY_INPUT_UP)>0){
-			moveVec+=Vector2D(0.0f,-1.0f);
+		//進めた先のキャラの位置まで調べる場所を動かす
+		if(index<size){
+			m_pointerVec=m_battleSceneData->m_unitList[index]->getPos();
+		} else{
+			//誰も調べないという状態になった場合は
+			//特に何もしない
 		}
-		if(keyboard_get(KEY_INPUT_LEFT)>4){
-			moveVec+=Vector2D(-15.0f,0.0f);
-		}else if(keyboard_get(KEY_INPUT_LEFT)>0){
-			moveVec+=Vector2D(-1.0f,0.0f);
+	}else{
+		//ユニット切り替えを用いなかった時は、マウス・ジョイスティック・キー入力で調べる位置を細かく移動
+		if(JudgeMouseInWindow() && (mouseVec-m_mousePosJustBefore).sqSize()>1.0f){
+			//マウスの移動が大きいならば、マウスの位置を調査場所とする
+			//マウスがウインドウに入っていない時は更新しないほうが無難
+			//誤差許容が大きすぎるとマウスを動かしてもカーソルが動かず気持ち悪い
+			m_pointerVec=mouseVec;
+		} else if(analogjoypad_get(DX_INPUT_PAD1)!=Vector2D()){
+			//ジョイスティックが動いたならば、それを参考に調査場所を移動する
+			Vector2D stick=analogjoypad_get(DX_INPUT_PAD1);
+			//アナログスティックの物理的なズレ等によるstickの微入力を除く
+			const float gap=50.0f;
+			if(std::abs(stick.x)<gap){
+				stick.x=0.0f;
+			}
+			if(std::abs(stick.y)<gap){
+				stick.y=0.0f;
+			}
+			m_pointerVec+=stick/64.0f;
+		} else{
+			//これ以外はキー入力
+			//キーボード入力しているなら、それを用いる
+			Vector2D moveVec=Vector2D();
+			if(keyboard_get(KEY_INPUT_UP)>4){
+				moveVec+=Vector2D(0.0f,-15.0f);
+			} else if(keyboard_get(KEY_INPUT_UP)>0){
+				moveVec+=Vector2D(0.0f,-1.0f);
+			}
+			if(keyboard_get(KEY_INPUT_LEFT)>4){
+				moveVec+=Vector2D(-15.0f,0.0f);
+			} else if(keyboard_get(KEY_INPUT_LEFT)>0){
+				moveVec+=Vector2D(-1.0f,0.0f);
+			}
+			if(keyboard_get(KEY_INPUT_RIGHT)>4){
+				moveVec+=Vector2D(15.0f,0.0f);
+			} else if(keyboard_get(KEY_INPUT_RIGHT)>0){
+				moveVec+=Vector2D(1.0f,0.0f);
+			}
+			if(keyboard_get(KEY_INPUT_DOWN)>4){
+				moveVec+=Vector2D(0.0f,15.0f);
+			} else if(keyboard_get(KEY_INPUT_DOWN)>0){
+				moveVec+=Vector2D(0.0f,1.0f);
+			}
+			m_pointerVec+=moveVec;
 		}
-		if(keyboard_get(KEY_INPUT_RIGHT)>4){
-			moveVec+=Vector2D(15.0f,0.0f);
-		}else if(keyboard_get(KEY_INPUT_RIGHT)>0){
-			moveVec+=Vector2D(1.0f,0.0f);
-		}
-		if(keyboard_get(KEY_INPUT_DOWN)>4){
-			moveVec+=Vector2D(0.0f,15.0f);
-		}else if(keyboard_get(KEY_INPUT_DOWN)>0){
-			moveVec+=Vector2D(0.0f,1.0f);
-		}
-		m_pointerVec+=moveVec;
 	}
 	//マウスの直前位置の更新
 	m_mousePosJustBefore=mouseVec;
@@ -113,6 +141,13 @@ void ResearchScene::thisDraw()const{
 		//DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
 	}
 
+
+	//全ユニットのHPゲージの描画
+	m_battleSceneData->DrawHPGage();
+
+	//ユニットのオーダー順番を描画
+	m_battleSceneData->DrawOrder(std::set<const BattleObject*>{m_researchUnit});
+
 	//調べている場所がどこかを描画
 	{
 		//矢印指ししてさらに強調
@@ -121,12 +156,6 @@ void ResearchScene::thisDraw()const{
 		GetGraphSizeF(m_researchPic,&dx,&dy);
 		DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy),m_researchPic,TRUE);
 	}
-
-	//全ユニットのHPゲージの描画
-	m_battleSceneData->DrawHPGage();
-
-	//ユニットのオーダー順番を描画
-	m_battleSceneData->DrawOrder(std::set<const BattleObject*>{m_researchUnit});
 
 	//パラメータの描画
 	if(m_researchUnit!=nullptr){
