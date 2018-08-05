@@ -1,6 +1,5 @@
 #include"ResearchScene.h"
 #include"DxLib.h"
-#include"input.h"
 #include"GraphicControl.h"
 
 //-------------------ResearchScene---------------------
@@ -16,6 +15,7 @@ ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_researchPic(LoadGraphEX("Graphic/operatedCursor.png"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_pointerVec(battleSceneData->m_operateUnit->getPos())
+	,m_moveButton(1620,980,80,80,LoadGraphEX(""))
 {
 	//操作ユニット等の初期化
 	UpdatePointer();
@@ -114,7 +114,7 @@ int ResearchScene::thisCalculate(){
 	UpdatePointer();
 
 	//遷移処理
-	if(keyboard_get(KEY_INPUT_F)==1 || keyboard_get(KEY_INPUT_X)==1){
+	if(keyboard_get(KEY_INPUT_F)==1 || keyboard_get(KEY_INPUT_X)==1 || m_moveButton.JudgePressMoment()){
 		return 0;//マップ調べモード切替ボタンまたは戻るボタン入力で直前場面へ
 	}
 
@@ -147,6 +147,9 @@ void ResearchScene::thisDraw()const{
 
 	//ユニットのオーダー順番を描画
 	m_battleSceneData->DrawOrder(std::set<const BattleObject*>{m_researchUnit});
+
+	//移動シーンに戻るボタンの描画
+	m_moveButton.DrawButton();
 
 	//調べている場所がどこかを描画
 	{

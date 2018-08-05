@@ -4,6 +4,7 @@
 #include"BattleSceneElement.h"
 #include"BattleSceneData.h"
 #include"Unit.h"
+#include"input.h"
 
 //マップの情報を調べるモードの場面変数
 class ResearchScene:public BattleSceneElement{
@@ -22,6 +23,7 @@ protected:
 	const Unit *m_researchUnit;//情報を表示するユニット
 	Vector2D m_pointerVec;//調べている場所
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
+	const MouseButtonUI m_moveButton;//移動シーンに戻るボタン
 
 	const int m_palFont;//パラメータ表示のためのフォント
 	const int m_nameFont;//名前表示のためのフォント
