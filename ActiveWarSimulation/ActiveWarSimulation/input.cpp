@@ -2,6 +2,7 @@
 #include<iostream>
 #include"DxLib.h"
 #include"input.h"
+#include"GraphicControl.h"
 
 //入力関連
 static InputControler *inputControler;
@@ -589,4 +590,29 @@ void InputSingleCharStringControler::Update(){
 			}
 		}
 	}
+}
+
+//マウスやタッチなどの画面上に置くボタン
+MouseButtonUI::MouseButtonUI(int x,int y,int dx,int dy,int graphic)
+	:m_x(x),m_y(y),m_dx(dx),m_dy(dy),m_graphic(graphic){}
+
+MouseButtonUI::~MouseButtonUI(){
+	DeleteGraphEX(m_graphic);
+}
+
+bool MouseButtonUI::JudgePressMoment()const{
+	return (mouse_get(MOUSE_INPUT_LEFT)==1 && JudgePushed());
+}
+
+bool MouseButtonUI::JudgePushed()const{
+	int mouseX,mouseY;
+	GetMousePoint(&mouseX,&mouseY);
+	const bool inButton=(mouseX>=m_x && mouseX<m_x+m_dx && mouseY>=m_y && mouseY<m_y+m_dy);
+	const bool push=(mouse_get(MOUSE_INPUT_LEFT)>0);
+	return (push && inButton);
+}
+
+void MouseButtonUI::DrawButton()const{
+	DrawBox(m_x,m_y,m_x+m_dx,m_y+m_dy,GetColor(255,255,0),TRUE);//デバッグ用
+	DrawGraph(m_x,m_y,m_graphic,TRUE);
 }

@@ -2,6 +2,7 @@
 #define DEF_PLAYERMOVESCENE_H
 
 #include"MoveScene.h"
+#include"input.h"
 
 //プレイヤーがユニットを動かす際に使う関数
 class PlayerMoveScene:public MoveScene{
@@ -10,6 +11,8 @@ class PlayerMoveScene:public MoveScene{
 	//定数
 
 	//変数
+protected:
+	const MouseButtonUI m_waitButton,m_researchButton;
 
 	//関数
 protected:
@@ -22,7 +25,7 @@ public:
 	
 	//仮想関数のオーバーライド
 	int thisCalculate();
-
+	void thisDraw()const;
 };
 
 #endif // !DEF_PLAYERMOVESCENE_H

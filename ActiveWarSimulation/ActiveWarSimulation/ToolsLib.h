@@ -460,6 +460,5 @@ public:
 	std::vector<std::string> GetStringVector()const;
 };
 
-
 #endif // !DEF_TOOLSLIB_H
 #pragma once
