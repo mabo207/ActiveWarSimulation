@@ -28,13 +28,16 @@ public:
 	std::shared_ptr<Terrain> m_Window;//ウインドウ全体を表す線分(対角線)
 	Vector2D m_stageSize;//ステージの大きさ(なお、ステージで一番左上にある点は(0,0)とする)
 
-	//その他の変数
-	FpsMeasuring m_fpsMesuring;//fps計測器。タイマーの意味合いも兼ねる。
-	const int m_orderFont;//オーダー表示の際のフォント
-
 	//グラフィックデータ
 	const int m_mapPic;//マップ全体のグラフィック
 	
+	//その他の変数
+	FpsMeasuring m_fpsMesuring;//fps計測器。タイマーの意味合いも兼ねる。
+	const int m_orderFont;//オーダー表示の際のフォント
+	static const size_t drawOrderHelpNum=2;
+	int m_drawOrderHelp[drawOrderHelpNum];//オーダーの矢印分岐について、それぞれどんな意味かを描画する
+
+
 	//デバッグ用変数
 public:
 	bool m_drawObjectShapeFlag;//フィールドオブジェクトの当たり判定図形を描画するかどうか

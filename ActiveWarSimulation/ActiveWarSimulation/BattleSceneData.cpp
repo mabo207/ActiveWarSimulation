@@ -13,6 +13,9 @@ BattleSceneData::BattleSceneData(const char *stagename)
 	,m_fpsMesuring(),m_operateUnit(nullptr),m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/map.png").c_str())),m_drawObjectShapeFlag(false)
 {
+	//グラフィックデータの読み込み
+	LoadDivGraphEX("Graphic/drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
+
 	//ファイルからステージを読み込み
 	const std::string stagedir("Stage/"+std::string(stagename)+"/");
 	//ファイルを開きすべての文字列を書き出す
@@ -116,6 +119,9 @@ BattleSceneData::BattleSceneData(const char *stagename)
 BattleSceneData::~BattleSceneData(){
 	//グラフィック開放
 	DeleteGraphEX(m_mapPic);
+	for(size_t i=0;i<drawOrderHelpNum;i++){
+		DeleteGraphEX(m_drawOrderHelp[i]);
+	}
 	//フォント開放
 	DeleteFontToHandle(m_orderFont);
 	//オブジェクト一覧を開放
@@ -321,7 +327,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 	//DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
 	
 	//行動終了時のユニットのオーダー位置予測の矢印の描画
-	const size_t arrowNum=2;
+	const size_t arrowNum=drawOrderHelpNum;
 	Vector2D arrowPos[arrowNum]={calDrawPoint(0),calDrawPoint(0)};//矢印の先端位置(先頭:行動しない時 後ろ:行動する時)
 	float op[arrowNum]={CalculateOperateUnitFinishOP(),CalculateOperateUnitFinishOP(m_operateUnit->ConsumeOPVirtualByCost(m_operateUnit->GetBattleStatus().weapon->GetCost()))};//今の位置で行動終了した時のOP(先頭:行動しない時 後ろ:行動する時)
 	const size_t listsize=m_unitList.size();
@@ -356,6 +362,12 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 			DrawBoxAA(v.x-width[j],v.y-height-width[j],arrowPos[i].x+width[j],v.y-height+width[j],color[j],TRUE);
 			DrawBoxAA(arrowPos[i].x-width[j],v.y-height-width[j],arrowPos[i].x+width[j],v.y,color[j],TRUE);
 			DrawTriangleAA(arrowPos[i].x,v.y+width[j]*2.0f,arrowPos[i].x-width[j]*2.0f,v.y,arrowPos[i].x+width[j]*2.0f,v.y,color[j],TRUE);
+			if(j==0){
+				//矢印の分岐の上にヘルプ描画
+				int dx,dy;
+				GetGraphSize(m_drawOrderHelp[i],&dx,&dy);
+				DrawGraph((int)arrowPos[i].x-dx/2,(int)(v.y-height-width[j])-dy*(drawOrderHelpNum-i),m_drawOrderHelp[i],TRUE);
+			}
 		}
 	}
 
