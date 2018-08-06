@@ -94,7 +94,12 @@ int PlayerMoveScene::thisCalculate(){
 		//待機
 		FinishUnitOperation();
 		return 0;
-	} else if(keyboard_get(KEY_INPUT_X)==1 || keyboard_get(KEY_INPUT_X)>30){
+	} else if(keyboard_get(KEY_INPUT_X)==1
+		|| keyboard_get(KEY_INPUT_X)>30
+		|| mouse_get(MOUSE_INPUT_RIGHT)==1
+		|| mouse_get(MOUSE_INPUT_RIGHT)>30
+		)
+	{
 		//移動やり直し(m_route.back()の1つ前の場所に戻す。back()の位置は現在位置の可能性が高いため)
 		if(!m_route.empty()){
 			m_route.pop_back();
