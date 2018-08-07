@@ -142,7 +142,9 @@ void MyPolygon::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillF
 		std::vector<Vector2D> vertexVec;
 		CalculateAllPointPosition(&vertexVec);
 		//全ての分割三角形に対して、内部判定を実行
-		unsigned int c=VJudgePointInsideShape(GetMousePointVector2D())?GetColor(168,128,128):GetColor(128,168,128);
+		unsigned int c;
+		//c=VJudgePointInsideShape(GetMousePointVector2D())?GetColor(168,128,128):GetColor(128,168,128);
+		c=color;
 		for(size_t i=0,size=m_triangleSet.size();i<size;i++){
 			DrawTriangleAA(vertexVec[m_triangleSet[i][0]].x+adjust.x,vertexVec[m_triangleSet[i][0]].y+adjust.y,
 				vertexVec[m_triangleSet[i][1]].x+adjust.x,vertexVec[m_triangleSet[i][1]].y+adjust.y,

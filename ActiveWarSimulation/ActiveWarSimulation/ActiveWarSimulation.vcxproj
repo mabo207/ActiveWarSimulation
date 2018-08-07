@@ -169,6 +169,7 @@
     <ClCompile Include="MyPolygon.cpp" />
     <ClCompile Include="ResearchScene.cpp" />
     <ClCompile Include="SwitchUnitScene.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="ToolsLib.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="AttackScene.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
+    <ClInclude Include="TitleScene.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="MoveScene.h" />
     <ClInclude Include="PlayerMoveScene.h" />

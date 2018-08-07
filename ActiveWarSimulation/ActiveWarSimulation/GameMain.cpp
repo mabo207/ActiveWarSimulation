@@ -3,10 +3,12 @@
 #include<cassert>
 #include"DxLib.h"
 #include"input.h"
-#include"BattleScene.h"
 #include<memory>
 #include"GraphicControl.h"
 #include"ToolsLib.h"
+
+#include"BattleScene.h"
+#include"TitleScene.h"
 
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
@@ -46,7 +48,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		{
 			//èÍñ ïœêî
-			std::shared_ptr<GameScene> pGameScene(new BattleScene("tutorial1"));
+			//std::shared_ptr<GameScene> pGameScene(new BattleScene("tutorial1"));
+			std::shared_ptr<GameScene> pGameScene(new TitleScene());
 
 			FpsMeasuring fpsMeasuring;
 			bool fpsdisp=false;
