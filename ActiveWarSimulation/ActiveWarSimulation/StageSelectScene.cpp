@@ -3,14 +3,16 @@
 #include"GraphicControl.h"
 #include"FileRead.h"
 #include<Windows.h>
+#include"BattleScene.h"
 
 //----------------------StageSelectScene------------------
 StageSelectScene::StageInfo::~StageInfo(){
 	//DeleteGraphEX(m_mapPic);
 }
 
-StageSelectScene::StageSelectScene()
-	:m_beforeStageButton(100,300,LoadGraphEX("Graphic/beforeItem.png"))
+StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass> *const pReqInfo)
+	:m_pReqInfo(pReqInfo)
+	,m_beforeStageButton(100,300,LoadGraphEX("Graphic/beforeItem.png"))
 	,m_afterStageButton(1770,300,LoadGraphEX("Graphic/afterItem.png"))
 	,m_backButton(60,940,LoadGraphEX("Graphic/backButton.png"))
 	,m_playButton(900,940,LoadGraphEX("Graphic/combatButton.png"))
@@ -93,8 +95,14 @@ int StageSelectScene::Calculate(){
 	}
 
 	//遷移系ボタンの処理
-	if(keyboard_get(KEY_INPUT_Z)==1 || m_playButton.JudgePressMoment()){
+	if(m_selectStageIndex!=-1 &&
+		(keyboard_get(KEY_INPUT_Z)==1 || m_playButton.JudgePressMoment())
+		)
+	{
 		//ゲームプレイへ進む
+		if(m_pReqInfo!=nullptr){
+			*m_pReqInfo=std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass>(new BattleScene::RequiredInfoToMakeBattleScene(m_stageInfoVec[m_selectStageIndex].m_dirName));//ゲームプレイ場面を作るのに必要な情報は渡しておく
+		}
 		return -1;
 	} else if(keyboard_get(KEY_INPUT_X)==1 || m_backButton.JudgePressMoment()){
 		//タイトル画面へ戻る

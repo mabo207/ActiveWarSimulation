@@ -25,6 +25,7 @@ private:
 protected:
 	size_t m_selectStageIndex;//選択中のステージ
 	std::vector<StageInfo> m_stageInfoVec;//ステージ一覧情報
+	std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass> *const m_pReqInfo;
 	
 	//マウスでクリックできるボタン群
 	const MouseButtonUI m_beforeStageButton;
@@ -41,7 +42,7 @@ protected:
 protected:
 
 public:
-	StageSelectScene();
+	StageSelectScene(std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass> *const pReqInfo);
 	~StageSelectScene();
 	int Calculate();
 	void Draw()const;

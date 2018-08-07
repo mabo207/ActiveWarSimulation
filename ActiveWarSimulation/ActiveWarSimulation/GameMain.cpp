@@ -7,7 +7,6 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 
-#include"BattleScene.h"
 #include"TitleScene.h"
 
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
@@ -48,8 +47,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		{
 			//場面変数
-			//std::shared_ptr<GameScene> pGameScene(new BattleScene("tutorial1"));
-			std::shared_ptr<GameScene> pGameScene(new TitleScene());
+			std::shared_ptr<MainControledGameScene> pGameScene(new TitleScene());
 			
 			FpsMeasuring fpsMeasuring;
 			bool fpsdisp=false;
@@ -79,8 +77,20 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				int index=pGameScene->Calculate();
 
+				//遷移処理
+				if(index!=0){
+					std::shared_ptr<MainControledGameScene> pNextScene=pGameScene->VGetNextMainControledScene();
+					if(pNextScene.get()!=nullptr){
+						//次の場面があれば、その場面へ遷移
+						pGameScene=pNextScene;
+					} else{
+						//なければ強制終了
+						break;
+					}
+				}
+
 				//終了検出
-				if(keyboard_get(KEY_INPUT_ESCAPE)>0 || index!=0){
+				if(keyboard_get(KEY_INPUT_ESCAPE)>0){
 					break;
 				}
 

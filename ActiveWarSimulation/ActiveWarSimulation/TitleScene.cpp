@@ -6,6 +6,7 @@
 #include"input.h"
 #include<cmath>
 #include"StageSelectScene.h"
+#include"BattleScene.h"
 
 //-------------------TitleScene-------------------
 std::string TitleScene::SelectItem::GetString(const Kind kind){
@@ -35,13 +36,15 @@ std::shared_ptr<Shape> TitleScene::MakeHexagon(const Vector2D center,const float
 const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={Vector2D(1440.0f,630.0f),Vector2D(1545.0f,820.0f)};
 
 TitleScene::TitleScene()
-	:m_backPic(LoadGraphEX("Graphic/titleScene.png"))
+	:MainControledGameScene()
+	,m_backPic(LoadGraphEX("Graphic/titleScene.png"))
 	,m_titleLogo(LoadGraphEX("Graphic/titleLogo.png"))
 	,m_itemFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_selectItem(SelectItem::e_stageSelect)
 	,m_flame(0)
 	,m_nextScene(nullptr)
+	,m_reqInfo(nullptr)
 {
 	//当たり判定図形の用意
 	m_hitJudgeShapeVec[0]=MakeHexagon(strPos[0],120.0f);
@@ -162,7 +165,7 @@ int TitleScene::Calculate(){
 			return 1;
 		case(SelectItem::e_stageSelect):
 			//ステージセレクト画面へ
-			m_nextScene=std::shared_ptr<GameScene>(new StageSelectScene());
+			m_nextScene=std::shared_ptr<GameScene>(new StageSelectScene(&m_reqInfo));
 			break;
 		case(SelectItem::COUNTER):
 			//現状維持
@@ -181,6 +184,7 @@ int TitleScene::Calculate(){
 		case(-2):
 			//前のクラスからこのクラスに戻ると伝わってきた
 			m_nextScene=std::shared_ptr<GameScene>(nullptr);
+			m_reqInfo=std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass>(nullptr);//次のクラスをどうするかという情報も消しておく
 			break;
 		}
 	}
@@ -195,4 +199,19 @@ void TitleScene::Draw()const{
 		//他クラスの処理
 		m_nextScene->Draw();
 	}
+}
+
+std::shared_ptr<MainControledGameScene> TitleScene::VGetNextMainControledScene()const{
+	if(m_reqInfo.get()==nullptr){
+		//次のクラスが作れない場合はnullptrを返す
+	} else{
+		//情報があれば、物は作れる
+		if(m_reqInfo->GetKind()==RequiredInfoToMakeClass::e_battleScene){
+			const BattleScene::RequiredInfoToMakeBattleScene *info=dynamic_cast<const BattleScene::RequiredInfoToMakeBattleScene *>(m_reqInfo.get());
+			if(info!=nullptr){
+				return std::shared_ptr<MainControledGameScene>(new BattleScene(info->m_stagename.c_str()));
+			}
+		}
+	}
+	return std::shared_ptr<MainControledGameScene>(nullptr);
 }

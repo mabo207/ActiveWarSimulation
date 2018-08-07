@@ -2,10 +2,10 @@
 #define DEF_GAMESCENE_H
 
 #include"ToolsLib.h"
+#include<memory>
 
 //場面を表すクラスが持つべき実装のインターフェース
 //かつこれだけあれば他クラスから動かすことが出来る
-
 class GameScene{
 	//型
 	//定数
@@ -16,6 +16,33 @@ public:
 	virtual void Draw()const=0;
 	GameScene(){}
 	virtual ~GameScene(){}
+};
+
+//main関数で管理されるべきクラスのインターフェース
+class MainControledGameScene:public GameScene{
+	//型
+public:
+	class RequiredInfoToMakeClass{
+		//MainControledGameSceneクラスを作るために必要なデータ群
+	public:
+		enum Kind{
+			e_battleScene
+			,e_titleScene
+		};
+	protected:
+		RequiredInfoToMakeClass(){}
+	public:
+		virtual Kind GetKind()const=0;//これのオーバーライドが必須な事で、継承先クラスを作るのを忘れないようにする。これは継承先クラスが該当するKindを返せば良い。
+	};
+
+	//定数
+	//変数
+
+	//関数
+public:
+	virtual std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const=0;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
+	MainControledGameScene():GameScene(){}
+	virtual ~MainControledGameScene(){}
 };
 
 //フェードイン、フェードアウトをする機能をGameSceneに追加するクラス

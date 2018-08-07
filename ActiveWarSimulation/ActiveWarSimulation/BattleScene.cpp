@@ -1,9 +1,10 @@
 #include"BattleScene.h"
 #include"SwitchUnitScene.h"
+#include"TitleScene.h"
 
 //----------------------BattleScene----------------------
 BattleScene::BattleScene(const char *stagename)
-	:GameScene(),m_battleSceneData(new BattleSceneData(stagename))
+	:MainControledGameScene(),m_battleSceneData(new BattleSceneData(stagename))
 {
 	//m_sceneDataの初期化、最初はひとまず移動で
 	m_sceneData=std::shared_ptr<BattleSceneElement>(new SwitchUnitScene(m_battleSceneData));
@@ -34,4 +35,9 @@ void BattleScene::Draw()const{
 	if(m_sceneData.get()!=nullptr){
 		m_sceneData->Draw();
 	}
+}
+
+std::shared_ptr<MainControledGameScene> BattleScene::VGetNextMainControledScene()const{
+	//ゲームプレイが終わった時は、タイトル画面へ
+	return std::shared_ptr<MainControledGameScene>(new TitleScene());
 }

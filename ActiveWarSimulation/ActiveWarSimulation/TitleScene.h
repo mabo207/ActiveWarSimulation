@@ -9,7 +9,7 @@
 #include<string>
 
 //タイトル画面のクラス
-class TitleScene:public GameScene{
+class TitleScene:public MainControledGameScene{
 	//型・列挙体
 private:
 	struct SelectItem{
@@ -21,8 +21,18 @@ private:
 		};
 		static std::string GetString(const Kind kind);
 	};
+public:
+	struct RequiredInfoToMakeTitleScene:public RequiredInfoToMakeClass{
+		//クラスを作るのに必要なデータはない
+		RequiredInfoToMakeTitleScene(){}
+		Kind GetKind()const{
+			return e_titleScene;
+		}
+	};
 
+	
 	//定数
+private:
 	static const Vector2D strPos[SelectItem::COUNTER];
 
 	//変数
@@ -32,6 +42,9 @@ protected:
 	SelectItem::Kind m_selectItem;//現在選択している項目
 	std::array<std::shared_ptr<Shape>,SelectItem::COUNTER> m_hitJudgeShapeVec;
 	std::shared_ptr<GameScene> m_nextScene;//次のシーン。これがnullptrなら、タイトルの処理を行う。
+
+	//他のクラスを作るのに必要なデータ
+	std::shared_ptr<RequiredInfoToMakeClass> m_reqInfo;//こいつへのポインタを渡すことで、他のクラスでもこの値を弄れる。それを用いて、このクラスから戻る時に、次どのクラスに行けばいいかなどが計算できる。
 
 	//グラフィック
 	const int m_backPic;//背景
@@ -49,7 +62,7 @@ public:
 	~TitleScene();
 	int Calculate();
 	void Draw()const;
-
+	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;
 };
 
 #endif // !DEF_TITLESCENE_H
