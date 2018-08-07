@@ -596,6 +596,12 @@ void InputSingleCharStringControler::Update(){
 MouseButtonUI::MouseButtonUI(int x,int y,int dx,int dy,int graphic)
 	:m_x(x),m_y(y),m_dx(dx),m_dy(dy),m_graphic(graphic){}
 
+MouseButtonUI::MouseButtonUI(int x,int y,int graphic)
+	:m_x(x),m_y(y),m_graphic(graphic)
+{
+	GetGraphSize(m_graphic,&m_dx,&m_dy);
+}
+
 MouseButtonUI::~MouseButtonUI(){
 	DeleteGraphEX(m_graphic);
 }
@@ -615,4 +621,19 @@ bool MouseButtonUI::JudgePushed()const{
 void MouseButtonUI::DrawButton()const{
 	//DrawBox(m_x,m_y,m_x+m_dx,m_y+m_dy,GetColor(255,255,0),TRUE);//デバッグ用
 	DrawGraph(m_x,m_y,m_graphic,TRUE);
+}
+
+void MouseButtonUI::GetButtonInfo(int *x,int *y,int *dx,int *dy)const{
+	if(x!=nullptr){
+		*x=m_x;
+	}
+	if(y!=nullptr){
+		*y=m_y;
+	}
+	if(dx!=nullptr){
+		*dx=m_dx;
+	}
+	if(dy!=nullptr){
+		*dy=m_dy;
+	}
 }
