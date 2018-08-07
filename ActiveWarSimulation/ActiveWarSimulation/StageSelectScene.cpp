@@ -11,9 +11,9 @@ StageSelectScene::StageInfo::~StageInfo(){
 
 StageSelectScene::StageSelectScene()
 	:m_beforeStageButton(100,300,LoadGraphEX("Graphic/beforeItem.png"))
-	,m_afterStageButton(100,300,LoadGraphEX("Graphic/afterItem.png"))
+	,m_afterStageButton(1770,300,LoadGraphEX("Graphic/afterItem.png"))
 	,m_backButton(60,940,LoadGraphEX("Graphic/backButton.png"))
-	,m_playButton(900,940,LoadGraphEX("Graphic/playButton.png"))
+	,m_playButton(900,940,LoadGraphEX("Graphic/combatButton.png"))
 	,m_backPic(LoadGraphEX("Graphic/titleScene.png"))
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
@@ -113,9 +113,10 @@ void StageSelectScene::Draw()const{
 	//ステージ情報の描画
 	if(m_selectStageIndex!=-1){
 		int stageDx,stageDy;
+		const int explainX=400;
 		GetGraphSize(m_stageInfoVec[m_selectStageIndex].m_mapPic,&stageDx,&stageDy);
-		DrawRotaGraph(resolution.first/2,resolution.second*2/5,540.0/stageDx,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
+		DrawRotaGraph(resolution.first/2,resolution.second/3,((double)resolution.second/2)/stageDy,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
 		DrawStringCenterBaseToHandle(resolution.first/2,resolution.second*3/5,m_stageInfoVec[m_selectStageIndex].m_stageName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
-		DrawStringNewLineToHandle(200,resolution.second*2/3,resolution.first-200*2,resolution.second/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+		DrawStringNewLineToHandle(explainX,resolution.second*2/3,resolution.first-explainX*2,resolution.second/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
 	}
 }
