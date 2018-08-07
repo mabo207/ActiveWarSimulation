@@ -5,6 +5,7 @@
 #include"MyPolygon.h"
 #include"input.h"
 #include<cmath>
+#include"StageSelectScene.h"
 
 //-------------------TitleScene-------------------
 std::string TitleScene::SelectItem::GetString(const Kind kind){
@@ -40,6 +41,7 @@ TitleScene::TitleScene()
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_selectItem(SelectItem::e_stageSelect)
 	,m_flame(0)
+	,m_nextScene(nullptr)
 {
 	//当たり判定図形の用意
 	m_hitJudgeShapeVec[0]=MakeHexagon(strPos[0],120.0f);
@@ -52,7 +54,7 @@ TitleScene::~TitleScene(){
 	DeleteFontToHandleEX(m_itemFont);
 }
 
-int TitleScene::Calculate(){
+int TitleScene::thisCalculate(){
 	//フレーム数の更新
 	m_flame++;
 
@@ -105,14 +107,22 @@ int TitleScene::Calculate(){
 		}
 	}
 
+	//遷移入力処理
+	if(keyboard_get(KEY_INPUT_Z)==1
+		|| (mouse_get(MOUSE_INPUT_LEFT)==1 && m_hitJudgeShapeVec[m_selectItem]->VJudgePointInsideShape(mousePos))
+		)
+	{
+		//決定キー入力か、ボタンの上で左クリック
+		return m_selectItem;
+	}
 
 	//マウス位置の更新
 	m_mousePosJustBefore=mousePos;
 
-	return 0;
+	return SelectItem::COUNTER;//SelectItem::COUNTERは現状維持
 }
 
-void TitleScene::Draw()const{
+void TitleScene::thisDraw()const{
 	//背景の描画
 	DrawGraph(0,0,m_backPic,TRUE);
 	//タイトルロゴの描画
@@ -137,5 +147,52 @@ void TitleScene::Draw()const{
 		m_hitJudgeShapeVec[i]->Draw(Vector2D(),inColor,TRUE);
 		m_hitJudgeShapeVec[i]->Draw(Vector2D(),frameColor,FALSE,3.0f);
 		DrawStringCenterBaseToHandle((int)strPos[i].x,(int)strPos[i].y+strDy,SelectItem::GetString(static_cast<SelectItem::Kind>(i)).c_str(),fontColor,m_itemFont,true);
+	}
+}
+
+int TitleScene::Calculate(){
+	int index;
+	if(m_nextScene.get()==nullptr){
+		//今指している状態がタイトル画面である時
+		index=thisCalculate();//更新処理
+		//遷移処理
+		switch(index){
+		case(SelectItem::e_gameFinish):
+			//前のクラスにもどる。
+			return 1;
+		case(SelectItem::e_stageSelect):
+			//ステージセレクト画面へ
+			m_nextScene=std::shared_ptr<GameScene>(new StageSelectScene());
+			break;
+		case(SelectItem::COUNTER):
+			//現状維持
+			break;
+		default:
+			break;
+		}
+	} else{
+		//それ以外の画面の状態である時
+		index=m_nextScene->Calculate();//更新処理
+		//遷移処理
+		switch(index){
+		case(-1):
+			//前のクラスから強制終了しろと伝わってきた
+			return -1;
+		case(-2):
+			//前のクラスからこのクラスに戻ると伝わってきた
+			m_nextScene=std::shared_ptr<GameScene>(nullptr);
+			break;
+		}
+	}
+	return 0;
+}
+
+void TitleScene::Draw()const{
+	if(m_nextScene.get()==nullptr){
+		//このクラスの処理
+		thisDraw();
+	} else{
+		//他クラスの処理
+		m_nextScene->Draw();
 	}
 }

@@ -18,12 +18,12 @@ int BattleScene::Calculate(){
 	if(m_sceneData.get()!=nullptr){
 		index=m_sceneData->Calculate();
 	} else{
-		index=1;
+		index=-2;
 	}
 	//状態遷移
 	if(index==BattleSceneElement::SceneKind::END){
 		//このクラスを監視するクラスにゲームプレイ場面の終了を伝える
-		return 1;
+		return -2;
 	}
 
 	return 0;

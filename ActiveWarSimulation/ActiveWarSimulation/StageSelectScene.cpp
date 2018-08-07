@@ -92,6 +92,15 @@ int StageSelectScene::Calculate(){
 		}
 	}
 
+	//遷移系ボタンの処理
+	if(keyboard_get(KEY_INPUT_Z)==1 || m_playButton.JudgePressMoment()){
+		//ゲームプレイへ進む
+		return -1;
+	} else if(keyboard_get(KEY_INPUT_X)==1 || m_backButton.JudgePressMoment()){
+		//タイトル画面へ戻る
+		return -2;
+	}
+
 	return 0;
 }
 

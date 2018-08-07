@@ -9,7 +9,6 @@
 
 #include"BattleScene.h"
 #include"TitleScene.h"
-#include"StageSelectScene.h"
 
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
@@ -50,9 +49,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		{
 			//èÍñ ïœêî
 			//std::shared_ptr<GameScene> pGameScene(new BattleScene("tutorial1"));
-			//std::shared_ptr<GameScene> pGameScene(new TitleScene());
-			std::shared_ptr<GameScene> pGameScene(new StageSelectScene());
-
+			std::shared_ptr<GameScene> pGameScene(new TitleScene());
+			
 			FpsMeasuring fpsMeasuring;
 			bool fpsdisp=false;
 

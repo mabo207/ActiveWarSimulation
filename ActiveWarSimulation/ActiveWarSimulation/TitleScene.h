@@ -31,7 +31,7 @@ protected:
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 	SelectItem::Kind m_selectItem;//現在選択している項目
 	std::array<std::shared_ptr<Shape>,SelectItem::COUNTER> m_hitJudgeShapeVec;
-	
+	std::shared_ptr<GameScene> m_nextScene;//次のシーン。これがnullptrなら、タイトルの処理を行う。
 
 	//グラフィック
 	const int m_backPic;//背景
@@ -41,6 +41,8 @@ protected:
 	//関数
 private:
 	std::shared_ptr<Shape> MakeHexagon(const Vector2D center,const float size)const;
+	int thisCalculate();//SelectItem::COUNTER:現状維持 0~SelectItem::COUNTER-1:遷移
+	void thisDraw()const;
 
 public:
 	TitleScene();
