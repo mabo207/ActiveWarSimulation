@@ -57,6 +57,8 @@ Temporary Items
 /ActiveWarSimulation/ActiveWarSimulation/Debug
 /ActiveWarSimulation/ActiveWarSimulation/Release
 /ActiveWarSimulation/ActiveWarSimulation/SaveData
+/ActiveWarSimulation/ActiveWarSimulation/Graphic
+/ActiveWarSimulation/ActiveWarSimulation/Sound
 /ActiveWarSimulation/ActiveWarSimulation/Log.txt
 /ActiveWarSimulation/FieldBase/Debug
 /ActiveWarSimulation/FieldBase/Release
@@ -83,3 +85,5 @@ Temporary Items
 *.idb
 *.ipch
 *.db
+*.png
+*.ogg
