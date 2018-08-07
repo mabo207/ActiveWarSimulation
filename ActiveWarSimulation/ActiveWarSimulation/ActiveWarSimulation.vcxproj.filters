@@ -150,6 +150,9 @@
     <ClCompile Include="TitleScene.cpp">
       <Filter>ソース ファイル\GameScene\Title</Filter>
     </ClCompile>
+    <ClCompile Include="StageSelectScene.cpp">
+      <Filter>ソース ファイル\GameScene\Title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -228,6 +231,9 @@
       <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
     <ClInclude Include="TitleScene.h">
+      <Filter>ヘッダー ファイル\GameScene\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="StageSelectScene.h">
       <Filter>ヘッダー ファイル\GameScene\Title</Filter>
     </ClInclude>
   </ItemGroup>
