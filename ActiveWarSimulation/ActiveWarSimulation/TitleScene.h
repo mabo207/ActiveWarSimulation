@@ -35,6 +35,7 @@ protected:
 
 	//グラフィック
 	const int m_backPic;//背景
+	const int m_titleLogo;//タイトルロゴ
 	const int m_itemFont;//選択項目のフォント
 
 	//関数

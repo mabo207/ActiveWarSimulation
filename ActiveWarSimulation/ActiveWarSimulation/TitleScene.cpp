@@ -35,6 +35,7 @@ const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={Vector2D(144
 
 TitleScene::TitleScene()
 	:m_backPic(LoadGraphEX("Graphic/titleScene.png"))
+	,m_titleLogo(LoadGraphEX("Graphic/titleLogo.png"))
 	,m_itemFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",24,1,-1))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_selectItem(SelectItem::e_stageSelect)
@@ -47,6 +48,7 @@ TitleScene::TitleScene()
 
 TitleScene::~TitleScene(){
 	DeleteGraphEX(m_backPic);
+	DeleteGraphEX(m_titleLogo);
 	DeleteFontToHandleEX(m_itemFont);
 }
 
@@ -113,6 +115,11 @@ int TitleScene::Calculate(){
 void TitleScene::Draw()const{
 	//îwåiÇÃï`âÊ
 	DrawGraph(0,0,m_backPic,TRUE);
+	//É^ÉCÉgÉãÉçÉSÇÃï`âÊ
+	DrawGraph(0,0,m_titleLogo,TRUE);
+	int verX,verY;
+	GetGraphSize(m_titleLogo,&verX,&verY);
+	DrawStringToHandle(verX,verY,"- C94 Trial Edition -",GetColor(255,255,255),m_itemFont);
 	//çÄñ⁄ÇÃï`âÊ
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
 		unsigned int inColor,frameColor,fontColor;
