@@ -8,11 +8,19 @@
 //選択するユニットを切り替えるシーン
 class SwitchUnitScene:public BattleSceneElement{
 	//型・列挙体
+	enum class JudgeEnd{
+		e_notEnd
+		,e_playerWin
+		,e_playerLose
+	};
 
 	//定数
 
 	//変数
 protected:
+	//勝敗判定
+	JudgeEnd m_judgeEnd;
+
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
 
