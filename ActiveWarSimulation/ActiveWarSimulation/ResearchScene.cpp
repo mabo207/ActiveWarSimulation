@@ -132,6 +132,7 @@ void ResearchScene::thisDraw()const{
 	if(m_researchUnit!=nullptr){
 		m_researchUnit->BattleObject::VDraw();
 		m_researchUnit->GetHitJudgeShape()->Draw(Vector2D(),GetColor(255,255,255),FALSE);//調べてるよってことを強調
+		m_researchUnit->DrawMaxMoveInfo();//最大移動距離を表示
 	}
 
 	//操作中ユニットの描画(m_researchUnitとかぶっていたら描画する必要はない)

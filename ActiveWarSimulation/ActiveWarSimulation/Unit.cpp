@@ -6,7 +6,7 @@
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
-	std::pair<std::string,Unit::Profession::Kind>("槍術士",Unit::Profession::e_lancer)
+	std::pair<std::string,Unit::Profession::Kind>("兵士",Unit::Profession::e_lancer)
 	,std::pair<std::string,Unit::Profession::Kind>("射手",Unit::Profession::e_archer)
 	,std::pair<std::string,Unit::Profession::Kind>("重装兵",Unit::Profession::e_armer)
 	,std::pair<std::string,Unit::Profession::Kind>("魔道士",Unit::Profession::e_mage)
@@ -169,16 +169,28 @@ void Unit::DrawMoveInfo(Vector2D adjust)const{
 }
 
 void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
+	DrawMoveInfo(GetMoveDistance(),point,adjust);
+}
+
+void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust)const{
 	Vector2D pos=point-adjust;
 	//ユニットの移動限界距離を水色に描画
-	DrawCircleAA(pos.x,pos.y,GetMoveDistance(),100,DxLib::GetColor(64,192,192),FALSE,3.0f);//枠
-	DrawCircleAA(pos.x,pos.y,GetMoveDistance(),100,DxLib::GetColor(0,255,255),FALSE,1.0f);//枠
-/*(仕様消滅のためコメントアウト)
+	DrawCircleAA(pos.x,pos.y,distance,100,DxLib::GetColor(64,192,192),FALSE,3.0f);//枠
+	DrawCircleAA(pos.x,pos.y,distance,100,DxLib::GetColor(0,255,255),FALSE,1.0f);//枠
+	/*(仕様消滅のためコメントアウト)
 	//ユニットの攻撃可能な移動限界距離を水色で描画(攻撃可能な場合のみ)
 	if((ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))>=0.0f){
-		DrawCircleAA(pos.x,pos.y,(ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//枠
+	DrawCircleAA(pos.x,pos.y,(ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//枠
 	}
-//*/
+	//*/
+}
+
+void Unit::DrawMaxMoveInfo(Vector2D adjust)const{
+	DrawMaxMoveInfo(getPos(),adjust);
+}
+
+void Unit::DrawMaxMoveInfo(Vector2D point,Vector2D adjust)const{
+	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP),point,adjust);
 }
 
 void Unit::DrawHPGage(Vector2D adjust)const{
@@ -256,7 +268,13 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
 
 float Unit::GetMoveDistance()const{
 	//残りOPで移動可能な直線距離を求める。
-	return m_battleStatus.OP/CalculateConsumeOP(1.0f)*m_baseStatus.move;
+	//return m_battleStatus.OP/CalculateConsumeOP(1.0f)*m_baseStatus.move;
+	return GetMoveDistance(m_battleStatus.OP);
+}
+
+float Unit::GetMoveDistance(float vOP)const{
+	//残りOPで移動可能な直線距離を求める。
+	return vOP/CalculateConsumeOP(1.0f)*m_baseStatus.move;
 }
 
 const Shape *Unit::GetHitJudgeShape()const{
