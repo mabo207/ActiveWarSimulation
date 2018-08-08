@@ -16,6 +16,7 @@ public:
 			e_attackNormal,
 			e_switch,
 			e_research,
+			e_clear,
 			END
 		};
 		static const int kindNum=END-start;

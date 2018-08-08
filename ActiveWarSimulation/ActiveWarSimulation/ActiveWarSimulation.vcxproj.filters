@@ -153,6 +153,9 @@
     <ClCompile Include="StageSelectScene.cpp">
       <Filter>ソース ファイル\GameScene\TitleScene</Filter>
     </ClCompile>
+    <ClCompile Include="StageClearScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -235,6 +238,9 @@
     </ClInclude>
     <ClInclude Include="StageSelectScene.h">
       <Filter>ヘッダー ファイル\GameScene\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="StageClearSceme.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
