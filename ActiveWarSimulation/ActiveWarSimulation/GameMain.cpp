@@ -47,7 +47,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		{
 			//場面変数
-			std::shared_ptr<MainControledGameScene> pGameScene(new TitleScene());
+			//std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(new TitleScene());
+			std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene>(new TitleScene()),0x03,15));
 			
 			FpsMeasuring fpsMeasuring;
 			bool fpsdisp=false;
@@ -79,12 +80,20 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				//遷移処理
 				if(index!=0){
-					std::shared_ptr<MainControledGameScene> pNextScene=pGameScene->VGetNextMainControledScene();
-					if(pNextScene.get()!=nullptr){
+					//std::shared_ptr<MainControledGameScene> pNextScene=pGameScene->VGetNextMainControledScene();
+					std::shared_ptr<MainControledGameScene> pNextActivateScene=pGameScene->VGetNextMainControledScene();
+					if(pNextActivateScene.get()!=nullptr){
 						//次の場面があれば、その場面へ遷移
-						pGameScene=pNextScene;
+						std::shared_ptr<MainControledGameScene> pNextScene(new MainControledFadeInOutGameScene(pNextActivateScene,0x03,15));
+						if(pNextScene.get()!=nullptr){
+							//次の場面の生成に成功すれば
+							pGameScene=pNextScene;
+						} else{
+							//失敗したら強制終了
+							break;
+						}
 					} else{
-						//なければ強制終了
+						//次の場面がなければ強制終了
 						break;
 					}
 				}

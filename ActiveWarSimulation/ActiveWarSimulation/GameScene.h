@@ -63,17 +63,33 @@ protected:
 	int m_nowProcess;//現在の段階(0:通常進行 1:Calculate()を行わずにフェードアウト 2:フェードアウト完了待ち)
 	int m_retIndex;//フェードアウト終了後Calculate()が返す数
 	int m_timer;//フェードアウトが綺麗に行われるために用いる
-	GameScene *m_pActivateClass;//実際に動かす場面クラス
+	std::shared_ptr<GameScene> m_pActivateClass;//実際に動かす場面クラス
 
 	//関数
 public:
-	FadeInOutGameScene(GameScene *pActivateClass,int fadeFlag,int flame);
-	~FadeInOutGameScene();
+	FadeInOutGameScene(std::shared_ptr<GameScene> pActivateClass,int fadeFlag,int flame);
+	virtual ~FadeInOutGameScene();
 	int Calculate();
 	void Draw()const;
 };
 
+//FadeInOutGameSceneをMainControledGameSceneに対しても用いれるようにした
+class MainControledFadeInOutGameScene:public FadeInOutGameScene,public MainControledGameScene{
+	//変数
+	//m_pActivateClassは必ずMainControledGameSceneである
+
+	//関数
+public:
+	MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene> pActivateClass,int fadeFlag,int flame);
+	~MainControledFadeInOutGameScene(){}
+	int Calculate(){
+		return FadeInOutGameScene::Calculate();
+	}
+	void Draw()const{
+		FadeInOutGameScene::Draw();
+	}
+	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
+};
 
 #endif // !DEF_GAMESCENE_H
 
-#pragma once
