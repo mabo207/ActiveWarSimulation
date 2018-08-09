@@ -68,10 +68,12 @@ void FadeInOutGameScene::Draw()const{
 	m_pActivateClass->Draw();
 	//“§–¾“x‚Ì•\Œ»(ã‚É”wŒiF’·•ûŒ`‚ð”í‚¹‚é)
 	if(m_drawAlpha.GetX()>0){
-		int dx,dy;
-		GetWindowSize(&dx,&dy);
+		//int dx,dy;
+		//GetWindowSize(&dx,&dy);
+		const std::pair<int,int> resolution=GetWindowResolution();
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,m_drawAlpha.GetX());
-		DrawBox(0,0,dx,dy,backColor,TRUE);
+		//DrawBox(0,0,dx,dy,backColor,TRUE);
+		DrawBox(0,0,resolution.first,resolution.second,backColor,TRUE);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,0);
 	}
 }
