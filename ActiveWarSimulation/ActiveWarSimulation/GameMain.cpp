@@ -64,6 +64,38 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					fpsdisp=!fpsdisp;
 				}
 
+				if(keyboard_get(KEY_INPUT_F1)==60){
+					//F1長押しで、ウインドウモードとフルスクリーンモードの切り替え。タイトル画面まで強制的に戻す
+					int mode=GetWindowModeFlag();
+					if(mode==TRUE){
+						mode=FALSE;
+					} else{
+						mode=TRUE;
+					}
+					if(ChangeWindowMode(mode) != 0) {
+						throw(std::runtime_error("ChangeWindowMode(mode) failed."));
+					}
+					if(SetDrawScreen(DX_SCREEN_BACK) != 0) {
+						DxLib_End();
+						throw(std::runtime_error("SetDrawScreen(DX_SCREEN_BACK) failed."));
+					}
+					//グラフィック系の読み込み直し
+					GraphicControler_End();//グラフィック管理クラスの解放
+					FontControler_End();//フォント管理クラスの解放
+					DeleteInputControler();//入力機構の解放
+					GraphicControler_Init();
+					FontControler_Init();
+					InitInputControler();
+					pGameScene=std::shared_ptr<MainControledGameScene>(new MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene>(new TitleScene()),0x03,15));
+					SetMouseDispFlag(TRUE);//ウインドウモードだとマウスが見えなくなるので設定
+				} else if(keyboard_get(KEY_INPUT_F2)==60){
+					//F2長押しで、ウインドウサイズを1.0倍に
+					SetWindowSizeExtendRate(1.0);
+				} else if(keyboard_get(KEY_INPUT_F3)==60){
+					//F3長押しで、ウインドウサイズを1.0倍に
+					SetWindowSizeExtendRate(0.5);
+				}
+
 				//描画
 				clsDx();
 				if(fpsdisp){ printfDx("FPS : %.1f/60\n",fpsMeasuring.GetFps()); }
