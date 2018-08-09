@@ -190,7 +190,7 @@ void Unit::DrawMaxMoveInfo(Vector2D adjust)const{
 }
 
 void Unit::DrawMaxMoveInfo(Vector2D point,Vector2D adjust)const{
-	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP),point,adjust);
+	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost)),point,adjust);
 }
 
 void Unit::DrawHPGage(Vector2D adjust)const{
