@@ -71,6 +71,8 @@ Temporary Items
 /ActiveWarSimulation/shinntyoku
 /ActiveWarSimulation/document
 
+#exclude by lisence
+nonfree
 
 #exclude by file type
 *.tlog
@@ -85,5 +87,4 @@ Temporary Items
 *.idb
 *.ipch
 *.db
-*.png
 *.ogg

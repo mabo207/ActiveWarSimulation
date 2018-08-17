@@ -37,7 +37,7 @@ const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={Vector2D(144
 
 TitleScene::TitleScene()
 	:MainControledGameScene()
-	,m_backPic(LoadGraphEX("Graphic/titleScene.png"))
+	,m_backPic(LoadGraphEX("Graphic/nonfree/titleScene.png"))
 	,m_titleLogo(LoadGraphEX("Graphic/titleLogo.png"))
 	,m_itemFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",24,1,-1))
 	,m_mousePosJustBefore(GetMousePointVector2D())

@@ -16,7 +16,7 @@ StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::Requi
 	,m_afterStageButton(1770,300,LoadGraphEX("Graphic/afterItem.png"))
 	,m_backButton(60,940,LoadGraphEX("Graphic/backButton.png"))
 	,m_playButton(900,940,LoadGraphEX("Graphic/combatButton.png"))
-	,m_backPic(LoadGraphEX("Graphic/titleScene.png"))
+	,m_backPic(LoadGraphEX("Graphic/nonfree/titleScene.png"))
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 {
@@ -59,7 +59,7 @@ StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::Requi
 	//各フォルダの中身を検索して、StageInfoを構成していく
 	for(const std::string &dirName:dirNameVec){
 		m_stageInfoVec.push_back(StageInfo(
-			LoadGraphEX(("Stage/"+dirName+"/map.png").c_str())
+			LoadGraphEX(("Stage/"+dirName+"/nonfree/map.png").c_str())
 			,dirName
 			,FileStrRead(("Stage/"+dirName+"/stageName.txt").c_str())
 			,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
