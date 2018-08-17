@@ -132,7 +132,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				//I—¹ŒŸo
 				if(keyboard_get(KEY_INPUT_ESCAPE)>0){
-					break;
+					//break;//Alt+F4‚Å‚â‚Á‚Ä‚à‚ç‚¤
 				}
 
 				if(fpsdisp){ printfDx("Update : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }
