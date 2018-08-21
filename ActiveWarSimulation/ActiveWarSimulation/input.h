@@ -111,4 +111,23 @@ public:
 
 };
 
+//マウスやタッチなどの画面上に置くボタン
+class MouseButtonUI{
+	//変数
+protected:
+	int m_x,m_y;
+	int m_dx,m_dy;
+	int m_graphic;
+	//関数
+public:
+	MouseButtonUI(int x,int y,int dx,int dy,int graphic);
+	MouseButtonUI(int x,int y,int graphic);
+	~MouseButtonUI();
+	bool JudgePressMoment()const;//ボタンを押した瞬間を調べる
+	bool JudgePushed()const;//ボタンを押しているかを調べる
+	void DrawButton()const;
+	void GetButtonInfo(int *x,int *y,int *dx,int *dy)const;
+};
+
+
 #endif

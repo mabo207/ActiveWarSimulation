@@ -1,5 +1,6 @@
 #include"Edge.h"
 #include"Circle.h"
+#include"MyPolygon.h"
 #include"DxLib.h"
 #include<cassert>
 
@@ -69,10 +70,18 @@ Vector2D Edge::CalculatePushVec(const Shape *pShape)const{
 	case Type::e_edge:
 		{
 			//pShapeをEdgeにキャストする
-			const Edge *pcircle=dynamic_cast<const Edge *>(pShape);
-			if(pcircle!=nullptr){
+			const Edge *pedge=dynamic_cast<const Edge *>(pShape);
+			if(pedge!=nullptr){
 				//この実装では線と線の当たり判定はできない。なお、実装するなら移動前後の位置が分かる必要がある。
-				//使わないので実装しない。
+				//ひとまず当たったかどうかの判定ができるように、Vector2D(0.001f,0.001f)だけ押し出すことにする。
+				if(this->m_vec!=pedge->m_vec){
+					//平行でない場合
+					//連立方程式を解けば良い
+					//使わないので実装しない
+				} else{
+					//平行である場合
+					//使わないので実装しない
+				}
 			} else{
 				//ここに来ることは無いはず。取り敢えず当たってないことにする。
 				assert(false);
@@ -85,6 +94,48 @@ Vector2D Edge::CalculatePushVec(const Shape *pShape)const{
 		break;
 	}
 	return ret;
+}
+
+bool Edge::PushParentObj(const Shape *pShape,ShapeHaving *parentObj,float pushRate)const{
+	//自分とぶつかった相手の候補pShapeが何かによって押し出し処理が異なる
+	switch(pShape->GetType()){
+	case(Type::e_circle):
+	case(Type::e_edge):
+		{
+			//相手が円か線分の場合は押し出し距離が求められるので、それをそのまま使う
+			//押し出し距離の計算
+			Vector2D pushVec=this->CalculatePushVec(pShape);
+			//押し出し距離の一定の割合のベクトルだけ押し出す
+			parentObj->Move(pushVec*pushRate);
+			//押し出し距離の長さでtrueかfalseかを判断して返す
+			return pushVec.sqSize()!=0.0f;
+		}
+	case(Type::e_polygon):
+		{
+			//相手が多角形の場合は、線分に分解して処理を行う
+			const MyPolygon *ppolygon=dynamic_cast<const MyPolygon *>(pShape);
+			if(ppolygon!=nullptr){
+				bool ret=false;
+				Vector2D begin=ppolygon->GetPosition();
+				for(const Vector2D &vec:ppolygon->GetAllEdgeVecs()){
+					//全ての線分に対しての処理
+					Edge e(begin,vec,ppolygon->m_fix);
+					ret=e.PushParentObj(pShape,parentObj,pushRate) | ret;//線分による押し出し処理+当たったかどうかの更新処理
+					begin+=vec;
+				}
+				return ret;
+			} else{
+				//ここに来ることがあったら、なんかバグってる
+				assert(false);
+			}
+		}
+	}
+	return false;
+}
+
+bool Edge::JudgeInShape(const Shape *pShape)const{
+	//線分の場合は押し出し距離を求められるのでそれを用いる
+	return CalculatePushVec(pShape)!=Vector2D();
 }
 
 bool Edge::VJudgePointInsideShape(Vector2D point)const{
@@ -128,6 +179,10 @@ Vector2D Edge::GetRightBottom()const{
 	return ret;
 }
 
+void Edge::RecordLatticePointInShape(std::vector<int> &latticeInShape,const size_t xNum,const size_t yNum,const size_t squareWidth,const size_t squareHeight,int index)const{
+	//線分内は格子点処理を行わない（行えない）ので、このまま放置
+}
+
 Vector2D Edge::VGetNearEndpoint(Vector2D point,float capacity)const{
 	const float sqCapacity=capacity*capacity;
 	if((m_position-point).sqSize()<sqCapacity){
@@ -153,7 +208,7 @@ Vector2D Edge::GetRetResize()const{
 }
 
 void Edge::WriteOutShape(std::ofstream &ofs)const{
-	//"("→(種別)→(始点位置)→(方向ベクトル)→(初期固定)→")"
+	//"("→(種別)→(始点位置)→(初期固定)→(方向ベクトル)→")"
 	ofs<<beginer<<Type::GetStr(m_type)<<spliter;//ofs<<"(Edge,";
 	ofs<<beginer<<m_position.x<<spliter<<m_position.y<<ender<<spliter;//ofs<<"("<<m_position.x<<","<<m_position.y<<"),";
 	ofs<<Fix::GetStr(m_fix)<<spliter;//ofs<<Fix::GetStr(m_fix)<<",";

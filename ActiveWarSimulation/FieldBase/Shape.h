@@ -7,6 +7,8 @@
 #include<iostream>
 #include<fstream>
 
+class ShapeHaving;//循環参照避け
+
 //当たり判定図形を指す純粋仮想関数
 class Shape{
 	//列挙体・型
@@ -15,6 +17,7 @@ public:
 		enum Kind{
 			e_circle,
 			e_edge,
+			e_polygon,
 			END
 		};
 		static Kind link(int num){
@@ -67,13 +70,16 @@ public:
 		return m_type;
 	}
 	void Move(Vector2D displacement);//オブジェクトを移動させる。数フレームかけて位置補正を行うため、当たり判定による位置の補正はMove()ではなくUpdate()によって行う
-	void Draw(Vector2D adjust,unsigned int color,int fillFlag,float lineTickness=1.0f)const;
+	void Draw(Vector2D adjust,unsigned int color,int fillFlag,float lineThickness=1.0f)const;
 	//純粋仮想関数
 	virtual std::shared_ptr<Shape> VCopy()const=0;//内容が同じでポインタの位置のみが異なるオブジェクトのポインタを返す
-	virtual void Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineTickness=1.0f)const=0;
-	virtual Vector2D CalculatePushVec(const Shape *pShape)const=0;//pShapeとthisが重なっているか判定し、押し出すベクトルを返す。重なっていない場合はVector2D(0,0)が返される。
+	virtual void Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness=1.0f)const=0;
+	//virtual Vector2D CalculatePushVec(const Shape *pShape)const=0;//pShapeとthisが重なっているか判定し、押し出すベクトルを返す。重なっていない場合はVector2D(0,0)が返される。
+	virtual bool PushParentObj(const Shape *pShape,ShapeHaving *parentObj,float pushRate)const=0;//thisとpShapeが重なっているか判定し、重なっている場合はparentObjを移動させtrueを返す。
+	virtual bool JudgeInShape(const Shape *pShape)const=0;//this内にpShapeがあるかどうかの判定
 	virtual Vector2D GetLeftTop()const=0;//左上の座標を求める
 	virtual Vector2D GetRightBottom()const=0;//右下の座標を求める
+	virtual void RecordLatticePointInShape(std::vector<int> &latticeInShape,const size_t xNum,const size_t yNum,const size_t squareWidth,const size_t squareHeight,int index)const=0;//この図形内部にある格子点の配列を全てindexにする
 	//エディタ用の純粋仮想関数
 	virtual bool VJudgePointInsideShape(Vector2D point)const=0;//図形内に点があるかどうかの判定、CalculatePushVecを用いるより高速に実装できるので関数を分ける
 	virtual Vector2D VGetNearEndpoint(Vector2D point,float capacity)const=0;//pointが端点に近い(距離がcapacity以内)場合、その端点を返す

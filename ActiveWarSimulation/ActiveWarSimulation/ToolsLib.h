@@ -121,6 +121,8 @@ int DrawStringNewLineToHandle(const int strX,const int strY,const int printableX
 
 int DrawStringNewLineToHandle(const int strX,const int strY,const int printableX,const int printableY,const int maxDX,const int maxDY,const int Color,const int Font,const int FontSize,const std::string &str);
 
+int DrawStringNewLineToHandle(const int strX,const int strY,const int maxDX,const int maxDY,const char *str,const int Color,const int Font,int spaceBetweenLines=0);//普段使いはこれでok。printableX,printableYによる切れた文字とか使わない場面も多い。
+
 //上の文字列描画の方式で、描画はせずに必要なY座標の幅のみ求める
 int GetStringHeightNewLineToHandle(const int maxDX,const int font,const char *str);
 
@@ -152,6 +154,9 @@ bool JudgeInTriangle(Vector2D point,Vector2D p1,Vector2D p2,Vector2D p3);
 
 //内部で使用している描画解像度を取得する(ウインドウの拡大縮小で左右されないサイズが手に入る)
 std::pair<int,int> GetWindowResolution();
+
+//マウスがウインドウ内に入っているかの判定
+bool JudgeMouseInWindow();
 
 //継承クラスのポインタのポインタを基底クラスのポインタのポインタにキャストする関数。継承先ポインタで作った配列を基底クラスのポインタで作った配列に変えたい時に使う
 template<typename T,typename FROM> std::enable_if_t<std::is_base_of_v<T,FROM>,T**> pointer_array_cast(FROM **arr){
@@ -454,7 +459,6 @@ public:
 	std::vector<StringBuilder> GetVector()const;
 	std::vector<std::string> GetStringVector()const;
 };
-
 
 #endif // !DEF_TOOLSLIB_H
 #pragma once

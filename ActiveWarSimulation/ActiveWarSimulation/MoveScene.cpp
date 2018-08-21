@@ -1,9 +1,11 @@
 #include"DxLib.h"
 #include"MoveScene.h"
 #include"AttackScene.h"
+#include"ResearchScene.h"
 #include"input.h"
 #include"Edge.h"
 #include<algorithm>
+#include"GraphicControl.h"
 
 //----------------------MoveScene----------------------
 const float MoveScene::routeFrequency=1.0f;
@@ -11,45 +13,17 @@ const float MoveScene::routeFrequency=1.0f;
 MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_move),m_battleSceneData(battleSceneData)
 {
+	LoadDivGraphEX("Graphic/attackedCursor.png",attackedCursorPicNum,attackedCursorPicNum,1,60,66,m_attackedCursor);
+	m_operatedCursor=LoadGraphEX("Graphic/operatedCursor.png");
 	//m_aimedUnit等の初期化
 	FinishUnitOperation();
 }
 
-MoveScene::~MoveScene(){}
-
-Vector2D MoveScene::CalculateInputVec()const{
-	Vector2D moveVec;
-	if(m_battleSceneData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
-		//プレイヤー操作時
-		moveVec=analogjoypad_get(DX_INPUT_PAD1);
-		//アナログスティックの物理的なズレ等によるmoveVecの微入力を除く
-		const float gap=50.0f;
-		if(std::abs(moveVec.x)<gap){
-			moveVec.x=0.0f;
-		}
-		if(std::abs(moveVec.y)<gap){
-			moveVec.y=0.0f;
-		}
-	} else{
-		//コンピュータ操作時、AIが方向を決める
-		//ターン開始から1秒経ったらひとまず最近傍ユニットに単純に近づく
-		if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0){
-			const Unit *nearestUnit=nullptr;
-			for(const Unit *pu:m_battleSceneData->m_unitList){
-				if(pu->GetBattleStatus().team!=m_battleSceneData->m_operateUnit->GetBattleStatus().team){
-					if(nearestUnit==nullptr){
-						nearestUnit=pu;
-					} else if((pu->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize()<(nearestUnit->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize()){
-						nearestUnit=pu;
-					}
-				}
-			}
-			if(nearestUnit!=nullptr){
-				moveVec=nearestUnit->getPos()-m_battleSceneData->m_operateUnit->getPos();
-			}
-		}
+MoveScene::~MoveScene(){
+	DeleteGraphEX(m_operatedCursor);
+	for(size_t i=0;i<attackedCursorPicNum;i++){
+		DeleteGraphEX(m_attackedCursor[i]);
 	}
-	return moveVec;
 }
 
 bool MoveScene::PositionUpdate(const Vector2D inputVec){
@@ -89,7 +63,7 @@ bool MoveScene::PositionUpdate(const Vector2D inputVec){
 
 void MoveScene::FinishUnitOperation(){
 	//バトルデータの更新
-	m_battleSceneData->FinishUnitOperation();
+	//m_battleSceneData->FinishUnitOperation();
 	//m_aimedUnitの初期化
 	SetAimedUnit(0.0f,0);
 	//m_routeの初期化
@@ -97,11 +71,25 @@ void MoveScene::FinishUnitOperation(){
 
 }
 
+bool MoveScene::JudgeBecomeAimedUnit(const Unit *punit)const{
+	return punit!=nullptr && m_battleSceneData->m_operateUnit->JudgeAttackable(punit);
+}
+
+void MoveScene::SetAimedUnit(int turntimes){
+	float angle;
+	if(m_aimedUnit!=nullptr){
+		angle=(m_aimedUnit->getPos()-m_battleSceneData->m_operateUnit->getPos()).GetRadian();
+	} else{
+		angle=0.0f;
+	}
+	SetAimedUnit(angle,turntimes);
+}
+
 void MoveScene::SetAimedUnit(float angle,int turntimes){
 	//範囲内のユニット一覧の作成
 	std::vector<Unit *> list;
 	for(Unit *pUnit:m_battleSceneData->m_unitList){
-		if(m_battleSceneData->m_operateUnit->JudgeAttackable(pUnit)){
+		if(JudgeBecomeAimedUnit(pUnit)){
 			//異なるチームかつ一定距離内にいれば追加
 			list.push_back(pUnit);
 		}
@@ -162,9 +150,11 @@ void MoveScene::SetAimedUnit(float angle,int turntimes){
 }
 
 bool MoveScene::JudgeAttackCommandUsable()const{
-	return m_aimedUnit!=nullptr && m_battleSceneData->m_operateUnit->GetBattleStatus().OP+m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack()>=0;
+	//return m_aimedUnit!=nullptr && m_battleSceneData->m_operateUnit->ConsumeOPVirtualByCost(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetCost())>=0.0f;//「攻撃するには攻撃コスト分のOPを残さないといけない」という仕様が消滅したため、コメントアウト
+	return m_aimedUnit!=nullptr;
 }
 
+/*
 int MoveScene::thisCalculate(){
 	if(m_battleSceneData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 		//味方操作時
@@ -208,6 +198,7 @@ int MoveScene::thisCalculate(){
 			} else if(keyboard_get(KEY_INPUT_V)==1){
 				//待機
 				FinishUnitOperation();
+				return 0;
 			} else if(keyboard_get(KEY_INPUT_X)==1 || keyboard_get(KEY_INPUT_X)>30){
 				//移動やり直し(m_route.back()の1つ前の場所に戻す。back()の位置は現在位置の可能性が高いため)
 				if(!m_route.empty()){
@@ -228,7 +219,6 @@ int MoveScene::thisCalculate(){
 		}
 	} else{
 		//敵操作時
-		//味方操作時
 		//m_operateUnitの位置更新
 		const Vector2D beforeVec=m_battleSceneData->m_operateUnit->getPos();
 		PositionUpdate(CalculateInputVec());
@@ -243,47 +233,73 @@ int MoveScene::thisCalculate(){
 			} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f || processedTime>10.0 || (moveSqLength<0.1f && processedTime>2.0)){
 				//移動できなくなったら、または10秒経ったら、また移動距離が少ない場合は待機
 				FinishUnitOperation();
+				return 0;
 			}
 		}
 	}
 	return SceneKind::e_move;
 }
+//*/
 
 void MoveScene::thisDraw()const{
-	//経路の描画
-	for(size_t i=0,max=m_route.size();i+1<max;i++){
-		DrawLineAA(m_route[i].pos.x,m_route[i].pos.y,m_route[i+1].pos.x,m_route[i+1].pos.y,GetColor(255,255,0),1.0f);
-	}
-
 	//フィールドの描画
 	m_battleSceneData->DrawField();
 
-	//ユニットの描画
-	m_battleSceneData->DrawUnit(true,std::set<const Unit *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
+	if(keyboard_get(KEY_INPUT_0)<=0){
+		//開発用コマンド、0を押している間はフィールド描画以外されず、60フレーム経つとスクショされる
 
-	//狙っているユニットの描画
-	if(m_aimedUnit!=nullptr){
-		m_aimedUnit->BattleObject::VDraw();
-		if(JudgeAttackCommandUsable()){
-			//攻撃可能ならマーカーを描画
-			Vector2D pos=m_aimedUnit->getPos();
-			DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
+		//経路の描画
+		for(size_t i=0,max=m_route.size();i+1<max;i++){
+			DrawLineAA(m_route[i].pos.x,m_route[i].pos.y,m_route[i+1].pos.x,m_route[i+1].pos.y,GetColor(255,255,0),1.0f);
 		}
+
+		//ユニットの描画
+		m_battleSceneData->DrawUnit(true,std::set<const Unit *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
+
+		//狙っているユニットの描画
+		if(m_aimedUnit!=nullptr){
+			m_aimedUnit->BattleObject::VDraw();
+		}
+
+		//操作中ユニットの描画
+		m_battleSceneData->m_operateUnit->BattleObject::VDraw();
+		m_battleSceneData->m_operateUnit->DrawMoveInfo();//移動情報の描画
+
+
+		//全ユニットのHPゲージの描画
+		m_battleSceneData->DrawHPGage();
+
+		//アイコン等を描く
+		Vector2D pos;
+		//狙っているユニット
+		if(m_aimedUnit!=nullptr){
+			if(JudgeAttackCommandUsable()){
+				//攻撃可能ならマーカーを描画
+				pos=m_aimedUnit->getPos();
+				//DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
+				size_t index=(m_battleSceneData->m_fpsMesuring.GetFlame()/15)%attackedCursorPicNum;
+				float dx,dy;
+				GetGraphSizeF(m_attackedCursor[index],&dx,&dy);
+				DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_attackedCursor[index],TRUE);
+			}
+		}
+		//操作ユニット
+		{
+			pos=m_battleSceneData->m_operateUnit->getPos();
+			float dx,dy;
+			GetGraphSizeF(m_operatedCursor,&dx,&dy);
+			DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_operatedCursor,TRUE);
+		}
+
+		//ユニットのオーダー順番を描画
+		m_battleSceneData->DrawOrder();
+	} else if(keyboard_get(KEY_INPUT_0)==60){
+		//int x,y;
+		//GetWindowSize(&x,&y);
+		//SaveDrawScreenToPNG(0,0,x,y,"screenshot.png");
+		const std::pair<int,int> resolution=GetWindowResolution();
+		SaveDrawScreenToPNG(0,0,resolution.first,resolution.second,"screenshot.png");
 	}
-
-	//操作中ユニットの描画
-	m_battleSceneData->m_operateUnit->BattleObject::VDraw();
-	m_battleSceneData->m_operateUnit->DrawMoveInfo();//移動情報の描画
-	Vector2D pos=m_battleSceneData->m_operateUnit->getPos();
-	DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
-
-
-	//全ユニットのHPゲージの描画
-	m_battleSceneData->DrawHPGage();
-
-	//ユニットのオーダー順番を描画
-	m_battleSceneData->DrawOrder();
-
 }
 
 int MoveScene::UpdateNextScene(int index){
@@ -291,11 +307,14 @@ int MoveScene::UpdateNextScene(int index){
 	case(SceneKind::e_attackNormal):
 		m_nextScene=std::shared_ptr<BattleSceneElement>(new AttackScene(m_battleSceneData,m_aimedUnit));
 		return index;
+	case(SceneKind::e_research):
+		m_nextScene=std::shared_ptr<BattleSceneElement>(new ResearchScene(m_battleSceneData));
+		return index;
 	default:
 		return index;
 	}
 }
 
 void MoveScene::ReturnProcess(){
-	FinishUnitOperation();//行動終了処理
+	//特に何もしない
 }

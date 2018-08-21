@@ -2,6 +2,7 @@
 #include<iostream>
 #include"DxLib.h"
 #include"input.h"
+#include"GraphicControl.h"
 
 //入力関連
 static InputControler *inputControler;
@@ -132,7 +133,8 @@ InputControler::InputControler(){
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_V,PAD_INPUT_2));
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_A,PAD_INPUT_7));
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_S,PAD_INPUT_8));
-	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_D,PAD_INPUT_6));
+	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_D,PAD_INPUT_5));
+	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_F,PAD_INPUT_6));
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_UP,PAD_INPUT_UP));
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_LEFT,PAD_INPUT_LEFT));
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_RIGHT,PAD_INPUT_RIGHT));
@@ -141,7 +143,7 @@ InputControler::InputControler(){
 	
 	//ジョイパッドのアナログスティックとキーボードの対応表
 	//(centerに誤差を与えておくことで上下キー入力がdoubleの計算誤差によって左上左下に対応して不可逆入力になるという歪な事態を避ける)
-	SetJoypadDeadZone(DX_INPUT_PAD1,0.0);
+	SetJoypadDeadZone(DX_INPUT_PAD1,0.2);
 	//m_stickmap.insert(AnalogJoypadKeyboardMap(KEY_INPUT_W,-M_PI*2/3+0.0001,M_PI/6,1000));
 	//m_stickmap.insert(AnalogJoypadKeyboardMap(KEY_INPUT_E,-M_PI/3+0.0001,M_PI/6,1000));
 	//m_stickmap.insert(AnalogJoypadKeyboardMap(KEY_INPUT_D,0.0001,M_PI/6,1000));
@@ -587,5 +589,51 @@ void InputSingleCharStringControler::Update(){
 				}
 			}
 		}
+	}
+}
+
+//マウスやタッチなどの画面上に置くボタン
+MouseButtonUI::MouseButtonUI(int x,int y,int dx,int dy,int graphic)
+	:m_x(x),m_y(y),m_dx(dx),m_dy(dy),m_graphic(graphic){}
+
+MouseButtonUI::MouseButtonUI(int x,int y,int graphic)
+	:m_x(x),m_y(y),m_graphic(graphic)
+{
+	GetGraphSize(m_graphic,&m_dx,&m_dy);
+}
+
+MouseButtonUI::~MouseButtonUI(){
+	DeleteGraphEX(m_graphic);
+}
+
+bool MouseButtonUI::JudgePressMoment()const{
+	return (mouse_get(MOUSE_INPUT_LEFT)==1 && JudgePushed());
+}
+
+bool MouseButtonUI::JudgePushed()const{
+	int mouseX,mouseY;
+	GetMousePoint(&mouseX,&mouseY);
+	const bool inButton=(mouseX>=m_x && mouseX<m_x+m_dx && mouseY>=m_y && mouseY<m_y+m_dy);
+	const bool push=(mouse_get(MOUSE_INPUT_LEFT)>0);
+	return (push && inButton);
+}
+
+void MouseButtonUI::DrawButton()const{
+	//DrawBox(m_x,m_y,m_x+m_dx,m_y+m_dy,GetColor(255,255,0),TRUE);//デバッグ用
+	DrawGraph(m_x,m_y,m_graphic,TRUE);
+}
+
+void MouseButtonUI::GetButtonInfo(int *x,int *y,int *dx,int *dy)const{
+	if(x!=nullptr){
+		*x=m_x;
+	}
+	if(y!=nullptr){
+		*y=m_y;
+	}
+	if(dx!=nullptr){
+		*dx=m_dx;
+	}
+	if(dy!=nullptr){
+		*dy=m_dy;
 	}
 }

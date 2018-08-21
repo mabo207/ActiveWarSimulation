@@ -31,7 +31,8 @@ AttackScene::~AttackScene(){
 
 void AttackScene::ProcessAttack(){
 	//コストの消費
-	m_battleSceneData->m_operateUnit->AddOP(m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack());
+	//m_battleSceneData->m_operateUnit->AddOP(m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack());
+	m_battleSceneData->m_operateUnit->ConsumeOPByCost(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetCost());
 	//操作ユニット→対象ユニットへの攻撃情報の計算
 	Weapon::AttackInfo attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,m_aimedUnit);
 	//操作ユニット→対象ユニットへの攻撃処理
@@ -66,8 +67,8 @@ int AttackScene::thisCalculate(){
 	}
 	//終了判定
 	if(m_attackMotion.GetEndFlag() && m_damageMotion.GetEndFlag()){
-		//ひとまず直前場面へ
-		return 0;
+		//ユニット切り替え場面へ
+		return SceneKind::e_switch;
 	}
 
 	return SceneKind::e_attackNormal;
@@ -90,9 +91,6 @@ void AttackScene::thisDraw()const{
 	
 	//全ユニットのHPゲージの描画
 	m_battleSceneData->DrawHPGage();
-
-	//ユニットのオーダー順番を描画
-	m_battleSceneData->DrawOrder();
 
 	//ダメージの描画
 	if(m_attackMotion.GetFlame()>damageBeginFlame){

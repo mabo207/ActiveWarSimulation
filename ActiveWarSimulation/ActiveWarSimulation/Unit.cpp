@@ -6,7 +6,7 @@
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
-	std::pair<std::string,Unit::Profession::Kind>("槍術士",Unit::Profession::e_lancer)
+	std::pair<std::string,Unit::Profession::Kind>("兵士",Unit::Profession::e_lancer)
 	,std::pair<std::string,Unit::Profession::Kind>("射手",Unit::Profession::e_archer)
 	,std::pair<std::string,Unit::Profession::Kind>("重装兵",Unit::Profession::e_armer)
 	,std::pair<std::string,Unit::Profession::Kind>("魔道士",Unit::Profession::e_mage)
@@ -57,6 +57,18 @@ unsigned int Unit::Team::GetColor(Kind kind){
 	return DxLib::GetColor(128,128,128);
 }
 
+bool Unit::Team::JudgeFriend(Kind team1,Kind team2){
+	if(team1==team2){
+		//チーム名が同じなら味方
+		return true;
+	}
+	//その他味方である組み合わせを列挙
+
+
+	//いずれでもないなら敵
+	return false;
+}
+
 //------------Unit::BattleStatus---------------
 const float Unit::BattleStatus::maxOP=100.0f+Unit::reduceStartActionCost+0.0001f;//キリの良い整数より少しだけ大きくする事でOPをmaxOPまで増やす時にOPが計算誤差で半端な整数にならないようにする。
 
@@ -69,17 +81,6 @@ const float Unit::attackCost=50.0f;
 
 const int Unit::hpFontSize=20;
 
-Unit::Unit(Vector2D position,int gHandle,Team::Kind team)
-	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
-	,m_baseStatus(2,20,5,3,2,3,5,4)
-	,m_battleStatus(20,0,team,Weapon::GetWeapon("鉄の槍"))
-	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
-	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,1,DX_FONTTYPE_EDGE))
-{
-	//テスト用のコンストラクタ
-	m_battleStatus.HP=m_baseStatus.maxHP;
-}
-
 Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
 	,m_baseStatus(baseStatus),m_battleStatus(100,Unit::BattleStatus::maxOP,team,weapon)
@@ -89,6 +90,13 @@ Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D positio
 	//テスト用のコンストラクタ
 	m_battleStatus.HP=m_baseStatus.maxHP;
 }
+
+Unit::Unit(const Unit &u)
+	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(u.m_hitJudgeShape->GetPosition(),unitCircleSize,Shape::Fix::e_static)),CopyGraph(u.m_gHandle))
+	,m_baseStatus(u.m_baseStatus),m_battleStatus(u.m_battleStatus)
+	,m_rivalInpenetratableCircle(u.m_rivalInpenetratableCircle->VCopy())
+	,m_hpFont(CopyFontToHandle(u.m_hpFont))
+{}
 
 Unit::~Unit(){
 	//フォントの解放
@@ -100,8 +108,12 @@ void Unit::WriteOutObjectPeculiarInfo(std::ofstream &ofs)const{
 	ofs<<"("<<Type::GetStr(m_type)<<")";
 }
 
+float Unit::CalculateConsumeOP(float cost)const{
+	return cost;
+}
+
 bool Unit::SetPenetratable(Team::Kind nowPhase){
-	return (m_penetratable=(m_battleStatus.team==nowPhase));
+	return (m_penetratable=Team::JudgeFriend(m_battleStatus.team,nowPhase));
 }
 
 bool Unit::JudgeAttackable(const Unit *pUnit)const{
@@ -111,7 +123,7 @@ bool Unit::JudgeAttackable(const Unit *pUnit)const{
 	}
 	//攻撃の射程と位置関係による条件
 	std::shared_ptr<Shape> pWeapon(new Circle(getPos(),m_battleStatus.weapon->GetLength(),Shape::Fix::e_dynamic));
-	if(pWeapon->CalculatePushVec(pUnit->GetUnitCircleShape())==Vector2D()){
+	if(!pWeapon->JudgeInShape(pUnit->GetUnitCircleShape())){
 		//攻撃範囲に敵ユニット本体がいなければ
 		return false;
 	}
@@ -133,13 +145,23 @@ int Unit::AddHP(int pal){
 	return m_battleStatus.HP;
 }
 
+/*
 void Unit::AddOP(float cost){
 	m_battleStatus.OP+=cost;
 }
+//*/
 
-float Unit::CalculateAddOPNormalAttack()const{
-	//武器によって決まるが、ひとまず決め打ちの値を返す
-	return -attackCost;
+float Unit::ConsumeOPByCost(float cost){
+	//ひとまずこれで。costに倍率をかけたりする。
+	return (m_battleStatus.OP=ConsumeOPVirtualByCost(cost));
+}
+
+float Unit::ConsumeOPVirtualByCost(float cost)const{
+	return m_battleStatus.OP-CalculateConsumeOP(cost);
+}
+
+float Unit::SetOP(float op){
+	return m_battleStatus.OP=op;
 }
 
 void Unit::DrawMoveInfo(Vector2D adjust)const{
@@ -147,14 +169,28 @@ void Unit::DrawMoveInfo(Vector2D adjust)const{
 }
 
 void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
-	Vector2D pos=point-adjust;
-	//ユニットの移動限界距離を緑を描画
-	DrawCircleAA(pos.x,pos.y,m_battleStatus.OP*m_baseStatus.move,100,DxLib::GetColor(0,255,0),FALSE);//枠
-	//ユニットの攻撃可能な移動限界距離を水色で描画(攻撃可能な場合のみ)
-	if(m_battleStatus.OP>Unit::attackCost){
-		DrawCircleAA(pos.x,pos.y,(m_battleStatus.OP-Unit::attackCost)*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//枠
-	}
+	DrawMoveInfo(GetMoveDistance(),point,adjust);
+}
 
+void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust)const{
+	Vector2D pos=point-adjust;
+	//ユニットの移動限界距離を水色に描画
+	DrawCircleAA(pos.x,pos.y,distance,100,DxLib::GetColor(64,192,192),FALSE,3.0f);//枠
+	DrawCircleAA(pos.x,pos.y,distance,100,DxLib::GetColor(0,255,255),FALSE,1.0f);//枠
+	/*(仕様消滅のためコメントアウト)
+	//ユニットの攻撃可能な移動限界距離を水色で描画(攻撃可能な場合のみ)
+	if((ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))>=0.0f){
+	DrawCircleAA(pos.x,pos.y,(ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//枠
+	}
+	//*/
+}
+
+void Unit::DrawMaxMoveInfo(Vector2D adjust)const{
+	DrawMaxMoveInfo(getPos(),adjust);
+}
+
+void Unit::DrawMaxMoveInfo(Vector2D point,Vector2D adjust)const{
+	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost)),point,adjust);
 }
 
 void Unit::DrawHPGage(Vector2D adjust)const{
@@ -189,9 +225,14 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 void Unit::DrawFacePic(Vector2D point)const{
 	//円の描画
 	const int x=(int)point.x,y=(int)point.y,r=(int)unitCircleSize;
+	DrawCircle(x,y,r,GetColor(255,255,255),TRUE);//背景の円の描画
+	int mode,pal;
+	GetDrawBlendMode(&mode,&pal);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
 	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team),TRUE);//背景の円の描画
+	SetDrawBlendMode(mode,pal);
 	DrawRotaGraph(x,y,1.0,0.0,m_gHandle,TRUE);//グラフィックの描画、暫定でマップ上のユニット絵を使用
-	DrawCircle(x,y,r,GetColor(255,255,255),FALSE,3);//背景の枠の描画
+	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team),FALSE,3);//背景の枠の描画
 }
 
 void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
@@ -225,6 +266,17 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
 	SetDrawBlendMode(mode,pal);
 }
 
+float Unit::GetMoveDistance()const{
+	//残りOPで移動可能な直線距離を求める。
+	//return m_battleStatus.OP/CalculateConsumeOP(1.0f)*m_baseStatus.move;
+	return GetMoveDistance(m_battleStatus.OP);
+}
+
+float Unit::GetMoveDistance(float vOP)const{
+	//残りOPで移動可能な直線距離を求める。
+	return vOP/CalculateConsumeOP(1.0f)*m_baseStatus.move;
+}
+
 const Shape *Unit::GetHitJudgeShape()const{
 	if(m_penetratable){
 		//味方の行動フェイズならば、ユニット自身の当たり判定図形を返す
@@ -255,36 +307,36 @@ void Unit::VHitProcess(const BattleObject *potherobj){
 }
 
 std::shared_ptr<BattleObject> Unit::VCopy()const{
-	return std::shared_ptr<BattleObject>(new Unit(m_hitJudgeShape->GetPosition(),m_gHandle,m_battleStatus.team));
+	return std::shared_ptr<BattleObject>(new Unit(*this));
 }
 
-Unit *Unit::CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,Team::Kind team){
+Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team){
 	BaseStatus baseStatus;
 	std::shared_ptr<Weapon> weapon;
 	int gHandle=-1;
 	switch(profession){
 	case(Profession::e_lancer):
-		baseStatus=BaseStatus(lv,20+(int)(lv*0.8),5+(int)(lv*0.5),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),5+(int)(lv*0.5),6);
+		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),5+(int)(lv*0.5),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),5+(int)(lv*0.5),6);
 		weapon=Weapon::GetWeapon("鉄の槍");
 		gHandle=LoadGraphEX("Graphic/soldier.png");
 		break;
 	case(Profession::e_archer):
-		baseStatus=BaseStatus(lv,18+(int)(lv*0.75),4+(int)(lv*0.45),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),3+(int)(lv*0.3),6);
+		baseStatus=BaseStatus(name,profession,lv,18+(int)(lv*0.75),4+(int)(lv*0.45),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),3+(int)(lv*0.3),6);
 		weapon=Weapon::GetWeapon("鉄の弓");
 		gHandle=LoadGraphEX("Graphic/archer.png");
 		break;
 	case(Profession::e_armer):
-		baseStatus=BaseStatus(lv,25+(int)(lv*0.9),6+(int)(lv*0.6),6+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
+		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),6+(int)(lv*0.6),6+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
 		weapon=Weapon::GetWeapon("鉄の槍");
 		gHandle=LoadGraphEX("Graphic/armerknight.png");
 		break;
 	case(Profession::e_mage):
-		baseStatus=BaseStatus(lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
+		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
 		weapon=Weapon::GetWeapon("ファイアーの書");
 		gHandle=LoadGraphEX("Graphic/mage.png");
 		break;
 	case(Profession::e_healer):
-		baseStatus=BaseStatus(lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),5+(int)(lv*0.55),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
+		baseStatus=BaseStatus(name,profession,lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),5+(int)(lv*0.55),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
 		weapon=Weapon::GetWeapon("ヒールの杖");
 		gHandle=LoadGraphEX("Graphic/healer.png");
 		break;

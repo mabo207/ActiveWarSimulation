@@ -1,6 +1,8 @@
 #include"DxLib.h"
 #include"EditAction.h"
 #include"input.h"
+#include"EditActionSettings.h"
+#include"BattleObject.h"
 
 //-----------------EditAction::EditActionButton-----------------
 EditAction::EditActionButton::EditActionButton(Vector2D point,Vector2D vec,const std::string &str)
@@ -29,4 +31,14 @@ bool EditAction::EditActionButton::JudgeButtonPushed()const{
 //-----------------EditAction-----------------
 void EditAction::DrawPushedButton()const{
 	DrawBox(m_buttonX,m_buttonY,m_buttonX+m_buttonDX,m_buttonY+m_buttonDY,m_pushedColor,TRUE);
+}
+
+void EditAction::ActionDraw(const Vector2D adjust,const EditActionSettings &settings)const{
+	if(settings.GetMPOriginObject()!=nullptr){
+		int mode,pal;
+		GetDrawBlendMode(&mode,&pal);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
+		settings.GetMPOriginObject()->VDraw(adjust);
+		SetDrawBlendMode(mode,pal);
+	}
 }

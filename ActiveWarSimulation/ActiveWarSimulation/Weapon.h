@@ -31,10 +31,11 @@ protected:
 	float m_length;//射程
 	float m_cost;//消費OP
 	std::shared_ptr<DamageCalculator> m_calculator;//ダメージ計算式
+	std::string m_explain;//説明文
 
 	//関数
 protected:
-	Weapon(const std::string &name,int power,float length,float cost,std::shared_ptr<DamageCalculator> calculator):m_name(name),m_power(power),m_length(length),m_cost(cost),m_calculator(calculator){}
+	Weapon(const std::string &name,int power,float length,float cost,std::shared_ptr<DamageCalculator> calculator,const std::string explain):m_name(name),m_power(power),m_length(length),m_cost(cost),m_calculator(calculator),m_explain(explain){}
 public:
 	~Weapon(){}
 
@@ -50,9 +51,13 @@ public:
 	float GetCost()const{
 		return m_cost;
 	}
+	std::string GetExplain()const{
+		return m_explain;
+	}
 
 	AttackInfo GetAttackInfo(const Unit *attacker,const Unit *defender)const;
 	bool JudgeWeild(const Unit *attacker,const Unit *defender)const;//attacker→defenderへの通常攻撃を実行可能であるか
+	std::string GetEffectivenessString(const Unit *attacker)const;//attackerがこの武器を使うとどんな効果を得られるか
 
 	//静的変数
 private:

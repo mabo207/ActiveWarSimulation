@@ -96,6 +96,7 @@ void ShapeHaving::UpdatePosition(ShapeHaving * const * const pShapeHavingVec,con
 			//当たり判定に影響を与える図形以外に対して押し出し処理を行う
 			if(pShapeHavingVec[i]->GetFix()!=Shape::Fix::e_ignore){
 				//図形をぴったり収める長方形を利用して簡易的な当たり判定を行う
+				const ShapeHaving *p=pShapeHavingVec[i];
 				if(JudgeInShapeRect(pShapeHavingVec[i])){
 					//押し出しする図形に追加
 					inShapeList.push_back(pShapeHavingVec[i]);
@@ -105,10 +106,14 @@ void ShapeHaving::UpdatePosition(ShapeHaving * const * const pShapeHavingVec,con
 		//簡易的当たり判定によって判定できる、重なっている図形の外に出るように押し出し処理をする
 		for(size_t i=0;i<updateTimes;i++){
 			for(const ShapeHaving *pShapeHaving:inShapeList){
+				/*
 				//各図形に対して完全に押し出せる距離を求める
 				Vector2D pushVec=GetHitJudgeShape()->CalculatePushVec(pShapeHaving->GetHitJudgeShape());
 				//押し出し距離の一定の割合のベクトルだけ押し出す
 				this->Move(pushVec*ShapeHaving::pushRate);
+				//*/
+				//押し出し処理を行う
+				GetHitJudgeShape()->PushParentObj(pShapeHaving->GetHitJudgeShape(),this,ShapeHaving::pushRate);
 			}
 		}
 	}
@@ -120,5 +125,6 @@ bool ShapeHaving::JudgeInShapeRect(const ShapeHaving *pShapeHaving)const{
 
 bool ShapeHaving::JudgeInShape(const ShapeHaving *pShapeHaving)const{
 	const Vector2D v=Vector2D();
-	return JudgeInShapeRect(pShapeHaving) && (GetHitJudgeShape()->CalculatePushVec(pShapeHaving->GetHitJudgeShape())!=v);//計算高速化のために長方形判定を加える
+	//return JudgeInShapeRect(pShapeHaving) && (GetHitJudgeShape()->CalculatePushVec(pShapeHaving->GetHitJudgeShape())!=v);//計算高速化のために長方形判定を加える
+	return JudgeInShapeRect(pShapeHaving) && GetHitJudgeShape()->JudgeInShape(pShapeHaving->GetHitJudgeShape());//計算高速化のために長方形判定を加える
 }

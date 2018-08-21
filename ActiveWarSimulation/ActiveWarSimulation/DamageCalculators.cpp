@@ -20,13 +20,14 @@ int PhysicalCalculator::VCalculateDamage(const Unit *attacker,const Unit *defend
 }
 
 bool PhysicalCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)const{
-	switch(attacker->GetBattleStatus().team){
-	case(Unit::Team::e_player):
-		return defender->GetBattleStatus().team==Unit::Team::e_enemy;
-	case(Unit::Team::e_enemy):
-		return defender->GetBattleStatus().team==Unit::Team::e_player;
-	}
-	return false;
+	//敵対関係かつ同一ユニットでなければ攻撃できる
+	return (!Unit::Team::JudgeFriend(attacker->GetBattleStatus().team,defender->GetBattleStatus().team)) && (attacker!=defender);
+}
+
+std::string PhysicalCalculator::VGetPowerString(const Unit *attacker)const{
+	const int weaponPower=(int)(attacker->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	const int totalPower=(int)(attacker->GetBaseStatus().power*m_powerRate)+(int)(attacker->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	return "武器威力："+std::to_string(weaponPower)+"　合計威力："+std::to_string(totalPower);
 }
 
 //---------------MagicCalculator-----------------
@@ -46,13 +47,14 @@ int MagicCalculator::VCalculateDamage(const Unit *attacker,const Unit *defender)
 }
 
 bool MagicCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)const{
-	switch(attacker->GetBattleStatus().team){
-	case(Unit::Team::e_player):
-		return defender->GetBattleStatus().team==Unit::Team::e_enemy;
-	case(Unit::Team::e_enemy):
-		return defender->GetBattleStatus().team==Unit::Team::e_player;
-	}
-	return false;
+	//敵対関係かつ同一ユニットでなければ攻撃できる
+	return (!Unit::Team::JudgeFriend(attacker->GetBattleStatus().team,defender->GetBattleStatus().team)) && (attacker!=defender);
+}
+
+std::string MagicCalculator::VGetPowerString(const Unit *attacker)const{
+	const int weaponPower=(int)(attacker->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	const int totalPower=(int)(attacker->GetBaseStatus().mpower*m_powerRate)+(int)(attacker->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	return "武器威力："+std::to_string(weaponPower)+"　合計威力："+std::to_string(totalPower);
 }
 
 //---------------RecoverCalculator-----------------
@@ -69,14 +71,15 @@ int RecoverCalculator::VCalculateDamage(const Unit *healer,const Unit *receiver)
 	return pal;
 }
 
-bool RecoverCalculator::VJudgeWeild(const Unit *attacker,const Unit *defender)const{
-	switch(attacker->GetBattleStatus().team){
-	case(Unit::Team::e_player):
-		return defender->GetBattleStatus().team==Unit::Team::e_player;
-	case(Unit::Team::e_enemy):
-		return defender->GetBattleStatus().team==Unit::Team::e_enemy;
-	}
-	return false;
+bool RecoverCalculator::VJudgeWeild(const Unit *healer,const Unit *defender)const{
+	//味方関係かつ同一ユニットでなければ回復できる
+	return Unit::Team::JudgeFriend(healer->GetBattleStatus().team,defender->GetBattleStatus().team) && (healer!=defender);
+}
+
+std::string RecoverCalculator::VGetPowerString(const Unit *healer)const{
+	const int weaponPower=(int)(healer->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	const int totalPower=(int)(healer->GetBaseStatus().mpower*m_powerRate)+(int)(healer->GetBattleStatus().weapon->GetPower()*m_weaponRate);
+	return "武器回復量："+std::to_string(weaponPower)+"　合計回復量："+std::to_string(totalPower);
 }
 
 

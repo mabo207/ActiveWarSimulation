@@ -61,6 +61,12 @@
     <Filter Include="ソース ファイル\UnitHaving\Explain">
       <UniqueIdentifier>{c670ccf6-03d9-48a3-8a50-301296b2cda2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameScene\TitleScene">
+      <UniqueIdentifier>{a888750d-c294-4255-b433-abbd5bd32961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\TitleScene">
+      <UniqueIdentifier>{d2ff5b42-d516-4b79-99b3-9b3b79e0507c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -123,6 +129,33 @@
     <ClCompile Include="BattleSceneElement.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerMoveScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="SwitchUnitScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputerMoveScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="MyPolygon.cpp">
+      <Filter>ソース ファイル\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="ResearchScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="FileRead.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>ソース ファイル\GameScene\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="StageSelectScene.cpp">
+      <Filter>ソース ファイル\GameScene\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="StageClearScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -180,6 +213,33 @@
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
     <ClInclude Include="BattleSceneElement.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerMoveScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputerMoveScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="SwitchUnitScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="MyPolygon.h">
+      <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="ResearchScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="FileRead.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>ヘッダー ファイル\GameScene\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="StageSelectScene.h">
+      <Filter>ヘッダー ファイル\GameScene\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="StageClearSceme.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>

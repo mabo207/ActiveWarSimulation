@@ -18,6 +18,7 @@
 
 #include"CircleFactory.h"
 #include"EdgeFactory.h"
+#include"PolygonFactory.h"
 
 #include"ConstPosSet.h"
 
@@ -31,8 +32,8 @@ const int StageEditor::leftUpPosY = 25;
 const int StageEditor::buttonWidth = 400;
 const int StageEditor::buttonHeight=(leftUpPosY*2+mapSizeY)/4;
 const int StageEditor::shapeButtonHeightNum=1;
-const int StageEditor::shapeButtonWidthNum=2;
-const int StageEditor::shapeButtonHeight=StageEditor::buttonHeight/2;
+const int StageEditor::shapeButtonWidthNum=3;
+const int StageEditor::shapeButtonHeight=StageEditor::buttonHeight/3;
 const int StageEditor::shapeButtonWidth=StageEditor::buttonWidth;
 const int StageEditor::posButtonWidth=StageEditor::buttonWidth;
 const int StageEditor::posButtonHeight=StageEditor::buttonHeight/2;
@@ -129,6 +130,15 @@ StageEditor::StageEditor()
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 	)));
 	
+	//PolygonFactoryボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new PolygonFactory::PolygonFactoryButton(
+		Vector2D(
+		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*2)
+			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*0)
+		)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+	)));
+
 	//1px位置調整ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new ConstPosSet::ConstPosSetButton(
 		Vector2D(
@@ -159,6 +169,9 @@ StageEditor::StageEditor()
 	//フォント
 	m_font=CreateFontToHandle("メイリオ",16,1);
 
+	//背景グラフィック
+	m_mapPic=LoadGraph("Savedata/stage.png");
+
 	//図形の読み込み
 	m_actionSettings.ReadStage("Savedata/stage.txt");
 }
@@ -166,6 +179,8 @@ StageEditor::StageEditor()
 StageEditor::~StageEditor() {
 	//フォント
 	DeleteFontToHandle(m_font);
+	//画像
+	DeleteGraph(m_mapPic);
 }
 
 //マウスを左クリックした時の動作群
@@ -210,6 +225,9 @@ int StageEditor::Calculate() {
 		}
 	}
 
+	//右クリックされたら
+	m_actionSettings.UpdateMouseObjectDepth(mouse_get(MOUSE_INPUT_RIGHT));//押してない時でも更新することがあるので、押しているフレーム数を渡す。
+
 	//キーボード入力受付
 	if(keyboard_get(KEY_INPUT_S)==10){
 		//Sキー長押しで保存
@@ -228,13 +246,13 @@ void StageEditor::Draw() {
 	//デバッグ描画
 	clsDx();
 	Vector2D v=GetMousePointVector2D();
-	printfDx("(%f,%f)\n",v.x,v.y);//素の座標
+	//printfDx("(%f,%f)\n",v.x,v.y);//素の座標
 	v=m_actionSettings.m_pPosSetting->CalculatePos(v,m_actionSettings);
-	printfDx("(%f,%f)\n",v.x,v.y);//位置調整後の座標
+	//printfDx("(%f,%f)\n",v.x,v.y);//位置調整後の座標
 	for(auto o:*m_actionSettings.GetPMObject()){
-		printfDx("%d\n",o.get());
+	//	printfDx("%d\n",o.get());
 	}
-	printfDx("m_pBattleObject:%d\n",m_actionSettings.m_pBattleObject.get());
+	//printfDx("m_pBattleObject:%d\n",m_actionSettings.m_pBattleObject.get());
 
 	//マップの描画
 	//マップ描画出来る範囲を制限
@@ -243,6 +261,7 @@ void StageEditor::Draw() {
 	bool firstflag=true;
 	Vector2D mouse=GetMousePointVector2D()-Vector2D((float)leftUpPosX,(float)leftUpPosY)+m_actionSettings.GetMAdjust();//マウスの位置(補正値を考慮しマップ上の座標で表す)
 	Vector2D adjust=Vector2D((float)leftUpPosX,(float)leftUpPosY)-m_actionSettings.GetMAdjust();//描画の全体調整位置
+	DrawGraph((int)adjust.x,(int)adjust.y,m_mapPic,TRUE);
 	//現在の編集対象図形を描画
 	if(m_actionSettings.m_pBattleObject.get()!=nullptr){
 		int mode,pal;
@@ -252,10 +271,11 @@ void StageEditor::Draw() {
 		SetDrawBlendMode(mode,pal);
 	}
 	//マップに存在しているものを全て描画
+	const BattleObject *mouseObj=m_actionSettings.GetMousePointedObjectPointer(mouse);
 	for (const std::shared_ptr<BattleObject> &obj : *m_actionSettings.GetPMObject()) {
 		obj.get()->VDraw(adjust);
 		//マウスが被っている図形には黄色い枠を描画しフォーカスを表現
-		if(firstflag && obj.get()->JudgePointInsideShape(mouse)){
+		if(firstflag && obj.get()==mouseObj){
 			obj.get()->ShapeDraw(GetColor(255,255,0),FALSE,1.0f,adjust);
 			obj.get()->PosDraw(GetColor(255,255,0),TRUE,2.0f,adjust);
 			firstflag=false;
@@ -267,6 +287,9 @@ void StageEditor::Draw() {
 		}
 	}
 	
+	//編集のためのデータを描画。図形描画が主
+	m_actionSettings.m_pEditAction->ActionDraw(adjust,m_actionSettings);
+/*	
 	//編集前のBattleObjectをマップに仮想的に描画
 	if(m_actionSettings.GetMPOriginObject()!=nullptr){
 		int mode,pal;
@@ -275,6 +298,8 @@ void StageEditor::Draw() {
 		m_actionSettings.GetMPOriginObject()->VDraw(adjust);
 		SetDrawBlendMode(mode,pal);
 	}
+//*/
+
 	SetDrawAreaFull();
 
 	//位置設定ガイドの描画

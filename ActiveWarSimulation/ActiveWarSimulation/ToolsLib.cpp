@@ -159,6 +159,13 @@ int DrawStringNewLineToHandle(const int X,const int Y,const int printableX,const
 	return returnnum;
 }
 
+int DrawStringNewLineToHandle(const int strX,const int strY,const int maxDX,const int maxDY,const char *str,const int Color,const int Font,int spaceBetweenLines){
+	//フォントの大きさを計算
+	const int fontsize=GetFontSizeToHandle(Font);
+	//描画
+	return DrawStringNewLineToHandle(strX,strY,strX,strY,maxDX,maxDY,Color,Font,fontsize+spaceBetweenLines,str);
+}
+
 //上の文字列描画の方式で、描画はせずに必要なY座標の幅のみ求める
 int GetStringHeightNewLineToHandle(const int maxDX,const int font,const char *str){
 	//変数初期化
@@ -307,6 +314,15 @@ std::pair<int,int> GetWindowResolution(){
 	} else{
 		return std::pair<int,int>((int)(std::ceil(dx/rateX)),(int)(std::ceil(dy/rateY)));
 	}
+}
+
+//マウスがウインドウ内に入っているかの判定
+bool JudgeMouseInWindow(){
+	std::pair<int,int> resolution=GetWindowResolution();
+	int x,y;
+	GetMousePoint(&x,&y);
+	//ウインドウの大きさが分かれば、長方形と点の内部判定
+	return (x>=0 && x<resolution.first && y>=0 && y<resolution.second);
 }
 
 //数値変化を様々な式で管理するクラス

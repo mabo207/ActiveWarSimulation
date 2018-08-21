@@ -44,6 +44,7 @@ public:
 	virtual void VProcessAction(Vector2D point,EditActionSettings &settings)=0;//マップ上の点の座標を取得しsettingsに対し編集行為を実行する
 	void DrawPushedButton()const;//該当するボタンが押されているように表示する関数
 	virtual PosSetKind VGetPosSetKind(const EditActionSettings &settings)const=0;//編集状況に依って返す値が異なるため
+	virtual void ActionDraw(const Vector2D adjust,const EditActionSettings &settings)const;//編集がやりやすくなるように図形描画をする。多くは編集前のBattleObjectをマップに仮想的に描画する
 };
 
 

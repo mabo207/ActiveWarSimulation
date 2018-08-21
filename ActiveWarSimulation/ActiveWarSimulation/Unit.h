@@ -32,8 +32,11 @@ public:
 		};
 		static Kind link(int num);
 		static unsigned int GetColor(Kind kind);
+		static bool JudgeFriend(Kind team1,Kind team2);//2つのチームが味方関係かどうかを判定する
 	};
 	struct BaseStatus{
+		std::string name;
+		Profession::Kind profession;
 		int lv;
 		int maxHP;
 		int power;
@@ -43,8 +46,8 @@ public:
 		int speed;
 		int move;
 		BaseStatus(){}
-		BaseStatus(int i_lv,int i_maxHP,int i_power,int i_def,int i_mpower,int i_mdef,int i_speed,int i_move)
-			:lv(i_lv),maxHP(i_maxHP),power(i_power),def(i_def),mpower(i_mpower),mdef(i_mdef),speed(i_speed),move(i_move){}
+		BaseStatus(std::string i_name,Profession::Kind i_profession,int i_lv,int i_maxHP,int i_power,int i_def,int i_mpower,int i_mdef,int i_speed,int i_move)
+			:name(i_name),profession(i_profession),lv(i_lv),maxHP(i_maxHP),power(i_power),def(i_def),mpower(i_mpower),mdef(i_mdef),speed(i_speed),move(i_move){}
 	};
 	struct BattleStatus{
 		//定数
@@ -90,11 +93,15 @@ public:
 	//関数
 protected:
 	void WriteOutObjectPeculiarInfo(std::ofstream &ofs)const;//オブジェクト特有の情報を返す
+	float CalculateConsumeOP(float cost)const;//costに対して消費するOPを計算する
+	float GetMoveDistance(float vOP)const;//もしvOPだけOPがあったら移動可能な直線距離を返す。定式化しておくとラクになるため
+	void DrawMoveInfo(float distance,Vector2D point,Vector2D adjust)const;//移動可能距離がdistanceである時の移動範囲関連の情報を描画する関数
 
 public:
 	//コンストラクタ系
-	Unit(Vector2D position,int gHandle,Team::Kind team);
+	//Unit(Vector2D position,int gHandle,Team::Kind team);
 	Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team);
+	Unit(const Unit &u);
 	~Unit();
 	//演算子オーバーロード
 
@@ -110,15 +117,20 @@ public:
 	bool JudgeAttackable(const Unit *pUnit)const;//pUnitに攻撃可能か
 	const Shape *GetUnitCircleShape()const;//ユニット自身を示す円を取得
 	int AddHP(int pal);//HPを増減させる関数、増減後のHPを返す
-	void AddOP(float cost);//OPを増減させる関数
-	float CalculateAddOPNormalAttack()const;//通常攻撃によって増加するOPを計算する。負値が返る。
+	//void AddOP(float cost);//OPを増減させる関数(意味合いが2つあるので分割)
+	float ConsumeOPByCost(float cost);//costを指定してOPを消費する関数。消費OP増加などの実装があったらここを弄れば良い。基本的にこの関数を用いてOP操作をする。
+	float ConsumeOPVirtualByCost(float cost)const;//もしConsumeOPByCost()をしたらOPはどんな値になるかを返す
+	float SetOP(float op);//Unit::OPをopの値にする。移動巻き戻しや行動順制御など、ConsumeOPByCost()を用いることができない時に用いる。
 	void DrawMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)
 	void DrawMoveInfo(Vector2D point,Vector2D adjust)const;//移動範囲関連の情報を描画する関数
+	void DrawMaxMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲最大の移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)
+	void DrawMaxMoveInfo(Vector2D point,Vector2D adjust)const;//移動範囲最大の移動範囲関連の情報を描画する関数
 	void DrawHPGage(Vector2D adjust=Vector2D())const;//HPゲージの描画
 	void DrawHPGage(Vector2D point,Vector2D adjust)const;//HPゲージの描画
 	void DrawFacePic(Vector2D point)const;//ユニットの顔グラフィックを用いたアイコンの描画を行う
 	void DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const;//マップ上のユニットを描画
-
+	float GetMoveDistance()const;//移動可能な直線距離を返す。定式化しておくとラクになるため
+	
 	//仮想関数・純粋仮想関数のオーバーライド
 	const Shape *GetHitJudgeShape()const;//当たり判定図形を取得。
 	void Move(Vector2D v);//当たり判定図形の移動。２種類の当たり判定図形を共に移動させる。
@@ -129,7 +141,7 @@ public:
 
 	//静的関数
 public:
-	static Unit *CreateMobUnit(Profession::Kind profession,int lv,Vector2D position,Team::Kind team);//モブユニットを動的生成する。
+	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team);//モブユニットを動的生成する。
 
 };
 

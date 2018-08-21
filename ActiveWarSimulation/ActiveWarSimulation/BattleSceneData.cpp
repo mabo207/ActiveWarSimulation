@@ -3,15 +3,23 @@
 #include"input.h"
 #include"Edge.h"
 #include<algorithm>
+#include"GraphicControl.h"
+#include"ToolsLib.h"
+#include"FileRead.h"
 
 //----------------------BattleSceneData----------------------
 BattleSceneData::BattleSceneData(const char *stagename)
-	:m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1960.0f,1080.0f),Shape::Fix::e_ignore)),-1,0,true))
-	,m_fpsMesuring(),m_operateUnit(nullptr)
+	:m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1920.0f,1080.0f),Shape::Fix::e_ignore)),-1,0,true))
+	,m_fpsMesuring(),m_operateUnit(nullptr),m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
+	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 {
+	//グラフィックデータの読み込み
+	LoadDivGraphEX("Graphic/drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
+
 	//ファイルからステージを読み込み
+	const std::string stagedir("Stage/"+std::string(stagename)+"/");
 	//ファイルを開きすべての文字列を書き出す
-	std::ifstream ifs("SaveData/stage.txt");
+	std::ifstream ifs((stagedir+"stage.txt").c_str());
 	if(!ifs){
 
 	} else{
@@ -34,17 +42,67 @@ BattleSceneData::BattleSceneData(const char *stagename)
 			}
 		}
 	}
+	//ファイルからステージのグラフィックデータの読み込み
+	m_stageSize=Vector2D(1920.0f,1080.0f);//本来はステージの大きさはグラフィックデータの縦横の大きさで決める
+
 	//ファイルからユニットを読み込み
-	//読み込み方法が確立していないので暫定
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,3,Vector2D(524.0f,324.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_archer,3,Vector2D(354.0f,294.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_mage,3,Vector2D(225.0f,519.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,3,Vector2D(306.0f,441.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_healer,3,Vector2D(106.0f,241.0f),Unit::Team::e_player));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(786.0f,510.0f),Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1596.0f,165.0f),Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_lancer,1,Vector2D(1740.0f,660.0f),Unit::Team::e_enemy));
-	m_field.push_back(Unit::CreateMobUnit(Unit::Profession::e_armer,1,Vector2D(1536.0f,810.0f),Unit::Team::e_enemy));
+	StringBuilder unitlist(FileStrRead((stagedir+"unitlist.txt").c_str()),'\n','{','}',false,true);
+	for(const StringBuilder &unitdata:unitlist.m_vec){
+		const StringBuilder sb(unitdata.GetString(),',','(',')',true,true);
+		//まずモブ用の設定をするか固定ユニット用の設定をするかを判定する
+		bool uniqueFlag=false;
+		for(const StringBuilder &ssb:sb.m_vec){
+			if(ssb.m_vec.size()>=2 && ssb.m_vec[0].GetString()=="definition"){
+				//設定方法はdefinitionに記載されている
+				uniqueFlag=(ssb.m_vec[1].GetString()=="unique");
+				break;
+			}
+		}
+		//モブか固定かで分岐
+		if(uniqueFlag){
+			//固定ユニット(未実装)
+
+		} else{
+			//モブ
+			//各値を宣言。設定したかどうかをpairのsecondに格納
+			std::pair<std::string,bool> name;
+			name.second=false;
+			std::pair<Vector2D,bool> pos;
+			pos.second=false;
+			std::pair<int,bool> lv;
+			lv.second=false;
+			std::pair<Unit::Profession::Kind,bool> prof;
+			prof.second=false;
+			std::pair<Unit::Team::Kind,bool> team;
+			team.second=false;
+			//各値の読み取り
+			for(const StringBuilder &ssb:sb.m_vec){
+				if(!ssb.m_vec.empty()){
+					//先頭文字列があることを保障
+					if(ssb.m_vec[0].GetString()=="name" && ssb.m_vec.size()>=2){
+						name.first=ssb.m_vec[1].GetString();
+						name.second=true;
+					} else if(ssb.m_vec[0].GetString()=="profession" && ssb.m_vec.size()>=2){
+						prof.first=Unit::Profession::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
+						prof.second=true;
+					} else if(ssb.m_vec[0].GetString()=="lv" && ssb.m_vec.size()>=2){
+						lv.first=std::atoi(ssb.m_vec[1].GetString().c_str());
+						lv.second=true;
+					} else if(ssb.m_vec[0].GetString()=="pos" && ssb.m_vec.size()>=3){
+						pos.first=Vector2D((float)std::atoi(ssb.m_vec[1].GetString().c_str()),(float)std::atoi(ssb.m_vec[2].GetString().c_str()));
+						pos.second=true;
+					} else if(ssb.m_vec[0].GetString()=="team" && ssb.m_vec.size()>=2){
+						team.first=Unit::Team::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
+						team.second=true;
+					}
+				}
+			}
+			//各値からユニットを格納
+			if(name.second && prof.second && lv.second && pos.second && team.second){
+				m_field.push_back(Unit::CreateMobUnit(name.first,prof.first,lv.first,pos.first,team.first));
+			}
+		}
+	}
 	//m_unitListやm_operateUnitの初期化
 	for(BattleObject *obj:m_field){
 		if(obj->GetType()==BattleObject::Type::e_unit){
@@ -59,9 +117,32 @@ BattleSceneData::BattleSceneData(const char *stagename)
 }
 
 BattleSceneData::~BattleSceneData(){
+	//グラフィック開放
+	DeleteGraphEX(m_mapPic);
+	for(size_t i=0;i<drawOrderHelpNum;i++){
+		DeleteGraphEX(m_drawOrderHelp[i]);
+	}
+	//フォント開放
+	DeleteFontToHandle(m_orderFont);
 	//オブジェクト一覧を開放
 	for(BattleObject *obj:m_field){
 		delete obj;
+	}
+}
+
+float BattleSceneData::CalculateOperateUnitFinishOP()const{
+	return CalculateOperateUnitFinishOP(m_operateUnit->GetBattleStatus().OP);
+}
+
+float BattleSceneData::CalculateOperateUnitFinishOP(float op)const{
+	//2番目の先頭ユニットと比較する
+	if(m_unitList.size()<2 || m_unitList[1]->GetBattleStatus().OP>op){
+		//1体しかユニットがいなければ補正は行わない
+		//次の操作ユニットのOPよりopが小さいなら補正は行わない
+		return op;
+	} else{
+		//そうでないなら補正を行う
+		return m_unitList[1]->GetBattleStatus().OP-1.0f;
 	}
 }
 
@@ -114,13 +195,25 @@ bool BattleSceneData::PositionUpdate(const Vector2D inputVec){
 	}
 	//移動距離の計測とOP減少
 	const float moveCost=(m_operateUnit->getPos()-beforePos).size()/speed;
-	m_operateUnit->AddOP(-moveCost);//減少なのでcostをマイナスしたものを加算する
+	//m_operateUnit->AddOP(-moveCost);//減少なのでcostをマイナスしたものを加算する
+	m_operateUnit->ConsumeOPByCost(moveCost);
 
 	return inputFlag;
 }
 
 void BattleSceneData::SortUnitList(){
 	std::vector<Unit *> list=m_unitList;//元の配列をコピー
+	//現在のユニットを一番後ろまで持っていく
+	//現在のユニットと同一OPのユニットを、現在のユニットより先に動かせるようにするため
+	for(std::vector<Unit *>::const_iterator it=list.begin(),ite=list.end();it!=ite;it++){
+		//初期化の時などm_operateUnitがnullptrの時は後ろに持っていくのは起こらない
+		if((*it)==m_operateUnit){
+			list.erase(it);
+			list.push_back(m_operateUnit);
+			break;
+		}
+	}
+	//m_unitListはclearして、listから順番にどんどん格納していく
 	m_unitList.clear();
 	//m_unitListにソート結果を格納。O(n^2)の実装なので直せるのなら直したいが、同じOPのオブジェクトは前後で同じ順番にしたい。
 	while(!list.empty()){
@@ -139,6 +232,11 @@ void BattleSceneData::SortUnitList(){
 }
 
 void BattleSceneData::FinishUnitOperation(){
+	//次の操作ユニットがm_operateUnitのままにならないようにOPを補正する
+	//初期化の際(m_operateUnitがnullptrである)にも用いられるので、nullptrの時は補正は必要ないのでしない。
+	if(m_operateUnit!=nullptr){
+		m_operateUnit->SetOP(CalculateOperateUnitFinishOP());
+	}
 	//m_unitListソートをし直す
 	SortUnitList();
 	//先頭をm_operateUnitに格納
@@ -146,10 +244,12 @@ void BattleSceneData::FinishUnitOperation(){
 	//m_operateUnitのOPが最大になるようにm_unitList全員のOP値を変化
 	const float plusOP=Unit::BattleStatus::maxOP-m_operateUnit->GetBattleStatus().OP;
 	for(Unit *u:m_unitList){
-		u->AddOP(plusOP);
+		//u->AddOP(plusOP);
+		u->SetOP(u->GetBattleStatus().OP+plusOP);
 	}
-	//m_operateUnitのOPを一定値減らす
-	m_operateUnit->AddOP(-Unit::reduceStartActionCost);
+	//m_operateUnitのOPを減らす(コストとして消費するので消費OP増加等の影響を受ける仕様となる)
+	//m_operateUnit->AddOP(-Unit::reduceStartActionCost);
+	m_operateUnit->ConsumeOPByCost(Unit::reduceStartActionCost);
 	//当たり判定図形の変化
 	UpdateFix();
 	//タイマーセット
@@ -157,16 +257,40 @@ void BattleSceneData::FinishUnitOperation(){
 
 }
 
+Unit *BattleSceneData::GetUnitPointer(Vector2D pos)const{
+	for(Unit *pu:m_unitList){
+		if(pu->JudgePointInsideShape(pos)){
+			return pu;
+		}
+	}
+	return nullptr;
+}
+
 void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{
-	for(const BattleObject *obj:m_field){
-		if(m_Window->JudgeInShapeRect(obj)
-			&& obj->GetType()!=BattleObject::Type::e_unit
-			&& notDraw.find(obj)==notDraw.end())
+	//背景データをそのまま描画
+	//背景をアニメーションするとかなったらここで処理を記述
+	DrawGraph(0,0,m_mapPic,TRUE);
+	//フィールドオブジェクトの当たり判定図形の描画（デバッグ機能としてデフォルトはOFF、コマンド入力でONになる）
+	if(m_drawObjectShapeFlag){
+		//数値情報をprintfDx()
 		{
-			//ウインドウに入っていない物は描画しない
-			//ユニット(typeがe_unit)は描画しない
-			//描画しないもの(notDrawに格納されているもの)は描画しない
-			obj->VDraw();
+			Vector2D v=GetMousePointVector2D();
+			int wx,wy;
+			GetWindowSize(&wx,&wy);
+			std::pair<int,int> ori=GetWindowResolution();
+			printfDx("mouse:(%f,%f)\nwindowsize:(%d,%d)\nresolution:(%d,%d)\n",v.x,v.y,wx,wy,ori.first,ori.second);
+		}
+		//当たり判定図形の描画
+		for(const BattleObject *obj:m_field){
+			if(m_Window->JudgeInShapeRect(obj)
+				&& obj->GetType()!=BattleObject::Type::e_unit
+				&& notDraw.find(obj)==notDraw.end())
+			{
+				//ウインドウに入っていない物は描画しない
+				//ユニット(typeがe_unit)は描画しない
+				//描画しないもの(notDrawに格納されているもの)は描画しない
+				obj->VDraw();
+			}
 		}
 	}
 }
@@ -195,10 +319,72 @@ void BattleSceneData::DrawHPGage()const{
 	}
 }
 
-void BattleSceneData::DrawOrder()const{
+void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)const{
 	std::pair<int,int> windowSize=GetWindowResolution();
-	DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
+	auto calDrawPoint=[windowSize](size_t i){return Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f);};//描画位置をそのまま計算する関数
+	
+	//オーダー画面の背景を描画
+	//DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
+	
+	//行動終了時のユニットのオーダー位置予測の矢印の描画
+	const size_t arrowNum=drawOrderHelpNum;
+	Vector2D arrowPos[arrowNum]={calDrawPoint(0),calDrawPoint(0)};//矢印の先端位置(先頭:行動しない時 後ろ:行動する時)
+	float op[arrowNum]={CalculateOperateUnitFinishOP(),CalculateOperateUnitFinishOP(m_operateUnit->ConsumeOPVirtualByCost(m_operateUnit->GetBattleStatus().weapon->GetCost()))};//今の位置で行動終了した時のOP(先頭:行動しない時 後ろ:行動する時)
+	const size_t listsize=m_unitList.size();
+	for(size_t j=0;j<arrowNum;j++){
+		bool flag=false;//位置設定が終わったか
+		for(size_t i=1;i+1<listsize;i++){
+			if(!flag && op[j]<=m_unitList[i]->GetBattleStatus().OP && op[j]>m_unitList[i+1]->GetBattleStatus().OP){
+				//ユニットが入るであろう区間を求める(既に求まっている場合:flag[j]==trueは計算の必要はない)
+				//等号位置に注意！現在のユニットと同一OPのユニットを、現在のユニットより先に動かせるようにするようにしているから、次ユニットよりOPが等しい場合はその区間は間違っているようにしないといけない。
+				//また、同一OPのユニットが存在する場合は、等号を条件に入れないと入るべき区間を見逃す可能性があるので等号は入れる。
+				const float pal=(m_unitList[i]->GetBattleStatus().OP-op[j])/(m_unitList[i]->GetBattleStatus().OP-m_unitList[i+1]->GetBattleStatus().OP);//条件式より0除算にならないことが保証されている
+				arrowPos[j]=calDrawPoint(i)*(1.0f-pal)+calDrawPoint(i+1)*pal;//内分点の算出式:p=ap0+bp1(a+b=1,a>=0,b>=0)
+				//計算し終わったからflagをtrueにして計算終了
+				flag=true;
+				break;
+			}
+		}
+		//区間が見つからなかったら一番後ろということ
+		if(!flag){
+			arrowPos[j]=calDrawPoint(listsize);
+			arrowPos[j].x+=(float)(j*8);//ズレさせてあげることで2矢印が完全に被る事を防ぐ
+		}
+	}
+	//矢印を描画
+	for(size_t j=0;j<2;j++){
+		const float width[2]={8.0f,6.0f};
+		const unsigned int color[2]={GetColor(0,0,0),GetColor(255,255,255)};//下地は黒、上は白
+		for(size_t i=0;i<arrowNum;i++){
+			const float height=Unit::unitCircleSize*0.6f;
+			const Vector2D v=calDrawPoint(0)-Vector2D(0.0f,width[0]*2.0f+Unit::unitCircleSize*0.9f);//先頭ユニットの描画基準位置(下地・中抜き部分ともに同じ位置にしたいのでwidth[0]を用いる)
+			DrawBoxAA(v.x-width[j],v.y-height-width[j],v.x+width[j],v.y,color[j],TRUE);
+			DrawBoxAA(v.x-width[j],v.y-height-width[j],arrowPos[i].x+width[j],v.y-height+width[j],color[j],TRUE);
+			DrawBoxAA(arrowPos[i].x-width[j],v.y-height-width[j],arrowPos[i].x+width[j],v.y,color[j],TRUE);
+			DrawTriangleAA(arrowPos[i].x,v.y+width[j]*2.0f,arrowPos[i].x-width[j]*2.0f,v.y,arrowPos[i].x+width[j]*2.0f,v.y,color[j],TRUE);
+			if(j==0){
+				//矢印の分岐の上にヘルプ描画
+				int dx,dy;
+				GetGraphSize(m_drawOrderHelp[i],&dx,&dy);
+				DrawGraph((int)arrowPos[i].x-dx/2,(int)(v.y-height-width[j])-dy*(drawOrderHelpNum-i),m_drawOrderHelp[i],TRUE);
+			}
+		}
+	}
+
+	//ユニットのオーダー情報を順番に描画
 	for(size_t i=0,size=m_unitList.size();i<size;i++){
-		m_unitList[i]->DrawFacePic(Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f));
+		const Vector2D centerPoint=calDrawPoint(i);
+		//マウスが重なっていれば、対応キャラまで線を伸ばす
+		//lineDrawに入っていても線を伸ばす
+		if((GetMousePointVector2D()-centerPoint).sqSize()<Unit::unitCircleSize*Unit::unitCircleSize || lineDraw.find(m_unitList[i])!=lineDraw.end()){
+			const Vector2D unitDrawPos=m_unitList[i]->getPos()-Vector2D();
+			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(196,196,196),3.0f);
+			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(255,255,255));
+		}
+		//ユニットアイコン(描画基準点は真ん中)
+		m_unitList[i]->DrawFacePic(centerPoint);
+		//残りOP
+		const int x=(int)centerPoint.x,y=((int)centerPoint.y)-(int)(Unit::unitCircleSize)-20;
+		DrawStringCenterBaseToHandle(x,y,std::to_string((int)m_unitList[i]->GetBattleStatus().OP).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
 	}
 }

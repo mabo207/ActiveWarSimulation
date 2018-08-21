@@ -24,14 +24,29 @@ public:
 	Unit *m_operateUnit;//現在操作できるユニット(静的ポインタ)
 	std::vector<Unit *> m_unitList;//フィールド上に生存しているユニット一覧。OPの順にソートされている。要素は全てm_fieldに格納されており、先頭はm_operateUnitになる。1ユニットの行動終了のタイミングでソートする。
 
-	//グラフィック関連の変数
+	//描画に必要な変数
 	std::shared_ptr<Terrain> m_Window;//ウインドウ全体を表す線分(対角線)
+	Vector2D m_stageSize;//ステージの大きさ(なお、ステージで一番左上にある点は(0,0)とする)
 
+	//グラフィックデータ
+	const int m_mapPic;//マップ全体のグラフィック
+	
 	//その他の変数
 	FpsMeasuring m_fpsMesuring;//fps計測器。タイマーの意味合いも兼ねる。
+	const int m_orderFont;//オーダー表示の際のフォント
+	static const size_t drawOrderHelpNum=2;
+	int m_drawOrderHelp[drawOrderHelpNum];//オーダーの矢印分岐について、それぞれどんな意味かを描画する
 
-	
+
+	//デバッグ用変数
+public:
+	bool m_drawObjectShapeFlag;//フィールドオブジェクトの当たり判定図形を描画するかどうか
+
 	//関数
+protected:
+	float CalculateOperateUnitFinishOP()const;//m_operateUnitが行動終了した際、opはいくらになるかを計算する関数(行動終了しても先頭ユニットであれば2番目になるまでOPを消費させる必要があるため)
+	float CalculateOperateUnitFinishOP(float op)const;//OPの消費を踏まえた計算をできるようにするために、引数から計算する関数を用意した
+
 public:
 	BattleSceneData(const char *stagename);
 	~BattleSceneData();
@@ -39,12 +54,13 @@ public:
 	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
 	void SortUnitList();//m_unitListをソートしなおす。
 	void FinishUnitOperation();//次のユニットへの遷移処理
+	Unit *GetUnitPointer(Vector2D pos)const;//pos(マップ上の座標)にいるユニットを返す。このユニットに攻撃する可能性がある事を考慮してconstはつけない。
 
 	//情報描画関数
-	void DrawField(const std::set<const BattleObject *> &notDraw={})const;//フィールドの描画、ユニットの描画は別
+	void DrawField(const std::set<const BattleObject *> &notDraw={})const;//フィールドの描画、ユニットの描画は別。こいつより前に描画したものはマップ絵で全て消えるはず。
 	void DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &notDraw={})const;//ユニットの描画、情報表示UIを表示するかを設定できる
 	void DrawHPGage()const;//全ユニットのHPゲージの描画
-	void DrawOrder()const;//ユニットのオーダー順番の描画
+	void DrawOrder(const std::set<const BattleObject *> &lineDraw={})const;//ユニットのオーダー順番の描画。lineDrawに含まれるユニットは、必ずマップ上の位置とオーダーが線で結ばれる
 };
 
 

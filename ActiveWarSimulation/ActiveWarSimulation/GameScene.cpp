@@ -3,7 +3,7 @@
 #include"GameScene.h"
 
 //---------------------FadeInOutGameScene---------------------
-FadeInOutGameScene::FadeInOutGameScene(GameScene *pActivateClass,int fadeFlag,int flame)
+FadeInOutGameScene::FadeInOutGameScene(std::shared_ptr<GameScene> pActivateClass,int fadeFlag,int flame)
 	:GameScene(),m_fadeFlag(fadeFlag),m_nowProcess(0),m_retIndex(0),m_pActivateClass(pActivateClass),m_timer(0)
 {
 	//フェードインの描画透明度の設定先を決める
@@ -16,11 +16,7 @@ FadeInOutGameScene::FadeInOutGameScene(GameScene *pActivateClass,int fadeFlag,in
 }
 
 FadeInOutGameScene::~FadeInOutGameScene(){
-	//m_pActivateClassは動的確保されているはずなので解放する
-	if(m_pActivateClass!=NULL){
-		delete m_pActivateClass;
-		m_pActivateClass=NULL;
-	}
+	
 }
 
 int FadeInOutGameScene::Calculate(){
@@ -72,10 +68,26 @@ void FadeInOutGameScene::Draw()const{
 	m_pActivateClass->Draw();
 	//透明度の表現(上に背景色長方形を被せる)
 	if(m_drawAlpha.GetX()>0){
-		int dx,dy;
-		GetWindowSize(&dx,&dy);
+		//int dx,dy;
+		//GetWindowSize(&dx,&dy);
+		const std::pair<int,int> resolution=GetWindowResolution();
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,m_drawAlpha.GetX());
-		DrawBox(0,0,dx,dy,backColor,TRUE);
+		//DrawBox(0,0,dx,dy,backColor,TRUE);
+		DrawBox(0,0,resolution.first,resolution.second,backColor,TRUE);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,0);
 	}
+}
+
+//--------------------MainControledFadeInOutGameScene--------------------
+MainControledFadeInOutGameScene::MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene> pActivateClass,int fadeFlag,int flame)
+	:FadeInOutGameScene(pActivateClass,fadeFlag,flame),MainControledGameScene()
+{}
+
+std::shared_ptr<MainControledGameScene> MainControledFadeInOutGameScene::VGetNextMainControledScene()const{
+	//m_pActivateClassが全てMainControledGameSceneである事を用いる
+	const MainControledGameScene *pScene=dynamic_cast<const MainControledGameScene *>(m_pActivateClass.get());
+	if(pScene!=nullptr){
+		return pScene->VGetNextMainControledScene();
+	}
+	return std::shared_ptr<MainControledGameScene>(nullptr);
 }
