@@ -28,6 +28,8 @@ ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleScen
 	:MoveScene(battleSceneData)
 	,m_xLatticeNum((size_t)(battleSceneData->m_stageSize.x)/squareSize+1)
 	,m_yLatticeNum((size_t)(battleSceneData->m_stageSize.y)/squareSize+1)
+	,m_actionWaiting(false)
+	,m_nextScene(SceneKind::e_move)
 {
 	//格子点の数だけ配列を確保
 	m_latticeInShape=std::vector<int>(m_xLatticeNum*m_yLatticeNum,0);
@@ -335,41 +337,55 @@ int ComputerMoveScene::thisCalculate(){
 	PositionUpdate(CalculateInputVec());
 	const float moveSqLength=(beforeVec-m_battleSceneData->m_operateUnit->getPos()).sqSize();
 	const double processedTime=m_battleSceneData->m_fpsMesuring.GetProcessedTime();
-	if(processedTime>1.0){
-		//1秒経ったら行動する
-		if(JudgeAttackCommandUsable() && m_aimedUnit==m_targetUnit){
-			//m_aimerUnitがAIが決めていた攻撃対象に一致した時、攻撃処理を行う
-			//FinishUnitOperation();//行動終了処理(あとで)
-			return SceneKind::e_attackNormal;//攻撃場面へ
-		}else if(m_targetUnit!=nullptr && m_battleSceneData->m_operateUnit->JudgeAttackable(m_targetUnit) && m_aimedUnit!=m_targetUnit){
-			//AIが決めていた攻撃対象が攻撃範囲内にいるが、m_aimedUnitがそれに一致しないときは、攻撃対象を動かす
-			SetAimedUnit(1);
-		} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f
-//			|| processedTime>10.0//デバッグのために一度省いている
-			|| keyboard_get(KEY_INPUT_Q)==1//時間制限がない際にゲームに戻れるようにするため
-		){
-			//移動できなくなったら、または10秒経ったら待機
-//			FinishUnitOperation();
-//			return 0;
-			return BranchingWaitingProcess();//行動対象がいれば行動する
-		} else if((moveSqLength<0.1f && processedTime>2.0)){
-			//移動距離も少ない場合は移動先の変更
-			if(m_latticeRoute.size()<2){
-				//進む場所がないまたは最後の1点にたどり着かずに止まっている場合は待機でよい
-				//最後の1点の場合も待機を行う理由は、先頭点を進入不可にする事でルート変更を行うが、最後の1点は大抵は元々進入不可でルートが変わらず、無限ループとなってしまうから。
-//				FinishUnitOperation();
-//				return 0;
-				return BranchingWaitingProcess();//行動対象がいれば行動する
-			} else{
-				//経由点で行き詰まっている場合、そのルートは間違っていると考えられるのでルート変更をする
-				if(m_latticeRoute.front().first<m_latticeInShape.size()){
-					ImpassableLatticeInShape(m_latticeRoute.front().first);//今通ろうとしている格子点を通れなくする
-					CalculateLatticeRoute();//ルート変更処理
+	if(!m_actionWaiting){
+		//行動までの待ち時間を待っている状態ではない時
+		if(processedTime>1.0){
+			//1秒経ったら行動する
+			if(JudgeAttackCommandUsable() && m_aimedUnit==m_targetUnit){
+				//m_aimerUnitがAIが決めていた攻撃対象に一致した時、攻撃処理を行う
+				//FinishUnitOperation();//行動終了処理(あとで)
+				//return SceneKind::e_attackNormal;//攻撃場面へ
+				m_nextScene=SceneKind::e_attackNormal;
+				m_battleSceneData->m_fpsMesuring.RecordTime();
+				m_actionWaiting=true;
+			} else if(m_targetUnit!=nullptr && m_battleSceneData->m_operateUnit->JudgeAttackable(m_targetUnit) && m_aimedUnit!=m_targetUnit){
+				//AIが決めていた攻撃対象が攻撃範囲内にいるが、m_aimedUnitがそれに一致しないときは、攻撃対象を動かす
+				SetAimedUnit(1);
+			} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f
+				//			|| processedTime>10.0//デバッグのために一度省いている
+				|| keyboard_get(KEY_INPUT_Q)==1//時間制限がない際にゲームに戻れるようにするため
+				){
+				//移動できなくなったら、または10秒経ったら待機
+				//return BranchingWaitingProcess();//行動対象がいれば行動する
+				m_nextScene=BranchingWaitingProcess();
+				m_battleSceneData->m_fpsMesuring.RecordTime();
+				m_actionWaiting=true;
+			} else if((moveSqLength<0.1f && processedTime>2.0)){
+				//移動距離も少ない場合は移動先の変更
+				if(m_latticeRoute.size()<2){
+					//進む場所がないまたは最後の1点にたどり着かずに止まっている場合は待機でよい
+					//最後の1点の場合も待機を行う理由は、先頭点を進入不可にする事でルート変更を行うが、最後の1点は大抵は元々進入不可でルートが変わらず、無限ループとなってしまうから。
+					//return BranchingWaitingProcess();//行動対象がいれば行動する
+					m_nextScene=BranchingWaitingProcess();
+					m_battleSceneData->m_fpsMesuring.RecordTime();
+					m_actionWaiting=true;
+				} else{
+					//経由点で行き詰まっている場合、そのルートは間違っていると考えられるのでルート変更をする
+					if(m_latticeRoute.front().first<m_latticeInShape.size()){
+						ImpassableLatticeInShape(m_latticeRoute.front().first);//今通ろうとしている格子点を通れなくする
+						CalculateLatticeRoute();//ルート変更処理
+					}
 				}
+			} else if(!m_latticeRoute.empty() && m_battleSceneData->m_operateUnit->JudgePointInsideShape(m_latticeRoute.front().second)){
+				//m_latticeRouteの先頭の点がユニットの当たり判定図形に入ったらそこまでは簡単に動けるということなので移動先を変える
+				m_latticeRoute.erase(m_latticeRoute.begin());
 			}
-		} else if(!m_latticeRoute.empty() && m_battleSceneData->m_operateUnit->JudgePointInsideShape(m_latticeRoute.front().second)){
-			//m_latticeRouteの先頭の点がユニットの当たり判定図形に入ったらそこまでは簡単に動けるということなので移動先を変える
-			m_latticeRoute.erase(m_latticeRoute.begin());
+		}
+	} else{
+		//待ち時間を待っている時
+		if(processedTime>0.1){
+			//0.1秒待ってから行動へ
+			return m_nextScene;
 		}
 	}
 	return SceneKind::e_move;
