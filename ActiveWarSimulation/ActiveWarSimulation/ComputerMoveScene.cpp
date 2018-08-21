@@ -341,7 +341,7 @@ int ComputerMoveScene::thisCalculate(){
 			//m_aimerUnit‚ªAI‚ªŒˆ‚ß‚Ä‚¢‚½UŒ‚‘ÎÛ‚Éˆê’v‚µ‚½ŽžAUŒ‚ˆ—‚ðs‚¤
 			//FinishUnitOperation();//s“®I—¹ˆ—(‚ ‚Æ‚Å)
 			return SceneKind::e_attackNormal;//UŒ‚ê–Ê‚Ö
-		}else if(m_battleSceneData->m_operateUnit->JudgeAttackable(m_targetUnit) && m_aimedUnit!=m_targetUnit){
+		}else if(m_targetUnit!=nullptr && m_battleSceneData->m_operateUnit->JudgeAttackable(m_targetUnit) && m_aimedUnit!=m_targetUnit){
 			//AI‚ªŒˆ‚ß‚Ä‚¢‚½UŒ‚‘ÎÛ‚ªUŒ‚”ÍˆÍ“à‚É‚¢‚é‚ªAm_aimedUnit‚ª‚»‚ê‚Éˆê’v‚µ‚È‚¢‚Æ‚«‚ÍAUŒ‚‘ÎÛ‚ð“®‚©‚·
 			SetAimedUnit(1);
 		} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f

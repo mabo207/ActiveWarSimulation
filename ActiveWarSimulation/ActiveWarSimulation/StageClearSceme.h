@@ -1,35 +1,32 @@
-#ifndef DEF_SWITCHUNITSCENE_H
-#define DEF_SWITCHUNITSCENE_H
+#ifndef DEF_STAGECLEARSCENE_H
+#define DEF_STAGECLEARSCENE_H
 
 #include"BattleSceneElement.h"
 #include"BattleSceneData.h"
-#include"ToolsLib.h"
 
-//選択するユニットを切り替えるシーン
-class SwitchUnitScene:public BattleSceneElement{
+//ステージクリア（勝ち負け関係なし）の場面
+class StageClearScene:public BattleSceneElement{
 	//型・列挙体
-	enum class JudgeEnd{
-		e_notEnd
-		,e_playerWin
-		,e_playerLose
-	};
-
+	
 	//定数
 
 	//変数
 protected:
-	//勝敗判定
-	JudgeEnd m_judgeEnd;
+	const bool m_winFlag;//クリアしたかどうか。
+	const std::string m_explain;//補足情報
+	int m_flame;
 
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
 
-	//タイマー
-
+	//グラフィック系
+	const int m_stageClearBox;//ステージクリア状況を描画するボックス
+	const int m_clearFont;
+	const int m_explainFont;
 
 	//関数
 protected:
-
+	
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
 	void thisDraw()const;
@@ -37,10 +34,9 @@ protected:
 	void ReturnProcess();//この場面に戻ってきた時の処理
 
 public:
-	SwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneData);
-	~SwitchUnitScene();
+	StageClearScene(std::shared_ptr<BattleSceneData> battleSceneData,bool winFlag,const std::string &explain);
+	~StageClearScene();
 };
 
 
-#endif // !DEF_SWITCHUNITSCENE_H
-#pragma once
+#endif // !DEF_STAGECLEARSCENE_H

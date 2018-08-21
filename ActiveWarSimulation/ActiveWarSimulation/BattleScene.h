@@ -5,10 +5,17 @@
 #include"BattleSceneElement.h"
 
 //バトルのゲームプレイ場面全般の管理を行うクラス
-class BattleScene:public GameScene{
+class BattleScene:public MainControledGameScene{
 	//型・列挙体
 public:
-	
+	struct RequiredInfoToMakeBattleScene:public RequiredInfoToMakeClass{
+		std::string m_stagename;
+		RequiredInfoToMakeBattleScene(const std::string &stagename):m_stagename(stagename){}
+		Kind GetKind()const{
+			return e_battleScene;
+		}
+	};
+
 	//定数
 protected:
 	
@@ -30,6 +37,7 @@ public:
 	~BattleScene();
 	int Calculate();
 	void Draw()const;
+	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;
 };
 
 

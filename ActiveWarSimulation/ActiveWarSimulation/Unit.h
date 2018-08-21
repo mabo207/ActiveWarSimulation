@@ -94,10 +94,12 @@ public:
 protected:
 	void WriteOutObjectPeculiarInfo(std::ofstream &ofs)const;//オブジェクト特有の情報を返す
 	float CalculateConsumeOP(float cost)const;//costに対して消費するOPを計算する
+	float GetMoveDistance(float vOP)const;//もしvOPだけOPがあったら移動可能な直線距離を返す。定式化しておくとラクになるため
+	void DrawMoveInfo(float distance,Vector2D point,Vector2D adjust)const;//移動可能距離がdistanceである時の移動範囲関連の情報を描画する関数
 
 public:
 	//コンストラクタ系
-	Unit(Vector2D position,int gHandle,Team::Kind team);
+	//Unit(Vector2D position,int gHandle,Team::Kind team);
 	Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team);
 	Unit(const Unit &u);
 	~Unit();
@@ -121,12 +123,14 @@ public:
 	float SetOP(float op);//Unit::OPをopの値にする。移動巻き戻しや行動順制御など、ConsumeOPByCost()を用いることができない時に用いる。
 	void DrawMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)
 	void DrawMoveInfo(Vector2D point,Vector2D adjust)const;//移動範囲関連の情報を描画する関数
+	void DrawMaxMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲最大の移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)
+	void DrawMaxMoveInfo(Vector2D point,Vector2D adjust)const;//移動範囲最大の移動範囲関連の情報を描画する関数
 	void DrawHPGage(Vector2D adjust=Vector2D())const;//HPゲージの描画
 	void DrawHPGage(Vector2D point,Vector2D adjust)const;//HPゲージの描画
 	void DrawFacePic(Vector2D point)const;//ユニットの顔グラフィックを用いたアイコンの描画を行う
 	void DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const;//マップ上のユニットを描画
 	float GetMoveDistance()const;//移動可能な直線距離を返す。定式化しておくとラクになるため
-
+	
 	//仮想関数・純粋仮想関数のオーバーライド
 	const Shape *GetHitJudgeShape()const;//当たり判定図形を取得。
 	void Move(Vector2D v);//当たり判定図形の移動。２種類の当たり判定図形を共に移動させる。

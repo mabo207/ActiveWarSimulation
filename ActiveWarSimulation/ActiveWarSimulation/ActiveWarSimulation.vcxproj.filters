@@ -61,6 +61,12 @@
     <Filter Include="ソース ファイル\UnitHaving\Explain">
       <UniqueIdentifier>{c670ccf6-03d9-48a3-8a50-301296b2cda2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameScene\TitleScene">
+      <UniqueIdentifier>{a888750d-c294-4255-b433-abbd5bd32961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\TitleScene">
+      <UniqueIdentifier>{d2ff5b42-d516-4b79-99b3-9b3b79e0507c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -141,6 +147,15 @@
     <ClCompile Include="FileRead.cpp">
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>ソース ファイル\GameScene\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="StageSelectScene.cpp">
+      <Filter>ソース ファイル\GameScene\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="StageClearScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -217,6 +232,15 @@
     </ClInclude>
     <ClInclude Include="FileRead.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>ヘッダー ファイル\GameScene\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="StageSelectScene.h">
+      <Filter>ヘッダー ファイル\GameScene\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="StageClearSceme.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
