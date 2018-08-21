@@ -95,7 +95,7 @@ protected:
 	void WriteOutObjectPeculiarInfo(std::ofstream &ofs)const;//オブジェクト特有の情報を返す
 	float CalculateConsumeOP(float cost)const;//costに対して消費するOPを計算する
 	float GetMoveDistance(float vOP)const;//もしvOPだけOPがあったら移動可能な直線距離を返す。定式化しておくとラクになるため
-	void DrawMoveInfo(float distance,Vector2D point,Vector2D adjust)const;//移動可能距離がdistanceである時の移動範囲関連の情報を描画する関数
+	void DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned int inColor,unsigned int outColor)const;//移動可能距離がdistanceである時の移動範囲関連の情報を描画する関数
 
 public:
 	//コンストラクタ系

@@ -169,14 +169,14 @@ void Unit::DrawMoveInfo(Vector2D adjust)const{
 }
 
 void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
-	DrawMoveInfo(GetMoveDistance(),point,adjust);
+	DrawMoveInfo(GetMoveDistance(),point,adjust,GetColor(0,255,255),GetColor(64,192,192));
 }
 
-void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust)const{
+void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned int inColor,unsigned int outColor)const{
 	Vector2D pos=point-adjust;
 	//ƒ†ƒjƒbƒg‚ÌˆÚ“®ŒÀŠE‹——£‚ð…F‚É•`‰æ
-	DrawCircleAA(pos.x,pos.y,distance,100,DxLib::GetColor(64,192,192),FALSE,3.0f);//˜g
-	DrawCircleAA(pos.x,pos.y,distance,100,DxLib::GetColor(0,255,255),FALSE,1.0f);//˜g
+	DrawCircleAA(pos.x,pos.y,distance,100,outColor,FALSE,3.0f);//˜g
+	DrawCircleAA(pos.x,pos.y,distance,100,inColor,FALSE,1.0f);//˜g
 	/*(Žd—lÁ–Å‚Ì‚½‚ßƒRƒƒ“ƒgƒAƒEƒg)
 	//ƒ†ƒjƒbƒg‚ÌUŒ‚‰Â”\‚ÈˆÚ“®ŒÀŠE‹——£‚ð…F‚Å•`‰æ(UŒ‚‰Â”\‚Èê‡‚Ì‚Ý)
 	if((ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))>=0.0f){
@@ -190,7 +190,7 @@ void Unit::DrawMaxMoveInfo(Vector2D adjust)const{
 }
 
 void Unit::DrawMaxMoveInfo(Vector2D point,Vector2D adjust)const{
-	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost)),point,adjust);
+	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost)),point,adjust,GetColor(0,128,255),GetColor(64,128,192));
 }
 
 void Unit::DrawHPGage(Vector2D adjust)const{

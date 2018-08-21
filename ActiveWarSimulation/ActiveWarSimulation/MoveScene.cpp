@@ -261,6 +261,12 @@ void MoveScene::thisDraw()const{
 			m_aimedUnit->BattleObject::VDraw();
 		}
 
+		//マウスを指しているユニットの移動範囲の描画
+		const Unit *pMouseUnit=m_battleSceneData->GetUnitPointer(GetMousePointVector2D());
+		if(pMouseUnit!=nullptr){
+			pMouseUnit->DrawMaxMoveInfo();//次のターンにおける移動情報なので、DrawMoveInfo()でなくDrawMaxMoveInfo()を用いる。
+		}
+
 		//操作中ユニットの描画
 		m_battleSceneData->m_operateUnit->BattleObject::VDraw();
 		m_battleSceneData->m_operateUnit->DrawMoveInfo();//移動情報の描画
@@ -292,7 +298,7 @@ void MoveScene::thisDraw()const{
 		}
 
 		//ユニットのオーダー順番を描画
-		m_battleSceneData->DrawOrder();
+		m_battleSceneData->DrawOrder(std::set<const BattleObject *>{pMouseUnit});//マウスが指している、行動範囲を表示しているユニットはオーダーと線で結ぶ
 	} else if(keyboard_get(KEY_INPUT_0)==60){
 		//int x,y;
 		//GetWindowSize(&x,&y);
