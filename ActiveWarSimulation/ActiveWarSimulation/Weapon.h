@@ -21,8 +21,9 @@ public:
 
 	//’è”
 public:
-	static const float closeAttackLength;//’Z‹——£UŒ‚‚ÌË’ö
-	static const float openAttackLength;//’·‹——£UŒ‚‚ÌË’ö
+	static const float closeAttackLength;//‹ßÚUŒ‚‚ÌË’ö
+	static const float openAttackLength;//ŠÔÚUŒ‚‚ÌË’ö
+	static const float longAttackLength;//‰“‹——£UŒ‚‚ÌË’ö
 
 	//•Ï”
 protected:

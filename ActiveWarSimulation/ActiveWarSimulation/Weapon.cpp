@@ -3,6 +3,7 @@
 //---------------Weapon----------------
 const float Weapon::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.15f;
 const float Weapon::openAttackLength=Weapon::closeAttackLength*2.0f;
+const float Weapon::longAttackLength=Weapon::closeAttackLength*3.0f;
 
 Weapon::AttackInfo Weapon::GetAttackInfo(const Unit *attacker,const Unit *defender)const{
 	AttackInfo info;
@@ -27,7 +28,7 @@ std::map<std::string,std::shared_ptr<Weapon>> Weapon::InitWeaponMap(){
 	std::map<std::string,std::shared_ptr<Weapon>> map;
 	//以下列挙してmapに格納していく
 	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の槍",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格で扱いやすい標準的な槍。"))));
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の弓",2,Weapon::openAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格で扱いやすい標準的な弓。"))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の弓",3,Weapon::longAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格で扱いやすい標準的な弓。"))));
 	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ファイアーの書",5,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator()),"魔道の基本が詰まっている標準的な魔法。"))));
 	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ヒールの杖",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator()),"回復の力を強める標準的な杖。"))));
 	//mapを返す
