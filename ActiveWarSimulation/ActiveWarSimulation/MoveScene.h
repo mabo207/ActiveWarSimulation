@@ -52,7 +52,7 @@ protected:
 	//int thisCalculate();//プレイヤーか敵かで異なるので
 	virtual void thisDraw()const;//AIのデバッグのための描画ができるようにする
 	int UpdateNextScene(int index);
-	void ReturnProcess();
+	virtual void ReturnProcess();
 
 	//仮想関数
 	virtual Vector2D CalculateInputVec()const=0;//味方ターン時は入力されてるアナログスティックのベクトルを返す。敵ターン時はAIに従って移動方向のベクトルを返す。

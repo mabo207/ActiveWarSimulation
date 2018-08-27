@@ -8,11 +8,13 @@ PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_waitButton(1520,980,80,80,LoadGraphEX("Graphic/nextButton.png"))
 	,m_researchButton(1620,980,80,80,LoadGraphEX("Graphic/researchButton.png"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
+	,m_mouseLeftFlag(false)
 {}
 
 Vector2D PlayerMoveScene::CalculateInputVec()const{
+	//移動処理
 	Vector2D moveVec;
-	if(mouse_get(MOUSE_INPUT_LEFT)>0){
+	if(mouse_get(MOUSE_INPUT_LEFT)>0 && m_mouseLeftFlag){
 		//マウスを左クリックしているならマウス入力に対応させる
 		moveVec=GetMousePointVector2D()-m_battleSceneData->m_operateUnit->getPos();
 		//アナログスティックの物理的なズレ等によるmoveVecの微入力を除く
@@ -119,10 +121,21 @@ int PlayerMoveScene::thisCalculate(){
 	} else if(keyboard_get(KEY_INPUT_F)==1 || m_researchButton.JudgePressMoment()){
 		//マップ調べモードへ
 		return SceneKind::e_research;
-	} else if(PositionUpdate(CalculateInputVec())){
-		//キー入力がなければm_operateUnitの位置更新
-		//位置更新をした時の処理
-
+	} else{
+		//移動し始めの判定更新(左クリックを押した瞬間であるかを判定・記録する)
+		int flame=mouse_get(MOUSE_INPUT_LEFT);
+		if(flame==0){
+			//左クリックをしなくなると、押していないのでfalseにする
+			m_mouseLeftFlag=false;
+		} else if(flame==1){
+			//1フレーム目を検知できた場合は、trueにする
+			m_mouseLeftFlag=true;
+		}
+		//移動処理
+		if(PositionUpdate(CalculateInputVec())){
+			//キー入力がなければm_operateUnitの位置更新
+			//位置更新をした時の処理
+		}
 	}
 
 	//次フレームに、本フレームにおけるマウスの位置が分かるようにする
@@ -138,4 +151,10 @@ void PlayerMoveScene::thisDraw()const{
 	//ボタンを描画
 	m_waitButton.DrawButton();
 	m_researchButton.DrawButton();
+}
+
+void PlayerMoveScene::ReturnProcess(){
+	//MoveSceneのReturnProcessに加え、m_mouseLeftFlagを初期化する
+	MoveScene::ReturnProcess();
+	m_mouseLeftFlag=false;
 }
