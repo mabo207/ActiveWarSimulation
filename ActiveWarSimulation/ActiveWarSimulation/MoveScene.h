@@ -37,7 +37,9 @@ protected:
 	//グラフィック関連
 	static const size_t attackedCursorPicNum=4;//分割数
 	int m_attackedCursor[attackedCursorPicNum];//m_aimedUnitの上に乗せるカーソルの描画
-	int m_operatedCursor;//m_operatedUnitの上に乗せるカーソルの描画
+	const int m_operatedCursor;//m_operatedUnitの上に乗せるカーソルの描画
+	const int m_predictExplainFont;//行動効果の意味フォント
+	const int m_predictNumberFont;//行動効果の数字フォント
 
 	//関数
 protected:

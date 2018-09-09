@@ -17,6 +17,20 @@ bool Weapon::JudgeWeild(const Unit *attacker,const Unit *defender)const{
 	return m_calculator->VJudgeWeild(attacker,defender);
 }
 
+std::string Weapon::GetEffectivenessString(const Unit *attacker)const{
+	//1行目に武器攻撃力と合計攻撃力（効果によって文面が異なる）、2行目に射程とコストを出力する。
+	std::string ret;
+	ret+=m_calculator->VGetPowerString(attacker);
+	ret+="\n";
+	ret+="射程："+std::to_string((int)m_length)+"　コスト："+std::to_string((int)m_cost);
+	return ret;
+}
+
+void Weapon::DrawPredict(const int centerX,const int centerY,const int explainFont,const int numberFont,const Unit *attacker,const Unit *defender)const{
+	//DamageCalculatorに投げる
+	m_calculator->VDrawPredict(centerX,centerY,explainFont,numberFont,attacker,defender);
+}
+
 //以下静的変数
 const std::map<std::string,std::shared_ptr<Weapon>> Weapon::m_weaponMap=Weapon::InitWeaponMap();
 
@@ -44,11 +58,3 @@ const std::shared_ptr<Weapon> Weapon::GetWeapon(const std::string &name){
 	}
 }
 
-std::string Weapon::GetEffectivenessString(const Unit *attacker)const{
-	//1行目に武器攻撃力と合計攻撃力（効果によって文面が異なる）、2行目に射程とコストを出力する。
-	std::string ret;
-	ret+=m_calculator->VGetPowerString(attacker);
-	ret+="\n";
-	ret+="射程："+std::to_string((int)m_length)+"　コスト："+std::to_string((int)m_cost);
-	return ret;
-}

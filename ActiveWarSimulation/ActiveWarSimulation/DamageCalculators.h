@@ -15,6 +15,7 @@ public:
 	virtual int VCalculateDamage(const Unit *attacker,const Unit *defender)const=0;//ダメージを計算する関数
 	virtual bool VJudgeWeild(const Unit *attacker,const Unit *defender)const=0;//attacker→defenderへの通常攻撃を実行可能であるか
 	virtual std::string VGetPowerString(const Unit *attacker)const=0;//attackerがこの行動をした時の効果の説明文を出力する
+	virtual void VDrawPredict(const int centerX,const int centerY,const int explainFont,const int numberFont,const Unit *attacker,const Unit *defender)const;//行動予想を描画する。単純なダメージである場合の描画処理はここに記す。
 };
 
 //物理攻撃
@@ -65,6 +66,7 @@ public:
 	int VCalculateDamage(const Unit *healer,const Unit *receiver)const;
 	bool VJudgeWeild(const Unit *healer,const Unit *defender)const;//attacker→defenderへの通常攻撃を実行可能であるか
 	std::string VGetPowerString(const Unit *healer)const;//attackerがこの行動をした時の効果の説明文を出力する
+	void VDrawPredict(const int centerX,const int centerY,const int explainFont,const int numberFont,const Unit *attacker,const Unit *defender)const;//行動予想を描画する。回復なので、攻撃とは異なる描画をする。
 };
 
 #endif // !DEF_DAMAGECALCULATORS_H

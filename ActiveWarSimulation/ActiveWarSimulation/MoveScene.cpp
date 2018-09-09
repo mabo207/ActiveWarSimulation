@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include"DxLib.h"
 #include"MoveScene.h"
 #include"AttackScene.h"
@@ -6,15 +7,19 @@
 #include"Edge.h"
 #include<algorithm>
 #include"GraphicControl.h"
+#include<cmath>
 
 //----------------------MoveScene----------------------
 const float MoveScene::routeFrequency=1.0f;
 
 MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
-	:BattleSceneElement(SceneKind::e_move),m_battleSceneData(battleSceneData)
+	:BattleSceneElement(SceneKind::e_move)
+	,m_battleSceneData(battleSceneData)
+	,m_operatedCursor(LoadGraphEX("Graphic/operatedCursor.png"))
+	,m_predictExplainFont(CreateFontToHandleEX("メイリオ",16,2,DX_FONTTYPE_ANTIALIASING_EDGE_4X4))
+	,m_predictNumberFont(CreateFontToHandleEX("メイリオ",48,8,DX_FONTTYPE_ANTIALIASING_EDGE_4X4))
 {
 	LoadDivGraphEX("Graphic/attackedCursor.png",attackedCursorPicNum,attackedCursorPicNum,1,60,66,m_attackedCursor);
-	m_operatedCursor=LoadGraphEX("Graphic/operatedCursor.png");
 	//m_aimedUnit等の初期化
 	FinishUnitOperation();
 }
@@ -258,7 +263,7 @@ void MoveScene::thisDraw()const{
 
 		//狙っているユニットの描画
 		if(m_aimedUnit!=nullptr){
-			m_aimedUnit->BattleObject::VDraw();
+			m_aimedUnit->BattleObject::VDraw();//アイコンの描画
 		}
 
 		//マウスを指しているユニットの移動範囲の描画
@@ -276,29 +281,33 @@ void MoveScene::thisDraw()const{
 		m_battleSceneData->DrawHPGage();
 
 		//アイコン等を描く
-		Vector2D pos;
+		//ユニットのオーダー順番を描画
+		m_battleSceneData->DrawOrder(std::set<const BattleObject *>{pMouseUnit});//マウスが指している、行動範囲を表示しているユニットはオーダーと線で結ぶ
 		//狙っているユニット
 		if(m_aimedUnit!=nullptr){
 			if(JudgeAttackCommandUsable()){
-				//攻撃可能ならマーカーを描画
-				pos=m_aimedUnit->getPos();
+				//攻撃可能ならマーカーと戦闘予測を描画
+				Vector2D pos=m_aimedUnit->getPos();
 				//DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
 				size_t index=(m_battleSceneData->m_fpsMesuring.GetFlame()/15)%attackedCursorPicNum;
 				float dx,dy;
 				GetGraphSizeF(m_attackedCursor[index],&dx,&dy);
 				DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_attackedCursor[index],TRUE);
+				//戦闘予測の描画
+				const int period=60;
+				//const int dx2=(int)(5*std::cos(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFlame()%period)/period));
+				const int dx2=0;
+				const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFlame()%period)/period));
+				m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->DrawPredict((int)pos.x+dx2,(int)pos.y+dy2,m_predictExplainFont,m_predictNumberFont,m_battleSceneData->m_operateUnit,m_aimedUnit);
 			}
 		}
 		//操作ユニット
 		{
-			pos=m_battleSceneData->m_operateUnit->getPos();
+			Vector2D pos=m_battleSceneData->m_operateUnit->getPos();
 			float dx,dy;
 			GetGraphSizeF(m_operatedCursor,&dx,&dy);
 			DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_operatedCursor,TRUE);
 		}
-
-		//ユニットのオーダー順番を描画
-		m_battleSceneData->DrawOrder(std::set<const BattleObject *>{pMouseUnit});//マウスが指している、行動範囲を表示しているユニットはオーダーと線で結ぶ
 	} else if(keyboard_get(KEY_INPUT_0)==60){
 		//int x,y;
 		//GetWindowSize(&x,&y);

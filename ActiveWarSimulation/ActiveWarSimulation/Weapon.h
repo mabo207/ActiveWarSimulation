@@ -59,6 +59,7 @@ public:
 	AttackInfo GetAttackInfo(const Unit *attacker,const Unit *defender)const;
 	bool JudgeWeild(const Unit *attacker,const Unit *defender)const;//attacker→defenderへの通常攻撃を実行可能であるか
 	std::string GetEffectivenessString(const Unit *attacker)const;//attackerがこの武器を使うとどんな効果を得られるか
+	void DrawPredict(const int centerX,const int centerY,const int explainFont,const int numberFont,const Unit *attacker,const Unit *defender)const;//行動予想を描画する
 
 	//静的変数
 private:
