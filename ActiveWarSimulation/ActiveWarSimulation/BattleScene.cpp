@@ -1,6 +1,8 @@
 #include"BattleScene.h"
 #include"SwitchUnitScene.h"
 #include"TitleScene.h"
+#include"input.h"
+#include"DxLib.h"
 
 //----------------------BattleScene----------------------
 BattleScene::BattleScene(const char *stagename)
@@ -22,7 +24,10 @@ int BattleScene::Calculate(){
 		index=-2;
 	}
 	//状態遷移
-	if(index==BattleSceneElement::SceneKind::END){
+	if(index==BattleSceneElement::SceneKind::END
+		|| keyboard_get(KEY_INPUT_DELETE)==60
+		)
+	{
 		//このクラスを監視するクラスにゲームプレイ場面の終了を伝える
 		return -2;
 	}
