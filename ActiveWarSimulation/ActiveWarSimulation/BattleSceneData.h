@@ -16,6 +16,8 @@ public:
 protected:
 
 public:
+	static const Vector2D mapDrawSize;//マップ描画部分の大きさ
+	static const Vector2D uiDrawSize;//UI描画部分の大きさ
 
 	//変数
 public:
@@ -25,7 +27,7 @@ public:
 	std::vector<Unit *> m_unitList;//フィールド上に生存しているユニット一覧。OPの順にソートされている。要素は全てm_fieldに格納されており、先頭はm_operateUnitになる。1ユニットの行動終了のタイミングでソートする。
 
 	//描画に必要な変数
-	std::shared_ptr<Terrain> m_Window;//ウインドウ全体を表す線分(対角線)
+	std::shared_ptr<Terrain> m_mapRange;//マップ全体を表す線分(対角線)
 	Vector2D m_stageSize;//ステージの大きさ(なお、ステージで一番左上にある点は(0,0)とする)
 
 	//グラフィックデータ

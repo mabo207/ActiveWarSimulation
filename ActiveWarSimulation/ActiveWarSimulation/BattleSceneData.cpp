@@ -6,10 +6,14 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 #include"FileRead.h"
+#include"GameScene.h"
 
 //----------------------BattleSceneData----------------------
+const Vector2D BattleSceneData::mapDrawSize=Vector2D(GameScene::windowSize.x,900.0f);
+const Vector2D BattleSceneData::uiDrawSize=Vector2D(GameScene::windowSize.x,GameScene::windowSize.y-BattleSceneData::mapDrawSize.y);
+
 BattleSceneData::BattleSceneData(const char *stagename)
-	:m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1920.0f,1080.0f),Shape::Fix::e_ignore)),-1,0,true))
+	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr),m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 {
@@ -43,7 +47,7 @@ BattleSceneData::BattleSceneData(const char *stagename)
 		}
 	}
 	//ファイルからステージのグラフィックデータの読み込み
-	m_stageSize=Vector2D(1920.0f,1080.0f);//本来はステージの大きさはグラフィックデータの縦横の大きさで決める
+	m_stageSize=mapDrawSize;//本来はステージの大きさはグラフィックデータの縦横の大きさで決める
 
 	//ファイルからユニットを読み込み
 	StringBuilder unitlist(FileStrRead((stagedir+"unitlist.txt").c_str()),'\n','{','}',false,true);
@@ -282,7 +286,7 @@ void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)co
 		}
 		//当たり判定図形の描画
 		for(const BattleObject *obj:m_field){
-			if(m_Window->JudgeInShapeRect(obj)
+			if(m_mapRange->JudgeInShapeRect(obj)
 				&& obj->GetType()!=BattleObject::Type::e_unit
 				&& notDraw.find(obj)==notDraw.end())
 			{
@@ -297,7 +301,7 @@ void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)co
 
 void BattleSceneData::DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &notDraw)const{
 	for(const Unit *obj:m_unitList){
-		if(m_Window->JudgeInShapeRect(obj)
+		if(m_mapRange->JudgeInShapeRect(obj)
 			&& obj->GetFix()!=Shape::Fix::e_ignore
 			&& notDraw.find(obj)==notDraw.end())
 		{
@@ -311,7 +315,7 @@ void BattleSceneData::DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &n
 
 void BattleSceneData::DrawHPGage()const{
 	for(const Unit *unit:m_unitList){
-		if(m_Window->JudgeInShapeRect(unit) && unit->GetFix()!=Shape::Fix::e_ignore){
+		if(m_mapRange->JudgeInShapeRect(unit) && unit->GetFix()!=Shape::Fix::e_ignore){
 			//ウインドウに入っていない物は描画しない
 			//退却したユニット(typeがe_unitかつfixがe_ignore)は描画しない
 			unit->DrawHPGage();

@@ -2,6 +2,9 @@
 #include"DxLib.h"
 #include"GameScene.h"
 
+//---------------------GameScene---------------------
+const Vector2D GameScene::windowSize=Vector2D(1920.0f,1080.0f);
+
 //---------------------FadeInOutGameScene---------------------
 FadeInOutGameScene::FadeInOutGameScene(std::shared_ptr<GameScene> pActivateClass,int fadeFlag,int flame)
 	:GameScene(),m_fadeFlag(fadeFlag),m_nowProcess(0),m_retIndex(0),m_pActivateClass(pActivateClass),m_timer(0)

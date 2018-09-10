@@ -6,4 +6,4 @@
 {(definition,mob),(name,“G•º),(profession,1),(lv,1),(pos,786,510),(team,1)}
 {(definition,mob),(name,“G•º),(profession,0),(lv,1),(pos,1596,165),(team,1)}
 {(definition,mob),(name,“G•º),(profession,0),(lv,1),(pos,1690,575),(team,1)}
-{(definition,mob),(name,“G•º),(profession,2),(lv,1),(pos,1636,735),(team,1)}
+{(definition,mob),(name,“G•º),(profession,2),(lv,1),(pos,1656,770),(team,1)}
