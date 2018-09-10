@@ -392,3 +392,19 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 		DrawStringCenterBaseToHandle(x,y,std::to_string((int)m_unitList[i]->GetBattleStatus().OP).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
 	}
 }
+
+bool BattleSceneData::JudgeMousePushInsideMapDrawZone(int mouseCode,bool continuousFlag){
+	const Vector2D mouse=GetMousePointVector2D();
+	if(mouse.x>=0.0f && mouse.x<mapDrawSize.x && mouse.y>=0.0f && mouse.y<mapDrawSize.y){
+		//マップ描画部分にマウスがあるか
+		const int f=mouse_get(mouseCode);
+		if(continuousFlag){
+			//trueなら押しているかどうかを
+			return f>0;
+		} else{
+			//falseなら押した瞬間かどうかを
+			return f==1;
+		}
+	}
+	return false;
+}

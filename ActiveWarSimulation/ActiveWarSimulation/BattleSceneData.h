@@ -63,6 +63,10 @@ public:
 	void DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &notDraw={})const;//ユニットの描画、情報表示UIを表示するかを設定できる
 	void DrawHPGage()const;//全ユニットのHPゲージの描画
 	void DrawOrder(const std::set<const BattleObject *> &lineDraw={})const;//ユニットのオーダー順番の描画。lineDrawに含まれるユニットは、必ずマップ上の位置とオーダーが線で結ばれる
+
+	//静的関数
+	static bool JudgeMousePushInsideMapDrawZone(int mouseCode,bool continuousFlag);//マップ描画領域でmouseCodeを押したかどうか。また、continuousFlagをtrueにすればフレーム数が>0であるかどうかを、falseにすればフレーム数が==1であるかを判定する。
+
 };
 
 

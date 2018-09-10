@@ -14,7 +14,11 @@ PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneDat
 Vector2D PlayerMoveScene::CalculateInputVec()const{
 	//移動処理
 	Vector2D moveVec;
-	if(mouse_get(MOUSE_INPUT_LEFT)>0 && m_mouseLeftFlag){
+	if(//mouse_get(MOUSE_INPUT_LEFT)>0
+		BattleSceneData::JudgeMousePushInsideMapDrawZone(MOUSE_INPUT_LEFT,true)
+		&& m_mouseLeftFlag
+		)
+	{
 		//マウスを左クリックしているならマウス入力に対応させる
 		moveVec=GetMousePointVector2D()-m_battleSceneData->m_operateUnit->getPos();
 		//アナログスティックの物理的なズレ等によるmoveVecの微入力を除く
@@ -65,7 +69,10 @@ int PlayerMoveScene::thisCalculate(){
 	const Vector2D mousePos=GetMousePointVector2D();
 	if(JudgeAttackCommandUsable()
 		&& (keyboard_get(KEY_INPUT_Z)==1
-			|| (m_aimedUnit->GetUnitCircleShape()->VJudgePointInsideShape(mousePos) && mouse_get(MOUSE_INPUT_LEFT)==1)
+			|| (m_aimedUnit->GetUnitCircleShape()->VJudgePointInsideShape(mousePos)
+				//&& mouse_get(MOUSE_INPUT_LEFT)==1
+				&& BattleSceneData::JudgeMousePushInsideMapDrawZone(MOUSE_INPUT_LEFT,false)
+				)
 			)
 		)
 	{
