@@ -7,10 +7,11 @@
 #include"ToolsLib.h"
 #include"FileRead.h"
 #include"GameScene.h"
+#include"CommonConstParameter.h"
 
 //----------------------BattleSceneData----------------------
-const Vector2D BattleSceneData::mapDrawSize=Vector2D(GameScene::windowSize.x,900.0f);
-const Vector2D BattleSceneData::uiDrawSize=Vector2D(GameScene::windowSize.x,GameScene::windowSize.y-BattleSceneData::mapDrawSize.y);
+const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);
+const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonConstParameter::gameResolutionX-BattleSceneData::mapDrawSize.y);
 
 BattleSceneData::BattleSceneData(const char *stagename)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))

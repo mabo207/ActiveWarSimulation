@@ -63,6 +63,7 @@ public:
 
 	//定数
 public:
+	//static const float unitCircleSize=(const float)CommonConstParameter::unitCircleSize;//非整数型static constメンバは、クラス内で初期化できない
 	static const float unitCircleSize;//ユニットそのものの大きさ
 	static const float rivalInpenetratableCircleSize;//敵対ユニットの進入不可領域
 	

@@ -76,8 +76,7 @@ const float Unit::BattleStatus::maxOP=100.0f+Unit::reduceStartActionCost+0.0001f
 //------------Unit---------------
 const float Unit::unitCircleSize=(float)CommonConstParameter::unitCircleSize;
 const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
-const float Unit::reduceStartActionCost=50.0f;
-
+const float Unit::reduceStartActionCost=50.0f;//定数値なのでヘッダー内初期化と同じ順番になり、ここで初期化してもUnit::BattleStatus::maxOPの初期化より先に処理が行われることになる。
 const float Unit::attackCost=50.0f;
 
 const int Unit::hpFontSize=20;

@@ -1,6 +1,7 @@
 #include"input.h"
 #include"DxLib.h"
 #include"ComputerMoveScene.h"
+#include"CommonConstParameter.h"
 
 #include"Circle.h"
 
@@ -22,7 +23,7 @@ bool ComputerMoveScene::LatticeDistanceInfo::operator==(const LatticeDistanceInf
 
 
 //---------------ComputerMoveScene------------------
-const size_t ComputerMoveScene::squareSize=(size_t)Unit::unitCircleSize;
+const size_t ComputerMoveScene::squareSize=CommonConstParameter::unitCircleSize;
 
 ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:MoveScene(battleSceneData)

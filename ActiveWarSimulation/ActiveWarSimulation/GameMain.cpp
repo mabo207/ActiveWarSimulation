@@ -6,6 +6,7 @@
 #include<memory>
 #include"GraphicControl.h"
 #include"ToolsLib.h"
+#include"CommonConstParameter.h"
 
 #include"TitleScene.h"
 
@@ -13,7 +14,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
 		//dxライブラリの初期化
 		//画面モードの設定(一応こんな感じ)
-		SetGraphMode((int)GameScene::windowSize.x,(int)GameScene::windowSize.y,16);
+		SetGraphMode(CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,16);
 		//タイトルメニュー文字
 		SetMainWindowText("ActiveWarSimulation");
 		//ウインドウサイズの変更

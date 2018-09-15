@@ -9,8 +9,7 @@
 class GameScene{
 	//型
 	//定数
-public:
-	static const Vector2D windowSize;//ウインドウの解像度
+
 	//変数
 	//関数
 public:
