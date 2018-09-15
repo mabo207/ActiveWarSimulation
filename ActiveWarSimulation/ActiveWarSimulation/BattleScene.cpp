@@ -8,6 +8,8 @@
 BattleScene::BattleScene(const char *stagename)
 	:MainControledGameScene(),m_battleSceneData(new BattleSceneData(stagename))
 {
+	//bgmÄ¶
+	PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);
 	//m_sceneData‚Ì‰Šú‰»AÅ‰‚Í‚Ğ‚Æ‚Ü‚¸ˆÚ“®‚Å
 	m_sceneData=std::shared_ptr<BattleSceneElement>(new SwitchUnitScene(m_battleSceneData));
 }

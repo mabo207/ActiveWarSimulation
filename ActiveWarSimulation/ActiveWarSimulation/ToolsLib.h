@@ -158,6 +158,9 @@ std::pair<int,int> GetWindowResolution();
 //マウスがウインドウ内に入っているかの判定
 bool JudgeMouseInWindow();
 
+//bgmを読み込む関数
+int LoadBGMMem(const std::string &dirname,int BufferNum=3,int UnionHandle=-1);
+
 //継承クラスのポインタのポインタを基底クラスのポインタのポインタにキャストする関数。継承先ポインタで作った配列を基底クラスのポインタで作った配列に変えたい時に使う
 template<typename T,typename FROM> std::enable_if_t<std::is_base_of_v<T,FROM>,T**> pointer_array_cast(FROM **arr){
 	//TがFROMを継承していないとコンパイルエラーになる。

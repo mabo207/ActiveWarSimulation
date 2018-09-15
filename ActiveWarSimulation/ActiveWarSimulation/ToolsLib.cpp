@@ -6,6 +6,7 @@
 #include<algorithm>
 #include<time.h>
 #include<Windows.h>
+#include"FileRead.h"
 #pragma comment(lib, "winmm.lib")
 
 #define INTMAXINDEX 12//int型の最大桁数+2('-'と'\0'のための+2)(int型の文字数)
@@ -324,6 +325,28 @@ bool JudgeMouseInWindow(){
 	//ウインドウの大きさが分かれば、長方形と点の内部判定
 	return (x>=0 && x<resolution.first && y>=0 && y<resolution.second);
 }
+
+//bgmを読み込む関数
+int LoadBGMMem(const std::string &dirname,int BufferNum,int UnionHandle){
+	//音を読み込む。
+	int handle=LoadSoundMem((dirname+"bgm.ogg").c_str(),BufferNum,UnionHandle);
+	//ループ位置の設定。info.csvに「ループ開始位置」「ループ終了位置」「音量%」が格納されている
+	std::vector<std::vector<int>> info=CSVRead((dirname+"info.csv").c_str());
+	if(!info.empty() && info[0].size()>=3){
+		const int loopstart=info[0][0];
+		const int loopend=info[0][1];
+		const int volume=info[0][2];
+		if(loopstart>=0){
+			SetLoopStartSamplePosSoundMem(loopstart,handle);
+		}
+		if(loopend>=0){
+			SetLoopSamplePosSoundMem(loopend,handle);
+		}
+		ChangeVolumeSoundMem(volume,handle);
+	}
+	return handle;
+}
+
 
 //数値変化を様々な式で管理するクラス
 //---Easing---

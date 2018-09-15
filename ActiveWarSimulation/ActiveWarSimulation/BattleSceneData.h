@@ -33,6 +33,9 @@ public:
 	//グラフィックデータ
 	const int m_mapPic;//マップ全体のグラフィック
 	
+	//サウンドデータ
+	const int m_mapBGM;//マップBGM
+
 	//その他の変数
 	FpsMeasuring m_fpsMesuring;//fps計測器。タイマーの意味合いも兼ねる。
 	const int m_orderFont;//オーダー表示の際のフォント

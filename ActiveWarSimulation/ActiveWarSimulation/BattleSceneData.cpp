@@ -17,6 +17,7 @@ BattleSceneData::BattleSceneData(const char *stagename)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr),m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
+	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/stage1/"))
 {
 	//グラフィックデータの読み込み
 	LoadDivGraphEX("Graphic/drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
@@ -127,6 +128,9 @@ BattleSceneData::~BattleSceneData(){
 	for(size_t i=0;i<drawOrderHelpNum;i++){
 		DeleteGraphEX(m_drawOrderHelp[i]);
 	}
+	//サウンド開放
+	StopSoundMem(m_mapBGM);
+	DeleteSoundMem(m_mapBGM);
 	//フォント開放
 	DeleteFontToHandle(m_orderFont);
 	//オブジェクト一覧を開放
