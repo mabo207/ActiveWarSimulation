@@ -156,6 +156,7 @@
     <ClCompile Include="BattleScene.cpp" />
     <ClCompile Include="BattleSceneData.cpp" />
     <ClCompile Include="BattleSceneElement.cpp" />
+    <ClCompile Include="CommonConstParameter.cpp" />
     <ClCompile Include="DamageCalculators.cpp" />
     <ClCompile Include="ComputerMoveScene.cpp" />
     <ClCompile Include="FileRead.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="BattleScene.h" />
     <ClInclude Include="BattleSceneData.h" />
     <ClInclude Include="BattleSceneElement.h" />
+    <ClInclude Include="CommonConstParameter.h" />
     <ClInclude Include="ComputerMoveScene.h" />
     <ClInclude Include="DamageCalculators.h" />
     <ClInclude Include="FileRead.h" />

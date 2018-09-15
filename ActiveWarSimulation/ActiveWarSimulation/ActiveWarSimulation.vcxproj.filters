@@ -156,6 +156,9 @@
     <ClCompile Include="StageClearScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
+    <ClCompile Include="CommonConstParameter.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -241,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="StageClearSceme.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonConstParameter.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

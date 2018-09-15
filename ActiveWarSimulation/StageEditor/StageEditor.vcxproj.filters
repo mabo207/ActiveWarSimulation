@@ -141,6 +141,9 @@
     <ClInclude Include="PolygonFactory.h">
       <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
     </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\CommonConstParameter.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -220,6 +223,9 @@
     </ClCompile>
     <ClCompile Include="PolygonFactory.cpp">
       <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\CommonConstParameter.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
