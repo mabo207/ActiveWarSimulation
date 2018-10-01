@@ -329,12 +329,40 @@ void BattleSceneData::DrawHPGage()const{
 }
 
 void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)const{
-	std::pair<int,int> windowSize=GetWindowResolution();
-	auto calDrawPoint=[windowSize](size_t i){return Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f);};//描画位置をそのまま計算する関数
+	const std::pair<int,int> windowSize=GetWindowResolution();
+	const float opStrDy=20.0f;//OPの数字の描画にウインドウ下端から何px使用するか
+	auto calDrawPoint=[windowSize,opStrDy](size_t i){
+		//描画位置をそのまま計算する関数
+		float topOpenWidth;//先頭キャラ（＝操作ユニット）だけ離して描画されるようにするための値
+		if(i==0){
+			topOpenWidth=0.0f;
+		} else{
+			topOpenWidth=20.0f;
+		}
+		return Vector2D((i+1)*Unit::unitCircleSize*2.4f+topOpenWidth,(float)windowSize.second-Unit::unitCircleSize*1.1f-opStrDy);
+	};
 	
 	//オーダー画面の背景を描画
 	//DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
 	
+
+	//ユニットのオーダー情報を順番に描画
+	for(size_t i=0,size=m_unitList.size();i<size;i++){
+		const Vector2D centerPoint=calDrawPoint(i);
+		//マウスが重なっていれば、対応キャラまで線を伸ばす
+		//lineDrawに入っていても線を伸ばす
+		if((GetMousePointVector2D()-centerPoint).sqSize()<Unit::unitCircleSize*Unit::unitCircleSize || lineDraw.find(m_unitList[i])!=lineDraw.end()){
+			const Vector2D unitDrawPos=m_unitList[i]->getPos()-Vector2D();
+			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(196,196,196),3.0f);
+			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(255,255,255));
+		}
+		//ユニットアイコン(描画基準点は真ん中)
+		m_unitList[i]->DrawFacePic(centerPoint);
+		//残りOP
+		const int x=(int)centerPoint.x,y=(int)(windowSize.second-opStrDy);
+		DrawStringCenterBaseToHandle(x,y,std::to_string((int)m_unitList[i]->GetBattleStatus().OP).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
+	}
+
 	//行動終了時のユニットのオーダー位置予測の矢印の描画
 	const size_t arrowNum=drawOrderHelpNum;
 	Vector2D arrowPos[arrowNum]={calDrawPoint(0),calDrawPoint(0)};//矢印の先端位置(先頭:行動しない時 後ろ:行動する時)
@@ -361,6 +389,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 		}
 	}
 	//矢印を描画
+/*
 	for(size_t j=0;j<2;j++){
 		const float width[2]={8.0f,6.0f};
 		const unsigned int color[2]={GetColor(0,0,0),GetColor(255,255,255)};//下地は黒、上は白
@@ -379,22 +408,23 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 			}
 		}
 	}
-
-	//ユニットのオーダー情報を順番に描画
-	for(size_t i=0,size=m_unitList.size();i<size;i++){
-		const Vector2D centerPoint=calDrawPoint(i);
-		//マウスが重なっていれば、対応キャラまで線を伸ばす
-		//lineDrawに入っていても線を伸ばす
-		if((GetMousePointVector2D()-centerPoint).sqSize()<Unit::unitCircleSize*Unit::unitCircleSize || lineDraw.find(m_unitList[i])!=lineDraw.end()){
-			const Vector2D unitDrawPos=m_unitList[i]->getPos()-Vector2D();
-			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(196,196,196),3.0f);
-			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(255,255,255));
+//*/
+	const unsigned int color[2][2]={{GetColor(100,162,234),GetColor(231,121,24)},{GetColor(255,255,255),GetColor(255,255,255)}};//下地は黒、上は白
+	for(size_t j=0;j<2;j++){
+		//奥と手前側に矢印を描画(j=0が奥の色付き、j=1が手前の白)
+		const float width[2]={8.0f,4.0f};
+		for(size_t i=0;i<arrowNum;i++){
+			const float height=15.0f;
+			const Vector2D v=calDrawPoint(0)-Vector2D(0.0f,width[0]*2.0f+Unit::unitCircleSize*0.9f);//先頭ユニットの描画基準位置(下地・中抜き部分ともに同じ位置にしたいのでwidth[0]を用いる)
+			DrawBoxAA(arrowPos[i].x-width[j],v.y-height-width[j],arrowPos[i].x+width[j],v.y,color[j][i],TRUE);
+			DrawTriangleAA(arrowPos[i].x,v.y+width[j]*2.0f,arrowPos[i].x-width[j]*2.0f,v.y,arrowPos[i].x+width[j]*2.0f,v.y,color[j][i],TRUE);
+			if(j==0){
+				//矢印の分岐の上にヘルプ描画
+				int dx,dy;
+				GetGraphSize(m_drawOrderHelp[i],&dx,&dy);
+				DrawGraph((int)arrowPos[i].x-dx/2,(int)(v.y-height-width[j])-dy*(drawOrderHelpNum-i),m_drawOrderHelp[i],TRUE);
+			}
 		}
-		//ユニットアイコン(描画基準点は真ん中)
-		m_unitList[i]->DrawFacePic(centerPoint);
-		//残りOP
-		const int x=(int)centerPoint.x,y=((int)centerPoint.y)-(int)(Unit::unitCircleSize)-20;
-		DrawStringCenterBaseToHandle(x,y,std::to_string((int)m_unitList[i]->GetBattleStatus().OP).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
 	}
 }
 
