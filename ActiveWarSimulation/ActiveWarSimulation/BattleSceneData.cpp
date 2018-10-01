@@ -337,7 +337,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 		if(i==0){
 			topOpenWidth=0.0f;
 		} else{
-			topOpenWidth=20.0f;
+			topOpenWidth=Unit::unitCircleSize;
 		}
 		return Vector2D((i+1)*Unit::unitCircleSize*2.4f+topOpenWidth,(float)windowSize.second-Unit::unitCircleSize*1.1f-opStrDy);
 	};

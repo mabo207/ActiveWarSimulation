@@ -202,7 +202,10 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 	const int gageX=(int)(getPos().x-unitCircleSize),gageY=(int)(getPos().y+unitCircleSize)-hpFontSize/2,unitCircleSizeInteger=(int)(unitCircleSize),margin=2;
 	const int gageMaxLength=(unitCircleSizeInteger-margin)*2;
 	const int gageLength=gageMaxLength*m_battleStatus.HP/m_baseStatus.maxHP;
-	unsigned int color;//ゲージの色
+	//ゲージの色
+	unsigned int color;
+/*
+	//HPの割合で色を決める
 	if(gageLength>gageMaxLength*3/4){
 		//HPが全体の3/4以上なら水色
 		color=GetColor(0,196,255);
@@ -216,9 +219,49 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 		//HPが全体の1/4以下なら赤色
 		color=GetColor(255,64,0);
 	}
-	DrawBox(gageX,gageY,gageX+unitCircleSizeInteger*2,gageY+hpFontSize,GetColor(0,0,0),TRUE);//ゲージ外側
-	DrawBox(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,color,TRUE);//ゲージ内側
-	DrawStringRightJustifiedToHandle(gageX,gageY,std::to_string(m_battleStatus.HP),GetColor(255,255,255),m_hpFont,GetColor(0,0,0));//HPの文字列
+//*/
+	//HPの値で色を決める
+	const int interval=5;
+	if(m_battleStatus.HP<=interval*1){
+		color=GetColor(255,64,0);//赤色
+	} else if(m_battleStatus.HP<=interval*2){
+		color=GetColor(234,106,0);
+	} else if(m_battleStatus.HP<=interval*3){
+		color=GetColor(213,149,0);
+	} else if(m_battleStatus.HP<=interval*4){
+		color=GetColor(192,192,0);//黄色
+	} else if(m_battleStatus.HP<=interval*5){
+		color=GetColor(128,192,0);
+	} else if(m_battleStatus.HP<=interval*6){
+		color=GetColor(85,192,0);
+	} else if(m_battleStatus.HP<=interval*7){
+		color=GetColor(32,192,0);//黄緑色
+	} else if(m_battleStatus.HP<=interval*8){
+		color=GetColor(21,192,85);
+	} else if(m_battleStatus.HP<=interval*9){
+		color=GetColor(10,192,170);
+	} else{
+		color=GetColor(0,192,255);//水色
+	}
+	//ゲージ外側の描画
+	DrawBox(gageX,gageY,gageX+unitCircleSizeInteger*2,gageY+hpFontSize,GetColor(0,0,0),TRUE);
+	//ゲージ内側の描画
+	//DrawBox(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,color,TRUE);//単純な描画
+	unsigned int leftColor;
+	switch(m_battleStatus.team){
+	case(Team::e_player):
+		leftColor=GetColor(21,106,191);
+		break;
+	case(Team::e_enemy):
+		leftColor=GetColor(191,21,34);
+		break;
+	default:
+		leftColor=GetColor(21,106,191);
+		break;
+	}
+	DrawBoxGradation(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,leftColor,color,true);
+	//HPの文字列の描画
+	DrawStringRightJustifiedToHandle(gageX,gageY,std::to_string(m_battleStatus.HP),GetColor(255,255,255),m_hpFont,GetColor(0,0,0));
 
 }
 

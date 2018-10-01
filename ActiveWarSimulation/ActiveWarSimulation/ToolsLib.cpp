@@ -347,6 +347,48 @@ int LoadBGMMem(const std::string &dirname,int BufferNum,int UnionHandle){
 	return handle;
 }
 
+//グラデーション有りの四角形描画(x1<x2,y1<y2でないと正しく動作しない)
+void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsigned int rightDownColor,bool horizontal){
+	//水平方向または垂直方向のみのグラデーション
+	if(horizontal){
+		//水平方向
+		DrawBoxGradation(x1,y1,x2,y2,leftUpColor,leftUpColor,rightDownColor,rightDownColor);
+	} else{
+		//垂直方向
+		DrawBoxGradation(x1,y1,x2,y2,leftUpColor,rightDownColor,leftUpColor,rightDownColor);
+	}
+}
+
+void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsigned int leftDownColor,unsigned int rightUpColor,unsigned int rightDownColor){
+	//頂点色の取得
+	int vertexColor[4][3];//0:(x1,y1) 1:(x1,y2) 2:(x2,y1) 3:(x2,y2)
+	GetColor2(leftUpColor,&vertexColor[0][0],&vertexColor[0][1],&vertexColor[0][2]);
+	GetColor2(leftDownColor,&vertexColor[1][0],&vertexColor[1][1],&vertexColor[1][2]);
+	GetColor2(rightUpColor,&vertexColor[2][0],&vertexColor[2][1],&vertexColor[2][2]);
+	GetColor2(rightDownColor,&vertexColor[3][0],&vertexColor[3][1],&vertexColor[3][2]);
+	//四角形の描画
+	if(x1<x2 && y1<y2){
+		for(int y=y1;y<y2;y++){
+			for(int x=x1;x<x2;x++){
+				//(x,y)に描画する色は
+				/*color=
+					vertexColor[0]*(x2-x)/(x2-x1)*(y2-y)/(y2-y1)
+					+vertexColor[1]*(x2-x)/(x2-x1)*(y-y1)/(y2-y1)
+					+vertexColor[2]*(x-x1)/(x2-x1)*(y2-y)/(y2-y1)
+					+vertexColor[3]*(x-x1)/(x2-x1)*(y-y1)/(y2-y1)
+				//*/
+				int colorValue[3];
+				for(size_t i=0;i<3;i++){
+					colorValue[i]=((vertexColor[0][i]*(x2-x)*(y2-y))+(vertexColor[1][i]*(x2-x)*(y-y1))+(vertexColor[2][i]*(x-x1)*(y2-y))+(vertexColor[3][i]*(x-x1)*(y-y1)))/(y2-y1)/(x2-x1);
+				}
+				DrawPixel(x,y,GetColor(colorValue[0],colorValue[1],colorValue[2]));
+			}
+		}
+	} else{
+		//0除算や方向でミスっている場合は普通のDrawBoxをする
+		DrawBox(x1,y1,x2,y2,leftUpColor,TRUE);
+	}
+}
 
 //数値変化を様々な式で管理するクラス
 //---Easing---
