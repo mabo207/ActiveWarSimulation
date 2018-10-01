@@ -292,12 +292,13 @@ void MoveScene::thisDraw()const{
 				size_t index=(m_battleSceneData->m_fpsMesuring.GetFlame()/15)%attackedCursorPicNum;
 				float dx,dy;
 				GetGraphSizeF(m_attackedCursor[index],&dx,&dy);
-				DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_attackedCursor[index],TRUE);
+				//DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_attackedCursor[index],TRUE);
 				//í“¬—\‘ª‚Ì•`‰æ
 				const int period=60;
 				//const int dx2=(int)(5*std::cos(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFlame()%period)/period));
 				const int dx2=0;
 				const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFlame()%period)/period));
+				//const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFlame()%period)/period))-30;
 				m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->DrawPredict((int)pos.x+dx2,(int)pos.y+dy2,m_predictExplainFont,m_predictNumberFont,m_battleSceneData->m_operateUnit,m_aimedUnit);
 			}
 		}
