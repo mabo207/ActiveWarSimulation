@@ -2,7 +2,7 @@
 #include"DxLib.h"
 #include"GraphicControl.h"
 #include"input.h"
-
+#include"CommonConstParameter.h"
 
 //--------------------StageClearScene------------------
 StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneData,bool winFlag,const std::string &explain)
@@ -46,18 +46,17 @@ void StageClearScene::thisDraw()const{
 
 	//マップ系は暗くするために黒い長方形を描画
 	int mode,pal;
-	const std::pair<int,int> resolution=GetWindowResolution();
 	GetDrawBlendMode(&mode,&pal);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
-	DrawBox(0,0,resolution.first,resolution.second,GetColor(0,0,0),TRUE);
+	DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
 	SetDrawBlendMode(mode,pal);
 
 	//ステージクリア状況の表示
 	int dx,dy;
 	GetGraphSize(m_stageClearBox,&dx,&dy);
-	DrawGraph((resolution.first-dx)/2,(resolution.second-dy)/2,m_stageClearBox,TRUE);
-	DrawStringCenterBaseToHandle(resolution.first/2,(resolution.second-dy)/2+48,(m_winFlag?"STAGE CLEAR!":"MISSION FAILED..."),GetColor(255,255,255),m_clearFont,true,(m_winFlag?GetColor(220,128,128):GetColor(128,128,200)));
-	DrawStringNewLineToHandle(resolution.first/2-dx/4,(resolution.second-dy)/2+120,dx/2,dy/4,m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+	DrawGraph((CommonConstParameter::gameResolutionX-dx)/2,(CommonConstParameter::gameResolutionY-dy)/2,m_stageClearBox,TRUE);
+	DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,(CommonConstParameter::gameResolutionY-dy)/2+48,(m_winFlag?"STAGE CLEAR!":"MISSION FAILED..."),GetColor(255,255,255),m_clearFont,true,(m_winFlag?GetColor(220,128,128):GetColor(128,128,200)));
+	DrawStringNewLineToHandle(CommonConstParameter::gameResolutionX/2-dx/4,(CommonConstParameter::gameResolutionY-dy)/2+120,dx/2,dy/4,m_explain.c_str(),GetColor(255,255,255),m_explainFont);
 }
 
 int StageClearScene::UpdateNextScene(int index){

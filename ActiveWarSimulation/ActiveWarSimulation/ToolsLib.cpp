@@ -7,6 +7,7 @@
 #include<time.h>
 #include<Windows.h>
 #include"FileRead.h"
+#include"CommonConstParameter.h"
 #pragma comment(lib, "winmm.lib")
 
 #define INTMAXINDEX 12//int型の最大桁数+2('-'と'\0'のための+2)(int型の文字数)
@@ -306,6 +307,8 @@ bool JudgeInTriangle(Vector2D point,Vector2D p1,Vector2D p2,Vector2D p3){
 
 //内部で使用している描画解像度を取得する(ウインドウの拡大縮小で左右されないサイズが手に入る)
 std::pair<int,int> GetWindowResolution(){
+	//これだとフルスクリーンモードでは対応できないので、画面解像度の情報を保持するしかない
+/*
 	int dx,dy;
 	double rateX,rateY;
 	GetWindowSize(&dx,&dy);
@@ -315,6 +318,8 @@ std::pair<int,int> GetWindowResolution(){
 	} else{
 		return std::pair<int,int>((int)(std::ceil(dx/rateX)),(int)(std::ceil(dy/rateY)));
 	}
+//*/
+	return std::pair<int,int>(CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY);
 }
 
 //マウスがウインドウ内に入っているかの判定

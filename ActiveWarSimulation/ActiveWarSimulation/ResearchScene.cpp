@@ -1,6 +1,7 @@
 #include"ResearchScene.h"
 #include"DxLib.h"
 #include"GraphicControl.h"
+#include"CommonConstParameter.h"
 
 //-------------------ResearchScene---------------------
 const int ResearchScene::explainFontSize=16;
@@ -165,8 +166,7 @@ void ResearchScene::thisDraw()const{
 	if(m_researchUnit!=nullptr){
 		//パラメータの表示
 		int gx=1200,gy=140;//パラメータ画面全体の描画位置
-		std::pair<int,int> windowSize=GetWindowResolution();
-		if(m_researchUnit->getPos().x<(int)windowSize.first/2){
+		if(m_researchUnit->getPos().x<CommonConstParameter::gameResolutionX/2){
 			//ユニットの位置が画面左半分にいるなら
 			gx=1200;
 		} else{

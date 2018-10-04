@@ -4,6 +4,7 @@
 #include"FileRead.h"
 #include<Windows.h>
 #include"BattleScene.h"
+#include"CommonConstParameter.h"
 
 //----------------------StageSelectScene------------------
 StageSelectScene::StageInfo::~StageInfo(){
@@ -113,14 +114,13 @@ int StageSelectScene::Calculate(){
 }
 
 void StageSelectScene::Draw()const{
-	const std::pair<int,int> resolution=GetWindowResolution();
 	//îwåiÇÃï`âÊ
 	DrawGraph(0,0,m_backPic,TRUE);
 	//à√ÇﬂÇ…ï`âÊÇ∑ÇÈÇΩÇﬂÇ…ÅAè„Ç©ÇÁçïí∑ï˚å`ÇîºìßñæÇ≈èdÇÀÇÈ
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
-	DrawBox(0,0,resolution.first,resolution.second,GetColor(0,0,0),TRUE);
+	DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
 	SetDrawBlendMode(mode,pal);
 	//É{É^ÉìÇÃï`âÊ
 	m_beforeStageButton.DrawButton();
@@ -132,8 +132,8 @@ void StageSelectScene::Draw()const{
 		int stageDx,stageDy;
 		const int explainX=400;
 		GetGraphSize(m_stageInfoVec[m_selectStageIndex].m_mapPic,&stageDx,&stageDy);
-		DrawRotaGraph(resolution.first/2,resolution.second/3,((double)resolution.second/2)/stageDy,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
-		DrawStringCenterBaseToHandle(resolution.first/2,resolution.second*3/5,m_stageInfoVec[m_selectStageIndex].m_stageName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
-		DrawStringNewLineToHandle(explainX,resolution.second*2/3,resolution.first-explainX*2,resolution.second/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+		DrawRotaGraph(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/3,((double)CommonConstParameter::gameResolutionY/2)/stageDy,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
+		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_selectStageIndex].m_stageName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
+		DrawStringNewLineToHandle(explainX,CommonConstParameter::gameResolutionY*2/3,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
 	}
 }

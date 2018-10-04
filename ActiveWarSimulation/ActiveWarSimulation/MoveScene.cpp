@@ -8,6 +8,7 @@
 #include<algorithm>
 #include"GraphicControl.h"
 #include<cmath>
+#include"CommonConstParameter.h"
 
 //----------------------MoveScene----------------------
 const float MoveScene::routeFrequency=1.0f;
@@ -313,8 +314,7 @@ void MoveScene::thisDraw()const{
 		//int x,y;
 		//GetWindowSize(&x,&y);
 		//SaveDrawScreenToPNG(0,0,x,y,"screenshot.png");
-		const std::pair<int,int> resolution=GetWindowResolution();
-		SaveDrawScreenToPNG(0,0,resolution.first,resolution.second,"screenshot.png");
+		SaveDrawScreenToPNG(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,"screenshot.png");
 	}
 }
 

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\ActiveWarSimulation\CommonConstParameter.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\FileRead.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\GraphicControl.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\GraphicProgramming.cpp" />
@@ -34,6 +35,7 @@
     <ClCompile Include="ShapeHaving.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ActiveWarSimulation\CommonConstParameter.h" />
     <ClInclude Include="..\ActiveWarSimulation\FileRead.h" />
     <ClInclude Include="..\ActiveWarSimulation\GraphicControl.h" />
     <ClInclude Include="..\ActiveWarSimulation\GraphicProgramming.h" />

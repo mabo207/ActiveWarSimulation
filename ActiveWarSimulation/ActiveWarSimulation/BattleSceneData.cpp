@@ -286,8 +286,7 @@ void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)co
 			Vector2D v=GetMousePointVector2D();
 			int wx,wy;
 			GetWindowSize(&wx,&wy);
-			std::pair<int,int> ori=GetWindowResolution();
-			printfDx("mouse:(%f,%f)\nwindowsize:(%d,%d)\nresolution:(%d,%d)\n",v.x,v.y,wx,wy,ori.first,ori.second);
+			printfDx("mouse:(%f,%f)\nwindowsize:(%d,%d)\nresolution:(%d,%d)\n",v.x,v.y,wx,wy,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY);
 		}
 		//当たり判定図形の描画
 		for(const BattleObject *obj:m_field){
@@ -329,9 +328,8 @@ void BattleSceneData::DrawHPGage()const{
 }
 
 void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)const{
-	const std::pair<int,int> windowSize=GetWindowResolution();
 	const float opStrDy=20.0f;//OPの数字の描画にウインドウ下端から何px使用するか
-	auto calDrawPoint=[windowSize,opStrDy](size_t i){
+	auto calDrawPoint=[opStrDy](size_t i){
 		//描画位置をそのまま計算する関数
 		float topOpenWidth;//先頭キャラ（＝操作ユニット）だけ離して描画されるようにするための値
 		if(i==0){
@@ -339,7 +337,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 		} else{
 			topOpenWidth=Unit::unitCircleSize;
 		}
-		return Vector2D((i+1)*Unit::unitCircleSize*2.4f+topOpenWidth,(float)windowSize.second-Unit::unitCircleSize*1.1f-opStrDy);
+		return Vector2D((i+1)*Unit::unitCircleSize*2.4f+topOpenWidth,(float)CommonConstParameter::gameResolutionY-Unit::unitCircleSize*1.1f-opStrDy);
 	};
 	
 	//オーダー画面の背景を描画
@@ -359,7 +357,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 		//ユニットアイコン(描画基準点は真ん中)
 		m_unitList[i]->DrawFacePic(centerPoint);
 		//残りOP
-		const int x=(int)centerPoint.x,y=(int)(windowSize.second-opStrDy);
+		const int x=(int)centerPoint.x,y=(int)(CommonConstParameter::gameResolutionY-opStrDy);
 		DrawStringCenterBaseToHandle(x,y,std::to_string((int)m_unitList[i]->GetBattleStatus().OP).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
 	}
 
