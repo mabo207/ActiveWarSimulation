@@ -34,7 +34,13 @@ public:
 	const int m_mapPic;//マップ全体のグラフィック
 	
 	//サウンドデータ
+	//bgm
 	const int m_mapBGM;//マップBGM
+	//effect
+	const int m_aimchangeSound;//狙いが変わった時の音
+	const int m_attackSound;//ダメージの音
+	const int m_healSound;//回復の音
+	const int m_footSound;//足音
 
 	//その他の変数
 	FpsMeasuring m_fpsMesuring;//fps計測器。タイマーの意味合いも兼ねる。

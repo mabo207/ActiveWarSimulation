@@ -15,9 +15,14 @@ const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonC
 
 BattleSceneData::BattleSceneData(const char *stagename)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
-	,m_fpsMesuring(),m_operateUnit(nullptr),m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
+	,m_fpsMesuring(),m_operateUnit(nullptr)
+	,m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/stage1/"))
+	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
+	,m_attackSound(LoadSoundMem("Sound/effect/nonfree/damage.ogg"))
+	,m_healSound(LoadSoundMem("Sound/effect/nonfree/recover.ogg"))
+	,m_footSound(LoadSoundMem("Sound/effect/nonfree/foot.ogg"))
 {
 	//グラフィックデータの読み込み
 	LoadDivGraphEX("Graphic/drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
@@ -131,6 +136,10 @@ BattleSceneData::~BattleSceneData(){
 	//サウンド開放
 	StopSoundMem(m_mapBGM);
 	DeleteSoundMem(m_mapBGM);
+	DeleteSoundMem(m_aimchangeSound);
+	DeleteSoundMem(m_attackSound);
+	DeleteSoundMem(m_healSound);
+	DeleteSoundMem(m_footSound);
 	//フォント開放
 	DeleteFontToHandle(m_orderFont);
 	//オブジェクト一覧を開放

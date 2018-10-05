@@ -352,6 +352,7 @@ int ComputerMoveScene::thisCalculate(){
 			} else if(m_targetUnit!=nullptr && m_battleSceneData->m_operateUnit->JudgeAttackable(m_targetUnit) && m_aimedUnit!=m_targetUnit){
 				//AIが決めていた攻撃対象が攻撃範囲内にいるが、m_aimedUnitがそれに一致しないときは、攻撃対象を動かす
 				SetAimedUnit(1);
+				PlaySoundMem(m_battleSceneData->m_aimchangeSound,DX_PLAYTYPE_BACK,TRUE);//狙い切り替えなのでその効果音を
 			} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f
 				//			|| processedTime>10.0//デバッグのために一度省いている
 				|| keyboard_get(KEY_INPUT_Q)==1//時間制限がない際にゲームに戻れるようにするため

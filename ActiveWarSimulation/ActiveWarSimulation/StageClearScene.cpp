@@ -3,6 +3,7 @@
 #include"GraphicControl.h"
 #include"input.h"
 #include"CommonConstParameter.h"
+#include"GeneralPurposeResourceManager.h"
 
 //--------------------StageClearScene------------------
 StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneData,bool winFlag,const std::string &explain)
@@ -30,6 +31,7 @@ int StageClearScene::thisCalculate(){
 		(keyboard_get(KEY_INPUT_Z)==1 || mouse_get(MOUSE_INPUT_LEFT)==1)
 		)
 	{
+		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//Œˆ’è‚ÌŒø‰Ê‰¹‚ð–Â‚ç‚·
 		return SceneKind::END;
 	}
 

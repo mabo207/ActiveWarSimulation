@@ -107,7 +107,12 @@ void ResearchScene::UpdatePointer(){
 	//マウスの直前位置の更新
 	m_mousePosJustBefore=mouseVec;
 	//ポインターの位置にいるユニットをm_researchUnitに格納する
+	const Unit *beforeResearchUnit=m_researchUnit;
 	m_researchUnit=m_battleSceneData->GetUnitPointer(m_pointerVec);
+	if(m_researchUnit!=nullptr && m_researchUnit!=beforeResearchUnit){
+		//ユニットを指定した瞬間であれば切り替えの効果音を
+		PlaySoundMem(m_battleSceneData->m_aimchangeSound,DX_PLAYTYPE_BACK,TRUE);
+	}
 }
 
 int ResearchScene::thisCalculate(){
