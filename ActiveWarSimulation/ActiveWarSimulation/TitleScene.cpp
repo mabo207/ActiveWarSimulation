@@ -40,6 +40,7 @@ TitleScene::TitleScene()
 	,m_backPic(LoadGraphEX("Graphic/nonfree/titleScene.png"))
 	,m_titleLogo(LoadGraphEX("Graphic/titleLogo.png"))
 	,m_itemFont(CreateFontToHandleEX("メイリオ",24,1,-1))
+	,m_bgm(LoadBGMMem("Sound/bgm/nonfree/title/"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_selectItem(SelectItem::e_stageSelect)
 	,m_flame(0)
@@ -49,12 +50,18 @@ TitleScene::TitleScene()
 	//当たり判定図形の用意
 	m_hitJudgeShapeVec[0]=MakeHexagon(strPos[0],120.0f);
 	m_hitJudgeShapeVec[1]=MakeHexagon(strPos[1],120.0f);
+	//bgm再生
+	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
 }
 
 TitleScene::~TitleScene(){
+	//グラフィック解放
 	DeleteGraphEX(m_backPic);
 	DeleteGraphEX(m_titleLogo);
 	DeleteFontToHandleEX(m_itemFont);
+	//サウンド解放
+	StopSoundMem(m_bgm);
+	DeleteSoundMem(m_bgm);
 }
 
 int TitleScene::thisCalculate(){

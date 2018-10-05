@@ -51,6 +51,9 @@ protected:
 	const int m_titleLogo;//タイトルロゴ
 	const int m_itemFont;//選択項目のフォント
 
+	//bgm
+	const int m_bgm;
+
 	//関数
 private:
 	std::shared_ptr<Shape> MakeHexagon(const Vector2D center,const float size)const;
