@@ -161,6 +161,7 @@
     <ClCompile Include="ComputerMoveScene.cpp" />
     <ClCompile Include="FileRead.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="GeneralPurposeResourceManager.cpp" />
     <ClCompile Include="GraphicControl.cpp" />
     <ClCompile Include="GraphicProgramming.cpp" />
     <ClCompile Include="input.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="DamageCalculators.h" />
     <ClInclude Include="FileRead.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="GeneralPurposeResourceManager.h" />
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
     <ClInclude Include="StageClearSceme.h" />
