@@ -54,6 +54,9 @@ protected:
 	//bgm
 	const int m_bgm;
 
+	//Œø‰Ê‰¹
+	const int m_aimchangeSound;
+
 	//ŠÖ”
 private:
 	std::shared_ptr<Shape> MakeHexagon(const Vector2D center,const float size)const;

@@ -5,6 +5,7 @@
 #include<Windows.h>
 #include"BattleScene.h"
 #include"CommonConstParameter.h"
+#include"GeneralPurposeResourceManager.h"
 
 //----------------------StageSelectScene------------------
 StageSelectScene::StageInfo::~StageInfo(){
@@ -75,23 +76,32 @@ StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::Requi
 }
 
 StageSelectScene::~StageSelectScene(){
+	//グラフィックの解放
 	DeleteGraphEX(m_backPic);
 	for(const StageInfo &info:m_stageInfoVec){
 		DeleteGraphEX(info.m_mapPic);
 	}
+	//フォントの解放
 	DeleteFontToHandleEX(m_stageNameFont);
 	DeleteFontToHandleEX(m_explainFont);
+	//音の解放
+
 }
 
 int StageSelectScene::Calculate(){
 	//選択ステージの更新
 	if(m_selectStageIndex!=-1){
 		//-1の時は読み込んでいるステージがないので更新はできない
+		const size_t beforeIndex=m_selectStageIndex;//効果音再生の可否判定に用いる
 		const size_t infoSize=m_stageInfoVec.size();
 		if(keyboard_get(KEY_INPUT_LEFT)==1 || m_beforeStageButton.JudgePressMoment()){
 			m_selectStageIndex=(m_selectStageIndex+infoSize-1)%infoSize;
 		} else if(keyboard_get(KEY_INPUT_RIGHT)==1 || m_afterStageButton.JudgePressMoment()){
 			m_selectStageIndex=(m_selectStageIndex+1)%infoSize;
+		}
+		if(m_selectStageIndex!=beforeIndex){
+			//変更があれば効果音再生
+			PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);
 		}
 	}
 
@@ -104,9 +114,11 @@ int StageSelectScene::Calculate(){
 		if(m_pReqInfo!=nullptr){
 			*m_pReqInfo=std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass>(new BattleScene::RequiredInfoToMakeBattleScene(m_stageInfoVec[m_selectStageIndex].m_dirName));//ゲームプレイ場面を作るのに必要な情報は渡しておく
 		}
+		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音
 		return -1;
 	} else if(keyboard_get(KEY_INPUT_X)==1 || m_backButton.JudgePressMoment()){
 		//タイトル画面へ戻る
+		PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);//戻るの効果音(鳴ると同時にデータが消えるので鳴らない)
 		return -2;
 	}
 

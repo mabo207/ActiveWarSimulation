@@ -7,6 +7,7 @@
 #include<cmath>
 #include"StageSelectScene.h"
 #include"BattleScene.h"
+#include"GeneralPurposeResourceManager.h"
 
 //-------------------TitleScene-------------------
 std::string TitleScene::SelectItem::GetString(const Kind kind){
@@ -41,6 +42,7 @@ TitleScene::TitleScene()
 	,m_titleLogo(LoadGraphEX("Graphic/titleLogo.png"))
 	,m_itemFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 	,m_bgm(LoadBGMMem("Sound/bgm/nonfree/title/"))
+	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_selectItem(SelectItem::e_stageSelect)
 	,m_flame(0)
@@ -62,6 +64,7 @@ TitleScene::~TitleScene(){
 	//サウンド解放
 	StopSoundMem(m_bgm);
 	DeleteSoundMem(m_bgm);
+	DeleteSoundMem(m_aimchangeSound);
 }
 
 int TitleScene::thisCalculate(){
@@ -73,13 +76,14 @@ int TitleScene::thisCalculate(){
 	const Vector2D stickInput=analogjoypad_get(DX_INPUT_PAD1);//アナログスティックの傾き
 
 	//選択項目の更新
+	const size_t beforeSelectItem=m_selectItem;//効果音を鳴らすかの判定に用いる
 	if((m_mousePosJustBefore-mousePos).sqSize()>4.0f){
 		//マウスが大きく動いたら、マウスの位置をもとに更新
 		for(size_t i=0;i<SelectItem::COUNTER;i++){
 			if(m_hitJudgeShapeVec[i]->VJudgePointInsideShape(mousePos)){
 				//図形全てに点の内部判定を行い、内部にあった図形に対応する項目に変更する。
 				//どの図形にも対応しなかったら変更はしない
-				m_selectItem=static_cast<SelectItem::Kind>(i);
+				m_selectItem=static_cast<SelectItem::Kind>(i);//変更
 				break;
 			}
 		}
@@ -116,6 +120,10 @@ int TitleScene::thisCalculate(){
 			m_selectItem=static_cast<SelectItem::Kind>((m_selectItem+1)%SelectItem::COUNTER);
 		}
 	}
+	if(beforeSelectItem!=m_selectItem){
+		//選択項目の変更が起きているならば効果音再生
+		PlaySoundMem(m_aimchangeSound,DX_PLAYTYPE_BACK,TRUE);
+	}
 
 	//遷移入力処理
 	if(keyboard_get(KEY_INPUT_Z)==1
@@ -123,6 +131,7 @@ int TitleScene::thisCalculate(){
 		)
 	{
 		//決定キー入力か、ボタンの上で左クリック
+		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
 		return m_selectItem;
 	}
 

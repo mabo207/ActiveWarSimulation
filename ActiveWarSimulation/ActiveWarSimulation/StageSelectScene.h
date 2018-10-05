@@ -38,6 +38,8 @@ protected:
 	const int m_stageNameFont;
 	const int m_explainFont;
 	
+	//Œø‰Ê‰¹
+
 	//ŠÖ”
 protected:
 
