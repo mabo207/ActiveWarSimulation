@@ -3,6 +3,7 @@
 #include"TitleScene.h"
 #include"input.h"
 #include"DxLib.h"
+#include"CommonConstParameter.h"
 
 //----------------------BattleScene----------------------
 const int BattleScene::resetInterval=60;
@@ -54,6 +55,7 @@ int BattleScene::Calculate(){
 			//リセット処理を行う
 			m_battleSceneData=std::shared_ptr<BattleSceneData>(new BattleSceneData(m_battleSceneData->m_stageName));//バトルデータを変える
 			m_sceneData=VGetSwitchUnitScene();//クラスを変える
+			PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);//bgm再生
 		} else if(m_resetFlame==resetInterval){
 			//リセット場面を終了する
 			m_resetFlame=0;
@@ -68,6 +70,14 @@ void BattleScene::Draw()const{
 	//描画
 	if(m_sceneData.get()!=nullptr){
 		m_sceneData->Draw();
+	}
+	//リセット中は暗転するようにする
+	if(m_resetFlag){
+		int mode,pal;
+		GetDrawBlendMode(&mode,&pal);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,255*m_resetFlame*(resetInterval-m_resetFlame)/(resetInterval/2)/(resetInterval/2));
+		DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
+		SetDrawBlendMode(mode,pal);
 	}
 }
 

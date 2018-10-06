@@ -62,7 +62,7 @@ int DemoSwitchUnitScene::UpdateNextScene(int index){
 			}
 			//m_nextScene=std::shared_ptr<BattleSceneElement>(new StageClearScene(m_battleSceneData,false,"撃破数："+std::to_string(killUnitNum)+"人 / "+std::to_string(totalUnitNum)+"人"));//デモでは結果表示はしない
 		}
-		return 0;
+		return SceneKind::e_gameReset;
 	default:
 		return index;
 	}

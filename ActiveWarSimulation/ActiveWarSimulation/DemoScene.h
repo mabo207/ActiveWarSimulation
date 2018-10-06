@@ -18,6 +18,8 @@ protected:
 
    //関数
 protected:
+	int m_flame;//DemoScene専用のフレーム数カウンタ
+	int m_font;//注意書きのフォント
 
 public:
 	DemoScene();
@@ -25,6 +27,9 @@ public:
 	
 	//仮想関数のオーバーライド
 	std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
+	int Calculate();
+	void Draw()const;
+
 };
 
 #endif // !DEF_DEMOSCENE_H

@@ -41,8 +41,8 @@ protected:
 public:
 	BattleScene(const char *stagename);
 	virtual ~BattleScene();
-	int Calculate();
-	void Draw()const;
+	virtual int Calculate();
+	virtual void Draw()const;
 	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;
 };
 
