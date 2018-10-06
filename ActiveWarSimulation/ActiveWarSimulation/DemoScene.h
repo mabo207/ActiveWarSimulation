@@ -24,7 +24,7 @@ public:
 	~DemoScene();
 	
 	//仮想関数のオーバーライド
-
+	std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
 };
 
 #endif // !DEF_DEMOSCENE_H
