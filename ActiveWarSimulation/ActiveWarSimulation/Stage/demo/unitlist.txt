@@ -1,0 +1,6 @@
+{(definition,mob),(name,アインス),(profession,0),(lv,20),(pos,354,294),(team,0)}
+{(definition,mob),(name,ツヴァイ),(profession,1),(lv,20),(pos,254,144),(team,0)}
+{(definition,mob),(name,ドライ),(profession,3),(lv,20),(pos,384,549),(team,0)}
+{(definition,mob),(name,フィーア),(profession,2),(lv,20),(pos,306,481),(team,0)}
+{(definition,mob),(name,フンフ),(profession,4),(lv,20),(pos,106,241),(team,0)}
+{(definition,mob),(name,敵兵),(profession,1),(lv,1),(pos,786,510),(team,1)}

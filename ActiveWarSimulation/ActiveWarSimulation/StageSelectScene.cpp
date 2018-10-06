@@ -60,12 +60,14 @@ StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::Requi
 	} while(FindNextFile(hFind,&find_dir_data));
 	//各フォルダの中身を検索して、StageInfoを構成していく
 	for(const std::string &dirName:dirNameVec){
-		m_stageInfoVec.push_back(StageInfo(
-			LoadGraphEX(("Stage/"+dirName+"/nonfree/map.png").c_str())
-			,dirName
-			,FileStrRead(("Stage/"+dirName+"/stageName.txt").c_str())
-			,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
-		));
+		if(dirName!="demo"){
+			m_stageInfoVec.push_back(StageInfo(
+				LoadGraphEX(("Stage/"+dirName+"/nonfree/map.png").c_str())
+				,dirName
+				,FileStrRead(("Stage/"+dirName+"/stageName.txt").c_str())
+				,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
+			));
+		}
 	}
 	//インデックスの初期化
 	if(m_stageInfoVec.empty()){
