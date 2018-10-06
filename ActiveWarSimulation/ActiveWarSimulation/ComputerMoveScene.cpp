@@ -31,6 +31,7 @@ ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleScen
 	,m_yLatticeNum((size_t)(battleSceneData->m_stageSize.y)/squareSize+1)
 	,m_actionWaiting(false)
 	,m_nextScene(SceneKind::e_move)
+	,m_aimChangeFlame(0)
 {
 	//格子点の数だけ配列を確保
 	m_latticeInShape=std::vector<int>(m_xLatticeNum*m_yLatticeNum,0);
@@ -333,6 +334,8 @@ int ComputerMoveScene::BranchingWaitingProcess(){
 }
 
 int ComputerMoveScene::thisCalculate(){
+	//m_aimChangeFlameの更新
+	m_aimChangeFlame++;
 	//m_operateUnitの位置更新
 	const Vector2D beforeVec=m_battleSceneData->m_operateUnit->getPos();
 	PositionUpdate(CalculateInputVec());
@@ -351,8 +354,12 @@ int ComputerMoveScene::thisCalculate(){
 				m_actionWaiting=true;
 			} else if(m_targetUnit!=nullptr && m_battleSceneData->m_operateUnit->JudgeAttackable(m_targetUnit) && m_aimedUnit!=m_targetUnit){
 				//AIが決めていた攻撃対象が攻撃範囲内にいるが、m_aimedUnitがそれに一致しないときは、攻撃対象を動かす
-				SetAimedUnit(1);
-				PlaySoundMem(m_battleSceneData->m_aimchangeSound,DX_PLAYTYPE_BACK,TRUE);//狙い切り替えなのでその効果音を
+				if(m_aimChangeFlame>5){
+					//ただし、5フレームほど間隔を持たせる
+					SetAimedUnit(1);
+					PlaySoundMem(m_battleSceneData->m_aimchangeSound,DX_PLAYTYPE_BACK,TRUE);//狙い切り替えなのでその効果音を
+					m_aimChangeFlame=0;
+				}
 			} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f
 				//			|| processedTime>10.0//デバッグのために一度省いている
 				|| keyboard_get(KEY_INPUT_Q)==1//時間制限がない際にゲームに戻れるようにするため
