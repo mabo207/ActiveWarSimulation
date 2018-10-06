@@ -13,9 +13,10 @@
 const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);
 const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonConstParameter::gameResolutionX-BattleSceneData::mapDrawSize.y);
 
-BattleSceneData::BattleSceneData(const char *stagename)
+BattleSceneData::BattleSceneData(const std::string &stagename)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr)
+	,m_stageName(stagename)
 	,m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/stage1/"))

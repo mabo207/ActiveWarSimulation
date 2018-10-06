@@ -30,6 +30,9 @@ public:
 	std::shared_ptr<Terrain> m_mapRange;//マップ全体を表す線分(対角線)
 	Vector2D m_stageSize;//ステージの大きさ(なお、ステージで一番左上にある点は(0,0)とする)
 
+	//読み込みの情報
+	const std::string m_stageName;
+
 	//グラフィックデータ
 	const int m_mapPic;//マップ全体のグラフィック
 	
@@ -59,7 +62,7 @@ protected:
 	float CalculateOperateUnitFinishOP(float op)const;//OPの消費を踏まえた計算をできるようにするために、引数から計算する関数を用意した
 
 public:
-	BattleSceneData(const char *stagename);
+	BattleSceneData(const std::string &stagename);
 	~BattleSceneData();
 	void UpdateFix();//m_fieldのFix::Kindを更新する関数
 	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
