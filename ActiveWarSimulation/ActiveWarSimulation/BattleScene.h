@@ -18,11 +18,16 @@ public:
 
 	//定数
 protected:
-	
+	static const int resetInterval;
+
 public:
 
 	//変数
 protected:
+	//ステージやり直し処理関連
+	int m_resetFlame;//リセット処理にかかっている時間
+	bool m_resetFlag;//リセット処理中かどうか
+
 	//ゲームの進行を管理する変数
 	std::shared_ptr<BattleSceneElement> m_sceneData;//一番基底となるシーン
 
@@ -31,12 +36,13 @@ protected:
 	
 	//関数
 protected:
+	virtual std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
 
 public:
 	BattleScene(const char *stagename);
-	~BattleScene();
-	int Calculate();
-	void Draw()const;
+	virtual ~BattleScene();
+	virtual int Calculate();
+	virtual void Draw()const;
 	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;
 };
 

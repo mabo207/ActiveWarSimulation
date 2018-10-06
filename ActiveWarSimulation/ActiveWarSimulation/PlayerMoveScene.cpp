@@ -1,6 +1,7 @@
 #include"DxLib.h"
 #include"PlayerMoveScene.h"
 #include"GraphicControl.h"
+#include"GeneralPurposeResourceManager.h"
 
 //----------------------PlayerMoveScene------------------------
 PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
@@ -8,11 +9,17 @@ PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_waitButton(1520,980,80,80,LoadGraphEX("Graphic/nextButton.png"))
 	,m_researchButton(1620,980,80,80,LoadGraphEX("Graphic/researchButton.png"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
+	,m_mouseLeftFlag(false)
 {}
 
 Vector2D PlayerMoveScene::CalculateInputVec()const{
+	//移動処理
 	Vector2D moveVec;
-	if(mouse_get(MOUSE_INPUT_LEFT)>0){
+	if(//mouse_get(MOUSE_INPUT_LEFT)>0
+		BattleSceneData::JudgeMousePushInsideMapDrawZone(MOUSE_INPUT_LEFT,true)
+		&& m_mouseLeftFlag
+		)
+	{
 		//マウスを左クリックしているならマウス入力に対応させる
 		moveVec=GetMousePointVector2D()-m_battleSceneData->m_operateUnit->getPos();
 		//アナログスティックの物理的なズレ等によるmoveVecの微入力を除く
@@ -63,7 +70,10 @@ int PlayerMoveScene::thisCalculate(){
 	const Vector2D mousePos=GetMousePointVector2D();
 	if(JudgeAttackCommandUsable()
 		&& (keyboard_get(KEY_INPUT_Z)==1
-			|| (m_aimedUnit->GetUnitCircleShape()->VJudgePointInsideShape(mousePos) && mouse_get(MOUSE_INPUT_LEFT)==1)
+			|| (m_aimedUnit->GetUnitCircleShape()->VJudgePointInsideShape(mousePos)
+				//&& mouse_get(MOUSE_INPUT_LEFT)==1
+				&& BattleSceneData::JudgeMousePushInsideMapDrawZone(MOUSE_INPUT_LEFT,false)
+				)
 			)
 		)
 	{
@@ -77,22 +87,30 @@ int PlayerMoveScene::thisCalculate(){
 	} else if(keyboard_get(KEY_INPUT_A)==1 && JudgeAttackCommandUsable()){
 		//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(反時計回り)
 		SetAimedUnit(-1);
+		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
 	} else if(keyboard_get(KEY_INPUT_S)==1 && JudgeAttackCommandUsable()){
 		//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(時計回り)
 		SetAimedUnit(1);
+		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
 	} else if((m_mousePosJustBefore-mousePos).sqSize()>=1.0f
 		&& JudgeAttackCommandUsable()
 		&& JudgeBecomeAimedUnit(m_battleSceneData->GetUnitPointer(mousePos))
 		)
 	{
 		//攻撃コマンド使用可能の時にマウスを大きく動かしたときのみ、狙いのキャラの変更
+		const Unit *beforeAimedUnit=m_aimedUnit;
 		m_aimedUnit=m_battleSceneData->GetUnitPointer(mousePos);
+		if(m_aimedUnit!=nullptr && m_aimedUnit!=beforeAimedUnit){
+			//選択ユニットが変更されていれば狙い切り替え音を鳴らす
+			PlaySoundMem(m_battleSceneData->m_aimchangeSound,DX_PLAYTYPE_BACK,TRUE);
+		}
 	} else if(keyboard_get(KEY_INPUT_C)==1){
 		//アイテムの使用
 
 	} else if(keyboard_get(KEY_INPUT_V)==1 || m_waitButton.JudgePressMoment()){
 		//待機
 		FinishUnitOperation();
+		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//待機決定は決定音
 		return 0;
 	} else if(keyboard_get(KEY_INPUT_X)==1
 		|| keyboard_get(KEY_INPUT_X)>30
@@ -118,11 +136,23 @@ int PlayerMoveScene::thisCalculate(){
 		}
 	} else if(keyboard_get(KEY_INPUT_F)==1 || m_researchButton.JudgePressMoment()){
 		//マップ調べモードへ
+		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
 		return SceneKind::e_research;
-	} else if(PositionUpdate(CalculateInputVec())){
-		//キー入力がなければm_operateUnitの位置更新
-		//位置更新をした時の処理
-
+	} else{
+		//移動し始めの判定更新(左クリックを押した瞬間であるかを判定・記録する)
+		int flame=mouse_get(MOUSE_INPUT_LEFT);
+		if(flame==0){
+			//左クリックをしなくなると、押していないのでfalseにする
+			m_mouseLeftFlag=false;
+		} else if(flame==1){
+			//1フレーム目を検知できた場合は、trueにする
+			m_mouseLeftFlag=true;
+		}
+		//移動処理
+		if(PositionUpdate(CalculateInputVec())){
+			//キー入力がなければm_operateUnitの位置更新
+			//位置更新をした時の処理
+		}
 	}
 
 	//次フレームに、本フレームにおけるマウスの位置が分かるようにする
@@ -138,4 +168,10 @@ void PlayerMoveScene::thisDraw()const{
 	//ボタンを描画
 	m_waitButton.DrawButton();
 	m_researchButton.DrawButton();
+}
+
+void PlayerMoveScene::ReturnProcess(){
+	//MoveSceneのReturnProcessに加え、m_mouseLeftFlagを初期化する
+	MoveScene::ReturnProcess();
+	m_mouseLeftFlag=false;
 }

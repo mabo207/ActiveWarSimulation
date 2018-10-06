@@ -3,6 +3,7 @@
 #include"Circle.h"
 #include"GraphicControl.h"
 #include"ToolsLib.h"
+#include"CommonConstParameter.h"
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
@@ -73,10 +74,9 @@ bool Unit::Team::JudgeFriend(Kind team1,Kind team2){
 const float Unit::BattleStatus::maxOP=100.0f+Unit::reduceStartActionCost+0.0001f;//キリの良い整数より少しだけ大きくする事でOPをmaxOPまで増やす時にOPが計算誤差で半端な整数にならないようにする。
 
 //------------Unit---------------
-const float Unit::unitCircleSize=45.0f;
+const float Unit::unitCircleSize=(float)CommonConstParameter::unitCircleSize;
 const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
-const float Unit::reduceStartActionCost=50.0f;
-
+const float Unit::reduceStartActionCost=50.0f;//定数値なのでヘッダー内初期化と同じ順番になり、ここで初期化してもUnit::BattleStatus::maxOPの初期化より先に処理が行われることになる。
 const float Unit::attackCost=50.0f;
 
 const int Unit::hpFontSize=20;
@@ -169,14 +169,14 @@ void Unit::DrawMoveInfo(Vector2D adjust)const{
 }
 
 void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
-	DrawMoveInfo(GetMoveDistance(),point,adjust);
+	DrawMoveInfo(GetMoveDistance(),point,adjust,GetColor(0,255,255),GetColor(64,192,192));
 }
 
-void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust)const{
+void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned int inColor,unsigned int outColor)const{
 	Vector2D pos=point-adjust;
 	//ユニットの移動限界距離を水色に描画
-	DrawCircleAA(pos.x,pos.y,distance,100,DxLib::GetColor(64,192,192),FALSE,3.0f);//枠
-	DrawCircleAA(pos.x,pos.y,distance,100,DxLib::GetColor(0,255,255),FALSE,1.0f);//枠
+	DrawCircleAA(pos.x,pos.y,distance,100,outColor,FALSE,3.0f);//枠
+	DrawCircleAA(pos.x,pos.y,distance,100,inColor,FALSE,1.0f);//枠
 	/*(仕様消滅のためコメントアウト)
 	//ユニットの攻撃可能な移動限界距離を水色で描画(攻撃可能な場合のみ)
 	if((ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))>=0.0f){
@@ -190,7 +190,7 @@ void Unit::DrawMaxMoveInfo(Vector2D adjust)const{
 }
 
 void Unit::DrawMaxMoveInfo(Vector2D point,Vector2D adjust)const{
-	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost)),point,adjust);
+	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost)),point,adjust,GetColor(0,128,255),GetColor(64,128,192));
 }
 
 void Unit::DrawHPGage(Vector2D adjust)const{
@@ -202,7 +202,10 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 	const int gageX=(int)(getPos().x-unitCircleSize),gageY=(int)(getPos().y+unitCircleSize)-hpFontSize/2,unitCircleSizeInteger=(int)(unitCircleSize),margin=2;
 	const int gageMaxLength=(unitCircleSizeInteger-margin)*2;
 	const int gageLength=gageMaxLength*m_battleStatus.HP/m_baseStatus.maxHP;
-	unsigned int color;//ゲージの色
+	//ゲージの色
+	unsigned int color;
+/*
+	//HPの割合で色を決める
 	if(gageLength>gageMaxLength*3/4){
 		//HPが全体の3/4以上なら水色
 		color=GetColor(0,196,255);
@@ -216,9 +219,49 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 		//HPが全体の1/4以下なら赤色
 		color=GetColor(255,64,0);
 	}
-	DrawBox(gageX,gageY,gageX+unitCircleSizeInteger*2,gageY+hpFontSize,GetColor(0,0,0),TRUE);//ゲージ外側
-	DrawBox(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,color,TRUE);//ゲージ内側
-	DrawStringRightJustifiedToHandle(gageX,gageY,std::to_string(m_battleStatus.HP),GetColor(255,255,255),m_hpFont,GetColor(0,0,0));//HPの文字列
+//*/
+	//HPの値で色を決める
+	const int interval=5;
+	if(m_battleStatus.HP<=interval*1){
+		color=GetColor(255,64,0);//赤色
+	} else if(m_battleStatus.HP<=interval*2){
+		color=GetColor(234,106,0);
+	} else if(m_battleStatus.HP<=interval*3){
+		color=GetColor(213,149,0);
+	} else if(m_battleStatus.HP<=interval*4){
+		color=GetColor(192,192,0);//黄色
+	} else if(m_battleStatus.HP<=interval*5){
+		color=GetColor(128,192,0);
+	} else if(m_battleStatus.HP<=interval*6){
+		color=GetColor(85,192,0);
+	} else if(m_battleStatus.HP<=interval*7){
+		color=GetColor(32,192,0);//黄緑色
+	} else if(m_battleStatus.HP<=interval*8){
+		color=GetColor(21,192,85);
+	} else if(m_battleStatus.HP<=interval*9){
+		color=GetColor(10,192,170);
+	} else{
+		color=GetColor(0,192,255);//水色
+	}
+	//ゲージ外側の描画
+	DrawBox(gageX,gageY,gageX+unitCircleSizeInteger*2,gageY+hpFontSize,GetColor(0,0,0),TRUE);
+	//ゲージ内側の描画
+	//DrawBox(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,color,TRUE);//単純な描画
+	unsigned int leftColor;
+	switch(m_battleStatus.team){
+	case(Team::e_player):
+		leftColor=GetColor(21,106,191);
+		break;
+	case(Team::e_enemy):
+		leftColor=GetColor(191,21,34);
+		break;
+	default:
+		leftColor=GetColor(21,106,191);
+		break;
+	}
+	DrawBoxGradation(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,leftColor,color,true);
+	//HPの文字列の描画
+	DrawStringRightJustifiedToHandle(gageX,gageY,std::to_string(m_battleStatus.HP),GetColor(255,255,255),m_hpFont,GetColor(0,0,0));
 
 }
 
@@ -316,27 +359,27 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 	int gHandle=-1;
 	switch(profession){
 	case(Profession::e_lancer):
-		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),5+(int)(lv*0.5),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),5+(int)(lv*0.5),6);
+		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),6+(int)(lv*0.5),5+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),5+(int)(lv*0.5),6);
 		weapon=Weapon::GetWeapon("鉄の槍");
 		gHandle=LoadGraphEX("Graphic/soldier.png");
 		break;
 	case(Profession::e_archer):
-		baseStatus=BaseStatus(name,profession,lv,18+(int)(lv*0.75),4+(int)(lv*0.45),3+(int)(lv*0.3),2+(int)(lv*0.1),3+(int)(lv*0.3),3+(int)(lv*0.3),6);
+		baseStatus=BaseStatus(name,profession,lv,18+(int)(lv*0.75),5+(int)(lv*0.45),4+(int)(lv*0.4),2+(int)(lv*0.1),4+(int)(lv*0.4),3+(int)(lv*0.3),6);
 		weapon=Weapon::GetWeapon("鉄の弓");
 		gHandle=LoadGraphEX("Graphic/archer.png");
 		break;
 	case(Profession::e_armer):
-		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),6+(int)(lv*0.6),6+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.1),1+(int)(lv*0.2),3);
+		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),7+(int)(lv*0.6),7+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),1+(int)(lv*0.2),3);
 		weapon=Weapon::GetWeapon("鉄の槍");
 		gHandle=LoadGraphEX("Graphic/armerknight.png");
 		break;
 	case(Profession::e_mage):
-		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.6),5+(int)(lv*0.4),5+(int)(lv*0.5),4);
+		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),6+(int)(lv*0.45),5+(int)(lv*0.5),4);
 		weapon=Weapon::GetWeapon("ファイアーの書");
 		gHandle=LoadGraphEX("Graphic/mage.png");
 		break;
 	case(Profession::e_healer):
-		baseStatus=BaseStatus(name,profession,lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),5+(int)(lv*0.55),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
+		baseStatus=BaseStatus(name,profession,lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
 		weapon=Weapon::GetWeapon("ヒールの杖");
 		gHandle=LoadGraphEX("Graphic/healer.png");
 		break;

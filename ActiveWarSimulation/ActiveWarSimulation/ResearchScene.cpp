@@ -1,6 +1,7 @@
 #include"ResearchScene.h"
 #include"DxLib.h"
 #include"GraphicControl.h"
+#include"CommonConstParameter.h"
 
 //-------------------ResearchScene---------------------
 const int ResearchScene::explainFontSize=16;
@@ -106,7 +107,12 @@ void ResearchScene::UpdatePointer(){
 	//マウスの直前位置の更新
 	m_mousePosJustBefore=mouseVec;
 	//ポインターの位置にいるユニットをm_researchUnitに格納する
+	const Unit *beforeResearchUnit=m_researchUnit;
 	m_researchUnit=m_battleSceneData->GetUnitPointer(m_pointerVec);
+	if(m_researchUnit!=nullptr && m_researchUnit!=beforeResearchUnit){
+		//ユニットを指定した瞬間であれば切り替えの効果音を
+		PlaySoundMem(m_battleSceneData->m_aimchangeSound,DX_PLAYTYPE_BACK,TRUE);
+	}
 }
 
 int ResearchScene::thisCalculate(){
@@ -165,8 +171,7 @@ void ResearchScene::thisDraw()const{
 	if(m_researchUnit!=nullptr){
 		//パラメータの表示
 		int gx=1200,gy=140;//パラメータ画面全体の描画位置
-		std::pair<int,int> windowSize=GetWindowResolution();
-		if(m_researchUnit->getPos().x<(int)windowSize.first/2){
+		if(m_researchUnit->getPos().x<CommonConstParameter::gameResolutionX/2){
 			//ユニットの位置が画面左半分にいるなら
 			gx=1200;
 		} else{

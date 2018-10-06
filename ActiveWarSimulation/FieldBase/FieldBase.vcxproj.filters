@@ -69,6 +69,12 @@
     <ClCompile Include="..\ActiveWarSimulation\MyPolygon.cpp">
       <Filter>ソース ファイル\Shape</Filter>
     </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\FileRead.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\CommonConstParameter.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shape.h">
@@ -103,6 +109,12 @@
     </ClInclude>
     <ClInclude Include="..\ActiveWarSimulation\MyPolygon.h">
       <Filter>ヘッダー ファイル\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\FileRead.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\CommonConstParameter.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

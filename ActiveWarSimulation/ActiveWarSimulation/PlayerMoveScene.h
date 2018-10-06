@@ -14,6 +14,7 @@ class PlayerMoveScene:public MoveScene{
 protected:
 	const MouseButtonUI m_waitButton,m_researchButton;
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
+	bool m_mouseLeftFlag;//プレイヤー操作場面でマウスの左クリックをし始めたかどうか
 
 	//関数
 protected:
@@ -27,6 +28,7 @@ public:
 	//仮想関数のオーバーライド
 	int thisCalculate();
 	void thisDraw()const;
+	void ReturnProcess();
 };
 
 #endif // !DEF_PLAYERMOVESCENE_H

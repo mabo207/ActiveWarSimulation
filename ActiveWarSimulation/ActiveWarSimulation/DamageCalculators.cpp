@@ -1,7 +1,23 @@
+#define NOMINMAX//std::minを使えるようにするため
 #include"DamageCalculators.h"
+#include"DxLib.h"
+#include"ToolsLib.h"
 #include"Weapon.h"
 #include<algorithm>
-#pragma comment(lib, "winmm.lib")
+
+//---------------DamageCalculator-----------------
+void DamageCalculator::VDrawPredict(const int centerX,const int centerY,const int explainFont,const int numberFont,const Unit *attacker,const Unit *defender)const{
+	//1行目に"DAMAGE"、2行目にダメージ量を描画する
+	const int fontsize[2]={GetFontSizeToHandle(explainFont),GetFontSizeToHandle(numberFont)};
+	int height=0;
+	for(size_t i=0;i<2;i++){
+		height+=fontsize[i];
+	}
+	int dy=-height/2;
+	DrawStringCenterBaseToHandle(centerX,centerY+dy,"DAMAGE",GetColor(255,255,255),explainFont,false,GetColor(0,0,0));
+	dy+=fontsize[0];
+	DrawStringCenterBaseToHandle(centerX,centerY+dy,std::to_string(VCalculateDamage(attacker,defender)).c_str(),GetColor(192,64,64),numberFont,false,GetColor(0,0,0));
+}
 
 //---------------PhysicalCalculator-----------------
 PhysicalCalculator::PhysicalCalculator(double powerRate,double defRate,double weaponRate)
@@ -82,4 +98,16 @@ std::string RecoverCalculator::VGetPowerString(const Unit *healer)const{
 	return "武器回復量："+std::to_string(weaponPower)+"　合計回復量："+std::to_string(totalPower);
 }
 
+void RecoverCalculator::VDrawPredict(const int centerX,const int centerY,const int explainFont,const int numberFont,const Unit *attacker,const Unit *defender)const{
+	//1行目に"RECOVER"、2行目に回復量を描画する
+	const int fontsize[2]={GetFontSizeToHandle(explainFont),GetFontSizeToHandle(numberFont)};
+	int height=0;
+	for(size_t i=0;i<2;i++){
+		height+=fontsize[i];
+	}
+	int dy=-height/2;
+	DrawStringCenterBaseToHandle(centerX,centerY+dy,"RECOVER",GetColor(255,255,255),explainFont,false,GetColor(0,0,0));
+	dy+=fontsize[0];
+	DrawStringCenterBaseToHandle(centerX,centerY+dy,std::to_string(-VCalculateDamage(attacker,defender)).c_str(),GetColor(64,192,64),numberFont,false,GetColor(0,0,0));
+}
 

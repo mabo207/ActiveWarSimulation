@@ -16,6 +16,7 @@ private:
 		//タイトル画面で選択できる項目
 		enum Kind{
 			e_stageSelect
+			,e_demo
 			,e_gameFinish
 			,COUNTER
 		};
@@ -50,6 +51,12 @@ protected:
 	const int m_backPic;//背景
 	const int m_titleLogo;//タイトルロゴ
 	const int m_itemFont;//選択項目のフォント
+
+	//bgm
+	const int m_bgm;
+
+	//効果音
+	const int m_aimchangeSound;
 
 	//関数
 private:

@@ -6,6 +6,8 @@
 #include<memory>
 #include"GraphicControl.h"
 #include"ToolsLib.h"
+#include"CommonConstParameter.h"
+#include"GeneralPurposeResourceManager.h"
 
 #include"TitleScene.h"
 
@@ -13,7 +15,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
 		//dxライブラリの初期化
 		//画面モードの設定(一応こんな感じ)
-		SetGraphMode(1920,1080,16);
+		SetGraphMode(CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,16);
 		//タイトルメニュー文字
 		SetMainWindowText("ActiveWarSimulation");
 		//ウインドウサイズの変更
@@ -44,6 +46,9 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		//入力機構の初期化
 		InitInputControler();
+
+		//共通素材のロード
+		GeneralPurposeResourceManager::LoadResource();
 
 		{
 			//場面変数
@@ -142,6 +147,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		//ここに来るまでにゲーム中で用いられていた変数は解放される
 
 		//終了処理
+		GeneralPurposeResourceManager::ReleaseResource();//共通リソースの解放
 		DeleteInputControler();//入力機構の解放
 		GraphicControler_End();//グラフィック管理クラスの解放
 		FontControler_End();//フォント管理クラスの解放

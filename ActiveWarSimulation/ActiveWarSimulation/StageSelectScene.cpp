@@ -4,6 +4,8 @@
 #include"FileRead.h"
 #include<Windows.h>
 #include"BattleScene.h"
+#include"CommonConstParameter.h"
+#include"GeneralPurposeResourceManager.h"
 
 //----------------------StageSelectScene------------------
 StageSelectScene::StageInfo::~StageInfo(){
@@ -58,12 +60,14 @@ StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::Requi
 	} while(FindNextFile(hFind,&find_dir_data));
 	//各フォルダの中身を検索して、StageInfoを構成していく
 	for(const std::string &dirName:dirNameVec){
-		m_stageInfoVec.push_back(StageInfo(
-			LoadGraphEX(("Stage/"+dirName+"/nonfree/map.png").c_str())
-			,dirName
-			,FileStrRead(("Stage/"+dirName+"/stageName.txt").c_str())
-			,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
-		));
+		if(dirName!="demo"){
+			m_stageInfoVec.push_back(StageInfo(
+				LoadGraphEX(("Stage/"+dirName+"/nonfree/map.png").c_str())
+				,dirName
+				,FileStrRead(("Stage/"+dirName+"/stageName.txt").c_str())
+				,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
+			));
+		}
 	}
 	//インデックスの初期化
 	if(m_stageInfoVec.empty()){
@@ -74,23 +78,32 @@ StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::Requi
 }
 
 StageSelectScene::~StageSelectScene(){
+	//グラフィックの解放
 	DeleteGraphEX(m_backPic);
 	for(const StageInfo &info:m_stageInfoVec){
 		DeleteGraphEX(info.m_mapPic);
 	}
+	//フォントの解放
 	DeleteFontToHandleEX(m_stageNameFont);
 	DeleteFontToHandleEX(m_explainFont);
+	//音の解放
+
 }
 
 int StageSelectScene::Calculate(){
 	//選択ステージの更新
 	if(m_selectStageIndex!=-1){
 		//-1の時は読み込んでいるステージがないので更新はできない
+		const size_t beforeIndex=m_selectStageIndex;//効果音再生の可否判定に用いる
 		const size_t infoSize=m_stageInfoVec.size();
 		if(keyboard_get(KEY_INPUT_LEFT)==1 || m_beforeStageButton.JudgePressMoment()){
 			m_selectStageIndex=(m_selectStageIndex+infoSize-1)%infoSize;
 		} else if(keyboard_get(KEY_INPUT_RIGHT)==1 || m_afterStageButton.JudgePressMoment()){
 			m_selectStageIndex=(m_selectStageIndex+1)%infoSize;
+		}
+		if(m_selectStageIndex!=beforeIndex){
+			//変更があれば効果音再生
+			PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);
 		}
 	}
 
@@ -103,9 +116,11 @@ int StageSelectScene::Calculate(){
 		if(m_pReqInfo!=nullptr){
 			*m_pReqInfo=std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass>(new BattleScene::RequiredInfoToMakeBattleScene(m_stageInfoVec[m_selectStageIndex].m_dirName));//ゲームプレイ場面を作るのに必要な情報は渡しておく
 		}
+		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音
 		return -1;
 	} else if(keyboard_get(KEY_INPUT_X)==1 || m_backButton.JudgePressMoment()){
 		//タイトル画面へ戻る
+		PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);//戻るの効果音(鳴ると同時にデータが消えるので鳴らない)
 		return -2;
 	}
 
@@ -113,14 +128,13 @@ int StageSelectScene::Calculate(){
 }
 
 void StageSelectScene::Draw()const{
-	const std::pair<int,int> resolution=GetWindowResolution();
 	//背景の描画
 	DrawGraph(0,0,m_backPic,TRUE);
 	//暗めに描画するために、上から黒長方形を半透明で重ねる
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
-	DrawBox(0,0,resolution.first,resolution.second,GetColor(0,0,0),TRUE);
+	DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
 	SetDrawBlendMode(mode,pal);
 	//ボタンの描画
 	m_beforeStageButton.DrawButton();
@@ -132,8 +146,8 @@ void StageSelectScene::Draw()const{
 		int stageDx,stageDy;
 		const int explainX=400;
 		GetGraphSize(m_stageInfoVec[m_selectStageIndex].m_mapPic,&stageDx,&stageDy);
-		DrawRotaGraph(resolution.first/2,resolution.second/3,((double)resolution.second/2)/stageDy,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
-		DrawStringCenterBaseToHandle(resolution.first/2,resolution.second*3/5,m_stageInfoVec[m_selectStageIndex].m_stageName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
-		DrawStringNewLineToHandle(explainX,resolution.second*2/3,resolution.first-explainX*2,resolution.second/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+		DrawRotaGraph(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/3,((double)CommonConstParameter::gameResolutionY/2)/stageDy,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
+		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_selectStageIndex].m_stageName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
+		DrawStringNewLineToHandle(explainX,CommonConstParameter::gameResolutionY*2/3,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
 	}
 }

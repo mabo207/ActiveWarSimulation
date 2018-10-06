@@ -22,6 +22,8 @@
 
 #include"ConstPosSet.h"
 
+#include"CommonConstParameter.h"
+
 #include"ScrollBar.h"
 
 //定数の定義
@@ -40,7 +42,7 @@ const int StageEditor::posButtonHeight=StageEditor::buttonHeight/2;
 const int StageEditor::posButtonWidthNum=3;
 const int StageEditor::posButtonHeightNum=1;
 const std::string StageEditor::actButtonStr[actButtonHeightNum*actButtonWidthNum]={"put","remove","move","expand"};
-const int StageEditor::baseSize=45;
+const int StageEditor::baseSize=CommonConstParameter::unitCircleSize;
 
 //関数定義
 //動的関数
@@ -299,6 +301,26 @@ void StageEditor::Draw() {
 		SetDrawBlendMode(mode,pal);
 	}
 //*/
+
+	//AI操作の際の参考となるユニットの半径間隔の格子点の描画
+	{
+		int init[2]={(int)m_actionSettings.GetMAdjust().x,(int)m_actionSettings.GetMAdjust().y};
+		for(int &pal:init){
+			//x,yの描画初期位置を調整する
+			if(pal<0){
+				pal=baseSize-((-pal)%baseSize);
+			} else{
+				pal=pal%baseSize;
+			}
+			//このままだと、palは「m_adjustから左上方向にpalだけ離れた場所に格子点が存在する」という値のままなので、マップ上で最も左上に描画される場所を示す値にしておく。
+			pal=baseSize-pal;
+		}
+		for(int y=init[1]+leftUpPosY;y<leftUpPosY+mapSizeY;y+=baseSize){
+			for(int x=init[0]+leftUpPosX;x<leftUpPosX+mapSizeX;x+=baseSize){
+				DrawCircle(x,y,2,GetColor(255,64,64),TRUE);
+			}
+		}
+	}
 
 	SetDrawAreaFull();
 

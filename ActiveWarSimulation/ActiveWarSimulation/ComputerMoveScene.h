@@ -31,6 +31,11 @@ protected:
 	//AIのための情報
 	std::vector<std::pair<size_t,Vector2D>> m_latticeRoute;//通る格子点(size_t:格子点番号(m_latticeInShape.size()をオーバーする場合は格子点ではないことを示す),Vector2D:その位置。誤差によって計算が位置から正しい格子点番号を求められない懸念があるのでこうした。)
 	Unit *m_targetUnit;//狙おうとしているユニット
+	bool m_actionWaiting;//行動を行うまでの待ち時間を待っている状態か？（対象変更した瞬間に攻撃だと分かりづらそう）
+	int m_nextScene;//どの行動場面へ進むか(thisCalculate()の返り値が何か)
+
+	//その他の情報
+	size_t m_aimChangeFlame;//狙いを変更してから経った時間
 
 	std::vector<LatticeDistanceInfo> distvec;//デバッグ用距離可視化変数
 

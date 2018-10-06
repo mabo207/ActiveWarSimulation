@@ -6,12 +6,24 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 #include"FileRead.h"
+#include"GameScene.h"
+#include"CommonConstParameter.h"
 
 //----------------------BattleSceneData----------------------
-BattleSceneData::BattleSceneData(const char *stagename)
-	:m_Window(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),Vector2D(1920.0f,1080.0f),Shape::Fix::e_ignore)),-1,0,true))
-	,m_fpsMesuring(),m_operateUnit(nullptr),m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
+const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);
+const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonConstParameter::gameResolutionX-BattleSceneData::mapDrawSize.y);
+
+BattleSceneData::BattleSceneData(const std::string &stagename)
+	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
+	,m_fpsMesuring(),m_operateUnit(nullptr)
+	,m_stageName(stagename)
+	,m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
+	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/stage1/"))
+	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
+	,m_attackSound(LoadSoundMem("Sound/effect/nonfree/damage.ogg"))
+	,m_healSound(LoadSoundMem("Sound/effect/nonfree/recover.ogg"))
+	,m_footSound(LoadSoundMem("Sound/effect/nonfree/foot.ogg"))
 {
 	//グラフィックデータの読み込み
 	LoadDivGraphEX("Graphic/drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
@@ -43,7 +55,7 @@ BattleSceneData::BattleSceneData(const char *stagename)
 		}
 	}
 	//ファイルからステージのグラフィックデータの読み込み
-	m_stageSize=Vector2D(1920.0f,1080.0f);//本来はステージの大きさはグラフィックデータの縦横の大きさで決める
+	m_stageSize=mapDrawSize;//本来はステージの大きさはグラフィックデータの縦横の大きさで決める
 
 	//ファイルからユニットを読み込み
 	StringBuilder unitlist(FileStrRead((stagedir+"unitlist.txt").c_str()),'\n','{','}',false,true);
@@ -122,6 +134,13 @@ BattleSceneData::~BattleSceneData(){
 	for(size_t i=0;i<drawOrderHelpNum;i++){
 		DeleteGraphEX(m_drawOrderHelp[i]);
 	}
+	//サウンド開放
+	StopSoundMem(m_mapBGM);
+	DeleteSoundMem(m_mapBGM);
+	DeleteSoundMem(m_aimchangeSound);
+	DeleteSoundMem(m_attackSound);
+	DeleteSoundMem(m_healSound);
+	DeleteSoundMem(m_footSound);
 	//フォント開放
 	DeleteFontToHandle(m_orderFont);
 	//オブジェクト一覧を開放
@@ -277,12 +296,11 @@ void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)co
 			Vector2D v=GetMousePointVector2D();
 			int wx,wy;
 			GetWindowSize(&wx,&wy);
-			std::pair<int,int> ori=GetWindowResolution();
-			printfDx("mouse:(%f,%f)\nwindowsize:(%d,%d)\nresolution:(%d,%d)\n",v.x,v.y,wx,wy,ori.first,ori.second);
+			printfDx("mouse:(%f,%f)\nwindowsize:(%d,%d)\nresolution:(%d,%d)\n",v.x,v.y,wx,wy,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY);
 		}
 		//当たり判定図形の描画
 		for(const BattleObject *obj:m_field){
-			if(m_Window->JudgeInShapeRect(obj)
+			if(m_mapRange->JudgeInShapeRect(obj)
 				&& obj->GetType()!=BattleObject::Type::e_unit
 				&& notDraw.find(obj)==notDraw.end())
 			{
@@ -297,7 +315,7 @@ void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)co
 
 void BattleSceneData::DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &notDraw)const{
 	for(const Unit *obj:m_unitList){
-		if(m_Window->JudgeInShapeRect(obj)
+		if(m_mapRange->JudgeInShapeRect(obj)
 			&& obj->GetFix()!=Shape::Fix::e_ignore
 			&& notDraw.find(obj)==notDraw.end())
 		{
@@ -311,7 +329,7 @@ void BattleSceneData::DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &n
 
 void BattleSceneData::DrawHPGage()const{
 	for(const Unit *unit:m_unitList){
-		if(m_Window->JudgeInShapeRect(unit) && unit->GetFix()!=Shape::Fix::e_ignore){
+		if(m_mapRange->JudgeInShapeRect(unit) && unit->GetFix()!=Shape::Fix::e_ignore){
 			//ウインドウに入っていない物は描画しない
 			//退却したユニット(typeがe_unitかつfixがe_ignore)は描画しない
 			unit->DrawHPGage();
@@ -320,12 +338,39 @@ void BattleSceneData::DrawHPGage()const{
 }
 
 void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)const{
-	std::pair<int,int> windowSize=GetWindowResolution();
-	auto calDrawPoint=[windowSize](size_t i){return Vector2D((i+1)*Unit::unitCircleSize*2.4f,(float)windowSize.second-Unit::unitCircleSize*1.1f);};//描画位置をそのまま計算する関数
+	const float opStrDy=20.0f;//OPの数字の描画にウインドウ下端から何px使用するか
+	auto calDrawPoint=[opStrDy](size_t i){
+		//描画位置をそのまま計算する関数
+		float topOpenWidth;//先頭キャラ（＝操作ユニット）だけ離して描画されるようにするための値
+		if(i==0){
+			topOpenWidth=0.0f;
+		} else{
+			topOpenWidth=Unit::unitCircleSize;
+		}
+		return Vector2D((i+1)*Unit::unitCircleSize*2.4f+topOpenWidth,(float)CommonConstParameter::gameResolutionY-Unit::unitCircleSize*1.1f-opStrDy);
+	};
 	
 	//オーダー画面の背景を描画
 	//DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
 	
+
+	//ユニットのオーダー情報を順番に描画
+	for(size_t i=0,size=m_unitList.size();i<size;i++){
+		const Vector2D centerPoint=calDrawPoint(i);
+		//マウスが重なっていれば、対応キャラまで線を伸ばす
+		//lineDrawに入っていても線を伸ばす
+		if((GetMousePointVector2D()-centerPoint).sqSize()<Unit::unitCircleSize*Unit::unitCircleSize || lineDraw.find(m_unitList[i])!=lineDraw.end()){
+			const Vector2D unitDrawPos=m_unitList[i]->getPos()-Vector2D();
+			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(196,196,196),3.0f);
+			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(255,255,255));
+		}
+		//ユニットアイコン(描画基準点は真ん中)
+		m_unitList[i]->DrawFacePic(centerPoint);
+		//残りOP
+		const int x=(int)centerPoint.x,y=(int)(CommonConstParameter::gameResolutionY-opStrDy);
+		DrawStringCenterBaseToHandle(x,y,std::to_string((int)m_unitList[i]->GetBattleStatus().OP).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
+	}
+
 	//行動終了時のユニットのオーダー位置予測の矢印の描画
 	const size_t arrowNum=drawOrderHelpNum;
 	Vector2D arrowPos[arrowNum]={calDrawPoint(0),calDrawPoint(0)};//矢印の先端位置(先頭:行動しない時 後ろ:行動する時)
@@ -352,6 +397,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 		}
 	}
 	//矢印を描画
+/*
 	for(size_t j=0;j<2;j++){
 		const float width[2]={8.0f,6.0f};
 		const unsigned int color[2]={GetColor(0,0,0),GetColor(255,255,255)};//下地は黒、上は白
@@ -370,21 +416,38 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 			}
 		}
 	}
-
-	//ユニットのオーダー情報を順番に描画
-	for(size_t i=0,size=m_unitList.size();i<size;i++){
-		const Vector2D centerPoint=calDrawPoint(i);
-		//マウスが重なっていれば、対応キャラまで線を伸ばす
-		//lineDrawに入っていても線を伸ばす
-		if((GetMousePointVector2D()-centerPoint).sqSize()<Unit::unitCircleSize*Unit::unitCircleSize || lineDraw.find(m_unitList[i])!=lineDraw.end()){
-			const Vector2D unitDrawPos=m_unitList[i]->getPos()-Vector2D();
-			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(196,196,196),3.0f);
-			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(255,255,255));
+//*/
+	const unsigned int color[2][2]={{GetColor(100,162,234),GetColor(231,121,24)},{GetColor(255,255,255),GetColor(255,255,255)}};//下地は黒、上は白
+	for(size_t j=0;j<2;j++){
+		//奥と手前側に矢印を描画(j=0が奥の色付き、j=1が手前の白)
+		const float width[2]={8.0f,4.0f};
+		for(size_t i=0;i<arrowNum;i++){
+			const float height=15.0f;
+			const Vector2D v=calDrawPoint(0)-Vector2D(0.0f,width[0]*2.0f+Unit::unitCircleSize*0.9f);//先頭ユニットの描画基準位置(下地・中抜き部分ともに同じ位置にしたいのでwidth[0]を用いる)
+			DrawBoxAA(arrowPos[i].x-width[j],v.y-height-width[j],arrowPos[i].x+width[j],v.y,color[j][i],TRUE);
+			DrawTriangleAA(arrowPos[i].x,v.y+width[j]*2.0f,arrowPos[i].x-width[j]*2.0f,v.y,arrowPos[i].x+width[j]*2.0f,v.y,color[j][i],TRUE);
+			if(j==0){
+				//矢印の分岐の上にヘルプ描画
+				int dx,dy;
+				GetGraphSize(m_drawOrderHelp[i],&dx,&dy);
+				DrawGraph((int)arrowPos[i].x-dx/2,(int)(v.y-height-width[j])-dy*(drawOrderHelpNum-i),m_drawOrderHelp[i],TRUE);
+			}
 		}
-		//ユニットアイコン(描画基準点は真ん中)
-		m_unitList[i]->DrawFacePic(centerPoint);
-		//残りOP
-		const int x=(int)centerPoint.x,y=((int)centerPoint.y)-(int)(Unit::unitCircleSize)-20;
-		DrawStringCenterBaseToHandle(x,y,std::to_string((int)m_unitList[i]->GetBattleStatus().OP).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
 	}
+}
+
+bool BattleSceneData::JudgeMousePushInsideMapDrawZone(int mouseCode,bool continuousFlag){
+	const Vector2D mouse=GetMousePointVector2D();
+	if(mouse.x>=0.0f && mouse.x<mapDrawSize.x && mouse.y>=0.0f && mouse.y<mapDrawSize.y){
+		//マップ描画部分にマウスがあるか
+		const int f=mouse_get(mouseCode);
+		if(continuousFlag){
+			//trueなら押しているかどうかを
+			return f>0;
+		} else{
+			//falseなら押した瞬間かどうかを
+			return f==1;
+		}
+	}
+	return false;
 }

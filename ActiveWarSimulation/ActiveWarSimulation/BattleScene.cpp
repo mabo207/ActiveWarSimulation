@@ -1,30 +1,66 @@
 #include"BattleScene.h"
 #include"SwitchUnitScene.h"
 #include"TitleScene.h"
+#include"input.h"
+#include"DxLib.h"
+#include"CommonConstParameter.h"
 
 //----------------------BattleScene----------------------
+const int BattleScene::resetInterval=60;
+
 BattleScene::BattleScene(const char *stagename)
-	:MainControledGameScene(),m_battleSceneData(new BattleSceneData(stagename))
+	:MainControledGameScene()
+	,m_resetFlag(false)
+	,m_resetFlame(0)
+	,m_battleSceneData(new BattleSceneData(stagename))
 {
+	//bgm再生
+	PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);
 	//m_sceneDataの初期化、最初はひとまず移動で
-	m_sceneData=std::shared_ptr<BattleSceneElement>(new SwitchUnitScene(m_battleSceneData));
+	m_sceneData=VGetSwitchUnitScene();
 }
 
 BattleScene::~BattleScene(){}
 
+std::shared_ptr<BattleSceneElement> BattleScene::VGetSwitchUnitScene()const{
+	return std::shared_ptr<BattleSceneElement>(new SwitchUnitScene(m_battleSceneData));
+}
+
 int BattleScene::Calculate(){
 	//更新
-	m_battleSceneData->m_fpsMesuring.Update();//タイマーの更新
-	int index;
-	if(m_sceneData.get()!=nullptr){
-		index=m_sceneData->Calculate();
+	if(!m_resetFlag){
+		//ゲーム処理を行う
+		m_battleSceneData->m_fpsMesuring.Update();//タイマーの更新
+		int index;
+		if(m_sceneData.get()!=nullptr){
+			index=m_sceneData->Calculate();
+		} else{
+			index=-2;
+		}
+		//状態遷移
+		if(index==BattleSceneElement::SceneKind::END
+			|| keyboard_get(KEY_INPUT_DELETE)==60
+			)
+		{
+			//このクラスを監視するクラスにゲームプレイ場面の終了を伝える
+			return -2;
+		} else if(index==BattleSceneElement::SceneKind::e_gameReset){
+			//リセット場面に移行する
+			m_resetFlag=true;
+		}
 	} else{
-		index=-2;
-	}
-	//状態遷移
-	if(index==BattleSceneElement::SceneKind::END){
-		//このクラスを監視するクラスにゲームプレイ場面の終了を伝える
-		return -2;
+		//リセット場面中
+		m_resetFlame++;
+		if(m_resetFlame==resetInterval/2){
+			//リセット処理を行う
+			m_battleSceneData=std::shared_ptr<BattleSceneData>(new BattleSceneData(m_battleSceneData->m_stageName));//バトルデータを変える
+			m_sceneData=VGetSwitchUnitScene();//クラスを変える
+			PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);//bgm再生
+		} else if(m_resetFlame==resetInterval){
+			//リセット場面を終了する
+			m_resetFlame=0;
+			m_resetFlag=false;
+		}
 	}
 
 	return 0;
@@ -34,6 +70,14 @@ void BattleScene::Draw()const{
 	//描画
 	if(m_sceneData.get()!=nullptr){
 		m_sceneData->Draw();
+	}
+	//リセット中は暗転するようにする
+	if(m_resetFlag){
+		int mode,pal;
+		GetDrawBlendMode(&mode,&pal);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,255*m_resetFlame*(resetInterval-m_resetFlame)/(resetInterval/2)/(resetInterval/2));
+		DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
+		SetDrawBlendMode(mode,pal);
 	}
 }
 

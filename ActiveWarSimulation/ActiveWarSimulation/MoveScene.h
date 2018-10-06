@@ -33,11 +33,14 @@ protected:
 	//ユニット移動場面でのみ使用する変数
 	Unit *m_aimedUnit;//現在の攻撃対象ユニット(静的ポインタ)
 	std::vector<RouteInfo> m_route;//操作ユニットが通った経路
+	size_t m_moveFlame;//移動入力が連続でされているフレーム数
 
 	//グラフィック関連
 	static const size_t attackedCursorPicNum=4;//分割数
 	int m_attackedCursor[attackedCursorPicNum];//m_aimedUnitの上に乗せるカーソルの描画
-	int m_operatedCursor;//m_operatedUnitの上に乗せるカーソルの描画
+	const int m_operatedCursor;//m_operatedUnitの上に乗せるカーソルの描画
+	const int m_predictExplainFont;//行動効果の意味フォント
+	const int m_predictNumberFont;//行動効果の数字フォント
 
 	//関数
 protected:
@@ -52,7 +55,7 @@ protected:
 	//int thisCalculate();//プレイヤーか敵かで異なるので
 	virtual void thisDraw()const;//AIのデバッグのための描画ができるようにする
 	int UpdateNextScene(int index);
-	void ReturnProcess();
+	virtual void ReturnProcess();
 
 	//仮想関数
 	virtual Vector2D CalculateInputVec()const=0;//味方ターン時は入力されてるアナログスティックのベクトルを返す。敵ターン時はAIに従って移動方向のベクトルを返す。

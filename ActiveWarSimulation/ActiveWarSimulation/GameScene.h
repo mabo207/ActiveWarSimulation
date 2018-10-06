@@ -9,6 +9,7 @@
 class GameScene{
 	//Œ^
 	//’è”
+
 	//•Ï”
 	//ŠÖ”
 public:

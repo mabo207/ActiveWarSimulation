@@ -37,6 +37,14 @@ void AttackScene::ProcessAttack(){
 	Weapon::AttackInfo attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,m_aimedUnit);
 	//操作ユニット→対象ユニットへの攻撃処理
 	int aimedHP=m_aimedUnit->AddHP(-attackinfo.damage);
+	//効果音を鳴らす
+	if(attackinfo.damage>0){
+		//ダメージがあれば攻撃音
+		PlaySoundMem(m_battleSceneData->m_attackSound,DX_PLAYTYPE_BACK,TRUE);
+	} else{
+		//回復しているなら回復音
+		PlaySoundMem(m_battleSceneData->m_healSound,DX_PLAYTYPE_BACK,TRUE);
+	}
 	if(aimedHP<=0){
 		//対象ユニットのHPが0以下なら、ステージからユニットを取り除く
 		m_aimedUnit->SetFix(Shape::Fix::e_ignore);//当たり判定の対象から取り除く
