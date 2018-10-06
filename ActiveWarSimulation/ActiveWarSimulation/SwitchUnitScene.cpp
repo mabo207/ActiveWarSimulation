@@ -51,16 +51,12 @@ void SwitchUnitScene::thisDraw()const{
 	//オーダーの表示は描画しない
 }
 
-std::shared_ptr<BattleSceneElement> SwitchUnitScene::GetPlayerOperateClass()const{
-	return std::shared_ptr<BattleSceneElement>(new PlayerMoveScene(m_battleSceneData));
-}
-
 int SwitchUnitScene::UpdateNextScene(int index){
 	switch(index){
 	case(SceneKind::e_move):
 		if(m_battleSceneData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 			//プレイヤーキャラなら自操作クラスへ
-			m_nextScene=GetPlayerOperateClass();
+			m_nextScene=std::shared_ptr<BattleSceneElement>(new PlayerMoveScene(m_battleSceneData));
 		} else{
 			//それ以外ならAI操作クラスへ
 			m_nextScene=std::shared_ptr<BattleSceneElement>(new ComputerMoveScene(m_battleSceneData));

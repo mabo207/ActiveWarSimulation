@@ -13,14 +13,12 @@ class DemoSwitchUnitScene:public SwitchUnitScene{
 
 	//関数
 protected:
-	//仮想関数のオーバーライド
-	std::shared_ptr<BattleSceneElement> GetPlayerOperateClass()const;//プレイヤーキャラを操作するクラスをAI操作クラスとして取得する。
-
+	
 public:
 	DemoSwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneData);
 	~DemoSwitchUnitScene();
 	
-	
+	int UpdateNextScene(int index);//SwitchUnitSceneと違い、プレイヤーキャラもAI操作であり、かつゲームが終わったら初期化されて最初からやり直される
 };
 
 #endif // !DEF_DEMOSWITCHUNITSCENE_H
