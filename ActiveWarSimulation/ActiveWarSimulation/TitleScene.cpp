@@ -7,6 +7,7 @@
 #include<cmath>
 #include"StageSelectScene.h"
 #include"BattleScene.h"
+#include"DemoScene.h"
 #include"GeneralPurposeResourceManager.h"
 
 //-------------------TitleScene-------------------
@@ -14,6 +15,8 @@ std::string TitleScene::SelectItem::GetString(const Kind kind){
 	switch(kind){
 	case(e_stageSelect):
 		return "STAGE SELECT";
+	case(e_demo):
+		return "DEMO PLAY";
 	case(e_gameFinish):
 		return "EXIT GAME";
 	}
@@ -34,7 +37,7 @@ std::shared_ptr<Shape> TitleScene::MakeHexagon(const Vector2D center,const float
 	return std::shared_ptr<Shape>(new MyPolygon(begin,point,Shape::Fix::e_static));
 }
 
-const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={Vector2D(1440.0f,630.0f),Vector2D(1545.0f,820.0f)};
+const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={Vector2D(1440.0f,630.0f),Vector2D(1550.0f,820.0f),Vector2D(1660.0f,630.0f)};
 
 TitleScene::TitleScene()
 	:MainControledGameScene()
@@ -50,8 +53,9 @@ TitleScene::TitleScene()
 	,m_reqInfo(nullptr)
 {
 	//当たり判定図形の用意
-	m_hitJudgeShapeVec[0]=MakeHexagon(strPos[0],120.0f);
-	m_hitJudgeShapeVec[1]=MakeHexagon(strPos[1],120.0f);
+	for(size_t i=0;i<SelectItem::COUNTER;i++){
+		m_hitJudgeShapeVec[i]=MakeHexagon(strPos[i],120.0f);
+	}
 	//bgm再生
 	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
 }
@@ -183,6 +187,10 @@ int TitleScene::Calculate(){
 			//ステージセレクト画面へ
 			m_nextScene=std::shared_ptr<GameScene>(new StageSelectScene(&m_reqInfo));
 			break;
+		case(SelectItem::e_demo):
+			//デモ画面へ
+			return 1;
+			break;
 		case(SelectItem::COUNTER):
 			//現状維持
 			break;
@@ -218,16 +226,23 @@ void TitleScene::Draw()const{
 }
 
 std::shared_ptr<MainControledGameScene> TitleScene::VGetNextMainControledScene()const{
-	if(m_reqInfo.get()==nullptr){
-		//次のクラスが作れない場合はnullptrを返す
-	} else{
-		//情報があれば、物は作れる
-		if(m_reqInfo->GetKind()==RequiredInfoToMakeClass::e_battleScene){
-			const BattleScene::RequiredInfoToMakeBattleScene *info=dynamic_cast<const BattleScene::RequiredInfoToMakeBattleScene *>(m_reqInfo.get());
-			if(info!=nullptr){
-				return std::shared_ptr<MainControledGameScene>(new BattleScene(info->m_stagename.c_str()));
+	switch(m_selectItem){
+	case(SelectItem::e_stageSelect):
+		if(m_reqInfo.get()==nullptr){
+			//次のクラスが作れない場合はnullptrを返す
+		} else{
+			//情報があれば、物は作れる
+			if(m_reqInfo->GetKind()==RequiredInfoToMakeClass::e_battleScene){
+				const BattleScene::RequiredInfoToMakeBattleScene *info=dynamic_cast<const BattleScene::RequiredInfoToMakeBattleScene *>(m_reqInfo.get());
+				if(info!=nullptr){
+					return std::shared_ptr<MainControledGameScene>(new BattleScene(info->m_stagename.c_str()));
+				}
 			}
 		}
+		break;
+	case(SelectItem::e_demo):
+		return std::shared_ptr<MainControledGameScene>(new DemoScene());
+		break;
 	}
 	return std::shared_ptr<MainControledGameScene>(nullptr);
 }

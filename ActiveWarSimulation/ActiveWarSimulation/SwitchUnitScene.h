@@ -29,6 +29,7 @@ protected:
 
 	//関数
 protected:
+	virtual std::shared_ptr<BattleSceneElement> GetPlayerOperateClass()const;//プレイヤーキャラを操作するクラスを手に入れる。デフォルトだと自操作クラスだが、継承してデモ用切り替えクラスを作成する場合はAI操作クラスにする。
 
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
@@ -38,7 +39,7 @@ protected:
 
 public:
 	SwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneData);
-	~SwitchUnitScene();
+	virtual ~SwitchUnitScene();
 };
 
 
