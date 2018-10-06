@@ -39,8 +39,8 @@ bool MoveScene::PositionUpdate(const Vector2D inputVec){
 	if(inputFlag){
 		//動きの入力がされているなら移動連続フレーム数を増やす
 		m_moveFlame++;
-		if(m_moveFlame%30==1){
-			//30フレームにつき1回移動音を鳴らす
+		if(m_moveFlame%15==1){
+			//15フレームにつき1回移動音を鳴らす
 			PlaySoundMem(m_battleSceneData->m_footSound,DX_PLAYTYPE_BACK,TRUE);
 		}
 	} else{
