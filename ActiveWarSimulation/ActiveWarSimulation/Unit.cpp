@@ -4,6 +4,7 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
+#include"BattleSceneData.h"
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
@@ -173,6 +174,9 @@ void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
 }
 
 void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned int inColor,unsigned int outColor)const{
+	RECT rect;
+	GetDrawArea(&rect);
+	SetDrawArea(0,0,(int)BattleSceneData::mapDrawSize.x,(int)BattleSceneData::mapDrawSize.y);
 	Vector2D pos=point-adjust;
 	//ƒ†ƒjƒbƒg‚ÌˆÚ“®ŒÀŠE‹——£‚ð…F‚É•`‰æ
 	DrawCircleAA(pos.x,pos.y,distance,100,outColor,FALSE,3.0f);//˜g
@@ -183,6 +187,8 @@ void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned i
 	DrawCircleAA(pos.x,pos.y,(ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//˜g
 	}
 	//*/
+	//•`‰æ”ÍˆÍ‚ðŒ³‚É–ß‚·
+	SetDrawArea(rect.left,rect.top,rect.right,rect.bottom);
 }
 
 void Unit::DrawMaxMoveInfo(Vector2D adjust)const{
