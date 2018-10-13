@@ -50,13 +50,29 @@ Unit::Team::Kind Unit::Team::link(int num){
 }
 
 unsigned int Unit::Team::GetColor(Kind kind){
+	return Team::GetColor(kind,255);
+}
+
+unsigned int Unit::Team::GetColor(Kind kind,int degree,int red,int green,int blue){
+	int r,g,b;
 	switch(kind){
 	case(e_player):
-		return DxLib::GetColor(64,64,255);
+		r=32;
+		g=64;
+		b=255;
+		break;
 	case(e_enemy):
-		return DxLib::GetColor(255,64,64);
+		r=255;
+		g=32;
+		b=64;
+		break;
+	default:
+		r=128;
+		g=128;
+		b=128;
+		break;
 	}
-	return DxLib::GetColor(128,128,128);
+	return DxLib::GetColor((r*degree+red*(255-degree))/255,(g*degree+red*(255-degree))/255,(b*degree+blue*(255-degree))/255);
 }
 
 bool Unit::Team::JudgeFriend(Kind team1,Kind team2){
@@ -275,14 +291,9 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 void Unit::DrawFacePic(Vector2D point)const{
 	//‰~‚Ì•`‰æ
 	const int x=(int)point.x,y=(int)point.y,r=(int)unitCircleSize;
-	DrawCircle(x,y,r,GetColor(255,255,255),TRUE);//”wŒi‚Ì‰~‚Ì•`‰æ
-	int mode,pal;
-	GetDrawBlendMode(&mode,&pal);
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
-	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team),TRUE);//”wŒi‚Ì‰~‚Ì•`‰æ
-	SetDrawBlendMode(mode,pal);
+	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//”wŒi‚Ì‰~‚Ì•`‰æ(”’‚ğ50%¬‚º‚é)
 	DrawRotaGraph(x,y,1.0,0.0,m_gHandle,TRUE);//ƒOƒ‰ƒtƒBƒbƒN‚Ì•`‰æAb’è‚Åƒ}ƒbƒvã‚Ìƒ†ƒjƒbƒgŠG‚ğg—p
-	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team),FALSE,3);//”wŒi‚Ì˜g‚Ì•`‰æ
+	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//”wŒi‚Ì˜g‚Ì•`‰æ(•‚ğ25%¬‚º‚é)
 }
 
 void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
@@ -305,10 +316,11 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
 		SetDrawBlendMode(mode,pal);
 		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//˜g
 		//ƒ†ƒjƒbƒg©g‚Ì“–‚½‚è”»’è‚Ì•`‰æ
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//–Ê
+//		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,255);
+		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//–Ê
 		SetDrawBlendMode(mode,pal);
-		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//–Ê
+		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//˜g(•‚ğ25%¬‚º‚é)
 	}
 	//ƒ†ƒjƒbƒgƒOƒ‰ƒtƒBƒbƒN‚ğ•`‰æ
 	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,0.0,m_gHandle,TRUE,FALSE);

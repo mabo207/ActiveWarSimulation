@@ -32,6 +32,7 @@ public:
 		};
 		static Kind link(int num);
 		static unsigned int GetColor(Kind kind);
+		static unsigned int GetColor(Kind kind,int degree,int red=0,int green=0,int blue=0);//チーム色に別の色を混ぜたカラーコードを取得する
 		static bool JudgeFriend(Kind team1,Kind team2);//2つのチームが味方関係かどうかを判定する
 	};
 	struct BaseStatus{
