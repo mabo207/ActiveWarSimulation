@@ -18,7 +18,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 	,m_fpsMesuring(),m_operateUnit(nullptr)
 	,m_stageName(stagename)
 //	,m_orderFont(CreateFontToHandle("04かんじゅくゴシック",24,4,DX_FONTTYPE_EDGE,-1,2))
-	,m_orderFont(LoadFontDataToHandle("Font/OrderPalFont.dft",2))
+	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/stage1/"))
 	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
@@ -143,7 +143,7 @@ BattleSceneData::~BattleSceneData(){
 	DeleteSoundMem(m_healSound);
 	DeleteSoundMem(m_footSound);
 	//フォント開放
-	DeleteFontToHandle(m_orderFont);
+	DeleteFontToHandleEX(m_orderFont);
 	//オブジェクト一覧を開放
 	for(BattleObject *obj:m_field){
 		delete obj;

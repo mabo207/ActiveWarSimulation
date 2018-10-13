@@ -13,7 +13,7 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_battleSceneData(battleSceneData)
 	,m_stageClearBox(LoadGraphEX("Graphic/stageClearBox.png"))
 //	,m_clearFont(CreateFontToHandleEX("Bell MT",48,4,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,2))
-	,m_clearFont(LoadFontDataToHandle("Font/StageClearFont.dft",2))
+	,m_clearFont(LoadFontDataToHandleEX("Font/StageClearFont.dft",2))
 	,m_explainFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",24,1,-1))
 	,m_flame(0)
 {}
