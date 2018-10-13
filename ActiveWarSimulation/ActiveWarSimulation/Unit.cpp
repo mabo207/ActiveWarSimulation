@@ -86,7 +86,8 @@ Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D positio
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
 	,m_baseStatus(baseStatus),m_battleStatus(100,Unit::BattleStatus::maxOP,team,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
-	,m_hpFont(CreateFontToHandleEX("メイリオ",hpFontSize,1,DX_FONTTYPE_EDGE))
+//	,m_hpFont(CreateFontToHandleEX("04かんじゅくゴシック",hpFontSize,2,DX_FONTTYPE_EDGE,-1,2))
+	,m_hpFont(LoadFontDataToHandle("Font/UnitHPFont.dft",2))
 {
 	//テスト用のコンストラクタ
 	m_battleStatus.HP=m_baseStatus.maxHP;
