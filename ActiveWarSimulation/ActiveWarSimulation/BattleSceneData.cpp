@@ -362,8 +362,30 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 		//lineDrawに入っていても線を伸ばす
 		if((GetMousePointVector2D()-centerPoint).sqSize()<Unit::unitCircleSize*Unit::unitCircleSize || lineDraw.find(m_unitList[i])!=lineDraw.end()){
 			const Vector2D unitDrawPos=m_unitList[i]->getPos()-Vector2D();
+			//線の描画
 			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(196,196,196),3.0f);
-			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(255,255,255));
+			//線の中を通る線分のアニメーション
+			const int animeDuration=30;//アニメーションの長さ
+			const int startDuration=45;//アニメーションが起こる間隔
+			const int t=m_fpsMesuring.GetFlame()%startDuration;
+			const int lineLength=5;//線分の長さはこのフレーム分
+			if(t<animeDuration+lineLength){
+				//線分の終端が出現してから始点が消失するまで線分の描画を行うので、AnimeDuration+lineLengthの長さだけ線分は描画する
+				if(t<lineLength){
+					//始点が出現していない場合
+					const Vector2D v=(centerPoint*(float)(animeDuration-t)+unitDrawPos*(float)t)/(float)animeDuration;//終点位置
+					DrawLineAA(centerPoint.x,centerPoint.y,v.x,v.y,GetColor(255,255,255));//始点の位置はオーダー描画の位置とする
+				} else if(t<animeDuration){
+					//始点終点ともに出現している場合
+					const Vector2D v1=(centerPoint*(float)(animeDuration+lineLength-t)+unitDrawPos*(float)(t-lineLength))/(float)animeDuration;//始点位置
+					const Vector2D v2=(centerPoint*(float)(animeDuration-t)+unitDrawPos*(float)t)/(float)animeDuration;//終点位置
+					DrawLineAA(v1.x,v1.y,v2.x,v2.y,GetColor(255,255,255));//始点と終点を結ぶ
+				} else{
+					//終点が消失している場合
+					const Vector2D v=(centerPoint*(float)(animeDuration+lineLength-t)+unitDrawPos*(float)(t-lineLength))/(float)animeDuration;//始点位置
+					DrawLineAA(v.x,v.y,unitDrawPos.x,unitDrawPos.y,GetColor(255,255,255));//終点の位置はユニットのマップ描画位置とする
+				}
+			}
 		}
 		//ユニットアイコン(描画基準点は真ん中)
 		m_unitList[i]->DrawFacePic(centerPoint);
