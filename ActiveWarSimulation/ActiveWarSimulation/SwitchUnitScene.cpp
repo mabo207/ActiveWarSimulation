@@ -126,7 +126,6 @@ int SwitchUnitScene::UpdateNextScene(int index){
 
 void SwitchUnitScene::ReturnProcess(){
 	m_battleSceneData->m_fpsMesuring.RecordTime();//タイマー初期化
-	m_battleSceneData->FinishUnitOperation();//ユニットの切り替え処理
 	//勝敗判定
 	size_t playerUnitNum=0,enemyUnitNum=0;
 	for(size_t i=0,size=m_battleSceneData->m_unitList.size();i<size;i++){
@@ -149,6 +148,7 @@ void SwitchUnitScene::ReturnProcess(){
 		m_judgeEnd=JudgeEnd::e_playerWin;
 	} else{
 		//どれでもないなら戦闘続行
+		m_battleSceneData->FinishUnitOperation();//ユニットの切り替え処理(戦闘続行以外の時はやらない、クリアターン数の計算が余分に加算されかねないため)
 		m_judgeEnd=JudgeEnd::e_notEnd;
 	}
 }
