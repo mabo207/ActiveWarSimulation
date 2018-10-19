@@ -54,7 +54,13 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 			//場面変数
 			//std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(new TitleScene());
 			std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene>(new TitleScene()),0x03,15));
+
+			//画面縮小することによる撮影をする際はSetMouseDispFlagをFALSEにしてコンパイル
+			SetMouseDispFlag(FALSE);
+			int mousePic=LoadGraphEX("Graphic/mouseCursor.png");
 			
+
+			//デバッグ用、処理時間の計測と表示
 			FpsMeasuring fpsMeasuring;
 			bool fpsdisp=false;
 
@@ -71,6 +77,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				if(keyboard_get(KEY_INPUT_F1)==60){
 					//F1長押しで、ウインドウモードとフルスクリーンモードの切り替え。タイトル画面まで強制的に戻す
+					const int mouseDispFlag=GetMouseDispFlag();
 					int mode=GetWindowModeFlag();
 					if(mode==TRUE){
 						mode=FALSE;
@@ -92,13 +99,18 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					FontControler_Init();
 					InitInputControler();
 					pGameScene=std::shared_ptr<MainControledGameScene>(new MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene>(new TitleScene()),0x03,15));
-					SetMouseDispFlag(TRUE);//ウインドウモードだとマウスが見えなくなるので設定
+					mousePic=LoadGraphEX("Graphic/mouseCursor.png");//マウスの読み込みし直し
+					SetMouseDispFlag(mouseDispFlag);
 				} else if(keyboard_get(KEY_INPUT_F2)==60){
 					//F2長押しで、ウインドウサイズを1.0倍に
+					const int mouseDispFlag=GetMouseDispFlag();
 					SetWindowSizeExtendRate(1.0);
+					SetMouseDispFlag(mouseDispFlag);
 				} else if(keyboard_get(KEY_INPUT_F3)==60){
 					//F3長押しで、ウインドウサイズを1.0倍に
+					const int mouseDispFlag=GetMouseDispFlag();
 					SetWindowSizeExtendRate(0.5);
+					SetMouseDispFlag(mouseDispFlag);
 				}
 
 				//描画
@@ -108,8 +120,15 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				pGameScene->Draw();
 
-				if(fpsdisp){ printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }
-
+				if(GetMouseDispFlag()==FALSE){
+					//マウス表示
+					int x,y;
+					GetMousePoint(&x,&y);
+					DrawGraph(x,y,mousePic,TRUE);
+				}
+				
+				if(fpsdisp){ printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }//fps表示
+				
 				//情報更新
 				fpsMeasuring.RecordTime();
 
@@ -142,6 +161,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				if(fpsdisp){ printfDx("Update : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }
 			}
+			DeleteGraphEX(mousePic);
 		}
 
 		//ここに来るまでにゲーム中で用いられていた変数は解放される
