@@ -65,6 +65,7 @@ int SwitchUnitScene::UpdateNextScene(int index){
 	case(SceneKind::e_clear):
 		if(m_judgeEnd==JudgeEnd::e_playerWin){
 			//プレイヤーの勝利
+			//撤退数の記録
 			int deathUnitNum=0;
 			for(size_t i=0,size=m_battleSceneData->m_field.size();i<size;i++){
 				if(m_battleSceneData->m_field[i]->GetType()==BattleObject::Type::e_unit){
@@ -85,7 +86,13 @@ int SwitchUnitScene::UpdateNextScene(int index){
 					}
 				}
 			}
-			m_nextScene=std::shared_ptr<BattleSceneElement>(new StageClearScene(m_battleSceneData,true,"撤退数："+std::to_string(deathUnitNum)+"人"));
+			//クリアターン数の記録
+			int clearTurn=(int)(m_battleSceneData->m_totalOP/Unit::BattleStatus::maxOP)+1;//0~150.0fが1ターンなので+1する
+			//nextSceneの作成
+			const std::string str=
+				"撤退数："+std::to_string(deathUnitNum)+"人\n"
+				+"クリアターン数："+std::to_string(clearTurn);
+			m_nextScene=std::shared_ptr<BattleSceneElement>(new StageClearScene(m_battleSceneData,true,str));
 		} else if(m_judgeEnd==JudgeEnd::e_playerLose){
 			//プレイヤーの敗北
 			int killUnitNum=0,totalUnitNum=0;

@@ -26,6 +26,9 @@ public:
 	Unit *m_operateUnit;//現在操作できるユニット(静的ポインタ)
 	std::vector<Unit *> m_unitList;//フィールド上に生存しているユニット一覧。OPの順にソートされている。要素は全てm_fieldに格納されており、先頭はm_operateUnitになる。1ユニットの行動終了のタイミングでソートする。
 
+	//評価に使用する変数
+	float m_totalOP;//今までに消費されたOPの合計値。ターン数を計測するのに使う。
+
 	//描画に必要な変数
 	std::shared_ptr<Terrain> m_mapRange;//マップ全体を表す線分(対角線)
 	Vector2D m_stageSize;//ステージの大きさ(なお、ステージで一番左上にある点は(0,0)とする)

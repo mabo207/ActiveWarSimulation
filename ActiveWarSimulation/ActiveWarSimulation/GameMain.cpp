@@ -56,7 +56,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 			std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene>(new TitleScene()),0x03,15));
 
 			//‰æ–Êk¬‚·‚é‚±‚Æ‚É‚æ‚éB‰e‚ğ‚·‚éÛ‚ÍSetMouseDispFlag‚ğFALSE‚É‚µ‚ÄƒRƒ“ƒpƒCƒ‹
-			SetMouseDispFlag(FALSE);
+			SetMouseDispFlag(TRUE);
 			int mousePic=LoadGraphEX("Graphic/mouseCursor.png");
 			
 

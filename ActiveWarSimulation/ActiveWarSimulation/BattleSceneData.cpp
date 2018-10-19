@@ -16,6 +16,7 @@ const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonC
 BattleSceneData::BattleSceneData(const std::string &stagename)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr)
+	,m_totalOP(0.0f)
 	,m_stageName(stagename)
 //	,m_orderFont(CreateFontToHandle("04かんじゅくゴシック",24,4,DX_FONTTYPE_EDGE,-1,2))
 	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
@@ -267,6 +268,7 @@ void BattleSceneData::FinishUnitOperation(){
 		//u->AddOP(plusOP);
 		u->SetOP(u->GetBattleStatus().OP+plusOP);
 	}
+	m_totalOP+=plusOP;//消費したOPにplusOPを加算。
 	//m_operateUnitのOPを減らす(コストとして消費するので消費OP増加等の影響を受ける仕様となる)
 	//m_operateUnit->AddOP(-Unit::reduceStartActionCost);
 	m_operateUnit->ConsumeOPByCost(Unit::reduceStartActionCost);
@@ -287,6 +289,7 @@ Unit *BattleSceneData::GetUnitPointer(Vector2D pos)const{
 }
 
 void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{
+	printfDx("totalOP:%f",m_totalOP);
 	//背景データをそのまま描画
 	//背景をアニメーションするとかなったらここで処理を記述
 	DrawGraph(0,0,m_mapPic,TRUE);
