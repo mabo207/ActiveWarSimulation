@@ -59,7 +59,7 @@ void StageClearScene::thisDraw()const{
 	GetGraphSize(m_stageClearBox,&dx,&dy);
 	DrawGraph((CommonConstParameter::gameResolutionX-dx)/2,(CommonConstParameter::gameResolutionY-dy)/2,m_stageClearBox,TRUE);
 	DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,(CommonConstParameter::gameResolutionY-dy)/2+48,(m_winFlag?"STAGE CLEAR!":"MISSION FAILED..."),GetColor(255,255,255),m_clearFont,true,(m_winFlag?GetColor(220,128,128):GetColor(128,128,200)));
-	DrawStringNewLineToHandle(CommonConstParameter::gameResolutionX/2-dx/4,(CommonConstParameter::gameResolutionY-dy)/2+120,dx/2,dy/4,m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+	DrawStringNewLineToHandle(CommonConstParameter::gameResolutionX/2-dx/4,(CommonConstParameter::gameResolutionY-dy)/2+120,dx/2,dy/4,m_explain.c_str(),GetColor(255,255,255),m_explainFont,4);
 }
 
 int StageClearScene::UpdateNextScene(int index){
