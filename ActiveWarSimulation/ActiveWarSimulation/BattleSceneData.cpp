@@ -290,7 +290,6 @@ Unit *BattleSceneData::GetUnitPointer(Vector2D pos)const{
 }
 
 void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{
-	printfDx("totalOP:%f\norderTurnOP:%f",m_totalOP,fmodf(m_totalOP,Unit::BattleStatus::maxOP));
 	//背景データをそのまま描画
 	//背景をアニメーションするとかなったらここで処理を記述
 	DrawGraph(0,0,m_mapPic,TRUE);
