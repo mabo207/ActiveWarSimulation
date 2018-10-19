@@ -37,6 +37,7 @@ protected:
 	//ŠÖ”
 protected:
 	virtual std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitScene‚©DemoSwitchUnitScene‚Ì‚Ç‚Á‚¿‚ğg‚¤‚©
+	void ResetGame();
 
 public:
 	BattleScene(const char *stagename);

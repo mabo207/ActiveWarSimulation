@@ -13,7 +13,7 @@ DemoScene::DemoScene()
 	,m_font(CreateFontToHandleEX("メイリオ",36,5,DX_FONTTYPE_ANTIALIASING_EDGE,-1,3))
 {
 	//m_sceneDataの初期化をやり直す、BattleSceneのコンストラクタ内ではDemoSceneの関数は呼び出せない
-	m_sceneData=VGetSwitchUnitScene();
+	ResetGame();
 }
 
 DemoScene::~DemoScene(){

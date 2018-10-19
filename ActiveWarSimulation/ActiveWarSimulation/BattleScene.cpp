@@ -26,6 +26,12 @@ std::shared_ptr<BattleSceneElement> BattleScene::VGetSwitchUnitScene()const{
 	return std::shared_ptr<BattleSceneElement>(new SwitchUnitScene(m_battleSceneData));
 }
 
+void BattleScene::ResetGame(){
+	m_battleSceneData=std::shared_ptr<BattleSceneData>(new BattleSceneData(m_battleSceneData->m_stageName));//バトルデータを変える
+	m_sceneData=VGetSwitchUnitScene();//クラスを変える
+	PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);//bgm再生
+}
+
 int BattleScene::Calculate(){
 	//更新
 	if(!m_resetFlag){
@@ -53,9 +59,7 @@ int BattleScene::Calculate(){
 		m_resetFlame++;
 		if(m_resetFlame==resetInterval/2){
 			//リセット処理を行う
-			m_battleSceneData=std::shared_ptr<BattleSceneData>(new BattleSceneData(m_battleSceneData->m_stageName));//バトルデータを変える
-			m_sceneData=VGetSwitchUnitScene();//クラスを変える
-			PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);//bgm再生
+			ResetGame();
 		} else if(m_resetFlame==resetInterval){
 			//リセット場面を終了する
 			m_resetFlame=0;
