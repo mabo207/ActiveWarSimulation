@@ -115,7 +115,8 @@ private:
 public:
 	FontControlClass();
 	~FontControlClass();
-	int CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype,int CharSet,int EdgeSize,int Italic,int Handle);
+	int CreateFontToHandleEX(const std::string &fontname,int size,int thick,int fonttype,int CharSet,int EdgeSize,int Italic,int Handle);
+	int LoadFontDataToHandleEX(const std::string &fontname,int edgeSize);
 	int CopyFontToHandle(int handle);//(戻り値)-1:エラー発生 それ以外:フォントハンドル//フォントデータを複製する(内部的には使われている箇所を1増やすだけ)
 	int DeleteFontToHandleEX(int handle);
 };
@@ -124,7 +125,9 @@ void FontControler_Init();
 
 void FontControler_End();
 
-int CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype=-1,int CharSet=-1,int EdgeSize=-1,int Italic=0,int Handle=-1);
+int CreateFontToHandleEX(const std::string &fontname,int size,int thick,int fonttype=-1,int CharSet=-1,int EdgeSize=-1,int Italic=0,int Handle=-1);
+
+int LoadFontDataToHandleEX(const std::string &fontname,int edgeSize);
 
 int CopyFontToHandle(int handle);
 

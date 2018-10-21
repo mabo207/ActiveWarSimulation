@@ -394,7 +394,13 @@ int ComputerMoveScene::thisCalculate(){
 		//待ち時間を待っている時
 		if(processedTime>0.1){
 			//0.1秒待ってから行動へ
-			return m_nextScene;
+			if(m_nextScene==SceneKind::e_attackNormal && !JudgeAttackCommandUsable()){
+				//攻撃選択の場合、JudgeAttackCommandUsable()をする。図形押し出し処理の影響で、「攻撃できると思ったらできない」が発生する事があるため。
+				FinishUnitOperation();//再現が難しすぎるので、自然発生的に発生するのを待つ
+				return 0;
+			} else{
+				return m_nextScene;
+			}
 		}
 	}
 	return SceneKind::e_move;

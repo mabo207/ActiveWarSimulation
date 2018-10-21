@@ -4,6 +4,7 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
+#include"BattleSceneData.h"
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
@@ -49,13 +50,29 @@ Unit::Team::Kind Unit::Team::link(int num){
 }
 
 unsigned int Unit::Team::GetColor(Kind kind){
+	return Team::GetColor(kind,255);
+}
+
+unsigned int Unit::Team::GetColor(Kind kind,int degree,int red,int green,int blue){
+	int r,g,b;
 	switch(kind){
 	case(e_player):
-		return DxLib::GetColor(64,64,255);
+		r=32;
+		g=64;
+		b=255;
+		break;
 	case(e_enemy):
-		return DxLib::GetColor(255,64,64);
+		r=255;
+		g=32;
+		b=64;
+		break;
+	default:
+		r=128;
+		g=128;
+		b=128;
+		break;
 	}
-	return DxLib::GetColor(128,128,128);
+	return DxLib::GetColor((r*degree+red*(255-degree))/255,(g*degree+red*(255-degree))/255,(b*degree+blue*(255-degree))/255);
 }
 
 bool Unit::Team::JudgeFriend(Kind team1,Kind team2){
@@ -85,7 +102,8 @@ Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D positio
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
 	,m_baseStatus(baseStatus),m_battleStatus(100,Unit::BattleStatus::maxOP,team,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
-	,m_hpFont(CreateFontToHandleEX("ƒƒCƒŠƒI",hpFontSize,1,DX_FONTTYPE_EDGE))
+//	,m_hpFont(CreateFontToHandleEX("04‚©‚ñ‚¶‚ã‚­ƒSƒVƒbƒN",hpFontSize,2,DX_FONTTYPE_EDGE,-1,2))
+	,m_hpFont(LoadFontDataToHandleEX("Font/UnitHPFont.dft",2))
 {
 	//ƒeƒXƒg—p‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^
 	m_battleStatus.HP=m_baseStatus.maxHP;
@@ -173,6 +191,9 @@ void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
 }
 
 void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned int inColor,unsigned int outColor)const{
+	RECT rect;
+	GetDrawArea(&rect);
+	SetDrawArea(0,0,(int)BattleSceneData::mapDrawSize.x,(int)BattleSceneData::mapDrawSize.y);
 	Vector2D pos=point-adjust;
 	//ƒ†ƒjƒbƒg‚ÌˆÚ“®ŒÀŠE‹——£‚ğ…F‚É•`‰æ
 	DrawCircleAA(pos.x,pos.y,distance,100,outColor,FALSE,3.0f);//˜g
@@ -183,6 +204,8 @@ void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned i
 	DrawCircleAA(pos.x,pos.y,(ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//˜g
 	}
 	//*/
+	//•`‰æ”ÍˆÍ‚ğŒ³‚É–ß‚·
+	SetDrawArea(rect.left,rect.top,rect.right,rect.bottom);
 }
 
 void Unit::DrawMaxMoveInfo(Vector2D adjust)const{
@@ -268,14 +291,9 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 void Unit::DrawFacePic(Vector2D point)const{
 	//‰~‚Ì•`‰æ
 	const int x=(int)point.x,y=(int)point.y,r=(int)unitCircleSize;
-	DrawCircle(x,y,r,GetColor(255,255,255),TRUE);//”wŒi‚Ì‰~‚Ì•`‰æ
-	int mode,pal;
-	GetDrawBlendMode(&mode,&pal);
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
-	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team),TRUE);//”wŒi‚Ì‰~‚Ì•`‰æ
-	SetDrawBlendMode(mode,pal);
+	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//”wŒi‚Ì‰~‚Ì•`‰æ(”’‚ğ50%¬‚º‚é)
 	DrawRotaGraph(x,y,1.0,0.0,m_gHandle,TRUE);//ƒOƒ‰ƒtƒBƒbƒN‚Ì•`‰æAb’è‚Åƒ}ƒbƒvã‚Ìƒ†ƒjƒbƒgŠG‚ğg—p
-	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team),FALSE,3);//”wŒi‚Ì˜g‚Ì•`‰æ
+	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//”wŒi‚Ì˜g‚Ì•`‰æ(•‚ğ25%¬‚º‚é)
 }
 
 void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
@@ -298,10 +316,11 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
 		SetDrawBlendMode(mode,pal);
 		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//˜g
 		//ƒ†ƒjƒbƒg©g‚Ì“–‚½‚è”»’è‚Ì•`‰æ
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//–Ê
+//		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,255);
+		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//–Ê
 		SetDrawBlendMode(mode,pal);
-		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//–Ê
+		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//˜g(•‚ğ25%¬‚º‚é)
 	}
 	//ƒ†ƒjƒbƒgƒOƒ‰ƒtƒBƒbƒN‚ğ•`‰æ
 	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,0.0,m_gHandle,TRUE,FALSE);

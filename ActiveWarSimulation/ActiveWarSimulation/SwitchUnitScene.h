@@ -11,6 +11,7 @@ class SwitchUnitScene:public BattleSceneElement{
 protected:
 	enum class JudgeEnd{
 		e_notEnd
+		,e_notEnd_TurnChange
 		,e_playerWin
 		,e_playerLose
 	};
@@ -25,11 +26,13 @@ protected:
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
 
-	//タイマー
-
+	//フォント
+	const int m_turnFont;
 
 	//関数
 protected:
+	int CalculateTurn()const;
+
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
 	void thisDraw()const;

@@ -287,7 +287,7 @@ FontControlClass::~FontControlClass(){
 	}
 }
 
-int FontControlClass::CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype,int CharSet,int EdgeSize,int Italic,int Handle){
+int FontControlClass::CreateFontToHandleEX(const std::string &fontname,int size,int thick,int fonttype,int CharSet,int EdgeSize,int Italic,int Handle){
 	//同一フォントが存在しているかの調査
 	FontData fontdata(fontname,size,thick,fonttype,EdgeSize);
 	std::map<FontData,MapValue>::iterator it=m_font.find(fontdata);
@@ -300,6 +300,27 @@ int FontControlClass::CreateFontToHandleEX(std::string fontname,int size,int thi
 	} else{
 		//まだフォントが作られていない場合
 		handle=CreateFontToHandle(fontname.c_str(),size,thick,fonttype,CharSet,EdgeSize,Italic,Handle);
+		if(handle!=-1){
+			//フォント生成が成功した場合はm_fontに情報を格納
+			m_font.insert(std::pair<FontData,MapValue>(fontdata,MapValue(handle,1)));
+		}
+	}
+	return handle;
+}
+
+int FontControlClass::LoadFontDataToHandleEX(const std::string &fontname,int edgeSize){
+	//同一フォントが存在しているかの調査
+	FontData fontdata(fontname,-1,-1,-1,edgeSize);
+	std::map<FontData,MapValue>::iterator it=m_font.find(fontdata);
+	//フォントの作成処理
+	int handle;
+	if(it!=m_font.end()){
+		//既にフォントが作られている場合
+		it->second.count++;
+		handle=it->second.handle;
+	} else{
+		//まだフォントが作られていない場合
+		handle=LoadFontDataToHandle(fontname.c_str(),edgeSize);
 		if(handle!=-1){
 			//フォント生成が成功した場合はm_fontに情報を格納
 			m_font.insert(std::pair<FontData,MapValue>(fontdata,MapValue(handle,1)));
@@ -357,12 +378,22 @@ void FontControler_End(){
 	}
 }
 
-int CreateFontToHandleEX(std::string fontname,int size,int thick,int fonttype,int CharSet,int EdgeSize,int Italic,int Handle){
+int CreateFontToHandleEX(const std::string &fontname,int size,int thick,int fonttype,int CharSet,int EdgeSize,int Italic,int Handle){
 	int handle;
 	if(pFontControler!=nullptr){
 		handle=pFontControler->CreateFontToHandleEX(fontname,size,thick,fonttype,CharSet,EdgeSize,Italic,Handle);
 	} else{
 		handle=CreateFontToHandle(fontname.c_str(),size,thick,fonttype,CharSet,EdgeSize,Italic,Handle);
+	}
+	return handle;
+}
+
+int LoadFontDataToHandleEX(const std::string &fontname,int edgeSize){
+	int handle;
+	if(pFontControler!=nullptr){
+		handle=pFontControler->LoadFontDataToHandleEX(fontname,edgeSize);
+	} else{
+		handle=LoadFontDataToHandle(fontname.c_str(),edgeSize);
 	}
 	return handle;
 }

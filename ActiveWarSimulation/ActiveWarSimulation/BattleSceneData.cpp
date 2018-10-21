@@ -8,6 +8,7 @@
 #include"FileRead.h"
 #include"GameScene.h"
 #include"CommonConstParameter.h"
+#include<math.h>
 
 //----------------------BattleSceneData----------------------
 const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);
@@ -16,8 +17,10 @@ const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonC
 BattleSceneData::BattleSceneData(const std::string &stagename)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr)
+	,m_totalOP(0.0f)
 	,m_stageName(stagename)
-	,m_orderFont(CreateFontToHandle("Bell MT",32,2,DX_FONTTYPE_EDGE))
+//	,m_orderFont(CreateFontToHandle("04かんじゅくゴシック",24,4,DX_FONTTYPE_EDGE,-1,2))
+	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/stage1/"))
 	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
@@ -142,7 +145,7 @@ BattleSceneData::~BattleSceneData(){
 	DeleteSoundMem(m_healSound);
 	DeleteSoundMem(m_footSound);
 	//フォント開放
-	DeleteFontToHandle(m_orderFont);
+	DeleteFontToHandleEX(m_orderFont);
 	//オブジェクト一覧を開放
 	for(BattleObject *obj:m_field){
 		delete obj;
@@ -266,6 +269,7 @@ void BattleSceneData::FinishUnitOperation(){
 		//u->AddOP(plusOP);
 		u->SetOP(u->GetBattleStatus().OP+plusOP);
 	}
+	m_totalOP+=plusOP;//消費したOPにplusOPを加算。
 	//m_operateUnitのOPを減らす(コストとして消費するので消費OP増加等の影響を受ける仕様となる)
 	//m_operateUnit->AddOP(-Unit::reduceStartActionCost);
 	m_operateUnit->ConsumeOPByCost(Unit::reduceStartActionCost);
@@ -354,36 +358,83 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 	//DrawBox(0,windowSize.second-(int)(Unit::unitCircleSize*1.5f),windowSize.first,windowSize.second,GetColor(128,128,128),TRUE);//背景の描画
 	
 
-	//ユニットのオーダー情報を順番に描画
-	for(size_t i=0,size=m_unitList.size();i<size;i++){
-		const Vector2D centerPoint=calDrawPoint(i);
-		//マウスが重なっていれば、対応キャラまで線を伸ばす
-		//lineDrawに入っていても線を伸ばす
-		if((GetMousePointVector2D()-centerPoint).sqSize()<Unit::unitCircleSize*Unit::unitCircleSize || lineDraw.find(m_unitList[i])!=lineDraw.end()){
-			const Vector2D unitDrawPos=m_unitList[i]->getPos()-Vector2D();
-			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(196,196,196),3.0f);
-			DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(255,255,255));
+	//ユニットのオーダー情報を順番に描画（タイマーも描画）
+	size_t unitListIndex=0;//ユニットリストの参照番号
+	bool turnTimerDrawFlag=false;//既にturnTimerを描画したか
+	std::vector<float> opVec(m_unitList.size()+1);//OPの値一覧
+	for(size_t i=0,size=m_unitList.size();i<size+1;i++){
+		const Vector2D centerPoint=calDrawPoint(i);//オーダー画面に乗っけられているユニットアイコンの中心位置
+		const float turnTimerOP=fmodf(m_totalOP,Unit::BattleStatus::maxOP);//ターン計測タイマーの表示OP
+		float opPal;//アイコンの下に描画するOPの値
+		//ユニットを描画するか、タイマーを描画するかでこの先は変化する
+		if(turnTimerDrawFlag
+			|| unitListIndex==0
+			|| (unitListIndex<size && m_unitList[unitListIndex]->GetBattleStatus().OP>=turnTimerOP)
+			)
+		{
+			//既にタイマーを描画している場合、先頭ユニットを描画していない場合は必ずユニット描画。また、turnTimerOPより大きいOPのユニットはタイマーより先に描画
+			//マウスが重なっていれば、対応キャラまで線を伸ばす
+			//線を伸ばすキャラのリストであるlineDrawにm_unitList[unitListIndex]が入っていても線を伸ばす
+			if((GetMousePointVector2D()-centerPoint).sqSize()<Unit::unitCircleSize*Unit::unitCircleSize || lineDraw.find(m_unitList[unitListIndex])!=lineDraw.end()){
+				const Vector2D unitDrawPos=m_unitList[unitListIndex]->getPos()-Vector2D();
+				//線の描画
+				DrawLineAA(centerPoint.x,centerPoint.y,unitDrawPos.x,unitDrawPos.y,GetColor(196,196,196),3.0f);
+				//線の中を通る線分のアニメーション
+				const int animeDuration=30;//アニメーションの長さ
+				const int startDuration=45;//アニメーションが起こる間隔
+				const int t=m_fpsMesuring.GetFlame()%startDuration;
+				const int lineLength=5;//線分の長さはこのフレーム分
+				if(t<animeDuration+lineLength){
+					//線分の終端が出現してから始点が消失するまで線分の描画を行うので、AnimeDuration+lineLengthの長さだけ線分は描画する
+					if(t<lineLength){
+						//始点が出現していない場合
+						const Vector2D v=(centerPoint*(float)(animeDuration-t)+unitDrawPos*(float)t)/(float)animeDuration;//終点位置
+						DrawLineAA(centerPoint.x,centerPoint.y,v.x,v.y,GetColor(255,255,255));//始点の位置はオーダー描画の位置とする
+					} else if(t<animeDuration){
+						//始点終点ともに出現している場合
+						const Vector2D v1=(centerPoint*(float)(animeDuration+lineLength-t)+unitDrawPos*(float)(t-lineLength))/(float)animeDuration;//始点位置
+						const Vector2D v2=(centerPoint*(float)(animeDuration-t)+unitDrawPos*(float)t)/(float)animeDuration;//終点位置
+						DrawLineAA(v1.x,v1.y,v2.x,v2.y,GetColor(255,255,255));//始点と終点を結ぶ
+					} else{
+						//終点が消失している場合
+						const Vector2D v=(centerPoint*(float)(animeDuration+lineLength-t)+unitDrawPos*(float)(t-lineLength))/(float)animeDuration;//始点位置
+						DrawLineAA(v.x,v.y,unitDrawPos.x,unitDrawPos.y,GetColor(255,255,255));//終点の位置はユニットのマップ描画位置とする
+					}
+				}
+			}
+			//ユニットアイコン(描画基準点は真ん中)
+			m_unitList[unitListIndex]->DrawFacePic(centerPoint);
+			//opPalの初期化
+			opPal=m_unitList[unitListIndex]->GetBattleStatus().OP;
+			//unitListIndexのインクリメント
+			unitListIndex++;
+		} else{
+			//タイマーアイコンの描画
+			DrawCircleAA(centerPoint.x,centerPoint.y,30.0f,9,GetColor(128,128,0),TRUE);
+			//opPalの初期化
+			opPal=turnTimerOP;
+			//もうタイマーを描画しないようにする
+			turnTimerDrawFlag=true;
 		}
-		//ユニットアイコン(描画基準点は真ん中)
-		m_unitList[i]->DrawFacePic(centerPoint);
 		//残りOP
 		const int x=(int)centerPoint.x,y=(int)(CommonConstParameter::gameResolutionY-opStrDy);
-		DrawStringCenterBaseToHandle(x,y,std::to_string((int)m_unitList[i]->GetBattleStatus().OP).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
+		DrawStringCenterBaseToHandle(x,y,std::to_string((int)opPal).c_str(),GetColor(255,255,255),m_orderFont,true,GetColor(0,0,0));
+		opVec[i]=opPal;
 	}
 
-	//行動終了時のユニットのオーダー位置予測の矢印の描画
+	//行動終了時のユニットのオーダー位置予測の矢印の描画位置計算
 	const size_t arrowNum=drawOrderHelpNum;
 	Vector2D arrowPos[arrowNum]={calDrawPoint(0),calDrawPoint(0)};//矢印の先端位置(先頭:行動しない時 後ろ:行動する時)
 	float op[arrowNum]={CalculateOperateUnitFinishOP(),CalculateOperateUnitFinishOP(m_operateUnit->ConsumeOPVirtualByCost(m_operateUnit->GetBattleStatus().weapon->GetCost()))};//今の位置で行動終了した時のOP(先頭:行動しない時 後ろ:行動する時)
-	const size_t listsize=m_unitList.size();
+	const size_t listsize=opVec.size();
 	for(size_t j=0;j<arrowNum;j++){
 		bool flag=false;//位置設定が終わったか
 		for(size_t i=1;i+1<listsize;i++){
-			if(!flag && op[j]<=m_unitList[i]->GetBattleStatus().OP && op[j]>m_unitList[i+1]->GetBattleStatus().OP){
+			if(!flag && op[j]<=opVec[i] && op[j]>opVec[i+1]){
 				//ユニットが入るであろう区間を求める(既に求まっている場合:flag[j]==trueは計算の必要はない)
 				//等号位置に注意！現在のユニットと同一OPのユニットを、現在のユニットより先に動かせるようにするようにしているから、次ユニットよりOPが等しい場合はその区間は間違っているようにしないといけない。
 				//また、同一OPのユニットが存在する場合は、等号を条件に入れないと入るべき区間を見逃す可能性があるので等号は入れる。
-				const float pal=(m_unitList[i]->GetBattleStatus().OP-op[j])/(m_unitList[i]->GetBattleStatus().OP-m_unitList[i+1]->GetBattleStatus().OP);//条件式より0除算にならないことが保証されている
+				const float pal=(opVec[i]-op[j])/(opVec[i]-opVec[i+1]);//条件式より0除算にならないことが保証されている
 				arrowPos[j]=calDrawPoint(i)*(1.0f-pal)+calDrawPoint(i+1)*pal;//内分点の算出式:p=ap0+bp1(a+b=1,a>=0,b>=0)
 				//計算し終わったからflagをtrueにして計算終了
 				flag=true;

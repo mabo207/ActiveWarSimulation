@@ -12,7 +12,8 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_explain(explain)
 	,m_battleSceneData(battleSceneData)
 	,m_stageClearBox(LoadGraphEX("Graphic/stageClearBox.png"))
-	,m_clearFont(CreateFontToHandleEX("Bell MT",48,4,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,2))
+//	,m_clearFont(CreateFontToHandleEX("Bell MT",48,4,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,2))
+	,m_clearFont(LoadFontDataToHandleEX("Font/StageClearFont.dft",2))
 	,m_explainFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",24,1,-1))
 	,m_flame(0)
 {}
@@ -58,7 +59,7 @@ void StageClearScene::thisDraw()const{
 	GetGraphSize(m_stageClearBox,&dx,&dy);
 	DrawGraph((CommonConstParameter::gameResolutionX-dx)/2,(CommonConstParameter::gameResolutionY-dy)/2,m_stageClearBox,TRUE);
 	DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,(CommonConstParameter::gameResolutionY-dy)/2+48,(m_winFlag?"STAGE CLEAR!":"MISSION FAILED..."),GetColor(255,255,255),m_clearFont,true,(m_winFlag?GetColor(220,128,128):GetColor(128,128,200)));
-	DrawStringNewLineToHandle(CommonConstParameter::gameResolutionX/2-dx/4,(CommonConstParameter::gameResolutionY-dy)/2+120,dx/2,dy/4,m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+	DrawStringNewLineToHandle(CommonConstParameter::gameResolutionX/2-dx/4,(CommonConstParameter::gameResolutionY-dy)/2+120,dx/2,dy/4,m_explain.c_str(),GetColor(255,255,255),m_explainFont,4);
 }
 
 int StageClearScene::UpdateNextScene(int index){
