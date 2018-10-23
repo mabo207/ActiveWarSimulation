@@ -281,7 +281,7 @@ void MoveScene::thisDraw()const{
 
 		//狙っているユニットの描画
 		if(m_aimedUnit!=nullptr){
-			m_aimedUnit->BattleObject::VDraw();//アイコンの描画
+			m_aimedUnit->DrawUnit(Vector2D(),0.0f,true);//アイコンの描画
 		}
 
 		//マウスを指しているユニットの移動範囲の描画
@@ -291,7 +291,7 @@ void MoveScene::thisDraw()const{
 		}
 
 		//操作中ユニットの描画
-		m_battleSceneData->m_operateUnit->BattleObject::VDraw();
+		m_battleSceneData->m_operateUnit->DrawUnit(Vector2D(),0.0f,true);
 		m_battleSceneData->m_operateUnit->DrawMoveInfo();//移動情報の描画
 
 

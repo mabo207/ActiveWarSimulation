@@ -91,11 +91,11 @@ void AttackScene::thisDraw()const{
 
 	//UŒ‚‘ÎÛƒ†ƒjƒbƒg‚Ì•`‰æ
 	if(m_aimedUnit!=nullptr){
-		m_aimedUnit->DrawUnit(m_aimedUnit->getPos(),Vector2D(),false);
+		m_aimedUnit->DrawUnit(Vector2D(),0.0f,false);
 	}
 	
 	//UŒ‚‚ðŽÀs‚·‚éƒ†ƒjƒbƒg‚Ì•`‰æ
-	m_battleSceneData->m_operateUnit->DrawUnit(Vector2D((float)m_attackMotion.GetX(),(float)m_attackMotion.GetY()),Vector2D(),false);
+	m_battleSceneData->m_operateUnit->DrawUnit(Vector2D((float)m_attackMotion.GetX(),(float)m_attackMotion.GetY()),Vector2D(),0.0f,false);
 	
 	//‘Sƒ†ƒjƒbƒg‚ÌHPƒQ[ƒW‚Ì•`‰æ
 	m_battleSceneData->DrawHPGage();

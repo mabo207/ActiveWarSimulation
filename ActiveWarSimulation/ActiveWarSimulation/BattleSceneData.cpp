@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include"DxLib.h"
 #include"BattleSceneData.h"
 #include"input.h"
@@ -326,7 +327,9 @@ void BattleSceneData::DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &n
 			//ƒEƒCƒ“ƒhƒE‚É“ü‚Á‚Ä‚¢‚È‚¢•¨‚Í•`‰æ‚µ‚È‚¢
 			//‘Þ‹p‚µ‚½ƒ†ƒjƒbƒg(m_fix‚ªe_ignore)‚Í•`‰æ‚µ‚È‚¢
 			//•`‰æ‚µ‚È‚¢‚à‚Ì(notDraw‚ÉŠi”[‚³‚ê‚Ä‚¢‚é‚à‚Ì)‚Í•`‰æ‚µ‚È‚¢
-			obj->DrawUnit(obj->getPos(),Vector2D(),infoDrawFlag);
+			float angle=std::cosf((float)(m_fpsMesuring.GetFlame())/60.0f*(float)M_PI)*(float)M_PI/180.0f*20.0f;
+			angle=0.0f;
+			obj->DrawUnit(obj->getPos(),Vector2D(),angle,infoDrawFlag);
 		}
 	}
 }

@@ -296,7 +296,11 @@ void Unit::DrawFacePic(Vector2D point)const{
 	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//”wŒi‚Ì˜g‚Ì•`‰æ(•‚ğ25%¬‚º‚é)
 }
 
-void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
+void Unit::DrawUnit(Vector2D adjust,float angle,bool infoDrawFlag)const{
+	DrawUnit(getPos(),adjust,angle,infoDrawFlag);
+}
+
+void Unit::DrawUnit(Vector2D point,Vector2D adjust,float angle,bool infoDrawFlag)const{
 	Vector2D pos=point-adjust;
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
@@ -323,7 +327,7 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
 		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//˜g(•‚ğ25%¬‚º‚é)
 	}
 	//ƒ†ƒjƒbƒgƒOƒ‰ƒtƒBƒbƒN‚ğ•`‰æ
-	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,0.0,m_gHandle,TRUE,FALSE);
+	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,angle,m_gHandle,TRUE,FALSE);
 	//•`‰æƒ‚[ƒh‚ğŒ³‚É–ß‚·
 	SetDrawBlendMode(mode,pal);
 }
@@ -361,7 +365,7 @@ Shape::Fix::Kind Unit::SetFix(Shape::Fix::Kind fix)const{
 }
 
 void Unit::VDraw(Vector2D point,Vector2D adjust)const{
-	DrawUnit(point,adjust,true);
+	DrawUnit(point,adjust,0.0f,true);
 }
 
 void Unit::VHitProcess(const BattleObject *potherobj){
@@ -380,27 +384,27 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 	case(Profession::e_lancer):
 		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),6+(int)(lv*0.5),5+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),5+(int)(lv*0.5),6);
 		weapon=Weapon::GetWeapon("“S‚Ì‘„");
-		gHandle=LoadGraphEX("Graphic/soldier.png");
+		gHandle=LoadGraphEX("Graphic/nonfree/soldier.png");
 		break;
 	case(Profession::e_archer):
 		baseStatus=BaseStatus(name,profession,lv,18+(int)(lv*0.75),5+(int)(lv*0.45),4+(int)(lv*0.4),2+(int)(lv*0.1),4+(int)(lv*0.4),3+(int)(lv*0.3),6);
 		weapon=Weapon::GetWeapon("“S‚Ì‹|");
-		gHandle=LoadGraphEX("Graphic/archer.png");
+		gHandle=LoadGraphEX("Graphic/nonfree/archer.png");
 		break;
 	case(Profession::e_armer):
 		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),7+(int)(lv*0.6),7+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),1+(int)(lv*0.2),3);
 		weapon=Weapon::GetWeapon("“S‚Ì‘„");
-		gHandle=LoadGraphEX("Graphic/armerknight.png");
+		gHandle=LoadGraphEX("Graphic/nonfree/armerknight.png");
 		break;
 	case(Profession::e_mage):
 		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),6+(int)(lv*0.45),5+(int)(lv*0.5),4);
 		weapon=Weapon::GetWeapon("ƒtƒ@ƒCƒA[‚Ì‘");
-		gHandle=LoadGraphEX("Graphic/mage.png");
+		gHandle=LoadGraphEX("Graphic/nonfree/mage.png");
 		break;
 	case(Profession::e_healer):
 		baseStatus=BaseStatus(name,profession,lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
 		weapon=Weapon::GetWeapon("ƒq[ƒ‹‚Ìñ");
-		gHandle=LoadGraphEX("Graphic/healer.png");
+		gHandle=LoadGraphEX("Graphic/nonfree/healer.png");
 		break;
 	}
 	return new Unit(baseStatus,weapon,position,gHandle,team);
