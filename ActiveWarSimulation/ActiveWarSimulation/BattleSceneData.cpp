@@ -325,7 +325,7 @@ void BattleSceneData::DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &n
 			//ƒEƒCƒ“ƒhƒE‚É“ü‚Á‚Ä‚¢‚È‚¢•¨‚Í•`‰æ‚µ‚È‚¢
 			//‘Þ‹p‚µ‚½ƒ†ƒjƒbƒg(m_fix‚ªe_ignore)‚Í•`‰æ‚µ‚È‚¢
 			//•`‰æ‚µ‚È‚¢‚à‚Ì(notDraw‚ÉŠi”[‚³‚ê‚Ä‚¢‚é‚à‚Ì)‚Í•`‰æ‚µ‚È‚¢
-			obj->DrawUnit(obj->getPos(),Vector2D(),m_fpsMesuring.GetFlame(),infoDrawFlag);
+			obj->DrawUnit(obj->getPos(),Vector2D(),m_fpsMesuring.GetFlame(),false,infoDrawFlag);
 		}
 	}
 }
