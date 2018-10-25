@@ -335,11 +335,12 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,int frame,bool animationFlag,
 	cx/=2;
 	cy/=2;
 	double angle=0.0;
-	double exRateX=1.2,exRateY=1.2;
+	const double defaultRate=1.2;//デフォの画像拡大率(画像がちゃんと揃ったら1.0にする)
+	double exRateX=defaultRate,exRateY=defaultRate;
 	if(animationFlag){
 		//angle=std::cos(frame/60.0*M_PI)*M_PI/180.0*6.0;
-		exRateY=1.2-(frame%60)*(60-frame%60)/900.0*0.05;//倍率は1.15~1.2倍、周期は1秒
-		uy+=(int)(cy*(1.2-exRateY));//画像下を常に揃える
+		exRateY=defaultRate-(frame%60)*(60-frame%60)/900.0*0.05;//倍率は1.15~1.2倍、周期は1秒
+		uy+=(int)(cy*(defaultRate-exRateY));//画像下を常に揃える
 	}
 	//ユニットグラフィックを描画
 	DrawRotaGraph3(ux,uy,cx,cy,exRateX,exRateY,angle,m_gHandle,TRUE,FALSE);
