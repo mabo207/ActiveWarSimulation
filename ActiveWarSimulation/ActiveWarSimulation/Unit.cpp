@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include"Unit.h"
 #include"DxLib.h"
 #include"Circle.h"
@@ -5,6 +6,7 @@
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
 #include"BattleSceneData.h"
+#include<math.h>
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
@@ -296,11 +298,11 @@ void Unit::DrawFacePic(Vector2D point)const{
 	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//背景の枠の描画(黒を25%混ぜる)
 }
 
-void Unit::DrawUnit(Vector2D adjust,float angle,bool infoDrawFlag)const{
-	DrawUnit(getPos(),adjust,angle,infoDrawFlag);
+void Unit::DrawUnit(Vector2D adjust,int frame,bool infoDrawFlag)const{
+	DrawUnit(getPos(),adjust,frame,infoDrawFlag);
 }
 
-void Unit::DrawUnit(Vector2D point,Vector2D adjust,float angle,bool infoDrawFlag)const{
+void Unit::DrawUnit(Vector2D point,Vector2D adjust,int frame,bool infoDrawFlag)const{
 	Vector2D pos=point-adjust;
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
@@ -327,7 +329,9 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,float angle,bool infoDrawFlag
 		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
 	}
 	//ユニットグラフィックを描画
-	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,angle,m_gHandle,TRUE,FALSE);
+	double angle=std::cos(frame/60.0*M_PI)*M_PI/180.0*20.0;
+	//angle=0.0;
+	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.2,angle,m_gHandle,TRUE,FALSE);
 	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
 }
@@ -365,7 +369,7 @@ Shape::Fix::Kind Unit::SetFix(Shape::Fix::Kind fix)const{
 }
 
 void Unit::VDraw(Vector2D point,Vector2D adjust)const{
-	DrawUnit(point,adjust,0.0f,true);
+	DrawUnit(point,adjust,0,true);
 }
 
 void Unit::VHitProcess(const BattleObject *potherobj){
