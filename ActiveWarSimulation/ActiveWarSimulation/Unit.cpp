@@ -329,12 +329,20 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,int frame,bool animationFlag,
 		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
 	}
 	//アニメーションパラメータの設定
+	int ux=(int)(pos.x),uy=(int)(pos.y);
+	int cx,cy;
+	GetGraphSize(m_gHandle,&cx,&cy);
+	cx/=2;
+	cy/=2;
 	double angle=0.0;
+	double exRateX=1.2,exRateY=1.2;
 	if(animationFlag){
-		angle=std::cos(frame/60.0*M_PI)*M_PI/180.0*20.0;
+		//angle=std::cos(frame/60.0*M_PI)*M_PI/180.0*6.0;
+		exRateY=1.2-(frame%60)*(60-frame%60)/900.0*0.05;//倍率は1.15~1.2倍、周期は1秒
+		uy+=(int)(cy*(1.2-exRateY));//画像下を常に揃える
 	}
 	//ユニットグラフィックを描画
-	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.2,angle,m_gHandle,TRUE,FALSE);
+	DrawRotaGraph3(ux,uy,cx,cy,exRateX,exRateY,angle,m_gHandle,TRUE,FALSE);
 	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
 }
