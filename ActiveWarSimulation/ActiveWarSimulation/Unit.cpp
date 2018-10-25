@@ -399,7 +399,7 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 	switch(profession){
 	case(Profession::e_lancer):
 		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),6+(int)(lv*0.5),5+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),5+(int)(lv*0.5),6);
-		weapon=Weapon::GetWeapon("“S‚Ì‘„");
+		weapon=Weapon::GetWeapon("“S‚ÌŒ•");
 		gHandle=LoadGraphEX("Graphic/nonfree/soldier.png");
 		break;
 	case(Profession::e_archer):
