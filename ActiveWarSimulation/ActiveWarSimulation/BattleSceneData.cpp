@@ -19,6 +19,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 	,m_totalOP(0.0f)
 	,m_stageName(stagename)
 //	,m_orderFont(CreateFontToHandle("04かんじゅくゴシック",24,4,DX_FONTTYPE_EDGE,-1,2))
+	,m_turnTimerPic(LoadGraphEX("Graphic/turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/stage1/"))
@@ -133,6 +134,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 BattleSceneData::~BattleSceneData(){
 	//グラフィック開放
 	DeleteGraphEX(m_mapPic);
+	DeleteGraphEX(m_turnTimerPic);
 	for(size_t i=0;i<drawOrderHelpNum;i++){
 		DeleteGraphEX(m_drawOrderHelp[i]);
 	}
@@ -409,7 +411,8 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 			unitListIndex++;
 		} else{
 			//タイマーアイコンの描画
-			DrawCircleAA(centerPoint.x,centerPoint.y,30.0f,9,GetColor(128,128,0),TRUE);
+			//DrawCircleAA(centerPoint.x,centerPoint.y,30.0f,9,GetColor(128,128,0),TRUE);
+			DrawRotaGraph((int)(centerPoint.x),(int)(centerPoint.y),1.0,0.0,m_turnTimerPic,TRUE);
 			//opPalの初期化
 			opPal=turnTimerOP;
 			//もうタイマーを描画しないようにする

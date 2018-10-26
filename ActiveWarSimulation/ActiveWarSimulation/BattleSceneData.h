@@ -38,7 +38,10 @@ public:
 
 	//グラフィックデータ
 	const int m_mapPic;//マップ全体のグラフィック
-	
+	const int m_turnTimerPic;//タイマーの絵
+	static const size_t drawOrderHelpNum=2;
+	int m_drawOrderHelp[drawOrderHelpNum];//オーダーの矢印分岐について、それぞれどんな意味かを描画する
+
 	//サウンドデータ
 	//bgm
 	const int m_mapBGM;//マップBGM
@@ -51,9 +54,7 @@ public:
 	//その他の変数
 	FpsMeasuring m_fpsMesuring;//fps計測器。タイマーの意味合いも兼ねる。
 	const int m_orderFont;//オーダー表示の際のフォント
-	static const size_t drawOrderHelpNum=2;
-	int m_drawOrderHelp[drawOrderHelpNum];//オーダーの矢印分岐について、それぞれどんな意味かを描画する
-
+	
 
 	//デバッグ用変数
 public:
