@@ -31,20 +31,20 @@ Vector2D GetMousePointVector2D(){
 
 //FpeMeasuringについての関数
 FpsMeasuring::FpsMeasuring()
-	:m_flame(0),m_recordTime(0){}
+	:m_frame(0),m_recordTime(0){}
 
 FpsMeasuring::~FpsMeasuring(){}
 
 void FpsMeasuring::Update(){
-	m_flame++;
-	m_time[m_flame%fpsSize]=timeGetTime();
+	m_frame++;
+	m_time[m_frame%fpsSize]=timeGetTime();
 }
 
 double FpsMeasuring::GetFps()const{
 	double fps;
-	double timeUpdateFpsSize=(double)(m_time[m_flame%fpsSize]-m_time[(m_flame+1)%fpsSize]);//fpsSize回の更新にどのくらいの時間がかかったか。単位はミリ秒
+	double timeUpdateFpsSize=(double)(m_time[m_frame%fpsSize]-m_time[(m_frame+1)%fpsSize]);//fpsSize回の更新にどのくらいの時間がかかったか。単位はミリ秒
 	if(timeUpdateFpsSize!=0.0){
-		fps=fpsSize/timeUpdateFpsSize*1000;
+		fps=(fpsSize-1)/timeUpdateFpsSize*1000;//配列の間隔の個数が更新回数なので、fpsSizeから-1する。
 	} else{
 		fps=0.0;
 	}
@@ -52,7 +52,12 @@ double FpsMeasuring::GetFps()const{
 }
 
 void FpsMeasuring::RecordTime(){
+	m_recordFrame=m_frame;
 	m_recordTime=timeGetTime();
+}
+
+size_t FpsMeasuring::GetProcessedFrame()const{
+	return m_frame-m_recordFrame;
 }
 
 double FpsMeasuring::GetProcessedTime()const{

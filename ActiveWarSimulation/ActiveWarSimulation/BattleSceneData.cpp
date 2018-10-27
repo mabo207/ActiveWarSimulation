@@ -327,7 +327,7 @@ void BattleSceneData::DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &n
 			//ウインドウに入っていない物は描画しない
 			//退却したユニット(m_fixがe_ignore)は描画しない
 			//描画しないもの(notDrawに格納されているもの)は描画しない
-			obj->DrawUnit(obj->getPos(),Vector2D(),m_fpsMesuring.GetFlame(),false,infoDrawFlag);
+			obj->DrawUnit(obj->getPos(),Vector2D(),m_fpsMesuring.GetFrame(),false,infoDrawFlag);
 		}
 	}
 }
@@ -383,7 +383,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 				//線の中を通る線分のアニメーション
 				const int animeDuration=30;//アニメーションの長さ
 				const int startDuration=45;//アニメーションが起こる間隔
-				const int t=m_fpsMesuring.GetFlame()%startDuration;
+				const int t=m_fpsMesuring.GetFrame()%startDuration;
 				const int lineLength=5;//線分の長さはこのフレーム分
 				if(t<animeDuration+lineLength){
 					//線分の終端が出現してから始点が消失するまで線分の描画を行うので、AnimeDuration+lineLengthの長さだけ線分は描画する

@@ -130,7 +130,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 				for(size_t i=0;i<moveCount;i++){
 					//1ƒtƒŒ[ƒ€“à‚É5‰ñˆÚ“®
 					//ˆÚ“®ˆ—‚ð¬•ª‚¯‚É‚·‚éŽ–‚ÅAˆÚ“®‘¬“x‚ðŒüã‚³‚¹‚é‚±‚Æ‚ª‚Å‚«‚é
-					if(fpsMeasuring.GetFlame()%1==0){
+					if(fpsMeasuring.GetFrame()%1==0){
 						//1‰ñ‚ÌˆÚ“®‹——£‚ð¬‚³‚­‚µ‚È‚¢‚ÆƒMƒŠƒMƒŠ’Ê‚ê‚È‚¢êŠ‚ª’Ê‚ê‚é‚æ‚¤‚É‚È‚Á‚Ä‚µ‚Ü‚¤
 						Vector2D v=GetMousePointVector2D()-pMoveCircle->getPos();
 						pMoveCircle->Move(v.norm()*std::fminf((float)(speed/moveCount),v.size()));

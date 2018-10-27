@@ -88,11 +88,12 @@ Vector2D GetMousePointVector2D();
 class FpsMeasuring{
 	//定数
 private:
-	static const size_t fpsSize=60;
+	static const size_t fpsSize=60+1;//60回の更新にかかった時間を図るには、60個前の時間が必要。間隔の個数を60にするため、1つ多く用意する。
 
 	//変数
 private:
-	int m_flame;
+	size_t m_frame;
+	size_t m_recordFrame;//処理にかかったフレーム数を計測するための変数。あると便利である。
 	unsigned long m_time[fpsSize];
 	unsigned long m_recordTime;//処理時間を計測するための変数
 
@@ -103,11 +104,12 @@ public:
 	FpsMeasuring();
 	~FpsMeasuring();
 	void Update();
-	int GetFlame()const{
-		return m_flame;
+	size_t GetFrame()const{
+		return m_frame;
 	}
 	double GetFps()const;
 	void RecordTime();//現在の時刻をm_recordTimeに記録する
+	size_t GetProcessedFrame()const;//m_recordFrameから経過したフレーム数を返す
 	double GetProcessedTime()const;//m_recordTimeから経過した時間を返す
 };
 

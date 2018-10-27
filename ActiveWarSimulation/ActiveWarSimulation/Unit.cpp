@@ -298,11 +298,11 @@ void Unit::DrawFacePic(Vector2D point)const{
 	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//îwåiÇÃògÇÃï`âÊ(çïÇ25%ç¨Ç∫ÇÈ)
 }
 
-void Unit::DrawUnit(Vector2D adjust,int frame,bool animationFlag,bool infoDrawFlag)const{
+void Unit::DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const{
 	DrawUnit(getPos(),adjust,frame,animationFlag,infoDrawFlag);
 }
 
-void Unit::DrawUnit(Vector2D point,Vector2D adjust,int frame,bool animationFlag,bool infoDrawFlag)const{
+void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const{
 	Vector2D pos=point-adjust;
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);

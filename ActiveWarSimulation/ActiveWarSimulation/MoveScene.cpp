@@ -281,7 +281,7 @@ void MoveScene::thisDraw()const{
 
 		//‘_‚Á‚Ä‚¢‚éƒ†ƒjƒbƒg‚Ì•`‰æ
 		if(m_aimedUnit!=nullptr){
-			m_aimedUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFlame(),false,true);//ƒAƒCƒRƒ“‚Ì•`‰æ
+			m_aimedUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,true);//ƒAƒCƒRƒ“‚Ì•`‰æ
 		}
 
 		//ƒ}ƒEƒX‚ðŽw‚µ‚Ä‚¢‚éƒ†ƒjƒbƒg‚ÌˆÚ“®”ÍˆÍ‚Ì•`‰æ
@@ -291,7 +291,7 @@ void MoveScene::thisDraw()const{
 		}
 
 		//‘€ì’†ƒ†ƒjƒbƒg‚Ì•`‰æ
-		m_battleSceneData->m_operateUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFlame(),true,true);
+		m_battleSceneData->m_operateUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),true,true);
 		m_battleSceneData->m_operateUnit->DrawMoveInfo();//ˆÚ“®î•ñ‚Ì•`‰æ
 
 
@@ -307,16 +307,16 @@ void MoveScene::thisDraw()const{
 				//UŒ‚‰Â”\‚È‚çƒ}[ƒJ[‚Æí“¬—\‘ª‚ð•`‰æ
 				Vector2D pos=m_aimedUnit->getPos();
 				//DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
-				size_t index=(m_battleSceneData->m_fpsMesuring.GetFlame()/15)%attackedCursorPicNum;
+				size_t index=(m_battleSceneData->m_fpsMesuring.GetFrame()/15)%attackedCursorPicNum;
 				float dx,dy;
 				GetGraphSizeF(m_attackedCursor[index],&dx,&dy);
 				//DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_attackedCursor[index],TRUE);
 				//í“¬—\‘ª‚Ì•`‰æ
 				const int period=60;
-				//const int dx2=(int)(5*std::cos(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFlame()%period)/period));
+				//const int dx2=(int)(5*std::cos(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period));
 				const int dx2=0;
-				const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFlame()%period)/period));
-				//const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFlame()%period)/period))-30;
+				const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period));
+				//const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period))-30;
 				m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->DrawPredict((int)pos.x+dx2,(int)pos.y+dy2,m_predictExplainFont,m_predictNumberFont,m_battleSceneData->m_operateUnit,m_aimedUnit);
 			}
 		}
