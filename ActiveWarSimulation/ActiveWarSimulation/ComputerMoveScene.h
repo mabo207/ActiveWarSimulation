@@ -35,7 +35,7 @@ protected:
 	int m_nextScene;//どの行動場面へ進むか(thisCalculate()の返り値が何か)
 
 	//その他の情報
-	size_t m_aimChangeFlame;//狙いを変更してから経った時間
+	size_t m_aimChangeFrame;//狙いを変更してから経った時間
 
 	std::vector<LatticeDistanceInfo> distvec;//デバッグ用距離可視化変数
 

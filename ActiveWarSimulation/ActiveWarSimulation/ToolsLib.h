@@ -202,19 +202,19 @@ public:
 	};
 	//変数
 protected:
-	int flame,maxflame;//フレーム数の管理。flameはmaxflameを超えて増加する。
+	int frame,maxframe;//フレーム数の管理。frameはmaxframeを超えて増加する。
 	int x,startx,endx;//数値xの管理
 	TYPE type;//変化形式
 	FUNCTION function;//使用する関数
 	double degree;//変化度合い
 	//関数
 public:
-	Easing(int i_x=0,int i_maxflame=0,TYPE i_type=TYPE_IN,FUNCTION i_function=FUNCTION_LINER,double i_degree=0.0)
-		:Easing(i_x,i_x,i_maxflame,i_type,i_function,i_degree){}
-	Easing(int i_x,int i_endx,int i_maxflame,TYPE i_type,FUNCTION i_function,double i_degree);
+	Easing(int i_x=0,int i_maxframe=0,TYPE i_type=TYPE_IN,FUNCTION i_function=FUNCTION_LINER,double i_degree=0.0)
+		:Easing(i_x,i_x,i_maxframe,i_type,i_function,i_degree){}
+	Easing(int i_x,int i_endx,int i_maxframe,TYPE i_type,FUNCTION i_function,double i_degree);
 	virtual ~Easing(){}//デストラクタ
 	virtual void Update();//位置更新
-	void SetTarget(int i_endx,bool initflame);//目標位置を決める
+	void SetTarget(int i_endx,bool initframe);//目標位置を決める
 	void EnforceEnd();//強制的に動作後にする
 	void Retry();//動作をリセットしてやり直す
 	void Retry(int i_startx);//動作をリセットしてやり直す。スタート位置も変える
@@ -227,11 +227,11 @@ public:
 	int GetendX()const{
 		return endx;
 	}
-	int GetFlame()const{
-		return flame;
+	int GetFrame()const{
+		return frame;
 	}
-	virtual int GetMaxFlame()const{
-		return maxflame;
+	virtual int GetMaxFrame()const{
+		return maxframe;
 	}
 	FUNCTION GetFunction()const{
 		return function;
@@ -242,7 +242,7 @@ public:
 	double GetDegree()const{
 		return degree;
 	}
-	void SetMaxFlame(int flame,bool targetinitflag);
+	void SetMaxFrame(int frame,bool targetinitflag);
 	virtual bool GetEndFlag()const;//動作が終了しているかを判定する
 };
 
@@ -255,17 +255,17 @@ protected:
 	Easing x,y;
 	//関数
 public:
-	PositionControl(int i_x=0,int i_y=0,int i_maxflame=0,Easing::TYPE i_type=Easing::TYPE_IN,Easing::FUNCTION i_function=Easing::FUNCTION_LINER,double i_degree=0.0)
-		:PositionControl(i_x,i_x,i_y,i_y,i_maxflame,i_type,i_function,i_degree){}//位置の初期化（最初のみ）
-	PositionControl(int i_x,int i_endx,int i_y,int i_endy,int i_maxflame,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
-		:x(i_x,i_endx,i_maxflame,i_type,i_function,i_degree),y(i_y,i_endy,i_maxflame,i_type,i_function,i_degree){}
-	PositionControl(Vector2D start,Vector2D end,int i_maxflameX,Easing::TYPE i_typeX,Easing::FUNCTION i_functionX,double i_degreeX,int i_maxflameY,Easing::TYPE i_typeY,Easing::FUNCTION i_functionY,double i_degreeY)
-		:x((int)start.x,(int)end.x,i_maxflameX,i_typeX,i_functionX,i_degreeX),y((int)start.y,(int)end.y,i_maxflameY,i_typeY,i_functionY,i_degreeY){}
-	PositionControl(Vector2D start,Vector2D end,int i_maxflame,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
-		:PositionControl(start,end,i_maxflame,i_type,i_function,i_degree,i_maxflame,i_type,i_function,i_degree){}
+	PositionControl(int i_x=0,int i_y=0,int i_maxframe=0,Easing::TYPE i_type=Easing::TYPE_IN,Easing::FUNCTION i_function=Easing::FUNCTION_LINER,double i_degree=0.0)
+		:PositionControl(i_x,i_x,i_y,i_y,i_maxframe,i_type,i_function,i_degree){}//位置の初期化（最初のみ）
+	PositionControl(int i_x,int i_endx,int i_y,int i_endy,int i_maxframe,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
+		:x(i_x,i_endx,i_maxframe,i_type,i_function,i_degree),y(i_y,i_endy,i_maxframe,i_type,i_function,i_degree){}
+	PositionControl(Vector2D start,Vector2D end,int i_maxframeX,Easing::TYPE i_typeX,Easing::FUNCTION i_functionX,double i_degreeX,int i_maxframeY,Easing::TYPE i_typeY,Easing::FUNCTION i_functionY,double i_degreeY)
+		:x((int)start.x,(int)end.x,i_maxframeX,i_typeX,i_functionX,i_degreeX),y((int)start.y,(int)end.y,i_maxframeY,i_typeY,i_functionY,i_degreeY){}
+	PositionControl(Vector2D start,Vector2D end,int i_maxframe,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
+		:PositionControl(start,end,i_maxframe,i_type,i_function,i_degree,i_maxframe,i_type,i_function,i_degree){}
 	virtual ~PositionControl(){}//デストラクタ
 	virtual void Update();//位置更新
-	void SetTarget(int i_endx,int i_endy,bool initflame);//目標位置を決める
+	void SetTarget(int i_endx,int i_endy,bool initframe);//目標位置を決める
 	void EnforceEnd();//強制的に動作後にする
 	void Retry();//動作をリセットしてやり直す
 	void Retry(int i_startx,int i_starty);//動作をリセットしてやり直す。スタート位置も変える
@@ -293,11 +293,11 @@ public:
 	int GetendY()const{
 		return y.GetendX();
 	}
-	int GetFlame()const{
-		return x.GetFlame();
+	int GetFrame()const{
+		return x.GetFrame();
 	}
-	virtual int GetMaxFlame()const{
-		return x.GetMaxFlame();
+	virtual int GetMaxFrame()const{
+		return x.GetMaxFrame();
 	}
 	Easing::FUNCTION GetFunction()const{
 		return x.GetFunction();
@@ -308,7 +308,7 @@ public:
 	double GetDegree()const{
 		return x.GetDegree();
 	}
-	void SetMaxFlame(int flame,bool targetinitflag);
+	void SetMaxFrame(int frame,bool targetinitflag);
 	virtual bool GetEndFlag()const;//動作が終了しているかを判定する
 };
 
@@ -323,12 +323,12 @@ protected:
 
 	//関数
 public:
-	PositionComplexControl(int i_x=0,int i_endx=0,int i_y=0,int i_endy=0,int i_maxflame=0,Easing::TYPE i_type=Easing::TYPE_IN,Easing::FUNCTION i_function=Easing::FUNCTION_LINER,double i_degree=0.0)
-		:indexX(0),indexY(0),x{Easing(i_x,i_endx,i_maxflame,i_type,i_function,i_degree)},y{Easing(i_y,i_endy,i_maxflame,i_type,i_function,i_degree)}{}//位置の初期化（最初のみ）
-	PositionComplexControl(Vector2D start,Vector2D end,int i_maxflame,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
-		:PositionComplexControl((int)start.x,(int)end.x,(int)start.y,(int)end.y,i_maxflame,i_type,i_function,i_degree){}
-	PositionComplexControl(Vector2D start,Vector2D end,int i_maxflame,Easing::TYPE i_typeX,Easing::FUNCTION i_functionX,double i_degreeX,Easing::TYPE i_typeY,Easing::FUNCTION i_functionY,double i_degreeY)
-		:indexX(0),indexY(0),x{Easing((int)start.x,(int)end.x,i_maxflame,i_typeX,i_functionX,i_degreeX)},y{Easing((int)start.y,(int)end.y,i_maxflame,i_typeY,i_functionY,i_degreeY)}{}
+	PositionComplexControl(int i_x=0,int i_endx=0,int i_y=0,int i_endy=0,int i_maxframe=0,Easing::TYPE i_type=Easing::TYPE_IN,Easing::FUNCTION i_function=Easing::FUNCTION_LINER,double i_degree=0.0)
+		:indexX(0),indexY(0),x{Easing(i_x,i_endx,i_maxframe,i_type,i_function,i_degree)},y{Easing(i_y,i_endy,i_maxframe,i_type,i_function,i_degree)}{}//位置の初期化（最初のみ）
+	PositionComplexControl(Vector2D start,Vector2D end,int i_maxframe,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
+		:PositionComplexControl((int)start.x,(int)end.x,(int)start.y,(int)end.y,i_maxframe,i_type,i_function,i_degree){}
+	PositionComplexControl(Vector2D start,Vector2D end,int i_maxframe,Easing::TYPE i_typeX,Easing::FUNCTION i_functionX,double i_degreeX,Easing::TYPE i_typeY,Easing::FUNCTION i_functionY,double i_degreeY)
+		:indexX(0),indexY(0),x{Easing((int)start.x,(int)end.x,i_maxframe,i_typeX,i_functionX,i_degreeX)},y{Easing((int)start.y,(int)end.y,i_maxframe,i_typeY,i_functionY,i_degreeY)}{}
 	PositionComplexControl(const std::vector<PositionControl> &controlgroup);//多用すると重い
 	PositionComplexControl(const std::vector<Easing> &i_x,const std::vector<Easing> &i_y)
 		:indexX(0),indexY(0),x(i_x),y(i_y){}
@@ -361,14 +361,14 @@ public:
 	int GetendY()const{
 		return y.back().GetendX();
 	}
-	int GetFlame()const{
-		int flame=0;
+	int GetFrame()const{
+		int frame=0;
 		for(const Easing &easing:x){
-			flame+=easing.GetFlame();
+			frame+=easing.GetFrame();
 		}
-		return flame;
+		return frame;
 	}
-	virtual int GetMaxFlame()const;
+	virtual int GetMaxFrame()const;
 	virtual bool GetEndFlag()const;//動作が終了しているかを判定する
 };
 
@@ -412,7 +412,7 @@ public:
 class Timer{
 	//定数
 protected:
-	const int fps;//Flame per Second。1以上の値が入る。
+	const int fps;//Frame per Second。1以上の値が入る。
 
 	//変数
 protected:
@@ -423,10 +423,10 @@ protected:
 public:
 	Timer(int i_fps);
 	~Timer();
-	int GetProcessCounter(bool secondFlag)const;//startTimerから数えた経過時間を返す。flame単位か秒単位で返すか選べる。
-	int GetLeftCounter(bool secondFlag)const;//endTimerまで残りどのくらいあるかを返す。flame単位か秒単位で返すか選べる。
+	int GetProcessCounter(bool secondFlag)const;//startTimerから数えた経過時間を返す。frame単位か秒単位で返すか選べる。
+	int GetLeftCounter(bool secondFlag)const;//endTimerまで残りどのくらいあるかを返す。frame単位か秒単位で返すか選べる。
 	bool JudgeEnd()const;//counterがendTimerを超えたかどうかを判定する
-	bool SetTimer(int timeLength,bool secondFlag);//タイマーの設定をする。flame単位か秒単位で設定するか選べる。
+	bool SetTimer(int timeLength,bool secondFlag);//タイマーの設定をする。frame単位か秒単位で設定するか選べる。
 	void Update();
 	void EnforceEnd();
 };

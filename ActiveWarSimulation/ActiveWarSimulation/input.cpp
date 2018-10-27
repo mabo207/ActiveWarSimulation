@@ -120,10 +120,10 @@ if(keyboard_get(KEY_INPUT_NUMPADENTER)==1){
 
 InputControler::InputControler(){
 	for(int i=0;i<KeyNum;i++){
-		m_keyboardFlame[i]=0;
+		m_keyboardFrame[i]=0;
 	}
 	for(int i=0;i<MouseButtonNum;i++){
-		m_mouseFlame[i]=0;
+		m_mouseFrame[i]=0;
 	}
 	
 	//ジョイパッドボタンとキーボードの対応表
@@ -169,9 +169,9 @@ int InputControler::Update(){
 		cflag=((cit!=cite) && (cit->keyboard)==i);//キーボード入力に対応するパッドボタンが存在すればtrueとなる。
 		sflag=((sit!=site) && (sit->keyboard)==i);//キーボード入力に対応するジョイパッドアナログスティックの入力方法が存在すればtrueとなる。
 		if(tmpKey[i]!=0 || (cflag && (tmpPad & cit->padbutton)!=0) || (sflag && sit->JudgeInput())){
-			m_keyboardFlame[i]++;
+			m_keyboardFrame[i]++;
 		}else{
-			m_keyboardFlame[i]=0;
+			m_keyboardFrame[i]=0;
 		}
 		if(cflag){
 			cit++;
@@ -184,9 +184,9 @@ int InputControler::Update(){
 	int mouseinput=GetMouseInput();
 	for(int i=0;i<MouseButtonNum;i++){
 		if((mouseinput>>i) & 0x01){
-			m_mouseFlame[i]++;
+			m_mouseFrame[i]++;
 		}else{
-			m_mouseFlame[i]=0;
+			m_mouseFrame[i]=0;
 		}
 	}
 	return 0;
@@ -194,19 +194,19 @@ int InputControler::Update(){
 
 int InputControler::Get(int KeyCode){
 	if(KeyCode>=0 && KeyCode<KeyNum){
-		return m_keyboardFlame[KeyCode];
+		return m_keyboardFrame[KeyCode];
 	}
 	return 0;
 }
 
 int InputControler::MouseGet(int MouseCode){
-	//MouseCodeの下からx個目のbitが1ならばm_mouseFlame[x-1]に入力フレーム数が格納されている
-	//つまりn回右シフトしたところ1が見えたならばm_mouseFlame[n]を返してあげれば良い
+	//MouseCodeの下からx個目のbitが1ならばm_mouseFrame[x-1]に入力フレーム数が格納されている
+	//つまりn回右シフトしたところ1が見えたならばm_mouseFrame[n]を返してあげれば良い
 	//ここでは、最下位bitが1のものを1bitずつ左シフトしていき、それとのAND演算によって何bit目に1があるかを検出する
 	int bit=0x01;
 	for(int i=0;i<MouseButtonNum;i++){
 		if(MouseCode & (bit<<i)){
-			return m_mouseFlame[i];
+			return m_mouseFrame[i];
 		}
 	}
 	return 0;
@@ -214,16 +214,16 @@ int InputControler::MouseGet(int MouseCode){
 
 void InputControler::InitInput(){
 	for(int i=0;i<KeyNum;i++){
-		m_keyboardFlame[i]=0;
+		m_keyboardFrame[i]=0;
 	}
 	for(int i=0;i<MouseButtonNum;i++){
-		m_mouseFlame[i]=0;
+		m_mouseFrame[i]=0;
 	}
 }
 
 void InputControler::COMinput(int KeyCode){
 	if(KeyCode>=0 && KeyCode<KeyNum){
-		m_keyboardFlame[KeyCode]++;
+		m_keyboardFrame[KeyCode]++;
 	}
 }
 
@@ -236,7 +236,7 @@ void InputControler::MapSaving(){
 }
 
 //リアルタイム半角文字列入力のサポート
-const int InputSingleCharStringControler::inputBreakFlame=30;
+const int InputSingleCharStringControler::inputBreakFrame=30;
 
 InputSingleCharStringControler::InputSingleCharStringControler(const std::string &banString,size_t maxLen)
 	:m_string(""),m_banString(banString),m_maxLen(maxLen),m_inputFlag(true)
@@ -252,7 +252,7 @@ InputSingleCharStringControler::~InputSingleCharStringControler(){}
 char InputSingleCharStringControler::InputCharString()const{
 	//スーパーベタ実装。Shift入りの入力を確認する。
 	bool shiftFlag=(keyboard_get(KEY_INPUT_LSHIFT)>0 || keyboard_get(KEY_INPUT_RSHIFT)>0);
-	auto f=[](int key)->bool{int t=keyboard_get(key);return (t==1 || t>=inputBreakFlame);};
+	auto f=[](int key)->bool{int t=keyboard_get(key);return (t==1 || t>=inputBreakFrame);};
 	if(f(KEY_INPUT_TAB)){
 		if(!shiftFlag){
 			return '\t';
@@ -573,7 +573,7 @@ void InputSingleCharStringControler::Update(){
 		if(keyboard_get(KEY_INPUT_NUMPADENTER)==1){
 			//Enterキーが押された場合
 			m_inputFlag=false;//入力終了
-		} else if((keyboard_get(KEY_INPUT_BACK)==1 || keyboard_get(KEY_INPUT_BACK)>inputBreakFlame) && !m_string.empty()){
+		} else if((keyboard_get(KEY_INPUT_BACK)==1 || keyboard_get(KEY_INPUT_BACK)>inputBreakFrame) && !m_string.empty()){
 			//backキーが押された場合(30フレーム以降は連続入力)
 			m_string.pop_back();//1文字削除
 		} else{

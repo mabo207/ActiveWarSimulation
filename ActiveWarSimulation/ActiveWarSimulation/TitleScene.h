@@ -38,7 +38,7 @@ private:
 
 	//変数
 protected:
-	int m_flame;//文字にアニメーションをつけるため
+	int m_frame;//文字にアニメーションをつけるため
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 	SelectItem::Kind m_selectItem;//現在選択している項目
 	std::array<std::shared_ptr<Shape>,SelectItem::COUNTER> m_hitJudgeShapeVec;

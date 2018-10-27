@@ -13,8 +13,8 @@ public:
 
 	//定数
 protected:
-	static const int motionFlame;//アニメーションする全体時間
-	static const int damageBeginFlame,damageEndFlame;//ダメージ文字が出現するタイミング、アニメーションが終わるタイミング
+	static const int motionFrame;//アニメーションする全体時間
+	static const int damageBeginFrame,damageEndFrame;//ダメージ文字が出現するタイミング、アニメーションが終わるタイミング
 	static const float moveLength;//アニメーション時に移動する距離
 
 	//変数

@@ -48,7 +48,7 @@ TitleScene::TitleScene()
 	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_selectItem(SelectItem::e_stageSelect)
-	,m_flame(0)
+	,m_frame(0)
 	,m_nextScene(nullptr)
 	,m_reqInfo(nullptr)
 {
@@ -73,7 +73,7 @@ TitleScene::~TitleScene(){
 
 int TitleScene::thisCalculate(){
 	//フレーム数の更新
-	m_flame++;
+	m_frame++;
 
 	//特殊な入力情報の取得
 	const Vector2D mousePos=GetMousePointVector2D();//マウス位置
@@ -165,7 +165,7 @@ void TitleScene::thisDraw()const{
 			inColor=GetColor(0,64,128);
 			frameColor=GetColor(0,128,200);
 			fontColor=GetColor(255,255,255);
-			strDy=std::abs((int)(std::cos(M_PI*2*m_flame/120)*5.0));
+			strDy=std::abs((int)(std::cos(M_PI*2*m_frame/120)*5.0));
 		}
 		m_hitJudgeShapeVec[i]->Draw(Vector2D(),inColor,TRUE);
 		m_hitJudgeShapeVec[i]->Draw(Vector2D(),frameColor,FALSE,3.0f);

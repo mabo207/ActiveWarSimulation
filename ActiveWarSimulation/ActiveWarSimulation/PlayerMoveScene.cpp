@@ -140,11 +140,11 @@ int PlayerMoveScene::thisCalculate(){
 		return SceneKind::e_research;
 	} else{
 		//移動し始めの判定更新(左クリックを押した瞬間であるかを判定・記録する)
-		int flame=mouse_get(MOUSE_INPUT_LEFT);
-		if(flame==0){
+		int frame=mouse_get(MOUSE_INPUT_LEFT);
+		if(frame==0){
 			//左クリックをしなくなると、押していないのでfalseにする
 			m_mouseLeftFlag=false;
-		} else if(flame==1){
+		} else if(frame==1){
 			//1フレーム目を検知できた場合は、trueにする
 			m_mouseLeftFlag=true;
 		}

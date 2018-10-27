@@ -15,7 +15,7 @@ const float MoveScene::routeFrequency=1.0f;
 
 MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_move)
-	,m_moveFlame(0)
+	,m_moveFrame(0)
 	,m_battleSceneData(battleSceneData)
 	,m_operatedCursor(LoadGraphEX("Graphic/operatedCursor.png"))
 	,m_predictExplainFont(CreateFontToHandleEX("メイリオ",16,2,DX_FONTTYPE_ANTIALIASING_EDGE_4X4))
@@ -38,14 +38,14 @@ bool MoveScene::PositionUpdate(const Vector2D inputVec){
 	bool inputFlag=m_battleSceneData->PositionUpdate(inputVec);
 	if(inputFlag){
 		//動きの入力がされているなら移動連続フレーム数を増やす
-		m_moveFlame++;
-		if(m_moveFlame%15==1){
+		m_moveFrame++;
+		if(m_moveFrame%15==1){
 			//15フレームにつき1回移動音を鳴らす
 			PlaySoundMem(m_battleSceneData->m_footSound,DX_PLAYTYPE_BACK,TRUE);
 		}
 	} else{
 		//動きの入力がされていないなら連続フレーム数を0にする
-		m_moveFlame=0;
+		m_moveFrame=0;
 	}
 
 	//攻撃対象ユニットの更新(移動しなくても(=inputFlagがfalseでも)ユニットの位置は動く可能性があるので毎ループ処理する)

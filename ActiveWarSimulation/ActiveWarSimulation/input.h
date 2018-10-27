@@ -57,8 +57,8 @@ protected:
 	static const int MouseButtonNum=8;//マウスの入力ボタン数
 
 	//変数
-	int m_keyboardFlame[KeyNum];//各キーボードが入力されたフレーム数
-	int m_mouseFlame[MouseButtonNum];//各マウスのボタンが入力されたフレーム数
+	int m_keyboardFrame[KeyNum];//各キーボードが入力されたフレーム数
+	int m_mouseFrame[MouseButtonNum];//各マウスのボタンが入力されたフレーム数
 	std::set<GamepadKeyboardMap> m_connectmap;//ゲームパッドとキーボードの対応表
 	std::set<AnalogJoypadKeyboardMap> m_stickmap;//アナログスティックとキーボードの対応表
 
@@ -82,7 +82,7 @@ class InputSingleCharStringControler{
 	//型・列挙体
 
 	//定数
-	static const int inputBreakFlame;//キーを押しっぱなしにした時、このフレーム数の間だけ入力を防ぐ
+	static const int inputBreakFrame;//キーを押しっぱなしにした時、このフレーム数の間だけ入力を防ぐ
 
 	//変数
 protected:

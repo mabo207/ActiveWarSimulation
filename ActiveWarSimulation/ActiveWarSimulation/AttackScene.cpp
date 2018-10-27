@@ -3,21 +3,21 @@
 #include"GraphicControl.h"
 
 //-------------------AttackScene-------------------
-const int AttackScene::motionFlame=20;
-const int AttackScene::damageBeginFlame=AttackScene::motionFlame/2;
-const int AttackScene::damageEndFlame=AttackScene::damageBeginFlame+30;
+const int AttackScene::motionFrame=20;
+const int AttackScene::damageBeginFrame=AttackScene::motionFrame/2;
+const int AttackScene::damageEndFrame=AttackScene::damageBeginFrame+30;
 const float AttackScene::moveLength=40.0;
 
 AttackScene::AttackScene(std::shared_ptr<BattleSceneData> data,Unit *aimedUnit)
 	:BattleSceneElement(SceneKind::e_attackNormal)
 	,m_battleSceneData(data),m_aimedUnit(aimedUnit)
 	,m_attackMotion({
-		PositionControl(data->m_operateUnit->getPos(),data->m_operateUnit->getPos()+(m_aimedUnit->getPos()-data->m_operateUnit->getPos()).norm()*moveLength,motionFlame/2,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
-		,PositionControl(data->m_operateUnit->getPos()+(m_aimedUnit->getPos()-data->m_operateUnit->getPos()).norm()*moveLength,data->m_operateUnit->getPos(),motionFlame/2,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0)
+		PositionControl(data->m_operateUnit->getPos(),data->m_operateUnit->getPos()+(m_aimedUnit->getPos()-data->m_operateUnit->getPos()).norm()*moveLength,motionFrame/2,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
+		,PositionControl(data->m_operateUnit->getPos()+(m_aimedUnit->getPos()-data->m_operateUnit->getPos()).norm()*moveLength,data->m_operateUnit->getPos(),motionFrame/2,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0)
 	})
 	,m_damageMotion({
-		PositionControl(0,0,0,-(int)Unit::unitCircleSize,(damageEndFlame-damageBeginFlame)/2,Easing::TYPE_OUT,Easing::FUNCTION_EXPO,9.0)
-		,PositionControl(0,0,-(int)Unit::unitCircleSize,-(int)Unit::unitCircleSize,(damageEndFlame-damageBeginFlame)/2,Easing::TYPE_OUT,Easing::FUNCTION_QUAD,9.0)
+		PositionControl(0,0,0,-(int)Unit::unitCircleSize,(damageEndFrame-damageBeginFrame)/2,Easing::TYPE_OUT,Easing::FUNCTION_EXPO,9.0)
+		,PositionControl(0,0,-(int)Unit::unitCircleSize,-(int)Unit::unitCircleSize,(damageEndFrame-damageBeginFrame)/2,Easing::TYPE_OUT,Easing::FUNCTION_QUAD,9.0)
 	})
 {
 	//攻撃情報の記録
@@ -65,9 +65,9 @@ int AttackScene::thisCalculate(){
 	//アニメーション更新
 	m_attackMotion.Update();
 	m_damageMotion.Update();
-	const int flame=m_attackMotion.GetFlame();
+	const int frame=m_attackMotion.GetFrame();
 	//ダメージモーションの開始
-	if(flame==damageBeginFlame){
+	if(frame==damageBeginFrame){
 		//アニメーションの初期化
 		m_damageMotion.Retry();
 		//ダメージ処理
@@ -101,7 +101,7 @@ void AttackScene::thisDraw()const{
 	m_battleSceneData->DrawHPGage();
 
 	//ダメージの描画
-	if(m_attackMotion.GetFlame()>damageBeginFlame){
+	if(m_attackMotion.GetFrame()>damageBeginFrame){
 		//表示するフレームより前は描画処理を行わない
 		//色の決定
 		unsigned int incolor,outcolor;

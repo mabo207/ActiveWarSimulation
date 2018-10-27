@@ -68,7 +68,7 @@ protected:
 
 	//ä÷êî
 public:
-	FadeInOutGameScene(std::shared_ptr<GameScene> pActivateClass,int fadeFlag,int flame);
+	FadeInOutGameScene(std::shared_ptr<GameScene> pActivateClass,int fadeFlag,int frame);
 	virtual ~FadeInOutGameScene();
 	int Calculate();
 	void Draw()const;
@@ -81,7 +81,7 @@ class MainControledFadeInOutGameScene:public FadeInOutGameScene,public MainContr
 
 	//ä÷êî
 public:
-	MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene> pActivateClass,int fadeFlag,int flame);
+	MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene> pActivateClass,int fadeFlag,int frame);
 	~MainControledFadeInOutGameScene(){}
 	int Calculate(){
 		return FadeInOutGameScene::Calculate();
