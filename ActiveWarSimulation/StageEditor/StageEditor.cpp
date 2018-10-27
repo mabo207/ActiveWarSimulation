@@ -249,8 +249,8 @@ void StageEditor::Draw() {
 	clsDx();
 	Vector2D v=GetMousePointVector2D();
 	//printfDx("(%f,%f)\n",v.x,v.y);//素の座標
-	v=m_actionSettings.m_pPosSetting->CalculatePos(v,m_actionSettings);
-	//printfDx("(%f,%f)\n",v.x,v.y);//位置調整後の座標
+	v=m_actionSettings.m_pPosSetting->CalculatePos(v-Vector2D((float)leftUpPosX,(float)leftUpPosY)+m_actionSettings.GetMAdjust(),m_actionSettings);
+	printfDx("(%f,%f)\n",v.x,v.y);//位置調整後の座標
 	for(auto o:*m_actionSettings.GetPMObject()){
 	//	printfDx("%d\n",o.get());
 	}
