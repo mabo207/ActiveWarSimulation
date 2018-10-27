@@ -340,10 +340,10 @@ int ComputerMoveScene::thisCalculate(){
 	const Vector2D beforeVec=m_battleSceneData->m_operateUnit->getPos();
 	PositionUpdate(CalculateInputVec());
 	const float moveSqLength=(beforeVec-m_battleSceneData->m_operateUnit->getPos()).sqSize();
-	const double processedTime=m_battleSceneData->m_fpsMesuring.GetProcessedTime();
+	const size_t processedFrame=m_battleSceneData->m_fpsMesuring.GetProcessedFrame();
 	if(!m_actionWaiting){
 		//行動までの待ち時間を待っている状態ではない時
-		if(processedTime>1.0){
+		if(processedFrame>45){
 			//1秒経ったら行動する
 			if(JudgeAttackCommandUsable() && m_aimedUnit==m_targetUnit){
 				//m_aimerUnitがAIが決めていた攻撃対象に一致した時、攻撃処理を行う
@@ -361,15 +361,15 @@ int ComputerMoveScene::thisCalculate(){
 					m_aimChangeFrame=0;
 				}
 			} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f
-				//			|| processedTime>10.0//デバッグのために一度省いている
-				|| keyboard_get(KEY_INPUT_Q)==1//時間制限がない際にゲームに戻れるようにするため
-				){
+				|| processedFrame>600//不具合があった時にゲームに戻れるようにするため
+				)
+			{
 				//移動できなくなったら、または10秒経ったら待機
 				//return BranchingWaitingProcess();//行動対象がいれば行動する
 				m_nextScene=BranchingWaitingProcess();
 				m_battleSceneData->m_fpsMesuring.RecordTime();
 				m_actionWaiting=true;
-			} else if((moveSqLength<0.1f && processedTime>2.0)){
+			} else if((moveSqLength<0.1f && processedFrame>120)){
 				//移動距離も少ない場合は移動先の変更
 				if(m_latticeRoute.size()<2){
 					//進む場所がないまたは最後の1点にたどり着かずに止まっている場合は待機でよい
@@ -392,7 +392,7 @@ int ComputerMoveScene::thisCalculate(){
 		}
 	} else{
 		//待ち時間を待っている時
-		if(processedTime>0.1){
+		if(processedFrame>6){
 			//0.1秒待ってから行動へ
 			if(m_nextScene==SceneKind::e_attackNormal && !JudgeAttackCommandUsable()){
 				//攻撃選択の場合、JudgeAttackCommandUsable()をする。図形押し出し処理の影響で、「攻撃できると思ったらできない」が発生する事があるため。
