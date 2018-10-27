@@ -322,8 +322,9 @@ int ComputerMoveScene::BranchingWaitingProcess(){
 		}
 	}
 	//攻撃するか待機するかの分岐
-	if(pActedUnit==nullptr){
+	if(pActedUnit==nullptr || evaluate<=0.0){
 		//行動対象がいなければ待機
+		//行動に意味がなくても待機
 		FinishUnitOperation();
 		return 0;
 	} else{
@@ -349,7 +350,8 @@ int ComputerMoveScene::thisCalculate(){
 				//m_aimerUnitがAIが決めていた攻撃対象に一致した時、攻撃処理を行う
 				//FinishUnitOperation();//行動終了処理(あとで)
 				//return SceneKind::e_attackNormal;//攻撃場面へ
-				m_nextScene=SceneKind::e_attackNormal;
+				//m_nextScene=SceneKind::e_attackNormal;//BranchingWaitingProcess()を用いて、効果がない行動をしないようにする。
+				m_nextScene=BranchingWaitingProcess();
 				m_battleSceneData->m_fpsMesuring.RecordTime();
 				m_actionWaiting=true;
 			} else if(m_targetUnit!=nullptr && m_battleSceneData->m_operateUnit->JudgeAttackable(m_targetUnit) && m_aimedUnit!=m_targetUnit){
