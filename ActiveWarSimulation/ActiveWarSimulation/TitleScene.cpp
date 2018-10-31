@@ -152,7 +152,7 @@ void TitleScene::thisDraw()const{
 	DrawGraph(0,0,m_titleLogo,TRUE);
 	int verX,verY;
 	GetGraphSize(m_titleLogo,&verX,&verY);
-	DrawStringToHandle(verX,verY,"- C94 Trial Edition -",GetColor(255,255,255),m_itemFont);
+	DrawStringToHandle(verX,verY,"- DigigameExpo 6th Trial Edition -",GetColor(255,255,255),m_itemFont);
 	//çÄñ⁄ÇÃï`âÊ
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
 		unsigned int inColor,frameColor,fontColor;
