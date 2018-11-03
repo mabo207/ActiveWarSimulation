@@ -48,7 +48,7 @@ TitleScene::TitleScene()
 	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_selectItem(SelectItem::e_stageSelect)
-	,m_flame(0)
+	,m_frame(0)
 	,m_nextScene(nullptr)
 	,m_reqInfo(nullptr)
 {
@@ -73,7 +73,7 @@ TitleScene::~TitleScene(){
 
 int TitleScene::thisCalculate(){
 	//フレーム数の更新
-	m_flame++;
+	m_frame++;
 
 	//特殊な入力情報の取得
 	const Vector2D mousePos=GetMousePointVector2D();//マウス位置
@@ -152,7 +152,7 @@ void TitleScene::thisDraw()const{
 	DrawGraph(0,0,m_titleLogo,TRUE);
 	int verX,verY;
 	GetGraphSize(m_titleLogo,&verX,&verY);
-	DrawStringToHandle(verX,verY,"- C94 Trial Edition -",GetColor(255,255,255),m_itemFont);
+	DrawStringToHandle(verX,verY,"- DigigameExpo 6th Trial Edition -",GetColor(255,255,255),m_itemFont);
 	//項目の描画
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
 		unsigned int inColor,frameColor,fontColor;
@@ -165,7 +165,7 @@ void TitleScene::thisDraw()const{
 			inColor=GetColor(0,64,128);
 			frameColor=GetColor(0,128,200);
 			fontColor=GetColor(255,255,255);
-			strDy=std::abs((int)(std::cos(M_PI*2*m_flame/120)*5.0));
+			strDy=std::abs((int)(std::cos(M_PI*2*m_frame/120)*5.0));
 		}
 		m_hitJudgeShapeVec[i]->Draw(Vector2D(),inColor,TRUE);
 		m_hitJudgeShapeVec[i]->Draw(Vector2D(),frameColor,FALSE,3.0f);

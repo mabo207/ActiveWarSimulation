@@ -21,6 +21,23 @@ bool ComputerMoveScene::LatticeDistanceInfo::operator==(const LatticeDistanceInf
 	return (this->index==otherobj.index) && (this->dist==otherobj.dist);
 }
 
+//---------------ComputerMoveScene::AttackFailedInfo------------------
+ComputerMoveScene::AttackFailedInfo::AttackFailedInfo()
+	:m_count(0),m_frame(0)
+{}
+
+bool ComputerMoveScene::AttackFailedInfo::JudgeAttackProcessProceed()const{
+	return (m_count==0 || m_frame>6);//6フレームは移動に当てる
+}
+
+bool ComputerMoveScene::AttackFailedInfo::JudgeRetry()const{
+	return (m_count<1);//やり直し回数は1回
+}
+
+void ComputerMoveScene::AttackFailedInfo::RetryProcess(){
+	m_count++;
+	m_frame=0;
+}
 
 //---------------ComputerMoveScene------------------
 const size_t ComputerMoveScene::squareSize=CommonConstParameter::unitCircleSize;
@@ -31,7 +48,9 @@ ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleScen
 	,m_yLatticeNum((size_t)(battleSceneData->m_stageSize.y)/squareSize+1)
 	,m_actionWaiting(false)
 	,m_nextScene(SceneKind::e_move)
-	,m_aimChangeFlame(0)
+	,m_aimChangeFrame(0)
+	,m_waitingFrame(0)
+	,m_attackFailedInfo()
 {
 	//格子点の数だけ配列を確保
 	m_latticeInShape=std::vector<int>(m_xLatticeNum*m_yLatticeNum,0);
@@ -322,8 +341,9 @@ int ComputerMoveScene::BranchingWaitingProcess(){
 		}
 	}
 	//攻撃するか待機するかの分岐
-	if(pActedUnit==nullptr){
+	if(pActedUnit==nullptr || evaluate<=0.0){
 		//行動対象がいなければ待機
+		//行動に意味がなくても待機
 		FinishUnitOperation();
 		return 0;
 	} else{
@@ -334,49 +354,49 @@ int ComputerMoveScene::BranchingWaitingProcess(){
 }
 
 int ComputerMoveScene::thisCalculate(){
-	//m_aimChangeFlameの更新
-	m_aimChangeFlame++;
+	//フレーム関係の更新
+	m_aimChangeFrame++;
+	m_attackFailedInfo.m_frame++;
 	//m_operateUnitの位置更新
 	const Vector2D beforeVec=m_battleSceneData->m_operateUnit->getPos();
 	PositionUpdate(CalculateInputVec());
 	const float moveSqLength=(beforeVec-m_battleSceneData->m_operateUnit->getPos()).sqSize();
-	const double processedTime=m_battleSceneData->m_fpsMesuring.GetProcessedTime();
+	const size_t processedFrame=m_battleSceneData->m_fpsMesuring.GetProcessedFrame();
 	if(!m_actionWaiting){
 		//行動までの待ち時間を待っている状態ではない時
-		if(processedTime>1.0){
+		if(processedFrame>45){
 			//1秒経ったら行動する
-			if(JudgeAttackCommandUsable() && m_aimedUnit==m_targetUnit){
+			if(JudgeAttackCommandUsable() && m_aimedUnit==m_targetUnit && m_attackFailedInfo.JudgeAttackProcessProceed()){
 				//m_aimerUnitがAIが決めていた攻撃対象に一致した時、攻撃処理を行う
+				//ただし、m_attackFailedInfoから分かる再移動の際は規定フレームを待つ
 				//FinishUnitOperation();//行動終了処理(あとで)
 				//return SceneKind::e_attackNormal;//攻撃場面へ
-				m_nextScene=SceneKind::e_attackNormal;
-				m_battleSceneData->m_fpsMesuring.RecordTime();
+				//m_nextScene=SceneKind::e_attackNormal;//BranchingWaitingProcess()を用いて、効果がない行動をしないようにする。
+				m_nextScene=BranchingWaitingProcess();
 				m_actionWaiting=true;
 			} else if(m_targetUnit!=nullptr && m_battleSceneData->m_operateUnit->JudgeAttackable(m_targetUnit) && m_aimedUnit!=m_targetUnit){
 				//AIが決めていた攻撃対象が攻撃範囲内にいるが、m_aimedUnitがそれに一致しないときは、攻撃対象を動かす
-				if(m_aimChangeFlame>5){
+				if(m_aimChangeFrame>5){
 					//ただし、5フレームほど間隔を持たせる
 					SetAimedUnit(1);
 					PlaySoundMem(m_battleSceneData->m_aimchangeSound,DX_PLAYTYPE_BACK,TRUE);//狙い切り替えなのでその効果音を
-					m_aimChangeFlame=0;
+					m_aimChangeFrame=0;
 				}
 			} else if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP<2.0f
-				//			|| processedTime>10.0//デバッグのために一度省いている
-				|| keyboard_get(KEY_INPUT_Q)==1//時間制限がない際にゲームに戻れるようにするため
-				){
+				|| processedFrame>600//不具合があった時にゲームに戻れるようにするため
+				)
+			{
 				//移動できなくなったら、または10秒経ったら待機
 				//return BranchingWaitingProcess();//行動対象がいれば行動する
 				m_nextScene=BranchingWaitingProcess();
-				m_battleSceneData->m_fpsMesuring.RecordTime();
 				m_actionWaiting=true;
-			} else if((moveSqLength<0.1f && processedTime>2.0)){
+			} else if((moveSqLength<0.1f && processedFrame>120)){
 				//移動距離も少ない場合は移動先の変更
 				if(m_latticeRoute.size()<2){
 					//進む場所がないまたは最後の1点にたどり着かずに止まっている場合は待機でよい
 					//最後の1点の場合も待機を行う理由は、先頭点を進入不可にする事でルート変更を行うが、最後の1点は大抵は元々進入不可でルートが変わらず、無限ループとなってしまうから。
 					//return BranchingWaitingProcess();//行動対象がいれば行動する
 					m_nextScene=BranchingWaitingProcess();
-					m_battleSceneData->m_fpsMesuring.RecordTime();
 					m_actionWaiting=true;
 				} else{
 					//経由点で行き詰まっている場合、そのルートは間違っていると考えられるのでルート変更をする
@@ -392,13 +412,24 @@ int ComputerMoveScene::thisCalculate(){
 		}
 	} else{
 		//待ち時間を待っている時
-		if(processedTime>0.1){
+		m_waitingFrame++;
+		if(m_waitingFrame>6){
 			//0.1秒待ってから行動へ
 			if(m_nextScene==SceneKind::e_attackNormal && !JudgeAttackCommandUsable()){
 				//攻撃選択の場合、JudgeAttackCommandUsable()をする。図形押し出し処理の影響で、「攻撃できると思ったらできない」が発生する事があるため。
-				FinishUnitOperation();//再現が難しすぎるので、自然発生的に発生するのを待つ
-				return 0;
+				//こうなるパターンは様々あるため、１度だけ再探索を行わせ、それでもダメなら待機する処理にする。
+				if(m_attackFailedInfo.JudgeRetry()){
+					//規定回数内の失敗の時
+					m_actionWaiting=!m_actionWaiting;
+					m_waitingFrame=0;
+					m_attackFailedInfo.RetryProcess();
+				}else{
+					FinishUnitOperation();//再現が難しすぎるので、自然発生的に発生するのを待つ
+					m_battleSceneData->m_fpsMesuring.RecordTime();
+					return 0;
+				}
 			} else{
+				m_battleSceneData->m_fpsMesuring.RecordTime();
 				return m_nextScene;
 			}
 		}

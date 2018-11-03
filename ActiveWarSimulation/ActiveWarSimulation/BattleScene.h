@@ -25,7 +25,7 @@ public:
 	//変数
 protected:
 	//ステージやり直し処理関連
-	int m_resetFlame;//リセット処理にかかっている時間
+	int m_resetFrame;//リセット処理にかかっている時間
 	bool m_resetFlag;//リセット処理中かどうか
 
 	//ゲームの進行を管理する変数

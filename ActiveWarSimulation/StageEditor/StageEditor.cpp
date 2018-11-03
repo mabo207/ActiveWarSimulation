@@ -249,10 +249,10 @@ void StageEditor::Draw() {
 	clsDx();
 	Vector2D v=GetMousePointVector2D();
 	//printfDx("(%f,%f)\n",v.x,v.y);//ëfÇÃç¿ïW
-	v=m_actionSettings.m_pPosSetting->CalculatePos(v,m_actionSettings);
+	v=m_actionSettings.m_pPosSetting->CalculatePos(v-Vector2D((float)leftUpPosX,(float)leftUpPosY)+m_actionSettings.GetMAdjust(),m_actionSettings);
 	//printfDx("(%f,%f)\n",v.x,v.y);//à íuí≤êÆå„ÇÃç¿ïW
 	for(auto o:*m_actionSettings.GetPMObject()){
-	//	printfDx("%d\n",o.get());
+		printfDx("%d\n",o.get());
 	}
 	//printfDx("m_pBattleObject:%d\n",m_actionSettings.m_pBattleObject.get());
 

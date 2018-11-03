@@ -31,20 +31,20 @@ Vector2D GetMousePointVector2D(){
 
 //FpeMeasuringについての関数
 FpsMeasuring::FpsMeasuring()
-	:m_flame(0),m_recordTime(0){}
+	:m_frame(0),m_recordTime(0){}
 
 FpsMeasuring::~FpsMeasuring(){}
 
 void FpsMeasuring::Update(){
-	m_flame++;
-	m_time[m_flame%fpsSize]=timeGetTime();
+	m_frame++;
+	m_time[m_frame%fpsSize]=timeGetTime();
 }
 
 double FpsMeasuring::GetFps()const{
 	double fps;
-	double timeUpdateFpsSize=(double)(m_time[m_flame%fpsSize]-m_time[(m_flame+1)%fpsSize]);//fpsSize回の更新にどのくらいの時間がかかったか。単位はミリ秒
+	double timeUpdateFpsSize=(double)(m_time[m_frame%fpsSize]-m_time[(m_frame+1)%fpsSize]);//fpsSize回の更新にどのくらいの時間がかかったか。単位はミリ秒
 	if(timeUpdateFpsSize!=0.0){
-		fps=fpsSize/timeUpdateFpsSize*1000;
+		fps=(fpsSize-1)/timeUpdateFpsSize*1000;//配列の間隔の個数が更新回数なので、fpsSizeから-1する。
 	} else{
 		fps=0.0;
 	}
@@ -52,7 +52,12 @@ double FpsMeasuring::GetFps()const{
 }
 
 void FpsMeasuring::RecordTime(){
+	m_recordFrame=m_frame;
 	m_recordTime=timeGetTime();
+}
+
+size_t FpsMeasuring::GetProcessedFrame()const{
+	return m_frame-m_recordFrame;
 }
 
 double FpsMeasuring::GetProcessedTime()const{
@@ -397,23 +402,23 @@ void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsig
 
 //数値変化を様々な式で管理するクラス
 //---Easing---
-Easing::Easing(int i_x,int i_endx,int i_maxflame,TYPE i_type,FUNCTION i_function,double i_degree)
-	:flame(0),maxflame(i_maxflame),x(i_x),startx(i_x),endx(i_endx),type(i_type),function(i_function),degree(i_degree){}
+Easing::Easing(int i_x,int i_endx,int i_maxframe,TYPE i_type,FUNCTION i_function,double i_degree)
+	:frame(0),maxframe(i_maxframe),x(i_x),startx(i_x),endx(i_endx),type(i_type),function(i_function),degree(i_degree){}
 
-void Easing::SetTarget(int i_endx,bool initflame){
+void Easing::SetTarget(int i_endx,bool initframe){
 	startx=x;
-	if(initflame){
-		//initflameがtrueの時のみflameを0に
-		flame=0;
+	if(initframe){
+		//initframeがtrueの時のみframeを0に
+		frame=0;
 	}
 	endx=i_endx;
 }
 
 void Easing::Update(){
 	double ft;//増加割合
-	const double fullRate=(double)flame/maxflame;
+	const double fullRate=(double)frame/maxframe;
 	if(!GetEndFlag()){
-		if(maxflame>0){
+		if(maxframe>0){
 			switch(function){
 			case(FUNCTION_LINER):
 				ft=1.0*fullRate;
@@ -452,18 +457,18 @@ void Easing::Update(){
 	} else{
 		x=endx;
 	}
-	flame++;
+	frame++;
 }
 
 void Easing::EnforceEnd(){
-	flame=maxflame;
+	frame=maxframe;
 	Update();
-	flame=maxflame;//flameがmaxflameで止まるようにする。
+	frame=maxframe;//frameがmaxframeで止まるようにする。
 }
 
 void Easing::Retry(){
 	x=startx;
-	flame=0;
+	frame=0;
 }
 
 void Easing::Retry(int i_startx){
@@ -471,24 +476,24 @@ void Easing::Retry(int i_startx){
 	Retry();
 }
 
-void Easing::SetMaxFlame(int flame,bool targetinitflag){
-	maxflame=flame;
+void Easing::SetMaxFrame(int frame,bool targetinitflag){
+	maxframe=frame;
 	if(targetinitflag){
 		Retry(x);
 	}else{
-		flame=min(flame,maxflame);
+		frame=min(frame,maxframe);
 	}
 }
 
 bool Easing::GetEndFlag()const{
-	return (flame>=maxflame);
+	return (frame>=maxframe);
 }
 
 //位置を色々な式で管理するクラス
 //---PositionControl---
-void PositionControl::SetTarget(int i_endx,int i_endy,bool initflame){
-	x.SetTarget(i_endx,initflame);
-	y.SetTarget(i_endy,initflame);
+void PositionControl::SetTarget(int i_endx,int i_endy,bool initframe){
+	x.SetTarget(i_endx,initframe);
+	y.SetTarget(i_endy,initframe);
 }
 
 void PositionControl::Update(){
@@ -511,9 +516,9 @@ void PositionControl::Retry(int i_startx,int i_starty){
 	y.Retry(i_starty);
 }
 
-void PositionControl::SetMaxFlame(int flame,bool targetinitflag){
-	x.SetMaxFlame(flame,targetinitflag);
-	y.SetMaxFlame(flame,targetinitflag);
+void PositionControl::SetMaxFrame(int frame,bool targetinitflag){
+	x.SetMaxFrame(frame,targetinitflag);
+	y.SetMaxFrame(frame,targetinitflag);
 }
 
 bool PositionControl::GetEndFlag()const{
@@ -595,15 +600,15 @@ bool PositionComplexControl::GetEndFlag()const{
 	return x.back().GetEndFlag() && y.back().GetEndFlag();
 }
 
-int PositionComplexControl::GetMaxFlame()const{
-	int maxflameX=0,maxflameY=0;
+int PositionComplexControl::GetMaxFrame()const{
+	int maxframeX=0,maxframeY=0;
 	for(const Easing &easing:x){
-		maxflameX+=easing.GetMaxFlame();
+		maxframeX+=easing.GetMaxFrame();
 	}
 	for(const Easing &easing:y){
-		maxflameY+=easing.GetMaxFlame();
+		maxframeY+=easing.GetMaxFrame();
 	}
-	return (std::max)(maxflameX,maxflameY);
+	return (std::max)(maxframeX,maxframeY);
 }
 
 //大きさ調整しつつ並べて表示する位置を計算するクラス
@@ -617,7 +622,7 @@ void LiningupScalingMechanism::Update(){
 }
 
 void LiningupScalingMechanism::SetScaling(int startdx,int startdy,int enddx,int enddy){
-	size=PositionControl(startdx,startdy,size.GetMaxFlame(),size.GetType()
+	size=PositionControl(startdx,startdy,size.GetMaxFrame(),size.GetType()
 		,size.GetFunction(),size.GetDegree());
 	size.SetTarget(enddx,enddy,true);
 }
@@ -737,7 +742,7 @@ int Timer::GetProcessCounter(bool secondFlag)const{
 		//秒単位で返す
 		return (counter-startTimer)/fps;
 	}else{
-		//flame単位で返す
+		//frame単位で返す
 		return counter-startTimer;
 	}
 }
@@ -747,7 +752,7 @@ int Timer::GetLeftCounter(bool secondFlag)const{
 		//秒単位で返す
 		return (endTimer-startTimer)/fps-GetProcessCounter(true);
 	}else{
-		//flame単位で返す
+		//frame単位で返す
 		return endTimer-counter;
 	}
 }
@@ -762,7 +767,7 @@ bool Timer::SetTimer(int timeLength,bool secondFlag){
 		//秒単位で設定
 		endTimer=startTimer+timeLength*fps;
 	} else{
-		//flame単位で設定
+		//frame単位で設定
 		endTimer=startTimer+timeLength;
 	}
 	return true;//失敗しないのでtrueを返す。

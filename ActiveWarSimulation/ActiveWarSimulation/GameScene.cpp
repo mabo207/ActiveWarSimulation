@@ -7,15 +7,15 @@
 
 
 //---------------------FadeInOutGameScene---------------------
-FadeInOutGameScene::FadeInOutGameScene(std::shared_ptr<GameScene> pActivateClass,int fadeFlag,int flame)
+FadeInOutGameScene::FadeInOutGameScene(std::shared_ptr<GameScene> pActivateClass,int fadeFlag,int frame)
 	:GameScene(),m_fadeFlag(fadeFlag),m_nowProcess(0),m_retIndex(0),m_pActivateClass(pActivateClass),m_timer(0)
 {
 	//フェードインの描画透明度の設定先を決める
 	if((m_fadeFlag & FADEIN)!=0){
 		//フェードインする場合
-		m_drawAlpha=Easing(255,0,flame,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
+		m_drawAlpha=Easing(255,0,frame,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
 	} else{
-		m_drawAlpha=Easing(0,flame,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
+		m_drawAlpha=Easing(0,frame,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
 	}
 }
 
@@ -50,7 +50,7 @@ int FadeInOutGameScene::Calculate(){
 		if((m_fadeFlag & FADEOUT)!=0){
 			//フェードアウトを行う設定をしている場合
 			m_nowProcess=1;//これ以上場面クラスのCalculate()を行わない
-			m_drawAlpha=Easing(m_drawAlpha.GetX(),255,m_drawAlpha.GetMaxFlame()
+			m_drawAlpha=Easing(m_drawAlpha.GetX(),255,m_drawAlpha.GetMaxFrame()
 				,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
 		} else{
 			//フェードアウトを行わない設定をしている場合はそのままreturn
@@ -80,8 +80,8 @@ void FadeInOutGameScene::Draw()const{
 }
 
 //--------------------MainControledFadeInOutGameScene--------------------
-MainControledFadeInOutGameScene::MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene> pActivateClass,int fadeFlag,int flame)
-	:FadeInOutGameScene(pActivateClass,fadeFlag,flame),MainControledGameScene()
+MainControledFadeInOutGameScene::MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene> pActivateClass,int fadeFlag,int frame)
+	:FadeInOutGameScene(pActivateClass,fadeFlag,frame),MainControledGameScene()
 {}
 
 std::shared_ptr<MainControledGameScene> MainControledFadeInOutGameScene::VGetNextMainControledScene()const{

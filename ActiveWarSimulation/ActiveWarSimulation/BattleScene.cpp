@@ -11,7 +11,7 @@ const int BattleScene::resetInterval=60;
 BattleScene::BattleScene(const char *stagename)
 	:MainControledGameScene()
 	,m_resetFlag(false)
-	,m_resetFlame(0)
+	,m_resetFrame(0)
 	,m_battleSceneData(new BattleSceneData(stagename))
 {
 	//bgm再生
@@ -56,13 +56,13 @@ int BattleScene::Calculate(){
 		}
 	} else{
 		//リセット場面中
-		m_resetFlame++;
-		if(m_resetFlame==resetInterval/2){
+		m_resetFrame++;
+		if(m_resetFrame==resetInterval/2){
 			//リセット処理を行う
 			ResetGame();
-		} else if(m_resetFlame==resetInterval){
+		} else if(m_resetFrame==resetInterval){
 			//リセット場面を終了する
-			m_resetFlame=0;
+			m_resetFrame=0;
 			m_resetFlag=false;
 		}
 	}
@@ -79,7 +79,7 @@ void BattleScene::Draw()const{
 	if(m_resetFlag){
 		int mode,pal;
 		GetDrawBlendMode(&mode,&pal);
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA,255*m_resetFlame*(resetInterval-m_resetFlame)/(resetInterval/2)/(resetInterval/2));
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,255*m_resetFrame*(resetInterval-m_resetFrame)/(resetInterval/2)/(resetInterval/2));
 		DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
 		SetDrawBlendMode(mode,pal);
 	}

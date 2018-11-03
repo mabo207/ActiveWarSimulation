@@ -14,7 +14,7 @@ class StageClearScene:public BattleSceneElement{
 protected:
 	const bool m_winFlag;//クリアしたかどうか。
 	const std::string m_explain;//補足情報
-	int m_flame;
+	int m_frame;
 
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;

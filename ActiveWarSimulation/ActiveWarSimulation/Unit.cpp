@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include"Unit.h"
 #include"DxLib.h"
 #include"Circle.h"
@@ -5,6 +6,7 @@
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
 #include"BattleSceneData.h"
+#include<math.h>
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
@@ -296,7 +298,11 @@ void Unit::DrawFacePic(Vector2D point)const{
 	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//背景の枠の描画(黒を25%混ぜる)
 }
 
-void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
+void Unit::DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const{
+	DrawUnit(getPos(),adjust,frame,animationFlag,infoDrawFlag);
+}
+
+void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const{
 	Vector2D pos=point-adjust;
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
@@ -322,8 +328,22 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,bool infoDrawFlag)const{
 		SetDrawBlendMode(mode,pal);
 		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
 	}
+	//アニメーションパラメータの設定
+	int ux=(int)(pos.x),uy=(int)(pos.y);
+	int cx,cy;
+	GetGraphSize(m_gHandle,&cx,&cy);
+	cx/=2;
+	cy/=2;
+	double angle=0.0;
+	const double defaultRate=1.2;//デフォの画像拡大率(画像がちゃんと揃ったら1.0にする)
+	double exRateX=defaultRate,exRateY=defaultRate;
+	if(animationFlag){
+		//angle=std::cos(frame/60.0*M_PI)*M_PI/180.0*6.0;
+		exRateY=defaultRate-(frame%60)*(60-frame%60)/900.0*0.05;//倍率は1.15~1.2倍、周期は1秒
+		uy+=(int)(cy*(defaultRate-exRateY));//画像下を常に揃える
+	}
 	//ユニットグラフィックを描画
-	DrawRotaGraph((int)(pos.x),(int)(pos.y),1.0,0.0,m_gHandle,TRUE,FALSE);
+	DrawRotaGraph3(ux,uy,cx,cy,exRateX,exRateY,angle,m_gHandle,TRUE,FALSE);
 	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
 }
@@ -361,7 +381,7 @@ Shape::Fix::Kind Unit::SetFix(Shape::Fix::Kind fix)const{
 }
 
 void Unit::VDraw(Vector2D point,Vector2D adjust)const{
-	DrawUnit(point,adjust,true);
+	DrawUnit(point,adjust,0,false,true);
 }
 
 void Unit::VHitProcess(const BattleObject *potherobj){
@@ -379,28 +399,28 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 	switch(profession){
 	case(Profession::e_lancer):
 		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),6+(int)(lv*0.5),5+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),5+(int)(lv*0.5),6);
-		weapon=Weapon::GetWeapon("鉄の槍");
-		gHandle=LoadGraphEX("Graphic/soldier.png");
+		weapon=Weapon::GetWeapon("鉄の剣");
+		gHandle=LoadGraphEX("Graphic/nonfree/soldier.png");
 		break;
 	case(Profession::e_archer):
 		baseStatus=BaseStatus(name,profession,lv,18+(int)(lv*0.75),5+(int)(lv*0.45),4+(int)(lv*0.4),2+(int)(lv*0.1),4+(int)(lv*0.4),3+(int)(lv*0.3),6);
 		weapon=Weapon::GetWeapon("鉄の弓");
-		gHandle=LoadGraphEX("Graphic/archer.png");
+		gHandle=LoadGraphEX("Graphic/nonfree/archer.png");
 		break;
 	case(Profession::e_armer):
 		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),7+(int)(lv*0.6),7+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),1+(int)(lv*0.2),3);
 		weapon=Weapon::GetWeapon("鉄の槍");
-		gHandle=LoadGraphEX("Graphic/armerknight.png");
+		gHandle=LoadGraphEX("Graphic/nonfree/armerknight.png");
 		break;
 	case(Profession::e_mage):
 		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),6+(int)(lv*0.45),5+(int)(lv*0.5),4);
 		weapon=Weapon::GetWeapon("ファイアーの書");
-		gHandle=LoadGraphEX("Graphic/mage.png");
+		gHandle=LoadGraphEX("Graphic/nonfree/mage.png");
 		break;
 	case(Profession::e_healer):
 		baseStatus=BaseStatus(name,profession,lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
 		weapon=Weapon::GetWeapon("ヒールの杖");
-		gHandle=LoadGraphEX("Graphic/healer.png");
+		gHandle=LoadGraphEX("Graphic/nonfree/healer.png");
 		break;
 	}
 	return new Unit(baseStatus,weapon,position,gHandle,team);

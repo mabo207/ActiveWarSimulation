@@ -17,6 +17,18 @@ protected:
 		bool operator<(const LatticeDistanceInfo &otherobj)const;
 		bool operator==(const LatticeDistanceInfo &otherobj)const;
 	};
+	//攻撃が当たり判定押し出しによって上手くいかなかった場合の情報管理
+	struct AttackFailedInfo{
+		//変数
+		size_t m_count;//失敗した回数
+		size_t m_frame;//前回失敗から経過したフレーム数
+		//関数
+		AttackFailedInfo();
+		~AttackFailedInfo(){}
+		bool JudgeAttackProcessProceed()const;//攻撃処理の分岐に進ませて大丈夫か
+		bool JudgeRetry()const;//移動をやり直させるか
+		void RetryProcess();//やり直し処理
+	};
 
 	//定数
 protected:
@@ -33,9 +45,11 @@ protected:
 	Unit *m_targetUnit;//狙おうとしているユニット
 	bool m_actionWaiting;//行動を行うまでの待ち時間を待っている状態か？（対象変更した瞬間に攻撃だと分かりづらそう）
 	int m_nextScene;//どの行動場面へ進むか(thisCalculate()の返り値が何か)
+	AttackFailedInfo m_attackFailedInfo;//押し出し処理による攻撃の失敗のリカバリーのための情報
 
 	//その他の情報
-	size_t m_aimChangeFlame;//狙いを変更してから経った時間
+	size_t m_aimChangeFrame;//狙いを変更してから経った時間
+	size_t m_waitingFrame;//待機状態のフレーム数
 
 	std::vector<LatticeDistanceInfo> distvec;//デバッグ用距離可視化変数
 

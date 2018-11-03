@@ -15,7 +15,7 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 //	,m_clearFont(CreateFontToHandleEX("Bell MT",48,4,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,2))
 	,m_clearFont(LoadFontDataToHandleEX("Font/StageClearFont.dft",2))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
-	,m_flame(0)
+	,m_frame(0)
 {}
 
 StageClearScene::~StageClearScene(){
@@ -25,10 +25,10 @@ StageClearScene::~StageClearScene(){
 }
 
 int StageClearScene::thisCalculate(){
-	m_flame++;
+	m_frame++;
 
 	//0.5秒たって以降に決定ボタンを押せばバトル場面の終了
-	if(m_flame>30 &&
+	if(m_frame>30 &&
 		(keyboard_get(KEY_INPUT_Z)==1 || mouse_get(MOUSE_INPUT_LEFT)==1)
 		)
 	{

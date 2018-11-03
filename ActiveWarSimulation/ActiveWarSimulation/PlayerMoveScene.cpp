@@ -8,6 +8,7 @@ PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	:MoveScene(battleSceneData)
 	,m_waitButton(1520,980,80,80,LoadGraphEX("Graphic/nextButton.png"))
 	,m_researchButton(1620,980,80,80,LoadGraphEX("Graphic/researchButton.png"))
+	,m_menuButton(1820,980,80,80,LoadGraphEX("Graphic/menuButton.png"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_mouseLeftFlag(false)
 {}
@@ -138,13 +139,17 @@ int PlayerMoveScene::thisCalculate(){
 		//マップ調べモードへ
 		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
 		return SceneKind::e_research;
+	} else if(keyboard_get(KEY_INPUT_SPACE)==1 || m_menuButton.JudgePressMoment()){
+		//システムメニュー画面へ
+		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+		return SceneKind::e_systemMenu;
 	} else{
 		//移動し始めの判定更新(左クリックを押した瞬間であるかを判定・記録する)
-		int flame=mouse_get(MOUSE_INPUT_LEFT);
-		if(flame==0){
+		int frame=mouse_get(MOUSE_INPUT_LEFT);
+		if(frame==0){
 			//左クリックをしなくなると、押していないのでfalseにする
 			m_mouseLeftFlag=false;
-		} else if(flame==1){
+		} else if(frame==1){
 			//1フレーム目を検知できた場合は、trueにする
 			m_mouseLeftFlag=true;
 		}
@@ -168,6 +173,7 @@ void PlayerMoveScene::thisDraw()const{
 	//ボタンを描画
 	m_waitButton.DrawButton();
 	m_researchButton.DrawButton();
+	m_menuButton.DrawButton();
 }
 
 void PlayerMoveScene::ReturnProcess(){

@@ -3,8 +3,7 @@
 {(definition,mob),(name,ƒcƒ”ƒ@ƒC),(profession,1),(lv,6),(pos,1500,690),(team,0)}
 {(definition,mob),(name,ƒhƒ‰ƒC),(profession,3),(lv,6),(pos,1700,720),(team,0)}
 {(definition,mob),(name,ƒtƒ“ƒt),(profession,4),(lv,6),(pos,1800,620),(team,0)}
-{(definition,mob),(name,“G•º),(profession,3),(lv,3),(pos,150,160),(team,1)}
-{(definition,mob),(name,“G•º),(profession,1),(lv,3),(pos,540,280),(team,1)}
-{(definition,mob),(name,“G•º),(profession,3),(lv,3),(pos,1700,230),(team,1)}
+{(definition,mob),(name,“G•º),(profession,0),(lv,3),(pos,200,200),(team,1)}
+{(definition,mob),(name,“G•º),(profession,4),(lv,3),(pos,500,140),(team,1)}
+{(definition,mob),(name,“G•º),(profession,0),(lv,3),(pos,1700,250),(team,1)}
 {(definition,mob),(name,“G•º),(profession,1),(lv,3),(pos,500,510),(team,1)}
-{(definition,mob),(name,“G•º),(profession,3),(lv,3),(pos,250,720),(team,1)}

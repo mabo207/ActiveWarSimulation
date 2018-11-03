@@ -17,6 +17,7 @@ public:
 			e_switch,
 			e_research,
 			e_clear,
+			e_systemMenu,
 			e_gameReset,//これだけクラスがなく、BattleScene内で処理を行う
 			END
 		};

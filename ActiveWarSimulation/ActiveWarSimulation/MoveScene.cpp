@@ -3,6 +3,7 @@
 #include"MoveScene.h"
 #include"AttackScene.h"
 #include"ResearchScene.h"
+#include"SystemMenu.h"
 #include"input.h"
 #include"Edge.h"
 #include<algorithm>
@@ -15,7 +16,7 @@ const float MoveScene::routeFrequency=1.0f;
 
 MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_move)
-	,m_moveFlame(0)
+	,m_moveFrame(0)
 	,m_battleSceneData(battleSceneData)
 	,m_operatedCursor(LoadGraphEX("Graphic/operatedCursor.png"))
 	,m_predictExplainFont(CreateFontToHandleEX("メイリオ",16,2,DX_FONTTYPE_ANTIALIASING_EDGE_4X4))
@@ -38,14 +39,14 @@ bool MoveScene::PositionUpdate(const Vector2D inputVec){
 	bool inputFlag=m_battleSceneData->PositionUpdate(inputVec);
 	if(inputFlag){
 		//動きの入力がされているなら移動連続フレーム数を増やす
-		m_moveFlame++;
-		if(m_moveFlame%15==1){
+		m_moveFrame++;
+		if(m_moveFrame%15==1){
 			//15フレームにつき1回移動音を鳴らす
 			PlaySoundMem(m_battleSceneData->m_footSound,DX_PLAYTYPE_BACK,TRUE);
 		}
 	} else{
 		//動きの入力がされていないなら連続フレーム数を0にする
-		m_moveFlame=0;
+		m_moveFrame=0;
 	}
 
 	//攻撃対象ユニットの更新(移動しなくても(=inputFlagがfalseでも)ユニットの位置は動く可能性があるので毎ループ処理する)
@@ -281,7 +282,7 @@ void MoveScene::thisDraw()const{
 
 		//狙っているユニットの描画
 		if(m_aimedUnit!=nullptr){
-			m_aimedUnit->BattleObject::VDraw();//アイコンの描画
+			m_aimedUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,true);//アイコンの描画
 		}
 
 		//マウスを指しているユニットの移動範囲の描画
@@ -291,7 +292,7 @@ void MoveScene::thisDraw()const{
 		}
 
 		//操作中ユニットの描画
-		m_battleSceneData->m_operateUnit->BattleObject::VDraw();
+		m_battleSceneData->m_operateUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),true,true);
 		m_battleSceneData->m_operateUnit->DrawMoveInfo();//移動情報の描画
 
 
@@ -307,16 +308,16 @@ void MoveScene::thisDraw()const{
 				//攻撃可能ならマーカーと戦闘予測を描画
 				Vector2D pos=m_aimedUnit->getPos();
 				//DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
-				size_t index=(m_battleSceneData->m_fpsMesuring.GetFlame()/15)%attackedCursorPicNum;
+				size_t index=(m_battleSceneData->m_fpsMesuring.GetFrame()/15)%attackedCursorPicNum;
 				float dx,dy;
 				GetGraphSizeF(m_attackedCursor[index],&dx,&dy);
 				//DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_attackedCursor[index],TRUE);
 				//戦闘予測の描画
 				const int period=60;
-				//const int dx2=(int)(5*std::cos(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFlame()%period)/period));
+				//const int dx2=(int)(5*std::cos(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period));
 				const int dx2=0;
-				const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFlame()%period)/period));
-				//const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFlame()%period)/period))-30;
+				const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period));
+				//const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period))-30;
 				m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->DrawPredict((int)pos.x+dx2,(int)pos.y+dy2,m_predictExplainFont,m_predictNumberFont,m_battleSceneData->m_operateUnit,m_aimedUnit);
 			}
 		}
@@ -342,6 +343,9 @@ int MoveScene::UpdateNextScene(int index){
 		return index;
 	case(SceneKind::e_research):
 		m_nextScene=std::shared_ptr<BattleSceneElement>(new ResearchScene(m_battleSceneData));
+		return index;
+	case(SceneKind::e_systemMenu):
+		m_nextScene=std::shared_ptr<BattleSceneElement>(new SystemMenu(m_battleSceneData));
 		return index;
 	default:
 		return index;

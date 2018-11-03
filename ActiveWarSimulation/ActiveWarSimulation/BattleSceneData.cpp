@@ -8,7 +8,6 @@
 #include"FileRead.h"
 #include"GameScene.h"
 #include"CommonConstParameter.h"
-#include<math.h>
 
 //----------------------BattleSceneData----------------------
 const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);
@@ -20,6 +19,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 	,m_totalOP(0.0f)
 	,m_stageName(stagename)
 //	,m_orderFont(CreateFontToHandle("04かんじゅくゴシック",24,4,DX_FONTTYPE_EDGE,-1,2))
+	,m_turnTimerPic(LoadGraphEX("Graphic/turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/stage1/"))
@@ -134,6 +134,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 BattleSceneData::~BattleSceneData(){
 	//グラフィック開放
 	DeleteGraphEX(m_mapPic);
+	DeleteGraphEX(m_turnTimerPic);
 	for(size_t i=0;i<drawOrderHelpNum;i++){
 		DeleteGraphEX(m_drawOrderHelp[i]);
 	}
@@ -326,7 +327,7 @@ void BattleSceneData::DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &n
 			//ウインドウに入っていない物は描画しない
 			//退却したユニット(m_fixがe_ignore)は描画しない
 			//描画しないもの(notDrawに格納されているもの)は描画しない
-			obj->DrawUnit(obj->getPos(),Vector2D(),infoDrawFlag);
+			obj->DrawUnit(obj->getPos(),Vector2D(),m_fpsMesuring.GetFrame(),false,infoDrawFlag);
 		}
 	}
 }
@@ -382,7 +383,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 				//線の中を通る線分のアニメーション
 				const int animeDuration=30;//アニメーションの長さ
 				const int startDuration=45;//アニメーションが起こる間隔
-				const int t=m_fpsMesuring.GetFlame()%startDuration;
+				const int t=m_fpsMesuring.GetFrame()%startDuration;
 				const int lineLength=5;//線分の長さはこのフレーム分
 				if(t<animeDuration+lineLength){
 					//線分の終端が出現してから始点が消失するまで線分の描画を行うので、AnimeDuration+lineLengthの長さだけ線分は描画する
@@ -410,7 +411,8 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 			unitListIndex++;
 		} else{
 			//タイマーアイコンの描画
-			DrawCircleAA(centerPoint.x,centerPoint.y,30.0f,9,GetColor(128,128,0),TRUE);
+			//DrawCircleAA(centerPoint.x,centerPoint.y,30.0f,9,GetColor(128,128,0),TRUE);
+			DrawRotaGraph((int)(centerPoint.x),(int)(centerPoint.y),1.0,0.0,m_turnTimerPic,TRUE);
 			//opPalの初期化
 			opPal=turnTimerOP;
 			//もうタイマーを描画しないようにする

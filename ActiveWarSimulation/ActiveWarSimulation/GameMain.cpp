@@ -17,7 +17,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		//画面モードの設定(一応こんな感じ)
 		SetGraphMode(CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,16);
 		//タイトルメニュー文字
-		SetMainWindowText("ActiveWarSimulation");
+		SetMainWindowText("ActiveWarSimulation [F2長押し:画面サイズ1倍 / F3長押し:画面サイズ0.5倍 / F1長押し:ウインドウ・フルスクリーン切替]");
 		//ウインドウサイズの変更
 		SetWindowSizeExtendRate(1.0);
 		//ウインドウサイズの変更をできるようにする

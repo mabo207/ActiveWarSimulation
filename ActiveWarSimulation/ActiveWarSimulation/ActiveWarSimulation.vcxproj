@@ -175,6 +175,7 @@
     <ClCompile Include="StageClearScene.cpp" />
     <ClCompile Include="StageSelectScene.cpp" />
     <ClCompile Include="SwitchUnitScene.cpp" />
+    <ClCompile Include="SystemMenu.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="ToolsLib.cpp" />
     <ClCompile Include="Unit.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="GraphicProgramming.h" />
     <ClInclude Include="StageClearSceme.h" />
     <ClInclude Include="StageSelectScene.h" />
+    <ClInclude Include="SystemMenu.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="MoveScene.h" />

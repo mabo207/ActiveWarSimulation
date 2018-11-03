@@ -12,7 +12,7 @@ class PlayerMoveScene:public MoveScene{
 
 	//変数
 protected:
-	const MouseButtonUI m_waitButton,m_researchButton;
+	const MouseButtonUI m_waitButton,m_researchButton,m_menuButton;
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 	bool m_mouseLeftFlag;//プレイヤー操作場面でマウスの左クリックをし始めたかどうか
 

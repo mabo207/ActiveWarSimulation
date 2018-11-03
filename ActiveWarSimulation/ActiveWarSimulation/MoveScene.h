@@ -33,7 +33,7 @@ protected:
 	//ユニット移動場面でのみ使用する変数
 	Unit *m_aimedUnit;//現在の攻撃対象ユニット(静的ポインタ)
 	std::vector<RouteInfo> m_route;//操作ユニットが通った経路
-	size_t m_moveFlame;//移動入力が連続でされているフレーム数
+	size_t m_moveFrame;//移動入力が連続でされているフレーム数
 
 	//グラフィック関連
 	static const size_t attackedCursorPicNum=4;//分割数

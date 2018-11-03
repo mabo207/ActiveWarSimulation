@@ -168,6 +168,9 @@
     <ClCompile Include="DemoSwitchUnitScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
+    <ClCompile Include="SystemMenu.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -264,6 +267,9 @@
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
     <ClInclude Include="DemoSwitchUnitScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemMenu.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>
