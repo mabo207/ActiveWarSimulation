@@ -1,0 +1,9 @@
+{(definition,mob),(name,アインス),(profession,0),(lv,3),(pos,300,400),(team,0)}
+{(definition,mob),(name,フィーア),(profession,2),(lv,3),(pos,200,300),(team,0)}
+{(definition,mob),(name,ツヴァイ),(profession,1),(lv,3),(pos,400,100),(team,0)}
+{(definition,mob),(name,ドライ),(profession,3),(lv,3),(pos,200,500),(team,0)}
+{(definition,mob),(name,フンフ),(profession,4),(lv,3),(pos,100,100),(team,0)}
+{(definition,mob),(name,敵兵),(profession,0),(lv,1),(pos,1500,400),(team,1)}
+{(definition,mob),(name,敵兵),(profession,2),(lv,1),(pos,1700,430),(team,1)}
+{(definition,mob),(name,敵兵),(profession,3),(lv,1),(pos,1820,750),(team,1)}
+{(definition,mob),(name,敵兵),(profession,4),(lv,1),(pos,1300,510),(team,1)}
