@@ -33,6 +33,8 @@ protected:
 	Weapon::AttackInfo m_attackinfo;//攻撃情報
 	int m_damageFont;//ダメージ描画に用いるフォント
 
+	int m_effect[30];
+
 	//関数
 protected:
 	void ProcessAttack();//攻撃処理を行う
