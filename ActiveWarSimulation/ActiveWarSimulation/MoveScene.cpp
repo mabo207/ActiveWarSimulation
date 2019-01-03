@@ -332,7 +332,7 @@ void MoveScene::thisDraw()const{
 		//int x,y;
 		//GetWindowSize(&x,&y);
 		//SaveDrawScreenToPNG(0,0,x,y,"screenshot.png");
-		SaveDrawScreenToPNG(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,"screenshot.png");
+		SaveDrawScreenToPNG(0,0,(int)BattleSceneData::mapDrawSize.x,(int)BattleSceneData::mapDrawSize.y,"screenshot.png");
 	}
 }
 
