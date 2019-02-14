@@ -92,8 +92,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 			std::pair<Unit::Team::Kind,bool> team;
 			team.second=false;
 			std::pair<Unit::AIType::Kind,bool> aitype;
-			aitype.second=true;//ここをfalseにして開発
-			aitype.first=Unit::AIType::e_assult;//ここの行は後に除く
+			aitype.second=false;//ここをfalseにして開発
 			//各値の読み取り
 			for(const StringBuilder &ssb:sb.m_vec){
 				if(!ssb.m_vec.empty()){
@@ -113,6 +112,11 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 					} else if(ssb.m_vec[0].GetString()=="team" && ssb.m_vec.size()>=2){
 						team.first=Unit::Team::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
 						team.second=true;
+					} else if(ssb.m_vec[0].GetString()=="ai" && ssb.m_vec.size()>=2){
+						//aiのコンマ列に1つ以上の値が存在しても良いので、複数変数を受け取れるようにできている
+						//現状1つの変数しか使用していないが、拡張は容易である
+						aitype.first=Unit::AIType::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
+						aitype.second=true;
 					}
 				}
 			}
