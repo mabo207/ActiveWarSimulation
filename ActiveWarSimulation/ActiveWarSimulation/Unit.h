@@ -35,6 +35,14 @@ public:
 		static unsigned int GetColor(Kind kind,int degree,int red=0,int green=0,int blue=0);//チーム色に別の色を混ぜたカラーコードを取得する
 		static bool JudgeFriend(Kind team1,Kind team2);//2つのチームが味方関係かどうかを判定する
 	};
+	struct AIType{
+		enum Kind{
+			e_assult//突撃型
+			,e_intercept//迎撃型
+			,END
+		};
+		static Kind link(int num);
+	};
 	struct BaseStatus{
 		std::string name;
 		Profession::Kind profession;
@@ -51,15 +59,17 @@ public:
 			:name(i_name),profession(i_profession),lv(i_lv),maxHP(i_maxHP),power(i_power),def(i_def),mpower(i_mpower),mdef(i_mdef),speed(i_speed),move(i_move){}
 	};
 	struct BattleStatus{
+
 		//定数
 		static const float maxOP;//オーダーポイントの最大値、全てのユニットで一律
 		//変数
 		int HP;
 		float OP;
 		Team::Kind team;
+		AIType::Kind aitype;
 		std::shared_ptr<Weapon> weapon;
-		BattleStatus(int i_HP,float i_OP,Team::Kind i_team,std::shared_ptr<Weapon> i_weapon)
-			:HP(i_HP),OP(i_OP),team(i_team),weapon(i_weapon){}
+		BattleStatus(int i_HP,float i_OP,Team::Kind i_team,AIType::Kind i_aitype,std::shared_ptr<Weapon> i_weapon)
+			:HP(i_HP),OP(i_OP),team(i_team),aitype(i_aitype),weapon(i_weapon){}
 	};
 
 	//定数
@@ -102,7 +112,7 @@ protected:
 public:
 	//コンストラクタ系
 	//Unit(Vector2D position,int gHandle,Team::Kind team);
-	Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team);
+	Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team,AIType::Kind aitype);
 	Unit(const Unit &u);
 	~Unit();
 	//演算子オーバーロード
@@ -144,7 +154,7 @@ public:
 
 	//静的関数
 public:
-	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team);//モブユニットを動的生成する。
+	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype);//モブユニットを動的生成する。
 
 };
 

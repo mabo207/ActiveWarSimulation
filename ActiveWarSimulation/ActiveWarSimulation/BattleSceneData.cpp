@@ -91,6 +91,9 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 			prof.second=false;
 			std::pair<Unit::Team::Kind,bool> team;
 			team.second=false;
+			std::pair<Unit::AIType::Kind,bool> aitype;
+			aitype.second=true;//ここをfalseにして開発
+			aitype.first=Unit::AIType::e_assult;//ここの行は後に除く
 			//各値の読み取り
 			for(const StringBuilder &ssb:sb.m_vec){
 				if(!ssb.m_vec.empty()){
@@ -114,8 +117,8 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 				}
 			}
 			//各値からユニットを格納
-			if(name.second && prof.second && lv.second && pos.second && team.second){
-				m_field.push_back(Unit::CreateMobUnit(name.first,prof.first,lv.first,pos.first,team.first));
+			if(name.second && prof.second && lv.second && pos.second && team.second && aitype.second){
+				m_field.push_back(Unit::CreateMobUnit(name.first,prof.first,lv.first,pos.first,team.first,aitype.first));
 			}
 		}
 	}
