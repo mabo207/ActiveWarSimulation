@@ -1,6 +1,7 @@
 #ifndef DEF_UNIT_H
 #define DEF_UNIT_H
 
+#include<set>
 #include"BattleObject.h"
 #include"Weapon.h"
 class Weapon;//循環参照を防ぐために宣言のみする
@@ -66,10 +67,12 @@ public:
 		int HP;
 		float OP;
 		Team::Kind team;
-		AIType::Kind aitype;
+		AIType::Kind aitype;//AIのタイプ
+		int aiGroup;//連動迎撃AI用のグループ分け
+		std::set<int> aiLinkage;//連動して動くaiGroupの値
 		std::shared_ptr<Weapon> weapon;
-		BattleStatus(int i_HP,float i_OP,Team::Kind i_team,AIType::Kind i_aitype,std::shared_ptr<Weapon> i_weapon)
-			:HP(i_HP),OP(i_OP),team(i_team),aitype(i_aitype),weapon(i_weapon){}
+		BattleStatus(int i_HP,float i_OP,Team::Kind i_team,AIType::Kind i_aitype,int i_aiGroup,std::set<int> i_aiLinkage,std::shared_ptr<Weapon> i_weapon)
+			:HP(i_HP),OP(i_OP),team(i_team),aitype(i_aitype),aiGroup(i_aiGroup),aiLinkage(i_aiLinkage),weapon(i_weapon){}
 	};
 
 	//定数
@@ -112,7 +115,7 @@ protected:
 public:
 	//コンストラクタ系
 	//Unit(Vector2D position,int gHandle,Team::Kind team);
-	Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team,AIType::Kind aitype);
+	Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage=std::set<int>{});
 	Unit(const Unit &u);
 	~Unit();
 	//演算子オーバーロード
@@ -154,7 +157,7 @@ public:
 
 	//静的関数
 public:
-	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype);//モブユニットを動的生成する。
+	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage);//モブユニットを動的生成する。
 
 };
 

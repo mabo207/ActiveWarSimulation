@@ -108,10 +108,10 @@ const float Unit::attackCost=50.0f;
 
 const int Unit::hpFontSize=20;
 
-Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team,AIType::Kind aitype)
+Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
 	,m_baseStatus(baseStatus)
-	,m_battleStatus(100,Unit::BattleStatus::maxOP,team,aitype,weapon)
+	,m_battleStatus(100,Unit::BattleStatus::maxOP,team,aitype,aiGroup,aiLinkage,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
 //	,m_hpFont(CreateFontToHandleEX("04Ç©ÇÒÇ∂Ç„Ç≠ÉSÉVÉbÉN",hpFontSize,2,DX_FONTTYPE_EDGE,-1,2))
 	,m_hpFont(LoadFontDataToHandleEX("Font/UnitHPFont.dft",2))
@@ -401,7 +401,7 @@ std::shared_ptr<BattleObject> Unit::VCopy()const{
 	return std::shared_ptr<BattleObject>(new Unit(*this));
 }
 
-Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype){
+Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage){
 	BaseStatus baseStatus;
 	std::shared_ptr<Weapon> weapon;
 	int gHandle=-1;
@@ -432,5 +432,5 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 		gHandle=LoadGraphEX("Graphic/nonfree/healer.png");
 		break;
 	}
-	return new Unit(baseStatus,weapon,position,gHandle,team,aitype);
+	return new Unit(baseStatus,weapon,position,gHandle,team,aitype,aiGroup,aiLinkage);
 }
