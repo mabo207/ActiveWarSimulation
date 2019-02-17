@@ -128,11 +128,12 @@ std::pair<std::pair<size_t,Vector2D>,Unit *> ComputerMoveScene::DecideTargetPoin
 	}
 	//格子点探し
 	const size_t vecSize=m_latticeInShape.size();
+	Vector2D targetPointVec=m_battleSceneData->m_operateUnit->getPos();//targetに相当する座標まで到達した際にどの座標に向かって動くか。初期値は「その場で待機する」
+	size_t target=vecSize;
 	if(targetUnit!=nullptr){
 		//狙うユニットを決めたら、そのユニットを攻撃できる格子点を探す
 		//貪欲法でいく
 		Unit copiedUnit(*dynamic_cast<Unit *>(m_battleSceneData->m_operateUnit->VCopy().get()));//作業用にコピーを作る
-		size_t target=vecSize;
 		for(size_t y=0;y<m_yLatticeNum;y++){
 			for(size_t x=0;x<m_xLatticeNum;x++){
 				const size_t index=x+y*m_xLatticeNum;
@@ -148,12 +149,13 @@ std::pair<std::pair<size_t,Vector2D>,Unit *> ComputerMoveScene::DecideTargetPoin
 			}
 		}
 		if(target!=vecSize){
-			return std::pair<std::pair<size_t,Vector2D>,Unit *>(std::pair<size_t,Vector2D>(target,targetUnit->getPos()),targetUnit);
+			targetPointVec=targetUnit->getPos();//暫定で最終目標座標が狙っているユニットになる（迎撃型AIであったりするとここが後で変わる）
 		}
 	} else{
 		//狙うユニットが無いなら、その場で待機する
+		//(target=vecSize,targetPointVec=m_battleSceneData->m_operateUnit->getPos()のまま)
 	}
-	return std::pair<std::pair<size_t,Vector2D>,Unit *>(std::pair<size_t,Vector2D>(vecSize,m_battleSceneData->m_operateUnit->getPos()),targetUnit);
+	return std::pair<std::pair<size_t,Vector2D>,Unit *>(std::pair<size_t,Vector2D>(target,targetPointVec),targetUnit);
 }
 
 void ComputerMoveScene::CalculateLatticeDistanceInfo(std::vector<LatticeDistanceInfo> &latticeDistanceInfo)const{
