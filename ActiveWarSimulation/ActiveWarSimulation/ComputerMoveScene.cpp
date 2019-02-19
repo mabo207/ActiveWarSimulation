@@ -159,14 +159,14 @@ std::pair<std::pair<size_t,Vector2D>,Unit *> ComputerMoveScene::DecideTargetPoin
 	//狙うユニットと目的地が決まったので、AIのルールに従ってそこに行くかどうか決める
 	switch(m_battleSceneData->m_operateUnit->GetBattleStatus().aitype){
 	case(Unit::AIType::e_intercept):
-		//迎撃型AI
+	case(Unit::AIType::e_linkageIntercept):
+		//迎撃型AIと連動迎撃型AI
 		if(target>=vecSize || point<0.0f){
 			//目的地が１回の移動で届かない場合は、その場で待機する
 			//pointが0以上である事が１回の移動で届く事の必要十分条件となっている
 			target=vecSize;
 			targetPointVec=m_battleSceneData->m_operateUnit->getPos();
 		}
-
 		break;
 	case(Unit::AIType::e_assult):
 		//突撃型AI
@@ -174,6 +174,18 @@ std::pair<std::pair<size_t,Vector2D>,Unit *> ComputerMoveScene::DecideTargetPoin
 		break;
 	}
 
+	//移動するかどうかによるAIの変化処理
+	if(target!=vecSize){
+		//行動する場合、自分に紐づいている連動迎撃型AIのキャラクタのAIを突撃型に変更する必要がある
+		const int group=m_battleSceneData->m_operateUnit->GetBattleStatus().aiGroup;
+		for(Unit *pu:m_battleSceneData->m_unitList){
+			//全てのユニットに対して検索
+			if(pu->GetBattleStatus().aiLinkage.count(group)!=0 && pu->GetBattleStatus().aitype==Unit::AIType::e_linkageIntercept){
+				//group値がpuのaiLinkageに存在していて、かつpuが連動迎撃型AIである場合は、puはm_operateUnitに連動して動くグループであるので突撃型になる
+
+			}
+		}
+	}
 
 	return std::pair<std::pair<size_t,Vector2D>,Unit *>(std::pair<size_t,Vector2D>(target,targetPointVec),targetUnit);
 }
