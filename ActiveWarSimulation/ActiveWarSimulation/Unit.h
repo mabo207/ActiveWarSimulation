@@ -137,6 +137,7 @@ public:
 	float ConsumeOPByCost(float cost);//costを指定してOPを消費する関数。消費OP増加などの実装があったらここを弄れば良い。基本的にこの関数を用いてOP操作をする。
 	float ConsumeOPVirtualByCost(float cost)const;//もしConsumeOPByCost()をしたらOPはどんな値になるかを返す
 	float SetOP(float op);//Unit::OPをopの値にする。移動巻き戻しや行動順制御など、ConsumeOPByCost()を用いることができない時に用いる。
+	void BecomeAssultAI();//自分が連動迎撃型AIであれば、この関数を呼び出されたら突撃型AIになる
 	void DrawMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)
 	void DrawMoveInfo(Vector2D point,Vector2D adjust)const;//移動範囲関連の情報を描画する関数
 	void DrawMaxMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲最大の移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)

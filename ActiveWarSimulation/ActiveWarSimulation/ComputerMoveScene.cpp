@@ -180,9 +180,10 @@ std::pair<std::pair<size_t,Vector2D>,Unit *> ComputerMoveScene::DecideTargetPoin
 		const int group=m_battleSceneData->m_operateUnit->GetBattleStatus().aiGroup;
 		for(Unit *pu:m_battleSceneData->m_unitList){
 			//全てのユニットに対して検索
-			if(pu->GetBattleStatus().aiLinkage.count(group)!=0 && pu->GetBattleStatus().aitype==Unit::AIType::e_linkageIntercept){
+			if(pu->GetBattleStatus().aiLinkage.count(group)!=0){
 				//group値がpuのaiLinkageに存在していて、かつpuが連動迎撃型AIである場合は、puはm_operateUnitに連動して動くグループであるので突撃型になる
-
+				//puが連動迎撃型であるかどうかの判定は、Unit::BecomeAssultAI()中で判定する。こっちのほうがコーディングのミスは減ると思う。
+				pu->BecomeAssultAI();
 			}
 		}
 	}

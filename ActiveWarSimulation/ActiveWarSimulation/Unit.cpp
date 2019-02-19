@@ -193,6 +193,12 @@ float Unit::SetOP(float op){
 	return m_battleStatus.OP=op;
 }
 
+void Unit::BecomeAssultAI(){
+	if(m_battleStatus.aitype==AIType::e_linkageIntercept){
+		m_battleStatus.aitype=AIType::e_assult;
+	}
+}
+
 void Unit::DrawMoveInfo(Vector2D adjust)const{
 	DrawMoveInfo(getPos(),adjust);
 }
