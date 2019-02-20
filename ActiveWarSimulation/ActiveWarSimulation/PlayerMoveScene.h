@@ -51,7 +51,7 @@ public:
 
 	//静的メンバ
 protected:
-	//static const std::array<std::function<std::pair<bool,int>(void)>,11> inCalculateProcessFunction;//処理を簡単にするために行動可能かの判定とその行動処理へのポインタを保持
+	static const std::array<std::function<std::pair<bool,int>(PlayerMoveScene&)>,11> inCalculateProcessFunction;//処理を簡単にするために行動可能かの判定とその行動処理へのポインタを保持
 
 };
 

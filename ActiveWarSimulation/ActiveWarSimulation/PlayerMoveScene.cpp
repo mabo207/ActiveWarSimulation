@@ -2,9 +2,21 @@
 #include"PlayerMoveScene.h"
 #include"GraphicControl.h"
 #include"GeneralPurposeResourceManager.h"
-
+#include<iostream>
 //----------------------PlayerMoveScene------------------------
-//const std::array<std::function<std::pair<bool,BattleSceneElement::SceneKind::Kind>(void)>,11> PlayerMoveScene::inCalculateProcessFunction={};
+const std::array<std::function<std::pair<bool,int>(PlayerMoveScene&)>,11> PlayerMoveScene::inCalculateProcessFunction={
+	&PlayerMoveScene::AttackProcess
+	,&PlayerMoveScene::SkillProcess
+	,&PlayerMoveScene::CounterclockwiseProcess
+	,&PlayerMoveScene::ClockwiseProcess
+	,&PlayerMoveScene::MouseSetAimedUnitProcess
+	,&PlayerMoveScene::ItemProcess
+	,&PlayerMoveScene::WaitProcess
+	,&PlayerMoveScene::CancelProcess
+	,&PlayerMoveScene::ResearchProcess
+	,&PlayerMoveScene::SystemMenuProcess
+	,&PlayerMoveScene::MoveProcess
+};
 
 std::pair<bool,int> PlayerMoveScene::AttackProcess(){
 	const Vector2D mousePos=GetMousePointVector2D();
@@ -222,60 +234,11 @@ int PlayerMoveScene::thisCalculate(){
 	const Vector2D mousePos=GetMousePointVector2D();
 
 	std::pair<bool,int> retPal;
-	retPal=AttackProcess();
-	if(retPal.first){
-		m_mousePosJustBefore=mousePos;
-		return retPal.second;
-	}
-	retPal=SkillProcess();
-	if(retPal.first){
-		m_mousePosJustBefore=mousePos;
-		return retPal.second;
-	}
-	retPal=CounterclockwiseProcess();
-	if(retPal.first){
-		m_mousePosJustBefore=mousePos;
-		return retPal.second;
-	}
-	retPal=ClockwiseProcess();
-	if(retPal.first){
-		m_mousePosJustBefore=mousePos;
-		return retPal.second;
-	}
-	retPal=MouseSetAimedUnitProcess();
-	if(retPal.first){
-		m_mousePosJustBefore=mousePos;
-		return retPal.second;
-	}
-	retPal=ItemProcess();
-	if(retPal.first){
-		m_mousePosJustBefore=mousePos;
-		return retPal.second;
-	}
-	retPal=WaitProcess();
-	if(retPal.first){
-		m_mousePosJustBefore=mousePos;
-		return retPal.second;
-	}
-	retPal=CancelProcess();
-	if(retPal.first){
-		m_mousePosJustBefore=mousePos;
-		return retPal.second;
-	}
-	retPal=ResearchProcess();
-	if(retPal.first){
-		m_mousePosJustBefore=mousePos;
-		return retPal.second;
-	}
-	retPal=SystemMenuProcess();
-	if(retPal.first){
-		m_mousePosJustBefore=mousePos;
-		return retPal.second;
-	}
-	retPal=MoveProcess();
-	if(retPal.first){
-		m_mousePosJustBefore=mousePos;
-		return retPal.second;
+	for(const std::function<std::pair<bool,int>(PlayerMoveScene&)> &func:inCalculateProcessFunction){
+		retPal=func(*this);
+		if(retPal.first && retPal.second!=SceneKind::e_move){
+			return retPal.second;
+		}
 	}
 
 /*
