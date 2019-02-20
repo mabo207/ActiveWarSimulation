@@ -91,8 +91,10 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 			prof.second=false;
 			std::pair<Unit::Team::Kind,bool> team;
 			team.second=false;
-			std::pair<Unit::AIType::Kind,bool> aitype;
-			aitype.second=false;//ここをfalseにして開発
+			Unit::AIType::Kind aitype;
+			int aiGroup;
+			std::set<int> aiLinkage;
+			bool aiFlag=false;//ここをfalseにして開発
 			//各値の読み取り
 			for(const StringBuilder &ssb:sb.m_vec){
 				if(!ssb.m_vec.empty()){
@@ -112,17 +114,21 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 					} else if(ssb.m_vec[0].GetString()=="team" && ssb.m_vec.size()>=2){
 						team.first=Unit::Team::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
 						team.second=true;
-					} else if(ssb.m_vec[0].GetString()=="ai" && ssb.m_vec.size()>=2){
-						//aiのコンマ列に1つ以上の値が存在しても良いので、複数変数を受け取れるようにできている
-						//現状1つの変数しか使用していないが、拡張は容易である
-						aitype.first=Unit::AIType::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
-						aitype.second=true;
+					} else if(ssb.m_vec[0].GetString()=="ai" && ssb.m_vec.size()>=3){
+						//aiのコンマ列に2つ以上の値が存在しても良いので、複数変数を受け取れるようにできている
+						//1つ目はAIの種類、2つ目は連動型AI用のグループ値、3つ目以降は自由(現状すべての値をaiLinkageに突っ込むようにしている)
+						aitype=Unit::AIType::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
+						aiGroup=std::atoi(ssb.m_vec[2].GetString().c_str());
+						for(size_t i=3,size=ssb.m_vec.size();i<size;i++){
+							aiLinkage.insert(std::atoi(ssb.m_vec[i].GetString().c_str()));
+						}
+						aiFlag=true;
 					}
 				}
 			}
 			//各値からユニットを格納
-			if(name.second && prof.second && lv.second && pos.second && team.second && aitype.second){
-				m_field.push_back(Unit::CreateMobUnit(name.first,prof.first,lv.first,pos.first,team.first,aitype.first));
+			if(name.second && prof.second && lv.second && pos.second && team.second && aiFlag){
+				m_field.push_back(Unit::CreateMobUnit(name.first,prof.first,lv.first,pos.first,team.first,aitype,aiGroup,aiLinkage));
 			}
 		}
 	}
