@@ -67,6 +67,12 @@
     <Filter Include="ヘッダー ファイル\GameScene\TitleScene">
       <UniqueIdentifier>{d2ff5b42-d516-4b79-99b3-9b3b79e0507c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\BattleScene\TutorialScene">
+      <UniqueIdentifier>{172e0707-fffe-4c11-8f16-80d680c1764e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameScene\BattleScene\TutorialScene">
+      <UniqueIdentifier>{df3aaa33-faef-445b-b28e-b4f09ff90d1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">

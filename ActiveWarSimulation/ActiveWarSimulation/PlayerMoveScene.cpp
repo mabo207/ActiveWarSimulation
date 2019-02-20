@@ -4,6 +4,156 @@
 #include"GeneralPurposeResourceManager.h"
 
 //----------------------PlayerMoveScene------------------------
+//const std::array<std::function<std::pair<bool,BattleSceneElement::SceneKind::Kind>(void)>,11> PlayerMoveScene::inCalculateProcessFunction={};
+
+std::pair<bool,int> PlayerMoveScene::AttackProcess(){
+	const Vector2D mousePos=GetMousePointVector2D();
+	if(JudgeAttackCommandUsable()
+		&& (keyboard_get(KEY_INPUT_Z)==1
+			|| (m_aimedUnit->GetUnitCircleShape()->VJudgePointInsideShape(mousePos)
+				//&& mouse_get(MOUSE_INPUT_LEFT)==1
+				&& BattleSceneData::JudgeMousePushInsideMapDrawZone(MOUSE_INPUT_LEFT,false)
+				)
+			)
+		)
+	{
+		//攻撃
+		//攻撃対象が存在し、OPが足りている場合のみ攻撃処理を行う
+		//FinishUnitOperation();//行動終了処理(あとで)
+		return std::pair<bool,int>(true,SceneKind::e_attackNormal);//攻撃場面へ
+	}
+	return std::pair<bool,int>(false,SceneKind::e_move);
+}
+
+std::pair<bool,int> PlayerMoveScene::SkillProcess(){
+	if(keyboard_get(KEY_INPUT_D)==1){
+		//必殺技
+		return std::pair<bool,int>(true,SceneKind::e_move);
+	}
+	return std::pair<bool,int>(false,SceneKind::e_move);
+}
+
+std::pair<bool,int> PlayerMoveScene::CounterclockwiseProcess(){
+	if(keyboard_get(KEY_INPUT_A)==1 && JudgeAttackCommandUsable()){
+		//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(反時計回り)
+		SetAimedUnit(-1);
+		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
+		return std::pair<bool,int>(true,SceneKind::e_move);
+	}
+	return std::pair<bool,int>(false,SceneKind::e_move);
+}
+
+std::pair<bool,int> PlayerMoveScene::ClockwiseProcess(){
+	if(keyboard_get(KEY_INPUT_S)==1 && JudgeAttackCommandUsable()){
+		//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(時計回り)
+		SetAimedUnit(1);
+		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
+		return std::pair<bool,int>(true,SceneKind::e_move);
+	}
+	return std::pair<bool,int>(false,SceneKind::e_move);
+}
+
+std::pair<bool,int> PlayerMoveScene::MouseSetAimedUnitProcess(){
+	const Vector2D mousePos=GetMousePointVector2D();
+	if((m_mousePosJustBefore-mousePos).sqSize()>=1.0f
+		&& JudgeAttackCommandUsable()
+		&& JudgeBecomeAimedUnit(m_battleSceneData->GetUnitPointer(mousePos))
+		)
+	{
+		//攻撃コマンド使用可能の時にマウスを大きく動かしたときのみ、狙いのキャラの変更
+		const Unit *beforeAimedUnit=m_aimedUnit;
+		m_aimedUnit=m_battleSceneData->GetUnitPointer(mousePos);
+		if(m_aimedUnit!=nullptr && m_aimedUnit!=beforeAimedUnit){
+			//選択ユニットが変更されていれば狙い切り替え音を鳴らす
+			PlaySoundMem(m_battleSceneData->m_aimchangeSound,DX_PLAYTYPE_BACK,TRUE);
+		}
+		return std::pair<bool,int>(true,SceneKind::e_move);
+	}
+	return std::pair<bool,int>(false,SceneKind::e_move);
+}
+
+std::pair<bool,int> PlayerMoveScene::ItemProcess(){
+	if(keyboard_get(KEY_INPUT_C)==1){
+		//アイテムの使用
+		return std::pair<bool,int>(true,SceneKind::e_move);
+	}
+	return std::pair<bool,int>(false,SceneKind::e_move);
+}
+
+std::pair<bool,int> PlayerMoveScene::WaitProcess(){
+	if(keyboard_get(KEY_INPUT_V)==1 || m_waitButton.JudgePressMoment()){
+		//待機
+		FinishUnitOperation();
+		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//待機決定は決定音
+		return std::pair<bool,int>(true,0);
+	}
+	return std::pair<bool,int>(false,SceneKind::e_move);
+}
+
+std::pair<bool,int> PlayerMoveScene::CancelProcess(){
+	if(keyboard_get(KEY_INPUT_X)==1
+		|| keyboard_get(KEY_INPUT_X)>30
+		|| mouse_get(MOUSE_INPUT_RIGHT)==1
+		|| mouse_get(MOUSE_INPUT_RIGHT)>30
+		)
+	{
+		//移動やり直し(m_route.back()の1つ前の場所に戻す。back()の位置は現在位置の可能性が高いため)
+		if(!m_route.empty()){
+			m_route.pop_back();
+			if(!m_route.empty()){
+				//もう要素がなければpop_back()をしない
+				RouteInfo info=m_route.back();
+				m_route.pop_back();
+				//ユニットを移動させる
+				m_battleSceneData->m_operateUnit->Warp(info.pos);
+				//OPを回復させる
+				//m_battleSceneData->m_operateUnit->AddOP(info.OP-m_battleSceneData->m_operateUnit->GetBattleStatus().OP);
+				m_battleSceneData->m_operateUnit->SetOP(info.OP);
+			}
+			//位置更新を行う
+			PositionUpdate(Vector2D());
+		}
+		return std::pair<bool,int>(true,SceneKind::e_move);
+	}
+	return std::pair<bool,int>(false,SceneKind::e_move);
+}
+
+std::pair<bool,int> PlayerMoveScene::ResearchProcess(){
+	if(keyboard_get(KEY_INPUT_F)==1 || m_researchButton.JudgePressMoment()){
+		//マップ調べモードへ
+		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+		return std::pair<bool,int>(true,SceneKind::e_research);
+	}
+	return std::pair<bool,int>(false,SceneKind::e_move);
+}
+
+std::pair<bool,int> PlayerMoveScene::SystemMenuProcess(){
+	if(keyboard_get(KEY_INPUT_SPACE)==1 || m_menuButton.JudgePressMoment()){
+		//システムメニュー画面へ
+		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+		return std::pair<bool,int>(true,SceneKind::e_systemMenu);
+	}
+	return std::pair<bool,int>(false,SceneKind::e_move);
+}
+
+std::pair<bool,int> PlayerMoveScene::MoveProcess(){
+	//移動し始めの判定更新(左クリックを押した瞬間であるかを判定・記録する)
+	int frame=mouse_get(MOUSE_INPUT_LEFT);
+	if(frame==0){
+		//左クリックをしなくなると、押していないのでfalseにする
+		m_mouseLeftFlag=false;
+	} else if(frame==1){
+		//1フレーム目を検知できた場合は、trueにする
+		m_mouseLeftFlag=true;
+	}
+	//移動処理
+	if(PositionUpdate(CalculateInputVec())){
+		//キー入力がなければm_operateUnitの位置更新
+		//位置更新をした時の処理
+	}
+	return std::pair<bool,int>(true,SceneKind::e_move);
+}
+
 PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:MoveScene(battleSceneData)
 	,m_waitButton(1520,980,80,80,LoadGraphEX("Graphic/nextButton.png"))
@@ -67,8 +217,68 @@ int PlayerMoveScene::thisCalculate(){
 		m_battleSceneData->m_drawObjectShapeFlag=!m_battleSceneData->m_drawObjectShapeFlag;
 	}
 	
+	
 	//キー入力受付
 	const Vector2D mousePos=GetMousePointVector2D();
+
+	std::pair<bool,int> retPal;
+	retPal=AttackProcess();
+	if(retPal.first){
+		m_mousePosJustBefore=mousePos;
+		return retPal.second;
+	}
+	retPal=SkillProcess();
+	if(retPal.first){
+		m_mousePosJustBefore=mousePos;
+		return retPal.second;
+	}
+	retPal=CounterclockwiseProcess();
+	if(retPal.first){
+		m_mousePosJustBefore=mousePos;
+		return retPal.second;
+	}
+	retPal=ClockwiseProcess();
+	if(retPal.first){
+		m_mousePosJustBefore=mousePos;
+		return retPal.second;
+	}
+	retPal=MouseSetAimedUnitProcess();
+	if(retPal.first){
+		m_mousePosJustBefore=mousePos;
+		return retPal.second;
+	}
+	retPal=ItemProcess();
+	if(retPal.first){
+		m_mousePosJustBefore=mousePos;
+		return retPal.second;
+	}
+	retPal=WaitProcess();
+	if(retPal.first){
+		m_mousePosJustBefore=mousePos;
+		return retPal.second;
+	}
+	retPal=CancelProcess();
+	if(retPal.first){
+		m_mousePosJustBefore=mousePos;
+		return retPal.second;
+	}
+	retPal=ResearchProcess();
+	if(retPal.first){
+		m_mousePosJustBefore=mousePos;
+		return retPal.second;
+	}
+	retPal=SystemMenuProcess();
+	if(retPal.first){
+		m_mousePosJustBefore=mousePos;
+		return retPal.second;
+	}
+	retPal=MoveProcess();
+	if(retPal.first){
+		m_mousePosJustBefore=mousePos;
+		return retPal.second;
+	}
+
+/*
 	if(JudgeAttackCommandUsable()
 		&& (keyboard_get(KEY_INPUT_Z)==1
 			|| (m_aimedUnit->GetUnitCircleShape()->VJudgePointInsideShape(mousePos)
@@ -159,11 +369,13 @@ int PlayerMoveScene::thisCalculate(){
 			//位置更新をした時の処理
 		}
 	}
+//*/
 
 	//次フレームに、本フレームにおけるマウスの位置が分かるようにする
 	m_mousePosJustBefore=mousePos;
 	
 	return SceneKind::e_move;
+	
 }
 
 void PlayerMoveScene::thisDraw()const{
