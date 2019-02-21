@@ -68,12 +68,12 @@ public:
 
 	//関数
 protected:
+	BattleSceneData(const std::string &stagename,const PlayMode playMode);//継承クラス用コンストラクタ
 	float CalculateOperateUnitFinishOP()const;//m_operateUnitが行動終了した際、opはいくらになるかを計算する関数(行動終了しても先頭ユニットであれば2番目になるまでOPを消費させる必要があるため)
 	float CalculateOperateUnitFinishOP(float op)const;//OPの消費を踏まえた計算をできるようにするために、引数から計算する関数を用意した
 
 public:
 	BattleSceneData(const std::string &stagename);
-	BattleSceneData(const std::string &stagename,const PlayMode playMode);
 	virtual ~BattleSceneData();
 	void UpdateFix();//m_fieldのFix::Kindを更新する関数
 	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
