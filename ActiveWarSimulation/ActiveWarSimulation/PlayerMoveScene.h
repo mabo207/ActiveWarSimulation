@@ -13,14 +13,16 @@ class PlayerMoveScene:public MoveScene{
 	//定数
 
 	//変数
-protected:
+private:
+	//継承先から関数を経由せずに変更して欲しくないので、private
 	const MouseButtonUI m_waitButton,m_researchButton,m_menuButton;
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 	bool m_mouseLeftFlag;//プレイヤー操作場面でマウスの左クリックをし始めたかどうか
 
 	//関数
-private:
-	//行動可能かの判定とその行動処理は、他のクラスで上書きしてはいけないのでprivate化する
+protected:
+	//行動可能かの判定とその行動処理は、クラス外からアクセスしてほしくないのでprotected
+	//virtual化、ダメ、ゼッタイ
 	//判定の結果と、シーン遷移情報を返す
 	std::pair<bool,int> AttackProcess();//攻撃遷移の判定と処理
 	std::pair<bool,int> SkillProcess();//スキル使用遷移の判定と処理
@@ -34,9 +36,6 @@ private:
 	std::pair<bool,int> SystemMenuProcess();//システムメニュー遷移の判定と処理
 	std::pair<bool,int> MoveProcess();//移動の判定と処理
 	
-
-protected:
-
 	//仮想関数のオーバーライド
 	Vector2D CalculateInputVec()const;
 
