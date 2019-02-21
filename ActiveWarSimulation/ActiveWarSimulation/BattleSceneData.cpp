@@ -14,6 +14,9 @@ const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter
 const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonConstParameter::gameResolutionX-BattleSceneData::mapDrawSize.y);
 
 BattleSceneData::BattleSceneData(const std::string &stagename)
+	:BattleSceneData(stagename,BattleSceneData::PlayMode::e_normal){}
+
+BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneData::PlayMode playMode)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr)
 	,m_totalOP(0.0f)
@@ -21,6 +24,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 //	,m_orderFont(CreateFontToHandle("04Ç©ÇÒÇ∂Ç„Ç≠ÉSÉVÉbÉN",24,4,DX_FONTTYPE_EDGE,-1,2))
 	,m_turnTimerPic(LoadGraphEX("Graphic/turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
+	,m_playMode(playMode)
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 //	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/kabalhill/"))
 	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/wild-road_loop/"))

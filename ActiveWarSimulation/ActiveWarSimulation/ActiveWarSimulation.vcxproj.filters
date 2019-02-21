@@ -177,6 +177,15 @@
     <ClCompile Include="SystemMenu.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
+    <ClCompile Include="TutorialBattleSceneData.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\TutorialScene</Filter>
+    </ClCompile>
+    <ClCompile Include="TutorialPlayerMoveScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\TutorialScene</Filter>
+    </ClCompile>
+    <ClCompile Include="TutorialScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\TutorialScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -277,6 +286,15 @@
     </ClInclude>
     <ClInclude Include="SystemMenu.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="TutorialBattleSceneData.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\TutorialScene</Filter>
+    </ClInclude>
+    <ClInclude Include="TutorialPlayerMoveScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\TutorialScene</Filter>
+    </ClInclude>
+    <ClInclude Include="TutorialScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\TutorialScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
