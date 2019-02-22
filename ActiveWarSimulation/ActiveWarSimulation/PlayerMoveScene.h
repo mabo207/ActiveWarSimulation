@@ -15,9 +15,9 @@ class PlayerMoveScene:public MoveScene{
 	//変数
 private:
 	//継承先から関数を経由せずに変更して欲しくないので、private
-	const MouseButtonUI m_waitButton,m_researchButton,m_menuButton;
 	bool m_mouseLeftFlag;//プレイヤー操作場面でマウスの左クリックをし始めたかどうか
 protected:
+	const MouseButtonUI m_waitButton,m_researchButton,m_menuButton;
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置(これだけは継承先で変更しないといけないのでprotected)
 	//継承先でのみ変更されることを想定した変数
 	bool m_attackableOnlyChangeInherit;//攻撃行動が可能かどうか
