@@ -19,6 +19,10 @@ private:
 	bool m_mouseLeftFlag;//プレイヤー操作場面でマウスの左クリックをし始めたかどうか
 protected:
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置(これだけは継承先で変更しないといけないのでprotected)
+	//継承先でのみ変更されることを想定した変数
+	bool m_attackableOnlyChangeInherit;//攻撃行動が可能かどうか
+	bool m_moveableOnlyChangeInherit;//移動行動が可能かどうか
+	bool m_waitableOnlyChangeInherit;//待機行動が可能かどうか
 
 	//関数
 protected:
