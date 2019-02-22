@@ -16,8 +16,9 @@ class PlayerMoveScene:public MoveScene{
 private:
 	//継承先から関数を経由せずに変更して欲しくないので、private
 	const MouseButtonUI m_waitButton,m_researchButton,m_menuButton;
-	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 	bool m_mouseLeftFlag;//プレイヤー操作場面でマウスの左クリックをし始めたかどうか
+protected:
+	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置(これだけは継承先で変更しないといけないのでprotected)
 
 	//関数
 protected:

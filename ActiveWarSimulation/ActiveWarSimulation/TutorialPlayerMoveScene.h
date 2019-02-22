@@ -11,13 +11,19 @@ class TutorialPlayerMoveScene:public PlayerMoveScene{
 
 	//変数
 protected:
+	//チュートリアルデータ
 	std::shared_ptr<TutorialBattleSceneData> m_tutorialBattleSceneData;
+
+	int m_animeFlame;
+
+	bool m_moveTutorialFlag;
+	const std::shared_ptr<Shape> m_moveTutorialArea;
 
 	//関数
 public:
 	TutorialPlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData);
 	~TutorialPlayerMoveScene();
-
+	int thisCalculate();
 	void thisDraw()const;
 
 };
