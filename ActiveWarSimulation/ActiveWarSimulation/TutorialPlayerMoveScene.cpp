@@ -18,6 +18,7 @@ TutorialPlayerMoveScene::TutorialPlayerMoveScene(std::shared_ptr<BattleSceneData
 	//移動チュートリアルから
 	m_moveTutorialFlag=true;
 	m_attackTutorialFlag=false;
+	m_waitTutorialFlag=false;
 }
 
 TutorialPlayerMoveScene::~TutorialPlayerMoveScene(){}
@@ -50,9 +51,12 @@ int TutorialPlayerMoveScene::thisCalculate(){
 				//目標移動エリアにユニットの中心点が入ったら
 				m_moveTutorialFlag=false;
 				m_moveableOnlyChangeInherit=false;//移動できなくする
-				m_attackableOnlyChangeInherit=true;//攻撃できるようにする
-				m_waitableOnlyChangeInherit=false;//待機できなくする
-				m_attackTutorialFlag=true;//攻撃チュートリアル開始
+				//m_attackableOnlyChangeInherit=true;//攻撃できるようにする
+				//m_waitableOnlyChangeInherit=false;//待機できなくする
+				//m_attackTutorialFlag=true;//攻撃チュートリアル開始
+				m_attackableOnlyChangeInherit=false;//攻撃できなくする
+				m_waitableOnlyChangeInherit=true;//待機できるようにする
+				m_waitTutorialFlag=true;//待機チュートリアル開始
 			} else if(m_attackTutorialFlag
 				&& retPal.second==SceneKind::e_attackNormal
 				)
@@ -67,6 +71,12 @@ int TutorialPlayerMoveScene::thisCalculate(){
 					PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);//失敗音を鳴らす
 					continue;
 				}
+			} else if(m_waitTutorialFlag
+				&& retPal.second==0//waitは0
+				)
+			{
+				//待機チュートリアル進行情報の更新
+				m_waitTutorialFlag=false;
 			}
 
 			if(retPal.second!=SceneKind::e_move){
@@ -96,9 +106,19 @@ void TutorialPlayerMoveScene::thisDraw()const{
 		SetDrawBlendMode(mode,pal);
 	}
 	if(m_attackTutorialFlag){
-		//狙うユニットの表示
+		//狙うユニットに矢印
 		const int x=(int)(m_targetUnit->getPos().x+std::cosf((m_animeFlame%120)*M_PI/60)*5.0f)+30,y=(int)(m_targetUnit->getPos().y+std::sinf((m_animeFlame%120)*M_PI/60)*5.0f)-30;
 		const unsigned int color=GetColor(128,0,255);
+		DrawTriangle(x,y,x+5,y-30,x+30,y-5,color,TRUE);
+		DrawTriangle(x+5,y-10,x+10,y-5,x+35,y-40,color,TRUE);
+		DrawTriangle(x+40,y-35,x+10,y-5,x+35,y-40,color,TRUE);
+	}
+	if(m_waitTutorialFlag){
+		//待機ボタンに矢印
+		int x,y,dx,dy;
+		m_waitButton.GetButtonInfo(&x,&y,&dx,&dy);
+		x=x+dx-5+(int)(std::cosf((m_animeFlame%120)*M_PI/60)*5.0f),y=y+5+(int)(std::sinf((m_animeFlame%120)*M_PI/60)*5.0f);
+		const unsigned int color=GetColor(196,128,255);
 		DrawTriangle(x,y,x+5,y-30,x+30,y-5,color,TRUE);
 		DrawTriangle(x+5,y-10,x+10,y-5,x+35,y-40,color,TRUE);
 		DrawTriangle(x+40,y-35,x+10,y-5,x+35,y-40,color,TRUE);

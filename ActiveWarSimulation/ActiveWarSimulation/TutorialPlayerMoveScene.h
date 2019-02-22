@@ -22,7 +22,8 @@ protected:
 	//特定キャラの攻撃チュートリアルに必要なデータ
 	bool m_attackTutorialFlag;
 	const Unit *m_targetUnit;//誰を攻撃すれば良いか
-
+	//待機チュートリアルに必要なデータ
+	bool m_waitTutorialFlag;
 
 	//関数
 public:
