@@ -16,16 +16,14 @@ protected:
 
 	int m_animeFlame;
 
-	//特定地点の移動チュートリアルに必要なデータ
-	bool m_moveTutorialFlag;
-	const std::shared_ptr<Shape> m_moveTutorialArea;//どこに移動すれば良いか（移動ユニットの中心点がこの図形の中に入れば良い）
-	//特定キャラの攻撃チュートリアルに必要なデータ
-	bool m_attackTutorialFlag;
-	const Unit *m_targetUnit;//誰を攻撃すれば良いか
-	//待機チュートリアルに必要なデータ
-	bool m_waitTutorialFlag;
-
 	//関数
+protected:
+	void UpdateFlagOnlyInherit();//boolのメンバ変数m_(hogehoge)OnlyChangeInheritを、m_tutorialBattleSceneDataに従って更新する
+	void GoNextTutorial();//次のチュートリアルデータへ更新
+	bool TutorialMoveProcess(int retIntPal);//移動チュートリアルの判定と処理、遷移処理を行うかどうかを返す
+	bool TutorialAttackProcess(int retIntPal);//攻撃チュートリアルの判定と処理、遷移処理を行うかどうかを返す
+	bool TutorialWaitProcess(int retIntPal);//待機チュートリアルの判定と処理、遷移処理を行うかどうかを返す
+
 public:
 	TutorialPlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData);
 	~TutorialPlayerMoveScene();

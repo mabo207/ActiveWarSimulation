@@ -7,21 +7,94 @@
 
 //-------------------TutorialPlayerMoveScene---------------
 TutorialPlayerMoveScene::TutorialPlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
-	:PlayerMoveScene(battleSceneData),m_tutorialBattleSceneData(std::dynamic_pointer_cast<TutorialBattleSceneData>(battleSceneData))
-	,m_moveTutorialArea(new Circle(Vector2D(395.0f,425.0f),45.0f,Shape::Fix::e_ignore))
+	:PlayerMoveScene(battleSceneData)
+	,m_tutorialBattleSceneData(std::dynamic_pointer_cast<TutorialBattleSceneData>(battleSceneData))
 	,m_animeFlame(0)
-	,m_targetUnit(m_battleSceneData->m_unitList[1])
 {
-	//初期状態では移動しかできないようにする
-	m_attackableOnlyChangeInherit=false;
-	m_waitableOnlyChangeInherit=false;
-	//移動チュートリアルから
-	m_moveTutorialFlag=true;
-	m_attackTutorialFlag=false;
-	m_waitTutorialFlag=false;
+	//先頭のチュートリアル項目に従ってbool値を更新
+	UpdateFlagOnlyInherit();
 }
 
 TutorialPlayerMoveScene::~TutorialPlayerMoveScene(){}
+
+void TutorialPlayerMoveScene::UpdateFlagOnlyInherit(){
+	if(!m_tutorialBattleSceneData->m_tutorialData.empty()){
+		//チュートリアル項目が残っている場合、m_tutorialBattleSceneDataを用いて出来る動作を制限
+		//まず全てできなくさせる
+		m_moveableOnlyChangeInherit=false;
+		m_attackableOnlyChangeInherit=false;
+		m_waitableOnlyChangeInherit=false;
+		//次に、出来る行動を設定する
+		switch(m_tutorialBattleSceneData->m_tutorialData[0]->m_kind){
+		case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_move):
+			m_moveableOnlyChangeInherit=true;
+			break;
+		case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_normalAttack):
+			m_attackableOnlyChangeInherit=true;
+			break;
+		case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_wait):
+			m_waitableOnlyChangeInherit=true;
+			break;
+		default:
+			break;
+		}
+	} else{
+		//チュートリアル項目が残っていない場合、何でもできるようにする
+		m_moveableOnlyChangeInherit=true;
+		m_attackableOnlyChangeInherit=true;
+		m_waitableOnlyChangeInherit=true;
+	}
+}
+
+void TutorialPlayerMoveScene::GoNextTutorial(){
+	//先頭のチュートリアルデータを取り除く
+	m_tutorialBattleSceneData->m_tutorialData.erase(m_tutorialBattleSceneData->m_tutorialData.begin());
+	//フラグの更新
+	UpdateFlagOnlyInherit();
+}
+
+bool TutorialPlayerMoveScene::TutorialMoveProcess(int retIntPal){
+	if(retIntPal==SceneKind::e_move){
+		//移動をしたことを確認した時のみ、キャストする。
+		const TutorialBattleSceneData::MoveTutorial *data=dynamic_cast<const TutorialBattleSceneData::MoveTutorial *>(m_tutorialBattleSceneData->m_tutorialData[0].get());
+		if(data!=nullptr
+			&& data->m_moveTutorialArea->VJudgePointInsideShape(m_battleSceneData->m_operateUnit->getPos())
+			)
+		{
+			//目的地に移動できたので、次のチュートリアルデータへ更新
+			GoNextTutorial();
+		}
+	}
+	return false;//遷移処理を行わない
+}
+
+bool TutorialPlayerMoveScene::TutorialAttackProcess(int retIntPal){
+	if(retIntPal==SceneKind::e_attackNormal){
+		//攻撃を実行しようとした入力を検知した時のみ、キャストする
+		const TutorialBattleSceneData::AttackTutorial *data=dynamic_cast<const TutorialBattleSceneData::AttackTutorial *>(m_tutorialBattleSceneData->m_tutorialData[0].get());
+		if(data!=nullptr){
+			if(m_aimedUnit==data->m_targetUnit){
+				//指定したユニットへの攻撃を確認できたら、次のチュートリアルデータへ
+				GoNextTutorial();
+				return true;//指定ユニットへの攻撃を指示した時のみ遷移処理を行う
+			} else{
+				//指定と違うユニットを狙っている場合は、攻撃ができないようにする。returnに到達させてはいけない。
+				PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);//失敗音を鳴らす
+			}
+		}
+	}
+	return false;
+}
+
+bool TutorialPlayerMoveScene::TutorialWaitProcess(int retIntPal){
+	if(retIntPal==0){
+		//待機については特に取得しないといけないデータはないのでキャストしない
+		//次のチュートリアルデータへ
+		GoNextTutorial();
+		return true;//遷移処理を行う
+	}
+	return false;
+}
 
 int TutorialPlayerMoveScene::thisCalculate(){
 	//デバッグコマンドの入力
@@ -40,47 +113,31 @@ int TutorialPlayerMoveScene::thisCalculate(){
 		retPal=func(*this);
 		if(retPal.first){
 			//遷移の前に、チュートリアル進行情報を更新する
+			bool transitionFlag=false;//遷移処理するかどうか
+			//m_tutorialBattleSceneData->m_tutorialData[0]->m_kindを見れば、どの種類のチュートリアルをしているかわかる
 			//retPal.secondを見れば、何の行動をしたかを見る事ができる
-			if(m_moveTutorialFlag
-				&& retPal.second==SceneKind::e_move
-				&& m_moveTutorialArea->VJudgePointInsideShape(m_battleSceneData->m_operateUnit->getPos())
-				)
-			{
-				//移動系のチュートリアル進行情報の更新
-				//移動チュートリアル中の目標移動地点への到達判定
-				//目標移動エリアにユニットの中心点が入ったら
-				m_moveTutorialFlag=false;
-				m_moveableOnlyChangeInherit=false;//移動できなくする
-				//m_attackableOnlyChangeInherit=true;//攻撃できるようにする
-				//m_waitableOnlyChangeInherit=false;//待機できなくする
-				//m_attackTutorialFlag=true;//攻撃チュートリアル開始
-				m_attackableOnlyChangeInherit=false;//攻撃できなくする
-				m_waitableOnlyChangeInherit=true;//待機できるようにする
-				m_waitTutorialFlag=true;//待機チュートリアル開始
-			} else if(m_attackTutorialFlag
-				&& retPal.second==SceneKind::e_attackNormal
-				)
-			{
-				//通常攻撃チュートリアル進行情報の更新
-				//攻撃対象ユニットに狙いをつけている時に攻撃したかどうかを判定する必要がある
-				if(m_aimedUnit==m_targetUnit){
-					//ちゃんと正しく狙っている場合は、行動成功
-					m_attackTutorialFlag=false;
-				} else{
-					//指定と違うユニットを狙っている場合は、攻撃ができないようにする。returnに到達させてはいけない。
-					PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);//失敗音を鳴らす
-					continue;
+			if(!m_tutorialBattleSceneData->m_tutorialData.empty()){
+				switch(m_tutorialBattleSceneData->m_tutorialData[0]->m_kind){
+				case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_move):
+					transitionFlag=TutorialMoveProcess(retPal.second);
+					break;
+				case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_normalAttack):
+					transitionFlag=TutorialAttackProcess(retPal.second);
+					break;
+				case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_wait):
+					transitionFlag=TutorialWaitProcess(retPal.second);
+					break;
+				default:
+					break;
 				}
-			} else if(m_waitTutorialFlag
-				&& retPal.second==0//waitは0
-				)
-			{
-				//待機チュートリアル進行情報の更新
-				m_waitTutorialFlag=false;
+			} else{
+				//チュートリアル項目がない場合は、通常通り移動をした時以外は常に遷移するようにする
+				if(retPal.second!=SceneKind::e_move){
+					transitionFlag=true;
+				}
 			}
-
-			if(retPal.second!=SceneKind::e_move){
-				//移動系処理の場合以外は遷移処理をする
+			//遷移処理を行う場合はretPal.secondを返すようにする
+			if(transitionFlag){
 				return retPal.second;
 			}
 		}
@@ -97,23 +154,29 @@ void TutorialPlayerMoveScene::thisDraw()const{
 	PlayerMoveScene::thisDraw();
 
 	//デバッグ表示
-	if(m_moveTutorialFlag){
-		//移動先の表示
-		int mode,pal;
-		GetDrawBlendMode(&mode,&pal);
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA,(int)(255*(std::sin((m_animeFlame%60)*M_PI/60))));
-		m_moveTutorialArea->Draw(Vector2D(),m_moveTutorialArea->VJudgePointInsideShape(m_battleSceneData->m_operateUnit->getPos())?GetColor(240,0,255):GetColor(128,0,64),TRUE,2.0f);
-		SetDrawBlendMode(mode,pal);
+	if(!m_tutorialBattleSceneData->m_tutorialData.empty() && m_tutorialBattleSceneData->m_tutorialData[0]->m_kind==TutorialBattleSceneData::TutorialBase::TutorialKind::e_move){
+		const TutorialBattleSceneData::MoveTutorial *data=dynamic_cast<const TutorialBattleSceneData::MoveTutorial *>(m_tutorialBattleSceneData->m_tutorialData[0].get());
+		if(data!=nullptr){
+			//移動先の表示
+			int mode,pal;
+			GetDrawBlendMode(&mode,&pal);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA,(int)(255*(std::sin((m_animeFlame%60)*M_PI/60))));
+			data->m_moveTutorialArea->Draw(Vector2D(),data->m_moveTutorialArea->VJudgePointInsideShape(m_battleSceneData->m_operateUnit->getPos())?GetColor(240,0,255):GetColor(128,0,64),TRUE,2.0f);
+			SetDrawBlendMode(mode,pal);
+		}
 	}
-	if(m_attackTutorialFlag){
-		//狙うユニットに矢印
-		const int x=(int)(m_targetUnit->getPos().x+std::cosf((m_animeFlame%120)*M_PI/60)*5.0f)+30,y=(int)(m_targetUnit->getPos().y+std::sinf((m_animeFlame%120)*M_PI/60)*5.0f)-30;
-		const unsigned int color=GetColor(128,0,255);
-		DrawTriangle(x,y,x+5,y-30,x+30,y-5,color,TRUE);
-		DrawTriangle(x+5,y-10,x+10,y-5,x+35,y-40,color,TRUE);
-		DrawTriangle(x+40,y-35,x+10,y-5,x+35,y-40,color,TRUE);
+	if(!m_tutorialBattleSceneData->m_tutorialData.empty() && m_tutorialBattleSceneData->m_tutorialData[0]->m_kind==TutorialBattleSceneData::TutorialBase::TutorialKind::e_normalAttack){
+		const TutorialBattleSceneData::AttackTutorial *data=dynamic_cast<const TutorialBattleSceneData::AttackTutorial *>(m_tutorialBattleSceneData->m_tutorialData[0].get());
+		if(data!=nullptr){
+			//狙うユニットに矢印
+			const int x=(int)(data->m_targetUnit->getPos().x+std::cosf((m_animeFlame%120)*M_PI/60)*5.0f)+30,y=(int)(data->m_targetUnit->getPos().y+std::sinf((m_animeFlame%120)*M_PI/60)*5.0f)-30;
+			const unsigned int color=GetColor(128,0,255);
+			DrawTriangle(x,y,x+5,y-30,x+30,y-5,color,TRUE);
+			DrawTriangle(x+5,y-10,x+10,y-5,x+35,y-40,color,TRUE);
+			DrawTriangle(x+40,y-35,x+10,y-5,x+35,y-40,color,TRUE);
+		}
 	}
-	if(m_waitTutorialFlag){
+	if(!m_tutorialBattleSceneData->m_tutorialData.empty() && m_tutorialBattleSceneData->m_tutorialData[0]->m_kind==TutorialBattleSceneData::TutorialBase::TutorialKind::e_wait){
 		//待機ボタンに矢印
 		int x,y,dx,dy;
 		m_waitButton.GetButtonInfo(&x,&y,&dx,&dy);
