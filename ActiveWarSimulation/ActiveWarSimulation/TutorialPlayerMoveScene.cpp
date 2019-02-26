@@ -153,6 +153,11 @@ int TutorialPlayerMoveScene::thisCalculate(){
 void TutorialPlayerMoveScene::thisDraw()const{
 	PlayerMoveScene::thisDraw();
 
+	//説明文の描画
+	if(!m_tutorialBattleSceneData->m_tutorialData.empty()){
+		m_tutorialBattleSceneData->m_tutorialData[0]->DrawSupplement(m_tutorialBattleSceneData->m_tutorialFont);
+	}
+
 	//デバッグ表示
 	if(!m_tutorialBattleSceneData->m_tutorialData.empty() && m_tutorialBattleSceneData->m_tutorialData[0]->m_kind==TutorialBattleSceneData::TutorialBase::TutorialKind::e_move){
 		const TutorialBattleSceneData::MoveTutorial *data=dynamic_cast<const TutorialBattleSceneData::MoveTutorial *>(m_tutorialBattleSceneData->m_tutorialData[0].get());
