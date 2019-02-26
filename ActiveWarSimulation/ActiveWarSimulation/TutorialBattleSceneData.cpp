@@ -44,7 +44,7 @@ TutorialBattleSceneData::AttackTutorial::AttackTutorial(const Unit *targetUnit)
 TutorialBattleSceneData::AttackTutorial::~AttackTutorial(){}
 
 void TutorialBattleSceneData::AttackTutorial::DrawSupplement(int font)const{
-	int width=650,height=120;
+	int width=650,height=250;
 	const int x=CommonConstParameter::gameResolutionX-width,y=0;
 	//黒バックを半透明で描画
 	int mode,pal;
@@ -57,7 +57,11 @@ void TutorialBattleSceneData::AttackTutorial::DrawSupplement(int font)const{
 		,"攻撃\n"
 		"　マウス　　　：攻撃したいユニットを左クリック\n"
 		"　ゲームパッド：ボタン４\n"
-		"　キーボード　：Zキー"
+		"　キーボード　：Zキー\n\n"
+		"攻撃対象の変更\n"
+		"　マウス　　　：攻撃したいユニットにマウスを合わせる\n"
+		"　ゲームパッド：ボタン７・ボタン８\n"
+		"　キーボード　：Aキー・Sキー"
 		,GetColor(255,255,255),font,2);
 }
 
