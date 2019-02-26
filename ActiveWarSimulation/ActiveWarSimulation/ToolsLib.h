@@ -198,7 +198,8 @@ public:
 	enum FUNCTION{
 		FUNCTION_LINER,
 		FUNCTION_QUAD,
-		FUNCTION_EXPO
+		FUNCTION_EXPO,
+		FUNCTION_BACK
 	};
 	//ïœêî
 protected:

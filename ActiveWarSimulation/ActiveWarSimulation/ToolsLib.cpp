@@ -449,6 +449,27 @@ void Easing::Update(){
 					}
 				}
 				break;
+			case(FUNCTION_BACK):
+				if(degree!=0.5){
+					//0.5‚É‚È‚é‚Æ0œZ‚ª‹N‚«‚é‚Ì‚Å•Êˆ—‚ğ‚·‚é
+					if(type==TYPE_IN){
+						ft=1.0/(1.0-degree*2.0)*fullRate*(fullRate-degree*2.0);
+					} else if(type==TYPE_OUT){
+						const double deg=1.0-degree;
+						ft=1.0/(1.0-deg*2.0)*fullRate*(fullRate-deg*2.0);
+					} else{
+						if(fullRate<0.5){
+							ft=2.0/(1.0-degree*2.0)*fullRate*(fullRate-degree);
+						} else{
+							const double deg=1.0-degree;
+							ft=2.0/(1.0-degree*2.0)*(fullRate-0.5)*(fullRate-0.5-degree)+0.5;
+						}
+					}
+				} else{
+					//liner‚É‚·‚é
+					ft=1.0*fullRate;
+				}
+				break;
 			}
 		} else{
 			ft=1.0;
