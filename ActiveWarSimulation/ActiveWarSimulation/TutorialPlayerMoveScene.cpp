@@ -185,18 +185,6 @@ int TutorialPlayerMoveScene::thisCalculate(){
 void TutorialPlayerMoveScene::thisDraw()const{
 	PlayerMoveScene::thisDraw();
 
-	//説明文の描画
-	if(!m_tutorialBattleSceneData->m_tutorialData.empty()){
-		if(m_tutorialBattleSceneData->m_tutorialData[0]->m_kind==TutorialBattleSceneData::TutorialBase::TutorialKind::e_explain){
-			//説明チュートリアルの場合は、半透明黒を画面全体に描画
-			int mode,pal;
-			GetDrawBlendMode(&mode,&pal);
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
-			DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
-			SetDrawBlendMode(mode,pal);
-		}
-		m_tutorialBattleSceneData->m_tutorialData[0]->DrawSupplement(m_tutorialBattleSceneData->m_tutorialFont);
-	}
 
 	//デバッグ表示
 	if(!m_tutorialBattleSceneData->m_tutorialData.empty() && m_tutorialBattleSceneData->m_tutorialData[0]->m_kind==TutorialBattleSceneData::TutorialBase::TutorialKind::e_move){
@@ -242,4 +230,18 @@ void TutorialPlayerMoveScene::thisDraw()const{
 		DrawTriangle(centerX-60,centerY+40,centerX-40,centerY+60,centerX+60,centerY-40,color,TRUE);
 		DrawTriangle(centerX-60,centerY+40,centerX+40,centerY-60,centerX+60,centerY-40,color,TRUE);
 	}
+
+	//説明文の描画(一番上に描画)
+	if(!m_tutorialBattleSceneData->m_tutorialData.empty()){
+		if(m_tutorialBattleSceneData->m_tutorialData[0]->m_kind==TutorialBattleSceneData::TutorialBase::TutorialKind::e_explain){
+			//説明チュートリアルの場合は、半透明黒を画面全体に描画
+			int mode,pal;
+			GetDrawBlendMode(&mode,&pal);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
+			DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
+			SetDrawBlendMode(mode,pal);
+		}
+		m_tutorialBattleSceneData->m_tutorialData[0]->DrawSupplement(m_tutorialBattleSceneData->m_tutorialFont);
+	}
+
 }

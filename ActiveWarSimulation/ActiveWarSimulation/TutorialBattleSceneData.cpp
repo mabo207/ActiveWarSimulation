@@ -93,7 +93,7 @@ void TutorialBattleSceneData::WaitTutorial::DrawSupplement(int font)const{
 TutorialBattleSceneData::ExplainTutorial::ExplainTutorial(const char *gFileName)
 	:TutorialBase(TutorialKind::e_explain)
 	,m_gHandle(LoadGraphEX(gFileName))
-	,m_pos(CommonConstParameter::gameResolutionX*3/2,CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/2,CommonConstParameter::gameResolutionY/2,15,Easing::TYPE_IN,Easing::FUNCTION_EXPO,1.0)
+	,m_pos(CommonConstParameter::gameResolutionX*2,CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/2,CommonConstParameter::gameResolutionY/2,15,Easing::TYPE_IN,Easing::FUNCTION_EXPO,1.0)
 	,m_secondMoveFlag(false)
 {}
 
