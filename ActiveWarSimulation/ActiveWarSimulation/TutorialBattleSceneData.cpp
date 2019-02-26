@@ -94,7 +94,7 @@ TutorialBattleSceneData::ExplainTutorial::ExplainTutorial(const char *gFileName)
 	:TutorialBase(TutorialKind::e_explain)
 	,m_gHandle(LoadGraphEX(gFileName))
 	//,m_pos(CommonConstParameter::gameResolutionX*2,CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/2,CommonConstParameter::gameResolutionY/2,30,Easing::TYPE_OUT,Easing::FUNCTION_BACK,0.2)
-	,m_pos(0,1280,0,720,25,Easing::TYPE_OUT,Easing::FUNCTION_BACK,0.2)
+	,m_rate(0,1000,25,Easing::TYPE_OUT,Easing::FUNCTION_BACK,0.2)
 	,m_secondMoveFlag(false)
 {}
 
@@ -105,13 +105,15 @@ TutorialBattleSceneData::ExplainTutorial::~ExplainTutorial(){
 void TutorialBattleSceneData::ExplainTutorial::DrawSupplement(int font)const{
 	int width,height;
 	GetGraphSize(m_gHandle,&width,&height);
+	width=width*m_rate.GetX()/1000;
+	height=height*m_rate.GetX()/1000;
 	//DrawGraph(m_pos.GetX()-width/2,m_pos.GetY()-height/2,m_gHandle,TRUE);
-	DrawExtendGraph(960-m_pos.GetX()/2,540-m_pos.GetY()/2,960+m_pos.GetX()/2,540+m_pos.GetY()/2,m_gHandle,TRUE);
+	DrawExtendGraph((CommonConstParameter::gameResolutionX-width)/2,(CommonConstParameter::gameResolutionY-height)/2,(CommonConstParameter::gameResolutionX+width)/2,(CommonConstParameter::gameResolutionY+height)/2,m_gHandle,TRUE);
 }
 
 void TutorialBattleSceneData::ExplainTutorial::SetSecondMoveFlag(){
 	//m_pos=PositionControl(m_pos.GetX(),m_pos.GetendX()*2-m_pos.GetstartX(),m_pos.GetY(),m_pos.GetendY()*2-m_pos.GetstartY(),m_pos.GetMaxFrame(),Easing::TYPE_IN,m_pos.GetFunction(),m_pos.GetDegree());
-	m_pos=PositionControl(m_pos.GetX(),0,m_pos.GetY(),0,m_pos.GetMaxFrame(),Easing::TYPE_IN,m_pos.GetFunction(),m_pos.GetDegree());
+	m_rate=Easing(m_rate.GetX(),0,m_rate.GetMaxFrame(),Easing::TYPE_IN,m_rate.GetFunction(),m_rate.GetDegree());
 	m_secondMoveFlag=true;
 }
 

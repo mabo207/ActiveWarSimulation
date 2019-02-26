@@ -103,11 +103,13 @@ bool TutorialPlayerMoveScene::TutorialExplainProcess(){
 	std::shared_ptr<TutorialBattleSceneData::ExplainTutorial> data=std::dynamic_pointer_cast<TutorialBattleSceneData::ExplainTutorial>(m_tutorialBattleSceneData->m_tutorialData[0]);
 	if(data.get()!=nullptr){
 		//説明チュートリアルの内部パラメータの更新
-		data->m_pos.Update();
+		//data->m_pos.Update();
+		data->m_rate.Update();
 		//説明チュートリアルの制御は、retIntPalを用いず、入力とチュートリアルデータのみを用いる
 		if(!data->m_secondMoveFlag){
 			//チュートリアル画面が入ってきてから真ん中で止まるまで
-			if(data->m_pos.GetEndFlag()
+//			if(data->m_pos.GetEndFlag()
+			if(data->m_rate.GetEndFlag()
 				&& (mouse_get(MOUSE_INPUT_LEFT)==1
 					|| keyboard_get(MOUSE_INPUT_RIGHT)==1
 					)
@@ -118,8 +120,9 @@ bool TutorialPlayerMoveScene::TutorialExplainProcess(){
 			}
 		} else{
 			//真ん中から外に出ていくまで
-			if(data->m_pos.GetEndFlag()){
-				//外まで出て行ったら次のチュートリアルへ
+//			if(data->m_pos.GetEndFlag()){
+			if(data->m_rate.GetEndFlag()){
+					//外まで出て行ったら次のチュートリアルへ
 				GoNextTutorial();
 			}
 		}
