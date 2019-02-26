@@ -105,8 +105,9 @@ TutorialBattleSceneData::ExplainTutorial::~ExplainTutorial(){
 void TutorialBattleSceneData::ExplainTutorial::DrawSupplement(int font)const{
 	int width,height;
 	GetGraphSize(m_gHandle,&width,&height);
-	width=width*m_rate.GetX()/1000;
-	height=height*m_rate.GetX()/1000;
+	const double rate=(m_secondMoveFlag?1.0-m_rate.GetRate():m_rate.GetRate());
+	width=(int)(width*rate);
+	height=(int)(height*rate);
 	//DrawGraph(m_pos.GetX()-width/2,m_pos.GetY()-height/2,m_gHandle,TRUE);
 	DrawExtendGraph((CommonConstParameter::gameResolutionX-width)/2,(CommonConstParameter::gameResolutionY-height)/2,(CommonConstParameter::gameResolutionX+width)/2,(CommonConstParameter::gameResolutionY+height)/2,m_gHandle,TRUE);
 }

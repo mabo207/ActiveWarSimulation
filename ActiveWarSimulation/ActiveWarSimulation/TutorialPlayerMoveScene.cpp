@@ -122,7 +122,7 @@ bool TutorialPlayerMoveScene::TutorialExplainProcess(){
 			//真ん中から外に出ていくまで
 //			if(data->m_pos.GetEndFlag()){
 			if(data->m_rate.GetEndFlag()){
-					//外まで出て行ったら次のチュートリアルへ
+				//外まで出て行ったら次のチュートリアルへ
 				GoNextTutorial();
 			}
 		}
