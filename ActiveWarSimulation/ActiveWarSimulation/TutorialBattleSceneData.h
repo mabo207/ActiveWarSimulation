@@ -3,6 +3,7 @@
 
 #include"BattleSceneData.h"
 #include"BattleSceneElement.h"
+#include"ToolsLib.h"
 
 struct TutorialBattleSceneData:public BattleSceneData{
 	//列挙体・型
@@ -13,6 +14,7 @@ public:
 			e_move
 			,e_normalAttack
 			,e_wait
+			,e_explain
 		};
 		const TutorialKind m_kind;
 		TutorialBase(TutorialKind kind):m_kind(kind){}
@@ -39,6 +41,17 @@ public:
 		~WaitTutorial();
 		void DrawSupplement(int font)const;
 	};
+	//説明を表示するチュートリアルを管理するクラス
+	struct ExplainTutorial:public TutorialBase{
+		PositionControl m_pos;//説明絵の描画中心位置(中央で一旦停止した後更新される)
+		const int m_gHandle;//説明絵のデータ
+		bool m_secondMoveFlag;//2回目の移動が始まったかどうか(チュートリアル終了の判定に用いる)
+		ExplainTutorial(const char *gFileName);
+		~ExplainTutorial();
+		void DrawSupplement(int font)const;//説明絵の描画を行う
+		void SetSecondMoveFlag();//2回目の移動を始められるように設定する
+	};
+
 
 	//定数
 

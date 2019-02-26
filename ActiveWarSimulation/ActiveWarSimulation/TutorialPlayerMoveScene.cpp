@@ -4,6 +4,7 @@
 #include"Circle.h"
 #include"GeneralPurposeResourceManager.h"
 #include<cmath>
+#include"CommonConstParameter.h"
 
 //-------------------TutorialPlayerMoveScene---------------
 TutorialPlayerMoveScene::TutorialPlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
@@ -34,6 +35,8 @@ void TutorialPlayerMoveScene::UpdateFlagOnlyInherit(){
 			break;
 		case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_wait):
 			m_waitableOnlyChangeInherit=true;
+			break;
+		case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_explain):
 			break;
 		default:
 			break;
@@ -96,6 +99,34 @@ bool TutorialPlayerMoveScene::TutorialWaitProcess(int retIntPal){
 	return false;
 }
 
+bool TutorialPlayerMoveScene::TutorialExplainProcess(){
+	std::shared_ptr<TutorialBattleSceneData::ExplainTutorial> data=std::dynamic_pointer_cast<TutorialBattleSceneData::ExplainTutorial>(m_tutorialBattleSceneData->m_tutorialData[0]);
+	if(data.get()!=nullptr){
+		//説明チュートリアルの内部パラメータの更新
+		data->m_pos.Update();
+		//説明チュートリアルの制御は、retIntPalを用いず、入力とチュートリアルデータのみを用いる
+		if(!data->m_secondMoveFlag){
+			//チュートリアル画面が入ってきてから真ん中で止まるまで
+			if(data->m_pos.GetEndFlag()
+				&& (mouse_get(MOUSE_INPUT_LEFT)==1
+					|| keyboard_get(MOUSE_INPUT_RIGHT)==1
+					)
+				)
+			{
+				//真ん中で停止した時にボタンを押していた場合、画面外に説明絵を移動させる
+				data->SetSecondMoveFlag();
+			}
+		} else{
+			//真ん中から外に出ていくまで
+			if(data->m_pos.GetEndFlag()){
+				//外まで出て行ったら次のチュートリアルへ
+				GoNextTutorial();
+			}
+		}
+	}
+	return false;
+}
+
 int TutorialPlayerMoveScene::thisCalculate(){
 	//デバッグコマンドの入力
 	if(keyboard_get(KEY_INPUT_LSHIFT)==60){
@@ -128,6 +159,7 @@ int TutorialPlayerMoveScene::thisCalculate(){
 					transitionFlag=TutorialWaitProcess(retPal.second);
 					break;
 				default:
+					transitionFlag=TutorialExplainProcess();
 					break;
 				}
 			} else{
@@ -155,6 +187,14 @@ void TutorialPlayerMoveScene::thisDraw()const{
 
 	//説明文の描画
 	if(!m_tutorialBattleSceneData->m_tutorialData.empty()){
+		if(m_tutorialBattleSceneData->m_tutorialData[0]->m_kind==TutorialBattleSceneData::TutorialBase::TutorialKind::e_explain){
+			//説明チュートリアルの場合は、半透明黒を画面全体に描画
+			int mode,pal;
+			GetDrawBlendMode(&mode,&pal);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
+			DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
+			SetDrawBlendMode(mode,pal);
+		}
 		m_tutorialBattleSceneData->m_tutorialData[0]->DrawSupplement(m_tutorialBattleSceneData->m_tutorialFont);
 	}
 
