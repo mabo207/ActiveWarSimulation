@@ -127,11 +127,16 @@ TutorialBattleSceneData::TutorialBattleSceneData()
 
 	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial1.png").c_str())));
 	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial2.png").c_str())));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new MoveTutorial(std::shared_ptr<Shape>(new Circle(Vector2D(395.0f,425.0f),45.0f,Shape::Fix::e_ignore)))));
+	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new MoveTutorial(std::shared_ptr<Shape>(new Circle(Vector2D(435.0f,510.0f),45.0f,Shape::Fix::e_ignore)))));
 	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial3.png").c_str())));
 	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new AttackTutorial(m_unitList[1])));
+	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial4.png").c_str())));
+	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial5.png").c_str())));
+	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new MoveTutorial(std::shared_ptr<Shape>(new Circle(Vector2D(800.0f,580.0f),45.0f,Shape::Fix::e_ignore)))));
 	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial6.png").c_str())));
 	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new WaitTutorial()));
+	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial7.png").c_str())));
+	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial8.png").c_str())));
 }
 
 TutorialBattleSceneData::~TutorialBattleSceneData()

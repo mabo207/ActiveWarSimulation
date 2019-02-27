@@ -111,7 +111,7 @@ bool TutorialPlayerMoveScene::TutorialExplainProcess(){
 //			if(data->m_pos.GetEndFlag()
 			if(data->m_rate.GetEndFlag()
 				&& (mouse_get(MOUSE_INPUT_LEFT)==1
-					|| keyboard_get(MOUSE_INPUT_RIGHT)==1
+					|| keyboard_get(KEY_INPUT_Z)==1
 					)
 				)
 			{
