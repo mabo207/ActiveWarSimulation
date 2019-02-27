@@ -85,6 +85,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneD
 		} else{
 			//モブ
 			//各値を宣言。設定したかどうかをpairのsecondに格納
+			//こちらは設定必須のもの
 			std::pair<std::string,bool> name;
 			name.second=false;
 			std::pair<Vector2D,bool> pos;
@@ -98,7 +99,12 @@ BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneD
 			Unit::AIType::Kind aitype;
 			int aiGroup;
 			std::set<int> aiLinkage;
-			bool aiFlag=false;//ここをfalseにして開発
+			bool aiFlag=false;
+			//こっちは設定任意のもの
+			std::pair<int,bool> initHP;
+			initHP.second=false;
+			std::pair<float,bool> initOP;
+			initOP.second=false;
 			//各値の読み取り
 			for(const StringBuilder &ssb:sb.m_vec){
 				if(!ssb.m_vec.empty()){
@@ -127,12 +133,29 @@ BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneD
 							aiLinkage.insert(std::atoi(ssb.m_vec[i].GetString().c_str()));
 						}
 						aiFlag=true;
+					} else if(ssb.m_vec[0].GetString()=="initHP" && ssb.m_vec.size()>=2){
+						initHP.first=std::atoi(ssb.m_vec[1].GetString().c_str());
+						initHP.second=true;
+					} else if(ssb.m_vec[0].GetString()=="initOP" && ssb.m_vec.size()>=2){
+						initOP.first=(float)(std::atoi(ssb.m_vec[1].GetString().c_str()));
+						initOP.second=true;
 					}
 				}
 			}
 			//各値からユニットを格納
 			if(name.second && prof.second && lv.second && pos.second && team.second && aiFlag){
-				m_field.push_back(Unit::CreateMobUnit(name.first,prof.first,lv.first,pos.first,team.first,aitype,aiGroup,aiLinkage));
+				//設定必須である項目が設定されているか
+				Unit *pu=Unit::CreateMobUnit(name.first,prof.first,lv.first,pos.first,team.first,aitype,aiGroup,aiLinkage);
+				//設定任意である項目の設定
+				if(initHP.second && initHP.first>0 && initHP.first<pu->GetBattleStatus().HP){
+					//HPが0以下だったり最大HPより大きくなったりしないようにする
+					pu->AddHP(initHP.first-pu->GetBattleStatus().HP);
+				}
+				if(initOP.second && initOP.first<Unit::BattleStatus::maxOP){
+					//OPはmaxOPを上回らないようにする。0以下になるのは問題ない
+					pu->SetOP(initOP.first);
+				}
+				m_field.push_back(pu);
 			}
 		}
 	}
