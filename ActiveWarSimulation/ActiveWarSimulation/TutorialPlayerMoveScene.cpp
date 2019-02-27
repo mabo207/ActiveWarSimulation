@@ -67,8 +67,11 @@ bool TutorialPlayerMoveScene::TutorialMoveProcess(int retIntPal){
 			//目的地に移動できたので、次のチュートリアルデータへ更新
 			GoNextTutorial();
 		}
+		return false;//移動が行われた時は常に遷移処理を行わない
+	} else{
+		//移動以外の動作がされている場合は、遷移処理をする(マップを調べるなど)
+		return true;
 	}
-	return false;//遷移処理を行わない
 }
 
 bool TutorialPlayerMoveScene::TutorialAttackProcess(int retIntPal){
@@ -85,8 +88,11 @@ bool TutorialPlayerMoveScene::TutorialAttackProcess(int retIntPal){
 				PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);//失敗音を鳴らす
 			}
 		}
+		return false;//攻撃ができない時は、遷移処理を行わない
+	} else{
+		//移動以外の動作がされている場合は、遷移処理をする(マップを調べるなど)
+		return true;
 	}
-	return false;
 }
 
 bool TutorialPlayerMoveScene::TutorialWaitProcess(int retIntPal){
@@ -95,8 +101,10 @@ bool TutorialPlayerMoveScene::TutorialWaitProcess(int retIntPal){
 		//次のチュートリアルデータへ
 		GoNextTutorial();
 		return true;//遷移処理を行う
+	} else{
+		//移動以外の動作がされている場合は、遷移処理をする(マップを調べるなど)
+		return true;
 	}
-	return false;
 }
 
 bool TutorialPlayerMoveScene::TutorialExplainProcess(){
@@ -161,7 +169,7 @@ int TutorialPlayerMoveScene::thisCalculate(){
 				case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_wait):
 					transitionFlag=TutorialWaitProcess(retPal.second);
 					break;
-				default:
+				case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_explain):
 					transitionFlag=TutorialExplainProcess();
 					break;
 				}
