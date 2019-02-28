@@ -19,8 +19,8 @@ MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_moveFrame(0)
 	,m_battleSceneData(battleSceneData)
 	,m_operatedCursor(LoadGraphEX("Graphic/operatedCursor.png"))
-	,m_predictExplainFont(CreateFontToHandleEX("メイリオ",16,2,DX_FONTTYPE_ANTIALIASING_EDGE_4X4))
-	,m_predictNumberFont(CreateFontToHandleEX("メイリオ",48,8,DX_FONTTYPE_ANTIALIASING_EDGE_4X4))
+	,m_predictExplainFont(CreateFontToHandleEX("メイリオ",20,3,DX_FONTTYPE_ANTIALIASING_EDGE_4X4))
+	,m_predictNumberFont(CreateFontToHandleEX("メイリオ",56,10,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,3))
 {
 	LoadDivGraphEX("Graphic/attackedCursor.png",attackedCursorPicNum,attackedCursorPicNum,1,60,66,m_attackedCursor);
 	//m_aimedUnit等の初期化
