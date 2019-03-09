@@ -234,7 +234,7 @@ bool BattleSceneData::PositionUpdate(const Vector2D inputVec){
 	Vector2D moveVec;
 	//移動ベクトルの計算
 	bool inputFlag=false;//移動の入力があったかどうか
-	if(m_operateUnit->GetBattleStatus().OP>0.0f){
+	if(CanOperateUnitMove()){
 		//OPが足りないと動けない
 		if(inputVec.sqSize()==0.0f){
 			inputFlag=false;
@@ -329,6 +329,10 @@ Unit *BattleSceneData::GetUnitPointer(Vector2D pos)const{
 		}
 	}
 	return nullptr;
+}
+
+bool BattleSceneData::CanOperateUnitMove()const{
+	return m_operateUnit->GetBattleStatus().OP>0.0f;
 }
 
 void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{
