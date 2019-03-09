@@ -3,6 +3,7 @@
 #include"Circle.h"
 #include"CommonConstParameter.h"
 #include"GraphicControl.h"
+#include"BattleSceneData.h"
 
 //----------------TutorialBattleSceneData::MoveTutorial----------------------
 TutorialBattleSceneData::MoveTutorial::MoveTutorial(std::shared_ptr<Shape> moveTutorialArea)
@@ -13,8 +14,8 @@ TutorialBattleSceneData::MoveTutorial::MoveTutorial(std::shared_ptr<Shape> moveT
 TutorialBattleSceneData::MoveTutorial::~MoveTutorial(){}
 
 void TutorialBattleSceneData::MoveTutorial::DrawSupplement(int font)const{
-	int width=650,height=250;
-	const int x=CommonConstParameter::gameResolutionX-width,y=0;
+	const int width=650,height=290;
+	const int x=CommonConstParameter::gameResolutionX-width,y=((int)BattleSceneData::mapDrawSize.y)-height;
 	//黒バックを半透明で描画
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
@@ -23,7 +24,8 @@ void TutorialBattleSceneData::MoveTutorial::DrawSupplement(int font)const{
 	SetDrawBlendMode(mode,pal);
 	//文字列の描画
 	DrawStringNewLineToHandle(x+5,y+5,width-10,height-10
-		,"移動\n"
+		,"紫に点滅している場所に行こう！\n\n"
+		"移動\n"
 		"　マウス　　　：左クリックでその場所に向かって移動\n"
 		"　ゲームパッド：左ジョイスティック or 十字キー\n"
 		"　キーボード　：上下左右キー\n\n"
@@ -43,8 +45,8 @@ TutorialBattleSceneData::AttackTutorial::AttackTutorial(const Unit *targetUnit)
 TutorialBattleSceneData::AttackTutorial::~AttackTutorial(){}
 
 void TutorialBattleSceneData::AttackTutorial::DrawSupplement(int font)const{
-	int width=650,height=250;
-	const int x=CommonConstParameter::gameResolutionX-width,y=0;
+	const int width=650,height=290;
+	const int x=CommonConstParameter::gameResolutionX-width,y=((int)BattleSceneData::mapDrawSize.y)-height;
 	//黒バックを半透明で描画
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
@@ -53,7 +55,8 @@ void TutorialBattleSceneData::AttackTutorial::DrawSupplement(int font)const{
 	SetDrawBlendMode(mode,pal);
 	//文字列の描画
 	DrawStringNewLineToHandle(x+5,y+5,width-10,height-10
-		,"攻撃\n"
+		,"矢印で指定されたユニットを攻撃しよう！\n\n"
+		"攻撃\n"
 		"　マウス　　　：攻撃したいユニットを左クリック\n"
 		"　ゲームパッド：ボタン４\n"
 		"　キーボード　：Zキー\n\n"
@@ -72,8 +75,8 @@ TutorialBattleSceneData::WaitTutorial::WaitTutorial()
 TutorialBattleSceneData::WaitTutorial::~WaitTutorial(){}
 
 void TutorialBattleSceneData::WaitTutorial::DrawSupplement(int font)const{
-	int width=650,height=120;
-	const int x=CommonConstParameter::gameResolutionX-width,y=0;
+	const int width=650,height=160;
+	const int x=CommonConstParameter::gameResolutionX-width,y=((int)BattleSceneData::mapDrawSize.y)-height;
 	//黒バックを半透明で描画
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
@@ -82,7 +85,8 @@ void TutorialBattleSceneData::WaitTutorial::DrawSupplement(int font)const{
 	SetDrawBlendMode(mode,pal);
 	//文字列の描画
 	DrawStringNewLineToHandle(x+5,y+5,width-10,height-10
-		,"待機\n"
+		,"その場で待機してみよう。\n\n"
+		"待機\n"
 		"　マウス　　　：右下のNEXTボタンを左クリック\n"
 		"　ゲームパッド：ボタン２\n"
 		"　キーボード　：Vキー"

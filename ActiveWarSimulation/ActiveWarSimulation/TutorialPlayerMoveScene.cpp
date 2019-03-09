@@ -204,8 +204,8 @@ void TutorialPlayerMoveScene::thisDraw()const{
 			//移動先の表示
 			int mode,pal;
 			GetDrawBlendMode(&mode,&pal);
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA,(int)(255*(std::sin((m_animeFlame%60)*M_PI/60))));
-			data->m_moveTutorialArea->Draw(Vector2D(),data->m_moveTutorialArea->VJudgePointInsideShape(m_battleSceneData->m_operateUnit->getPos())?GetColor(240,0,255):GetColor(128,0,64),TRUE,2.0f);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA,(int)(192*(std::sin((m_animeFlame%60)*M_PI/60))));
+			data->m_moveTutorialArea->Draw(Vector2D(),GetColor(128,96,196),TRUE,2.0f);
 			SetDrawBlendMode(mode,pal);
 		}
 	}
@@ -213,7 +213,7 @@ void TutorialPlayerMoveScene::thisDraw()const{
 		const TutorialBattleSceneData::AttackTutorial *data=dynamic_cast<const TutorialBattleSceneData::AttackTutorial *>(m_tutorialBattleSceneData->m_tutorialData[0].get());
 		if(data!=nullptr){
 			//狙うユニットに矢印
-			const int x=(int)(data->m_targetUnit->getPos().x+std::cosf((m_animeFlame%120)*M_PI/60)*5.0f)+30,y=(int)(data->m_targetUnit->getPos().y+std::sinf((m_animeFlame%120)*M_PI/60)*5.0f)-30;
+			const int x=(int)(data->m_targetUnit->getPos().x+std::cos((m_animeFlame%120)*M_PI/60)*5.0)+30,y=(int)(data->m_targetUnit->getPos().y+std::sin((m_animeFlame%120)*M_PI/60)*5.0)-30;
 			const unsigned int color=GetColor(128,0,255);
 			DrawTriangle(x,y,x+5,y-30,x+30,y-5,color,TRUE);
 			DrawTriangle(x+5,y-10,x+10,y-5,x+35,y-40,color,TRUE);
@@ -224,7 +224,7 @@ void TutorialPlayerMoveScene::thisDraw()const{
 		//待機ボタンに矢印
 		int x,y,dx,dy;
 		m_waitButton.GetButtonInfo(&x,&y,&dx,&dy);
-		x=x+dx-5+(int)(std::cosf((m_animeFlame%120)*M_PI/60)*5.0f),y=y+5+(int)(std::sinf((m_animeFlame%120)*M_PI/60)*5.0f);
+		x=x+dx-5+(int)(std::cos((m_animeFlame%120)*M_PI/60)*5.0),y=y+5+(int)(std::sin((m_animeFlame%120)*M_PI/60)*5.0);
 		const unsigned int color=GetColor(196,128,255);
 		DrawTriangle(x,y,x+5,y-30,x+30,y-5,color,TRUE);
 		DrawTriangle(x+5,y-10,x+10,y-5,x+35,y-40,color,TRUE);
