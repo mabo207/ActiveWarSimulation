@@ -26,6 +26,7 @@ protected:
 
 	//関数
 protected:
+	void EnableAllChangeInherit();//全てのChangeInheritをtrueにして、何でもできるようにする
 	//行動可能かの判定とその行動処理は、クラス外からアクセスしてほしくないのでprotected
 	//virtual化、ダメ、ゼッタイ
 	//判定の結果と、シーン遷移情報を返す

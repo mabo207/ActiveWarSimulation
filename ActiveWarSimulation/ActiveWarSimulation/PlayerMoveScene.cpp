@@ -191,6 +191,12 @@ std::pair<bool,int> PlayerMoveScene::MoveProcess(){
 	return std::pair<bool,int>(true,SceneKind::e_move);
 }
 
+void PlayerMoveScene::EnableAllChangeInherit(){
+	m_moveableOnlyChangeInherit=true;
+	m_attackableOnlyChangeInherit=true;
+	m_waitableOnlyChangeInherit=true;
+}
+
 PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:MoveScene(battleSceneData)
 	,m_waitButton(1520,980,80,80,LoadGraphEX("Graphic/nextButton.png"))

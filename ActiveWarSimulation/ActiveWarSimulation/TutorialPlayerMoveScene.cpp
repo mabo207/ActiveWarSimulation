@@ -38,14 +38,15 @@ void TutorialPlayerMoveScene::UpdateFlagOnlyInherit(){
 			break;
 		case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_explain):
 			break;
+		case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_blank):
+			EnableAllChangeInherit();
+			break;
 		default:
 			break;
 		}
 	} else{
 		//チュートリアル項目が残っていない場合、何でもできるようにする
-		m_moveableOnlyChangeInherit=true;
-		m_attackableOnlyChangeInherit=true;
-		m_waitableOnlyChangeInherit=true;
+		EnableAllChangeInherit();
 	}
 }
 
@@ -151,6 +152,24 @@ bool TutorialPlayerMoveScene::TutorialExplainProcess(){
 	return false;
 }
 
+bool TutorialPlayerMoveScene::TutorialBlankProcess(int retIntPal){
+	if(retIntPal==0 || retIntPal==SceneKind::e_attackNormal){
+		//待機か攻撃をした際は次のチュートリアルデータを更新
+		TutorialBattleSceneData::BlankTutorial *data=dynamic_cast<TutorialBattleSceneData::BlankTutorial *>(m_tutorialBattleSceneData->m_tutorialData[0].get());
+		if(data!=nullptr){
+			data->m_leftCount--;
+			if(data->m_leftCount<=0){
+				//規定回数行動が終わった場合は次のチュートリアルデータへ
+				GoNextTutorial();
+			}
+		}
+		return true;//遷移処理を行う
+	} else{
+		//移動以外の動作がされている場合は、遷移処理をする(マップを調べるなど)
+		return true;
+	}
+}
+
 int TutorialPlayerMoveScene::thisCalculate(){
 	//デバッグコマンドの入力
 	if(keyboard_get(KEY_INPUT_LSHIFT)==60){
@@ -168,7 +187,7 @@ int TutorialPlayerMoveScene::thisCalculate(){
 		retPal=func(*this);
 		if(retPal.first){
 			//遷移の前に、チュートリアル進行情報を更新する
-			bool transitionFlag=false;//遷移処理するかどうか
+			bool transitionFlag=false;//遷移処理する可能性があるかどうか
 			//m_tutorialBattleSceneData->m_tutorialData[0]->m_kindを見れば、どの種類のチュートリアルをしているかわかる
 			//retPal.secondを見れば、何の行動をしたかを見る事ができる
 			if(!m_tutorialBattleSceneData->m_tutorialData.empty()){
@@ -184,6 +203,9 @@ int TutorialPlayerMoveScene::thisCalculate(){
 					break;
 				case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_explain):
 					transitionFlag=TutorialExplainProcess();
+					break;
+				case(TutorialBattleSceneData::TutorialBase::TutorialKind::e_blank):
+					transitionFlag=TutorialBlankProcess(retPal.second);
 					break;
 				}
 			} else{

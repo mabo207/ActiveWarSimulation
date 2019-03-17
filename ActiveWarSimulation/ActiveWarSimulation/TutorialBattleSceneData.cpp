@@ -63,6 +63,12 @@ std::shared_ptr<TutorialBattleSceneData::TutorialBase> TutorialBattleSceneData::
 		} else if(sb.m_vec[0].GetString()=="explain"){
 			//ExplainTutorialには画像ファイル名が入っている
 			return std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+gameData.m_stageName+sb.m_vec[1].GetString()).c_str()));
+		} else if(sb.m_vec[0].GetString()=="blank"){
+			//BlankTutorialには何もしない行動の回数が入っている
+			const int count=std::atoi(sb.m_vec[1].GetString().c_str());
+			if(count>0){
+				return std::shared_ptr<TutorialBase>(new BlankTutorial(count));
+			}
 		}
 	}
 	return std::shared_ptr<TutorialBase>(nullptr);
@@ -153,6 +159,14 @@ void TutorialBattleSceneData::ExplainTutorial::SetSecondMoveFlag(){
 	m_rate=Easing(m_rate.GetX(),0,m_rate.GetMaxFrame(),Easing::TYPE_IN,m_rate.GetFunction(),m_rate.GetDegree());
 	m_secondMoveFlag=true;
 }
+
+//----------------TutorialBattleSceneData::BlankTutorial----------------------
+TutorialBattleSceneData::BlankTutorial::BlankTutorial(int count)
+	:TutorialBase(TutorialKind::e_blank)
+	,m_leftCount(count)
+{}
+
+void TutorialBattleSceneData::BlankTutorial::DrawSupplement(int font)const{}
 
 //----------------TutorialBattleSceneData-----------------------
 TutorialBattleSceneData::TutorialBattleSceneData()

@@ -15,6 +15,7 @@ public:
 			,e_normalAttack
 			,e_wait
 			,e_explain
+			,e_blank
 		};
 		const TutorialKind m_kind;
 		TutorialBase(TutorialKind kind):m_kind(kind){}
@@ -50,12 +51,20 @@ public:
 		Easing m_rate;//説明絵の拡大率(中央で一旦停止した後更新される)
 		const int m_gHandle;//説明絵のデータ
 		bool m_secondMoveFlag;//2回目の移動が始まったかどうか(チュートリアル終了の判定に用いる)
+
 		ExplainTutorial(const char *gFileName);
 		~ExplainTutorial();
 		void DrawSupplement(int font)const;//説明絵の描画を行う
 		void SetSecondMoveFlag();//2回目の移動を始められるように設定する
 	};
-
+	//数回の行動終了まで特に何もチュートリアルしないクラス
+	struct BlankTutorial:public TutorialBase{
+		int m_leftCount;//残り回数
+		
+		explicit BlankTutorial(int count);
+		~BlankTutorial()=default;
+		void DrawSupplement(int font)const;//何もしない
+	};
 
 	//定数
 
