@@ -17,6 +17,7 @@ private:
 		enum Kind{
 			e_stageSelect
 			,e_tutorial
+			,e_tutorial_2
 			,e_demo
 			,e_gameFinish
 			,COUNTER

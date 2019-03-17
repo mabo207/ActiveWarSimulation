@@ -2,8 +2,8 @@
 #include"TutorialBattleSceneData.h"
 
 //--------------------TutorialScene--------------------
-TutorialScene::TutorialScene()
-	:BattleScene(std::shared_ptr<BattleSceneData>(new TutorialBattleSceneData()))
+TutorialScene::TutorialScene(const std::string &stageName)
+	:BattleScene(std::shared_ptr<BattleSceneData>(new TutorialBattleSceneData(stageName)))
 {
 }
 

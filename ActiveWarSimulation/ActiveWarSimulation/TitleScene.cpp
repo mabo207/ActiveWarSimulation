@@ -18,6 +18,8 @@ std::string TitleScene::SelectItem::GetString(const Kind kind){
 		return "STAGE SELECT";
 	case(e_tutorial):
 		return "TUTORIAL";
+	case(e_tutorial_2):
+		return "TUTORIAL2";
 	case(e_demo):
 		return "DEMO PLAY";
 	case(e_gameFinish):
@@ -40,7 +42,13 @@ std::shared_ptr<Shape> TitleScene::MakeHexagon(const Vector2D center,const float
 	return std::shared_ptr<Shape>(new MyPolygon(begin,point,Shape::Fix::e_static));
 }
 
-const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={Vector2D(1440.0f,630.0f),Vector2D(1550.0f,820.0f),Vector2D(1660.0f,630.0f),Vector2D(1770.0f,820.0f)};
+const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={
+	Vector2D(1330.0f,630.0f)
+	,Vector2D(1440.0f,820.0f)
+	,Vector2D(1550.0f,630.0f)
+	,Vector2D(1660.0f,820.0f)
+	,Vector2D(1770.0f,630.0f)
+};
 
 TitleScene::TitleScene()
 	:MainControledGameScene()
@@ -198,6 +206,10 @@ int TitleScene::Calculate(){
 			//チュートリアル画面へ
 			return 1;
 			break;
+		case(SelectItem::e_tutorial_2):
+			//チュートリアル画面2へ
+			return 1;
+			break;
 		case(SelectItem::COUNTER):
 			//現状維持
 			break;
@@ -251,7 +263,10 @@ std::shared_ptr<MainControledGameScene> TitleScene::VGetNextMainControledScene()
 		return std::shared_ptr<MainControledGameScene>(new DemoScene());
 		break;
 	case(SelectItem::e_tutorial):
-		return std::shared_ptr<MainControledGameScene>(new TutorialScene());
+		return std::shared_ptr<MainControledGameScene>(new TutorialScene("tutorial"));
+		break;
+	case(SelectItem::e_tutorial_2):
+		return std::shared_ptr<MainControledGameScene>(new TutorialScene("tutorial_2"));
 		break;
 	}
 	return std::shared_ptr<MainControledGameScene>(nullptr);

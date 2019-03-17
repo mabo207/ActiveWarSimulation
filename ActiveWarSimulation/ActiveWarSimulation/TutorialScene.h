@@ -12,7 +12,7 @@ class TutorialScene:public BattleScene{
 
 	//ä÷êî
 public:
-	TutorialScene();
+	TutorialScene(const std::string &stageName);
 	~TutorialScene();
 };
 
