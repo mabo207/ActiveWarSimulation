@@ -74,8 +74,7 @@ bool TutorialPlayerMoveScene::TutorialMoveProcess(int retIntPal){
 				//ポップアップを閉じた時にすぐにポップアップが出ないようにする
 				data->m_displayPopFlag=false;
 				//到達していないのに動けなくなった場合は、ポップアップを出す
-				const std::string fileName="Stage/"+m_tutorialBattleSceneData->m_stageName+"/nonfree/tutorial5.png";
-				const std::shared_ptr<TutorialBattleSceneData::TutorialBase> insertData(new TutorialBattleSceneData::ExplainTutorial(fileName.c_str()));
+				const std::shared_ptr<TutorialBattleSceneData::TutorialBase> insertData(new TutorialBattleSceneData::ExplainTutorial("Graphic/tutorial/nonfree/moveCancel.png"));
 				m_tutorialBattleSceneData->m_tutorialData.insert(m_tutorialBattleSceneData->m_tutorialData.begin(),insertData);
 				//フラグの更新
 				UpdateFlagOnlyInherit();

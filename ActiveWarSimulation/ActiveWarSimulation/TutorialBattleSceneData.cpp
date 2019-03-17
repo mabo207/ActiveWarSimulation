@@ -4,6 +4,7 @@
 #include"CommonConstParameter.h"
 #include"GraphicControl.h"
 #include"BattleSceneData.h"
+#include"FileRead.h"
 
 //----------------TutorialBattleSceneData::MoveTutorial----------------------
 const float TutorialBattleSceneData::MoveTutorial::minDisplayPopOP=60.0f;
@@ -37,6 +38,34 @@ void TutorialBattleSceneData::MoveTutorial::DrawSupplement(int font)const{
 		"　ゲームパッド：ボタン３\n"
 		"　キーボード　：Xキー"
 		,GetColor(255,255,255),font,2);
+}
+
+std::shared_ptr<TutorialBattleSceneData::TutorialBase> TutorialBattleSceneData::TutorialBase::Create(const std::string &str,const BattleSceneData &gameData){
+	//データを分割
+	const StringBuilder sb(str,',','(',')',true,true);
+	//チュートリアルデータを作成
+	if(sb.m_vec.size()>=2){
+		if(sb.m_vec[0].GetString()=="move"){
+			//MoveTutorialは、到達地点を表す図形が格納されている
+			const std::shared_ptr<Shape> pShape=Shape::CreateShape(sb.m_vec[1].GetString());
+			if(pShape.get()!=nullptr){
+				return std::shared_ptr<TutorialBase>(new MoveTutorial(pShape));
+			}
+		} else if(sb.m_vec[0].GetString()=="attack"){
+			//AttackTutorialは、初期化された時のユニットの配列番号が格納されている
+			const size_t index=std::atoi(sb.m_vec[1].GetString().c_str());
+			if(index<gameData.m_unitList.size()){
+				return std::shared_ptr<TutorialBase>(new AttackTutorial(gameData.m_unitList[index]));
+			}
+		} else if(sb.m_vec[0].GetString()=="wait"){
+			//WaitTutorialには特に設定する項目はない
+			return std::shared_ptr<TutorialBase>(new WaitTutorial());
+		} else if(sb.m_vec[0].GetString()=="explain"){
+			//ExplainTutorialには画像ファイル名が入っている
+			return std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+gameData.m_stageName+sb.m_vec[1].GetString()).c_str()));
+		}
+	}
+	return std::shared_ptr<TutorialBase>(nullptr);
 }
 
 //----------------TutorialBattleSceneData::AttackTutorial----------------------
@@ -131,19 +160,14 @@ TutorialBattleSceneData::TutorialBattleSceneData()
 	,m_tutorialFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 {
 	//チュートリアルデータの読み込み
-
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial1.png").c_str())));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial2.png").c_str())));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new MoveTutorial(std::shared_ptr<Shape>(new Circle(Vector2D(435.0f,510.0f),45.0f,Shape::Fix::e_ignore)))));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial3.png").c_str())));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new AttackTutorial(m_unitList[1])));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial4.png").c_str())));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial5.png").c_str())));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new MoveTutorial(std::shared_ptr<Shape>(new Circle(Vector2D(800.0f,580.0f),45.0f,Shape::Fix::e_ignore)))));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial6.png").c_str())));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new WaitTutorial()));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial7.png").c_str())));
-	m_tutorialData.push_back(std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+m_stageName+"/nonfree/tutorial8.png").c_str())));
+	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
+	StringBuilder sb(FileStrRead(("Stage/"+m_stageName+"/tutorialList.txt").c_str()),'\n','{','}',false,true);
+	for(const StringBuilder &ssb:sb.m_vec){
+		std::shared_ptr<TutorialBase> pt=TutorialBase::Create(ssb.GetString(),*this);
+		if(pt.get()!=nullptr){
+			m_tutorialData.push_back(pt);
+		}
+	}
 }
 
 TutorialBattleSceneData::~TutorialBattleSceneData()

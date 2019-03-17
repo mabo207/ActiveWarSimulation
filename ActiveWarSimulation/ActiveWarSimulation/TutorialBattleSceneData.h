@@ -20,6 +20,7 @@ public:
 		TutorialBase(TutorialKind kind):m_kind(kind){}
 		virtual ~TutorialBase(){}
 		virtual void DrawSupplement(int font)const=0;//補足説明を描画する
+		static std::shared_ptr<TutorialBase> Create(const std::string &str,const BattleSceneData &gameData);
 	};
 	//移動に関するチュートリアルデータを管理するクラス
 	struct MoveTutorial:public TutorialBase{
