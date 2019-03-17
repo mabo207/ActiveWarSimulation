@@ -403,19 +403,20 @@ void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsig
 //数値変化を様々な式で管理するクラス
 //---Easing---
 Easing::Easing(int i_x,int i_endx,int i_maxframe,TYPE i_type,FUNCTION i_function,double i_degree)
-	:frame(0),maxframe(i_maxframe),x(i_x),startx(i_x),endx(i_endx),type(i_type),function(i_function),degree(i_degree){}
+	:frame(0),maxframe(i_maxframe),startx(i_x),endx(i_endx),type(i_type),function(i_function),degree(i_degree){}
 
-void Easing::SetTarget(int i_endx,bool initframe){
-	startx=x;
-	if(initframe){
-		//initframeがtrueの時のみframeを0に
-		frame=0;
+int Easing::GetX()const{
+	if(!GetEndFlag()){
+		//動作が終わっていない場合は、割合を計算する
+		return startx+(int)((endx-startx)*GetRate());
+	} else{
+		//動作が終わっている場合は、endxと分かりきっている
+		return endx;
 	}
-	endx=i_endx;
 }
 
-void Easing::Update(){
-	double ft;//増加割合
+double Easing::GetRate()const{
+	double ft;//返す値
 	const double fullRate=(double)frame/maxframe;
 	if(!GetEndFlag()){
 		if(maxframe>0){
@@ -449,14 +450,47 @@ void Easing::Update(){
 					}
 				}
 				break;
+			case(FUNCTION_BACK):
+				if(degree!=0.5){
+					//0.5になると0除算が起きるので別処理をする
+					if(type==TYPE_IN){
+						ft=1.0/(1.0-degree*2.0)*fullRate*(fullRate-degree*2.0);
+					} else if(type==TYPE_OUT){
+						const double deg=1.0-degree;
+						ft=1.0/(1.0-deg*2.0)*fullRate*(fullRate-deg*2.0);
+					} else{
+						if(fullRate<0.5){
+							ft=2.0/(1.0-degree*2.0)*fullRate*(fullRate-degree);
+						} else{
+							const double deg=1.0-degree;
+							ft=2.0/(1.0-degree*2.0)*(fullRate-0.5)*(fullRate-0.5-degree)+0.5;
+						}
+					}
+				} else{
+					//linerにする
+					ft=1.0*fullRate;
+				}
+				break;
 			}
 		} else{
 			ft=1.0;
 		}
-		x=startx+(int)((endx-startx)*ft);
 	} else{
-		x=endx;
+		ft=1.0;
 	}
+	return ft;
+}
+
+void Easing::SetTarget(int i_endx,bool initframe){
+	startx=GetX();
+	if(initframe){
+		//initframeがtrueの時のみframeを0に
+		frame=0;
+	}
+	endx=i_endx;
+}
+
+void Easing::Update(){
 	frame++;
 }
 
@@ -467,7 +501,6 @@ void Easing::EnforceEnd(){
 }
 
 void Easing::Retry(){
-	x=startx;
 	frame=0;
 }
 
@@ -479,7 +512,7 @@ void Easing::Retry(int i_startx){
 void Easing::SetMaxFrame(int frame,bool targetinitflag){
 	maxframe=frame;
 	if(targetinitflag){
-		Retry(x);
+		Retry(GetX());
 	}else{
 		frame=min(frame,maxframe);
 	}

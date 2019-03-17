@@ -128,11 +128,12 @@ std::pair<std::pair<size_t,Vector2D>,Unit *> ComputerMoveScene::DecideTargetPoin
 	}
 	//格子点探し
 	const size_t vecSize=m_latticeInShape.size();
+	Vector2D targetPointVec=m_battleSceneData->m_operateUnit->getPos();//targetに相当する座標まで到達した際にどの座標に向かって動くか。初期値は「その場で待機する」
+	size_t target=vecSize;
 	if(targetUnit!=nullptr){
 		//狙うユニットを決めたら、そのユニットを攻撃できる格子点を探す
 		//貪欲法でいく
 		Unit copiedUnit(*dynamic_cast<Unit *>(m_battleSceneData->m_operateUnit->VCopy().get()));//作業用にコピーを作る
-		size_t target=vecSize;
 		for(size_t y=0;y<m_yLatticeNum;y++){
 			for(size_t x=0;x<m_xLatticeNum;x++){
 				const size_t index=x+y*m_xLatticeNum;
@@ -148,12 +149,46 @@ std::pair<std::pair<size_t,Vector2D>,Unit *> ComputerMoveScene::DecideTargetPoin
 			}
 		}
 		if(target!=vecSize){
-			return std::pair<std::pair<size_t,Vector2D>,Unit *>(std::pair<size_t,Vector2D>(target,targetUnit->getPos()),targetUnit);
+			targetPointVec=targetUnit->getPos();//暫定で最終目標座標が狙っているユニットになる（迎撃型AIであったりするとここが後で変わる）
 		}
 	} else{
 		//狙うユニットが無いなら、その場で待機する
+		//(target=vecSize,targetPointVec=m_battleSceneData->m_operateUnit->getPos()のまま)
 	}
-	return std::pair<std::pair<size_t,Vector2D>,Unit *>(std::pair<size_t,Vector2D>(vecSize,m_battleSceneData->m_operateUnit->getPos()),targetUnit);
+
+	//狙うユニットと目的地が決まったので、AIのルールに従ってそこに行くかどうか決める
+	switch(m_battleSceneData->m_operateUnit->GetBattleStatus().aitype){
+	case(Unit::AIType::e_intercept):
+	case(Unit::AIType::e_linkageIntercept):
+		//迎撃型AIと連動迎撃型AI
+		if(target>=vecSize || point<0.0f){
+			//目的地が１回の移動で届かない場合は、その場で待機する
+			//pointが0以上である事が１回の移動で届く事の必要十分条件となっている
+			target=vecSize;
+			targetPointVec=m_battleSceneData->m_operateUnit->getPos();
+		}
+		break;
+	case(Unit::AIType::e_assult):
+		//突撃型AI
+		//求めた目的地まで進む(targetに変更は無し)
+		break;
+	}
+
+	//移動するかどうかによるAIの変化処理
+	if(target!=vecSize){
+		//行動する場合、自分に紐づいている連動迎撃型AIのキャラクタのAIを突撃型に変更する必要がある
+		const int group=m_battleSceneData->m_operateUnit->GetBattleStatus().aiGroup;
+		for(Unit *pu:m_battleSceneData->m_unitList){
+			//全てのユニットに対して検索
+			if(pu->GetBattleStatus().aiLinkage.count(group)!=0){
+				//group値がpuのaiLinkageに存在していて、かつpuが連動迎撃型AIである場合は、puはm_operateUnitに連動して動くグループであるので突撃型になる
+				//puが連動迎撃型であるかどうかの判定は、Unit::BecomeAssultAI()中で判定する。こっちのほうがコーディングのミスは減ると思う。
+				pu->BecomeAssultAI();
+			}
+		}
+	}
+
+	return std::pair<std::pair<size_t,Vector2D>,Unit *>(std::pair<size_t,Vector2D>(target,targetPointVec),targetUnit);
 }
 
 void ComputerMoveScene::CalculateLatticeDistanceInfo(std::vector<LatticeDistanceInfo> &latticeDistanceInfo)const{
@@ -249,11 +284,14 @@ Vector2D ComputerMoveScene::CalculateInputVec()const{
 float ComputerMoveScene::CalculateEvaluate(const Unit *punit,const std::vector<LatticeDistanceInfo> &distanceInfo)const{
 	//const float sqDistance=-(punit->getPos()-m_battleSceneData->m_operateUnit->getPos()).sqSize();//ユニット間の距離の2乗値。
 	//punitに攻撃が届く位置までの距離についての評価値
+	//distanceEvaluateの値域
+	//	distanceEvaluate=0:届く
+	//	distanceEvaluate<=m_operateUnit->GetMoveDistance():届かない
 	float distanceEvaluate=-50000.0f;//ひとまず酷い点数をつける
 	if(punit->GetHitJudgeShape()->GetType()==Shape::Type::e_circle){
-		const Circle *pcircle=dynamic_cast<const Circle *>(punit->GetHitJudgeShape());//作業用のユニット図形の確保
+		const Circle *pcircle=dynamic_cast<const Circle *>(punit->GetUnitCircleShape());//作業用のユニット図形(内部)の確保
 		if(pcircle!=nullptr){
-			Circle c(pcircle->GetPosition(),pcircle->GetR()+m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetLength(),pcircle->m_fix);//攻撃可能範囲
+			Circle c(pcircle->GetPosition(),pcircle->GetR()+m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetLength()+squareSize,pcircle->m_fix);//攻撃可能範囲(ただし、位置によっては格子点を検出できないため、squareSizeだけ余分に広い範囲で格子点を探す)
 			//攻撃可能範囲の中にある格子点の中で最近点を求める
 			const size_t size=distanceInfo.size();
 			size_t nearestIndex=size;//これがsizeである間は
@@ -278,6 +316,8 @@ float ComputerMoveScene::CalculateEvaluate(const Unit *punit,const std::vector<L
 	}
 
 	//行動した際の影響度についての評価値
+	//actionEvaluateの値域は、1ターンの間で目標ユニットにactionができない場合はtotalが負の値になるようにするためにこうする
+	//	actionEvaluate<=m_operateUnit->GetMoveDistance()
 	const float actionEvaluate=CalculateActionEvaluate(punit);
 
 	//合計の評価値を返す

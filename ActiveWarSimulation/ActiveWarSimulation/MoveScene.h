@@ -41,7 +41,8 @@ protected:
 	const int m_operatedCursor;//m_operatedUnitの上に乗せるカーソルの描画
 	const int m_predictExplainFont;//行動効果の意味フォント
 	const int m_predictNumberFont;//行動効果の数字フォント
-
+	const int m_cannotMovePic;//動けないことをあらわすアイコン
+	
 	//関数
 protected:
 	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。

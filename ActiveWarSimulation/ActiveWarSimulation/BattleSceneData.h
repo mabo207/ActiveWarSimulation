@@ -11,6 +11,11 @@
 struct BattleSceneData{
 	//型・列挙体
 public:
+	//今どのモードでのプレイをしているか
+	enum class PlayMode{
+		e_normal//通常プレイ
+		,e_tutorial//チュートリアルモード
+	};
 
 	//定数
 protected:
@@ -54,6 +59,7 @@ public:
 	//その他の変数
 	FpsMeasuring m_fpsMesuring;//fps計測器。タイマーの意味合いも兼ねる。
 	const int m_orderFont;//オーダー表示の際のフォント
+	const PlayMode m_playMode;//今のプレイモード
 	
 
 	//デバッグ用変数
@@ -62,17 +68,19 @@ public:
 
 	//関数
 protected:
+	BattleSceneData(const std::string &stagename,const PlayMode playMode);//継承クラス用コンストラクタ
 	float CalculateOperateUnitFinishOP()const;//m_operateUnitが行動終了した際、opはいくらになるかを計算する関数(行動終了しても先頭ユニットであれば2番目になるまでOPを消費させる必要があるため)
 	float CalculateOperateUnitFinishOP(float op)const;//OPの消費を踏まえた計算をできるようにするために、引数から計算する関数を用意した
 
 public:
 	BattleSceneData(const std::string &stagename);
-	~BattleSceneData();
+	virtual ~BattleSceneData();
 	void UpdateFix();//m_fieldのFix::Kindを更新する関数
 	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
 	void SortUnitList();//m_unitListをソートしなおす。
 	void FinishUnitOperation();//次のユニットへの遷移処理
 	Unit *GetUnitPointer(Vector2D pos)const;//pos(マップ上の座標)にいるユニットを返す。このユニットに攻撃する可能性がある事を考慮してconstはつけない。
+	bool CanOperateUnitMove()const;//m_operateUnitが移動することが可能か（周りに何があるかは考えない）
 
 	//情報描画関数
 	void DrawField(const std::set<const BattleObject *> &notDraw={})const;//フィールドの描画、ユニットの描画は別。こいつより前に描画したものはマップ絵で全て消えるはず。
@@ -81,6 +89,7 @@ public:
 	void DrawOrder(const std::set<const BattleObject *> &lineDraw={})const;//ユニットのオーダー順番の描画。lineDrawに含まれるユニットは、必ずマップ上の位置とオーダーが線で結ばれる
 
 	//静的関数
+public:
 	static bool JudgeMousePushInsideMapDrawZone(int mouseCode,bool continuousFlag);//マップ描画領域でmouseCodeを押したかどうか。また、continuousFlagをtrueにすればフレーム数が>0であるかどうかを、falseにすればフレーム数が==1であるかを判定する。
 
 };

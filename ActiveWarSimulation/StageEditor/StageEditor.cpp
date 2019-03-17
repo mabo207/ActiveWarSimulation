@@ -28,7 +28,7 @@
 
 //定数の定義
 const int StageEditor::mapSizeX = 1920;
-const int StageEditor::mapSizeY = 1080;
+const int StageEditor::mapSizeY = 900;
 const int StageEditor::leftUpPosX = 25;
 const int StageEditor::leftUpPosY = 25;
 const int StageEditor::buttonWidth = 400;
@@ -250,7 +250,7 @@ void StageEditor::Draw() {
 	Vector2D v=GetMousePointVector2D();
 	//printfDx("(%f,%f)\n",v.x,v.y);//素の座標
 	v=m_actionSettings.m_pPosSetting->CalculatePos(v-Vector2D((float)leftUpPosX,(float)leftUpPosY)+m_actionSettings.GetMAdjust(),m_actionSettings);
-	//printfDx("(%f,%f)\n",v.x,v.y);//位置調整後の座標
+	printfDx("(%f,%f)\n",v.x,v.y);//位置調整後の座標
 	for(auto o:*m_actionSettings.GetPMObject()){
 		printfDx("%d\n",o.get());
 	}

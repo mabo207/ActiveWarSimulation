@@ -16,7 +16,7 @@ void DamageCalculator::VDrawPredict(const int centerX,const int centerY,const in
 	int dy=-height/2;
 	DrawStringCenterBaseToHandle(centerX,centerY+dy,"DAMAGE",GetColor(255,255,255),explainFont,false,GetColor(0,0,0));
 	dy+=fontsize[0];
-	DrawStringCenterBaseToHandle(centerX,centerY+dy,std::to_string(VCalculateDamage(attacker,defender)).c_str(),GetColor(192,64,64),numberFont,false,GetColor(0,0,0));
+	DrawStringCenterBaseToHandle(centerX,centerY+dy,std::to_string(VCalculateDamage(attacker,defender)).c_str(),GetColor(240,68,48),numberFont,false,GetColor(0,0,0));
 }
 
 //---------------PhysicalCalculator-----------------

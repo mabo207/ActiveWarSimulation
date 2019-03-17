@@ -1,6 +1,7 @@
 #ifndef DEF_UNIT_H
 #define DEF_UNIT_H
 
+#include<set>
 #include"BattleObject.h"
 #include"Weapon.h"
 class Weapon;//循環参照を防ぐために宣言のみする
@@ -35,6 +36,15 @@ public:
 		static unsigned int GetColor(Kind kind,int degree,int red=0,int green=0,int blue=0);//チーム色に別の色を混ぜたカラーコードを取得する
 		static bool JudgeFriend(Kind team1,Kind team2);//2つのチームが味方関係かどうかを判定する
 	};
+	struct AIType{
+		enum Kind{
+			e_assult//突撃型
+			,e_intercept//迎撃型
+			,e_linkageIntercept//連動迎撃型
+			,END
+		};
+		static Kind link(int num);
+	};
 	struct BaseStatus{
 		std::string name;
 		Profession::Kind profession;
@@ -51,15 +61,19 @@ public:
 			:name(i_name),profession(i_profession),lv(i_lv),maxHP(i_maxHP),power(i_power),def(i_def),mpower(i_mpower),mdef(i_mdef),speed(i_speed),move(i_move){}
 	};
 	struct BattleStatus{
+
 		//定数
 		static const float maxOP;//オーダーポイントの最大値、全てのユニットで一律
 		//変数
 		int HP;
 		float OP;
 		Team::Kind team;
+		AIType::Kind aitype;//AIのタイプ
+		int aiGroup;//連動迎撃AI用のグループ分け
+		std::set<int> aiLinkage;//連動して動くaiGroupの値
 		std::shared_ptr<Weapon> weapon;
-		BattleStatus(int i_HP,float i_OP,Team::Kind i_team,std::shared_ptr<Weapon> i_weapon)
-			:HP(i_HP),OP(i_OP),team(i_team),weapon(i_weapon){}
+		BattleStatus(int i_HP,float i_OP,Team::Kind i_team,AIType::Kind i_aitype,int i_aiGroup,std::set<int> i_aiLinkage,std::shared_ptr<Weapon> i_weapon)
+			:HP(i_HP),OP(i_OP),team(i_team),aitype(i_aitype),aiGroup(i_aiGroup),aiLinkage(i_aiLinkage),weapon(i_weapon){}
 	};
 
 	//定数
@@ -102,7 +116,7 @@ protected:
 public:
 	//コンストラクタ系
 	//Unit(Vector2D position,int gHandle,Team::Kind team);
-	Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team);
+	Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage=std::set<int>{});
 	Unit(const Unit &u);
 	~Unit();
 	//演算子オーバーロード
@@ -123,6 +137,7 @@ public:
 	float ConsumeOPByCost(float cost);//costを指定してOPを消費する関数。消費OP増加などの実装があったらここを弄れば良い。基本的にこの関数を用いてOP操作をする。
 	float ConsumeOPVirtualByCost(float cost)const;//もしConsumeOPByCost()をしたらOPはどんな値になるかを返す
 	float SetOP(float op);//Unit::OPをopの値にする。移動巻き戻しや行動順制御など、ConsumeOPByCost()を用いることができない時に用いる。
+	void BecomeAssultAI();//自分が連動迎撃型AIであれば、この関数を呼び出されたら突撃型AIになる
 	void DrawMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)
 	void DrawMoveInfo(Vector2D point,Vector2D adjust)const;//移動範囲関連の情報を描画する関数
 	void DrawMaxMoveInfo(Vector2D adjust=Vector2D())const;//移動範囲最大の移動範囲関連の情報を描画する関数(VDraw()と同じようなオーバーロードをする)
@@ -144,7 +159,7 @@ public:
 
 	//静的関数
 public:
-	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team);//モブユニットを動的生成する。
+	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage);//モブユニットを動的生成する。
 
 };
 

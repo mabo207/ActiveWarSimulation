@@ -66,7 +66,7 @@ unsigned int Unit::Team::GetColor(Kind kind,int degree,int red,int green,int blu
 	case(e_enemy):
 		r=255;
 		g=32;
-		b=64;
+		b=128;
 		break;
 	default:
 		r=128;
@@ -89,6 +89,14 @@ bool Unit::Team::JudgeFriend(Kind team1,Kind team2){
 	return false;
 }
 
+//------------Unit::AIType--------------
+Unit::AIType::Kind Unit::AIType::link(int num){
+	if(num>=0 && num<END){
+		return static_cast<Kind>(num);
+	}
+	return END;
+}
+
 //------------Unit::BattleStatus---------------
 const float Unit::BattleStatus::maxOP=100.0f+Unit::reduceStartActionCost+0.0001f;//キリの良い整数より少しだけ大きくする事でOPをmaxOPまで増やす時にOPが計算誤差で半端な整数にならないようにする。
 
@@ -100,9 +108,10 @@ const float Unit::attackCost=50.0f;
 
 const int Unit::hpFontSize=20;
 
-Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team)
+Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
-	,m_baseStatus(baseStatus),m_battleStatus(100,Unit::BattleStatus::maxOP,team,weapon)
+	,m_baseStatus(baseStatus)
+	,m_battleStatus(100,Unit::BattleStatus::maxOP,team,aitype,aiGroup,aiLinkage,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
 //	,m_hpFont(CreateFontToHandleEX("04かんじゅくゴシック",hpFontSize,2,DX_FONTTYPE_EDGE,-1,2))
 	,m_hpFont(LoadFontDataToHandleEX("Font/UnitHPFont.dft",2))
@@ -182,6 +191,12 @@ float Unit::ConsumeOPVirtualByCost(float cost)const{
 
 float Unit::SetOP(float op){
 	return m_battleStatus.OP=op;
+}
+
+void Unit::BecomeAssultAI(){
+	if(m_battleStatus.aitype==AIType::e_linkageIntercept){
+		m_battleStatus.aitype=AIType::e_assult;
+	}
 }
 
 void Unit::DrawMoveInfo(Vector2D adjust)const{
@@ -392,7 +407,7 @@ std::shared_ptr<BattleObject> Unit::VCopy()const{
 	return std::shared_ptr<BattleObject>(new Unit(*this));
 }
 
-Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team){
+Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage){
 	BaseStatus baseStatus;
 	std::shared_ptr<Weapon> weapon;
 	int gHandle=-1;
@@ -423,5 +438,5 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 		gHandle=LoadGraphEX("Graphic/nonfree/healer.png");
 		break;
 	}
-	return new Unit(baseStatus,weapon,position,gHandle,team);
+	return new Unit(baseStatus,weapon,position,gHandle,team,aitype,aiGroup,aiLinkage);
 }

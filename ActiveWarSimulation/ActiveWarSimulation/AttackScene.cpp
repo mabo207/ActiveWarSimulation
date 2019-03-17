@@ -23,10 +23,16 @@ AttackScene::AttackScene(std::shared_ptr<BattleSceneData> data,Unit *aimedUnit)
 	//攻撃情報の記録
 	m_attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,m_aimedUnit);
 	m_damageFont=CreateFontToHandleEX("メイリオ",30,4,DX_FONTTYPE_ANTIALIASING_EDGE);
+
+	LoadDivGraph("Graphic/effect/zangeki.png",30,30,1,100,100,m_effect);
 }
 
 AttackScene::~AttackScene(){
 	DeleteFontToHandleEX(m_damageFont);
+
+	for(size_t i=0;i<30;i++){
+		DeleteGraph(m_effect[i]);
+	}
 }
 
 void AttackScene::ProcessAttack(){
@@ -99,6 +105,11 @@ void AttackScene::thisDraw()const{
 	
 	//全ユニットのHPゲージの描画
 	m_battleSceneData->DrawHPGage();
+
+	//エフェクトの描画
+	if(m_attackMotion.GetFrame()<30){
+		//DrawGraph(((int)m_aimedUnit->getPos().x)-50,((int)m_aimedUnit->getPos().y)-50,m_effect[m_attackMotion.GetFrame()],TRUE);
+	}
 
 	//ダメージの描画
 	if(m_attackMotion.GetFrame()>damageBeginFrame){

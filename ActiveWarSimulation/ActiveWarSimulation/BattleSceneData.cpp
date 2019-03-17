@@ -14,6 +14,9 @@ const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter
 const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonConstParameter::gameResolutionX-BattleSceneData::mapDrawSize.y);
 
 BattleSceneData::BattleSceneData(const std::string &stagename)
+	:BattleSceneData(stagename,BattleSceneData::PlayMode::e_normal){}
+
+BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneData::PlayMode playMode)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr)
 	,m_totalOP(0.0f)
@@ -21,8 +24,10 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 //	,m_orderFont(CreateFontToHandle("04かんじゅくゴシック",24,4,DX_FONTTYPE_EDGE,-1,2))
 	,m_turnTimerPic(LoadGraphEX("Graphic/turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
+	,m_playMode(playMode)
 	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
-	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/stage1/"))
+//	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/kabalhill/"))
+	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/wild-road_loop/"))
 	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
 	,m_attackSound(LoadSoundMem("Sound/effect/nonfree/damage.ogg"))
 	,m_healSound(LoadSoundMem("Sound/effect/nonfree/recover.ogg"))
@@ -80,6 +85,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 		} else{
 			//モブ
 			//各値を宣言。設定したかどうかをpairのsecondに格納
+			//こちらは設定必須のもの
 			std::pair<std::string,bool> name;
 			name.second=false;
 			std::pair<Vector2D,bool> pos;
@@ -90,6 +96,15 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 			prof.second=false;
 			std::pair<Unit::Team::Kind,bool> team;
 			team.second=false;
+			Unit::AIType::Kind aitype;
+			int aiGroup;
+			std::set<int> aiLinkage;
+			bool aiFlag=false;
+			//こっちは設定任意のもの
+			std::pair<int,bool> initHP;
+			initHP.second=false;
+			std::pair<float,bool> initOP;
+			initOP.second=false;
 			//各値の読み取り
 			for(const StringBuilder &ssb:sb.m_vec){
 				if(!ssb.m_vec.empty()){
@@ -109,12 +124,38 @@ BattleSceneData::BattleSceneData(const std::string &stagename)
 					} else if(ssb.m_vec[0].GetString()=="team" && ssb.m_vec.size()>=2){
 						team.first=Unit::Team::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
 						team.second=true;
+					} else if(ssb.m_vec[0].GetString()=="ai" && ssb.m_vec.size()>=3){
+						//aiのコンマ列に2つ以上の値が存在しても良いので、複数変数を受け取れるようにできている
+						//1つ目はAIの種類、2つ目は連動型AI用のグループ値、3つ目以降は自由(現状すべての値をaiLinkageに突っ込むようにしている)
+						aitype=Unit::AIType::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
+						aiGroup=std::atoi(ssb.m_vec[2].GetString().c_str());
+						for(size_t i=3,size=ssb.m_vec.size();i<size;i++){
+							aiLinkage.insert(std::atoi(ssb.m_vec[i].GetString().c_str()));
+						}
+						aiFlag=true;
+					} else if(ssb.m_vec[0].GetString()=="initHP" && ssb.m_vec.size()>=2){
+						initHP.first=std::atoi(ssb.m_vec[1].GetString().c_str());
+						initHP.second=true;
+					} else if(ssb.m_vec[0].GetString()=="initOP" && ssb.m_vec.size()>=2){
+						initOP.first=(float)(std::atoi(ssb.m_vec[1].GetString().c_str()));
+						initOP.second=true;
 					}
 				}
 			}
 			//各値からユニットを格納
-			if(name.second && prof.second && lv.second && pos.second && team.second){
-				m_field.push_back(Unit::CreateMobUnit(name.first,prof.first,lv.first,pos.first,team.first));
+			if(name.second && prof.second && lv.second && pos.second && team.second && aiFlag){
+				//設定必須である項目が設定されているか
+				Unit *pu=Unit::CreateMobUnit(name.first,prof.first,lv.first,pos.first,team.first,aitype,aiGroup,aiLinkage);
+				//設定任意である項目の設定
+				if(initHP.second && initHP.first>0 && initHP.first<pu->GetBattleStatus().HP){
+					//HPが0以下だったり最大HPより大きくなったりしないようにする
+					pu->AddHP(initHP.first-pu->GetBattleStatus().HP);
+				}
+				if(initOP.second && initOP.first<Unit::BattleStatus::maxOP){
+					//OPはmaxOPを上回らないようにする。0以下になるのは問題ない
+					pu->SetOP(initOP.first);
+				}
+				m_field.push_back(pu);
 			}
 		}
 	}
@@ -193,7 +234,7 @@ bool BattleSceneData::PositionUpdate(const Vector2D inputVec){
 	Vector2D moveVec;
 	//移動ベクトルの計算
 	bool inputFlag=false;//移動の入力があったかどうか
-	if(m_operateUnit->GetBattleStatus().OP>0.0f){
+	if(CanOperateUnitMove()){
 		//OPが足りないと動けない
 		if(inputVec.sqSize()==0.0f){
 			inputFlag=false;
@@ -288,6 +329,10 @@ Unit *BattleSceneData::GetUnitPointer(Vector2D pos)const{
 		}
 	}
 	return nullptr;
+}
+
+bool BattleSceneData::CanOperateUnitMove()const{
+	return m_operateUnit->GetBattleStatus().OP>0.0f;
 }
 
 void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{
