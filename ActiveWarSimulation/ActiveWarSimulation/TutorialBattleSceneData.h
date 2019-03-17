@@ -23,6 +23,8 @@ public:
 	};
 	//移動に関するチュートリアルデータを管理するクラス
 	struct MoveTutorial:public TutorialBase{
+		static const float minDisplayPopOP;//ポップアップを出す場合は、これ以上のOPから移動しないといけない
+		bool m_displayPopFlag;//目的地点に到達できなかった時にポップアップを出すかどうか
 		const std::shared_ptr<Shape> m_moveTutorialArea;//どこに移動すれば良いか（移動ユニットの中心点がこの図形の中に入れば良い）
 		MoveTutorial(std::shared_ptr<Shape> moveTutorialArea);
 		~MoveTutorial();

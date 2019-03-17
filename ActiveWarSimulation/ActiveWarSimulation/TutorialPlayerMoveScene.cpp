@@ -59,13 +59,27 @@ void TutorialPlayerMoveScene::GoNextTutorial(){
 bool TutorialPlayerMoveScene::TutorialMoveProcess(int retIntPal){
 	if(retIntPal==SceneKind::e_move){
 		//移動をしたことを確認した時のみ、キャストする。
-		const TutorialBattleSceneData::MoveTutorial *data=dynamic_cast<const TutorialBattleSceneData::MoveTutorial *>(m_tutorialBattleSceneData->m_tutorialData[0].get());
-		if(data!=nullptr
-			&& data->m_moveTutorialArea->VJudgePointInsideShape(m_battleSceneData->m_operateUnit->getPos())
-			)
-		{
-			//目的地に移動できたので、次のチュートリアルデータへ更新
-			GoNextTutorial();
+		TutorialBattleSceneData::MoveTutorial *data=dynamic_cast<TutorialBattleSceneData::MoveTutorial *>(m_tutorialBattleSceneData->m_tutorialData[0].get());
+		if(data!=nullptr){
+			//MoveTutorial::m_displayPopFlagの更新
+			if(m_battleSceneData->m_operateUnit->GetBattleStatus().OP>TutorialBattleSceneData::MoveTutorial::minDisplayPopOP){
+				data->m_displayPopFlag=true;
+			}
+			//チュートリアルの状態遷移
+			if(data->m_moveTutorialArea->VJudgePointInsideShape(m_battleSceneData->m_operateUnit->getPos())){
+				//目的地に移動できた場合は、次のチュートリアルデータへ更新
+				GoNextTutorial();
+			} else if(!m_battleSceneData->CanOperateUnitMove() && data->m_displayPopFlag){
+				//ここに来る時点で目的地には到達できていない事は決まっているので条件は１つ省ける
+				//ポップアップを閉じた時にすぐにポップアップが出ないようにする
+				data->m_displayPopFlag=false;
+				//到達していないのに動けなくなった場合は、ポップアップを出す
+				const std::string fileName="Stage/"+m_tutorialBattleSceneData->m_stageName+"/nonfree/tutorial5.png";
+				const std::shared_ptr<TutorialBattleSceneData::TutorialBase> insertData(new TutorialBattleSceneData::ExplainTutorial(fileName.c_str()));
+				m_tutorialBattleSceneData->m_tutorialData.insert(m_tutorialBattleSceneData->m_tutorialData.begin(),insertData);
+				//フラグの更新
+				UpdateFlagOnlyInherit();
+			}
 		}
 		return false;//移動が行われた時は常に遷移処理を行わない
 	} else{

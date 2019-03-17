@@ -6,9 +6,12 @@
 #include"BattleSceneData.h"
 
 //----------------TutorialBattleSceneData::MoveTutorial----------------------
+const float TutorialBattleSceneData::MoveTutorial::minDisplayPopOP=60.0f;
+
 TutorialBattleSceneData::MoveTutorial::MoveTutorial(std::shared_ptr<Shape> moveTutorialArea)
 	:TutorialBase(TutorialKind::e_move)
 	,m_moveTutorialArea(moveTutorialArea)
+	,m_displayPopFlag(false)
 {}
 
 TutorialBattleSceneData::MoveTutorial::~MoveTutorial(){}
