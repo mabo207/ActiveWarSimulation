@@ -178,6 +178,9 @@
     <ClCompile Include="SystemMenu.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="ToolsLib.cpp" />
+    <ClCompile Include="TutorialBattleSceneData.cpp" />
+    <ClCompile Include="TutorialPlayerMoveScene.cpp" />
+    <ClCompile Include="TutorialScene.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="AttackScene.cpp" />
     <ClCompile Include="Weapon.cpp" />
@@ -213,6 +216,9 @@
     <ClInclude Include="ResearchScene.h" />
     <ClInclude Include="SwitchUnitScene.h" />
     <ClInclude Include="ToolsLib.h" />
+    <ClInclude Include="TutorialBattleSceneData.h" />
+    <ClInclude Include="TutorialPlayerMoveScene.h" />
+    <ClInclude Include="TutorialScene.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="AttackScene.h" />
     <ClInclude Include="Weapon.h" />

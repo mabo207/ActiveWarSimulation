@@ -19,8 +19,9 @@ MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_moveFrame(0)
 	,m_battleSceneData(battleSceneData)
 	,m_operatedCursor(LoadGraphEX("Graphic/operatedCursor.png"))
-	,m_predictExplainFont(CreateFontToHandleEX("メイリオ",16,2,DX_FONTTYPE_ANTIALIASING_EDGE_4X4))
-	,m_predictNumberFont(CreateFontToHandleEX("メイリオ",48,8,DX_FONTTYPE_ANTIALIASING_EDGE_4X4))
+	,m_cannotMovePic(LoadGraphEX("Graphic/cannotWalk.png"))
+	,m_predictExplainFont(CreateFontToHandleEX("メイリオ",20,3,DX_FONTTYPE_ANTIALIASING_EDGE_4X4))
+	,m_predictNumberFont(CreateFontToHandleEX("メイリオ",56,8,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,3))
 {
 	LoadDivGraphEX("Graphic/attackedCursor.png",attackedCursorPicNum,attackedCursorPicNum,1,60,66,m_attackedCursor);
 	//m_aimedUnit等の初期化
@@ -29,6 +30,7 @@ MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 
 MoveScene::~MoveScene(){
 	DeleteGraphEX(m_operatedCursor);
+	DeleteGraphEX(m_cannotMovePic);
 	for(size_t i=0;i<attackedCursorPicNum;i++){
 		DeleteGraphEX(m_attackedCursor[i]);
 	}
@@ -295,11 +297,16 @@ void MoveScene::thisDraw()const{
 		m_battleSceneData->m_operateUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),true,true);
 		m_battleSceneData->m_operateUnit->DrawMoveInfo();//移動情報の描画
 
-
 		//全ユニットのHPゲージの描画
 		m_battleSceneData->DrawHPGage();
 
 		//アイコン等を描く
+		//移動できない時のアイコン
+		if(!m_battleSceneData->CanOperateUnitMove()){
+			//移動できない場合
+			const Vector2D v=m_battleSceneData->m_operateUnit->getPos();
+			DrawGraph(((int)v.x)+5,((int)v.y)-10,m_cannotMovePic,TRUE);
+		}
 		//ユニットのオーダー順番を描画
 		m_battleSceneData->DrawOrder(std::set<const BattleObject *>{pMouseUnit});//マウスが指している、行動範囲を表示しているユニットはオーダーと線で結ぶ
 		//狙っているユニット

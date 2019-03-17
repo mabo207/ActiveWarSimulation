@@ -5,6 +5,8 @@
 #include"StageClearSceme.h"
 #include"GraphicControl.h"
 
+#include"TutorialPlayerMoveScene.h"
+
 //------------------SwitchUnitScene-------------------
 SwitchUnitScene::SwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_switch)
@@ -26,6 +28,16 @@ SwitchUnitScene::~SwitchUnitScene(){
 
 int SwitchUnitScene::CalculateTurn()const{
 	return (int)(m_battleSceneData->m_totalOP/Unit::BattleStatus::maxOP)+1;
+}
+
+std::shared_ptr<BattleSceneElement> SwitchUnitScene::GetPlayerMoveScene()const{
+	if(m_battleSceneData->m_playMode!=BattleSceneData::PlayMode::e_tutorial){
+		//通常バトルである場合はPlayerMoveSceneへ
+		return std::shared_ptr<BattleSceneElement>(new PlayerMoveScene(m_battleSceneData));
+	} else{
+		//チュートリアルである場合はTutorialPlayerMoveSceneへ
+		return std::shared_ptr<BattleSceneElement>(new TutorialPlayerMoveScene(m_battleSceneData));
+	}
 }
 
 int SwitchUnitScene::thisCalculate(){
@@ -82,7 +94,7 @@ int SwitchUnitScene::UpdateNextScene(int index){
 	case(SceneKind::e_move):
 		if(m_battleSceneData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player){
 			//プレイヤーキャラなら自操作クラスへ
-			m_nextScene=std::shared_ptr<BattleSceneElement>(new PlayerMoveScene(m_battleSceneData));
+			m_nextScene=GetPlayerMoveScene();
 		} else{
 			//それ以外ならAI操作クラスへ
 			m_nextScene=std::shared_ptr<BattleSceneElement>(new ComputerMoveScene(m_battleSceneData));

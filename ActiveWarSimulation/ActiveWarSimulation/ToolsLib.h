@@ -198,12 +198,13 @@ public:
 	enum FUNCTION{
 		FUNCTION_LINER,
 		FUNCTION_QUAD,
-		FUNCTION_EXPO
+		FUNCTION_EXPO,
+		FUNCTION_BACK
 	};
 	//変数
 protected:
 	int frame,maxframe;//フレーム数の管理。frameはmaxframeを超えて増加する。
-	int x,startx,endx;//数値xの管理
+	int startx,endx;//数値xの管理
 	TYPE type;//変化形式
 	FUNCTION function;//使用する関数
 	double degree;//変化度合い
@@ -218,9 +219,7 @@ public:
 	void EnforceEnd();//強制的に動作後にする
 	void Retry();//動作をリセットしてやり直す
 	void Retry(int i_startx);//動作をリセットしてやり直す。スタート位置も変える
-	int GetX()const{
-		return x;
-	}
+	int GetX()const;
 	int GetstartX()const{
 		return startx;
 	}
@@ -242,6 +241,7 @@ public:
 	double GetDegree()const{
 		return degree;
 	}
+	double GetRate()const;
 	void SetMaxFrame(int frame,bool targetinitflag);
 	virtual bool GetEndFlag()const;//動作が終了しているかを判定する
 };
@@ -307,6 +307,9 @@ public:
 	}
 	double GetDegree()const{
 		return x.GetDegree();
+	}
+	double GetRate()const{
+		return x.GetRate();
 	}
 	void SetMaxFrame(int frame,bool targetinitflag);
 	virtual bool GetEndFlag()const;//動作が終了しているかを判定する

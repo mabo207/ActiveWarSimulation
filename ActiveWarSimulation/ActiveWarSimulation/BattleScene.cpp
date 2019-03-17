@@ -8,17 +8,20 @@
 //----------------------BattleScene----------------------
 const int BattleScene::resetInterval=60;
 
-BattleScene::BattleScene(const char *stagename)
+BattleScene::BattleScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:MainControledGameScene()
 	,m_resetFlag(false)
 	,m_resetFrame(0)
-	,m_battleSceneData(new BattleSceneData(stagename))
+	,m_battleSceneData(battleSceneData)
 {
 	//bgmÄ¶
 	PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);
 	//m_sceneData‚Ì‰Šú‰»AÅ‰‚Í‚Ğ‚Æ‚Ü‚¸ˆÚ“®‚Å
 	m_sceneData=VGetSwitchUnitScene();
 }
+
+BattleScene::BattleScene(const char *stagename)
+	:BattleScene(std::shared_ptr<BattleSceneData>(new BattleSceneData(stagename))){}
 
 BattleScene::~BattleScene(){}
 

@@ -36,6 +36,7 @@ protected:
 	
 	//関数
 protected:
+	BattleScene(std::shared_ptr<BattleSceneData> battleSceneData);//継承クラス用コンストラクタ
 	virtual std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
 	void ResetGame();
 

@@ -66,7 +66,7 @@ unsigned int Unit::Team::GetColor(Kind kind,int degree,int red,int green,int blu
 	case(e_enemy):
 		r=255;
 		g=32;
-		b=64;
+		b=128;
 		break;
 	default:
 		r=128;
