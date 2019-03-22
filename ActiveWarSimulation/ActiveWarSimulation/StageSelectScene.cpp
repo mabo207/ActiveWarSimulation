@@ -24,7 +24,6 @@ StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::Requi
 {
 //	FpsMeasuring fps;
 	//フォルダを検索
-//	fps.RecordTime();
 	char cdir[1024];
 	GetCurrentDirectory(1024,cdir);
 	const std::string cdir_str(cdir);
@@ -46,8 +45,6 @@ StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::Requi
 		return s;
 	};
 	std::vector<std::string> dirNameVec;
-//	const double t1=fps.GetProcessedTime();
-//	fps.RecordTime();
 	do{
 		if(hFind!=INVALID_HANDLE_VALUE){
 			const std::string filename=GetFileName(find_dir_data);
@@ -62,14 +59,11 @@ StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::Requi
 			}
 		}
 	} while(FindNextFile(hFind,&find_dir_data));
-//	const double t2=fps.GetProcessedTime();
-//	fps.RecordTime();
 	//各フォルダの中身を検索して、StageInfoを構成していく
 	for(const std::string &dirName:dirNameVec){
-		if(dirName!="demo"){
+		if(dirName!="demo" && dirName!="tutorial" && dirName!="tutorial_2"){
 			m_stageInfoVec.push_back(StageInfo(
-				LoadGraphEX(("Stage/"+dirName+"/nonfree/map.png").c_str())
-//				LoadGraphEX(("Stage/"+dirName+"/nonfree/minimap.png").c_str())
+				LoadGraphEX(("Stage/"+dirName+"/nonfree/minimap.png").c_str())
 				,dirName
 				,FileStrRead(("Stage/"+dirName+"/stageName.txt").c_str())
 				,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
@@ -82,8 +76,6 @@ StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::Requi
 	} else{
 		m_selectStageIndex=0;
 	}
-//	const double t3=fps.GetProcessedTime();
-//	int a=0;
 }
 
 StageSelectScene::~StageSelectScene(){
