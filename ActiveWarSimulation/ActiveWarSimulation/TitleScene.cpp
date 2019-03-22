@@ -10,6 +10,7 @@
 #include"DemoScene.h"
 #include"TutorialScene.h"
 #include"GeneralPurposeResourceManager.h"
+#include"CommonConstParameter.h"
 
 //-------------------TitleScene-------------------
 std::string TitleScene::SelectItem::GetString(const Kind kind){
@@ -43,18 +44,17 @@ std::shared_ptr<Shape> TitleScene::MakeHexagon(const Vector2D center,const float
 }
 
 const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={
-	Vector2D(1330.0f,630.0f)
-	,Vector2D(1440.0f,820.0f)
-	,Vector2D(1550.0f,630.0f)
-	,Vector2D(1660.0f,820.0f)
-	,Vector2D(1770.0f,630.0f)
+	Vector2D(1450.0f,790.0f)
+	,Vector2D(1530.0f,920.0f)
+	,Vector2D(1610.0f,790.0f)
+	,Vector2D(1690.0f,920.0f)
+	,Vector2D(1770.0f,790.0f)
 };
 
 TitleScene::TitleScene()
 	:MainControledGameScene()
 	,m_backPic(LoadGraphEX("Graphic/nonfree/titleScene.png"))
-	,m_titleLogo(LoadGraphEX("Graphic/titleLogo.png"))
-	,m_itemFont(CreateFontToHandleEX("メイリオ",24,1,-1))
+	,m_itemFont(CreateFontToHandleEX("メイリオ",16,1,-1))
 	,m_bgm(LoadBGMMem("Sound/bgm/nonfree/title/"))
 	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
@@ -65,7 +65,7 @@ TitleScene::TitleScene()
 {
 	//当たり判定図形の用意
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
-		m_hitJudgeShapeVec[i]=MakeHexagon(strPos[i],120.0f);
+		m_hitJudgeShapeVec[i]=MakeHexagon(strPos[i],80.0f);
 	}
 	//bgm再生
 	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
@@ -74,7 +74,6 @@ TitleScene::TitleScene()
 TitleScene::~TitleScene(){
 	//グラフィック解放
 	DeleteGraphEX(m_backPic);
-	DeleteGraphEX(m_titleLogo);
 	DeleteFontToHandleEX(m_itemFont);
 	//サウンド解放
 	StopSoundMem(m_bgm);
@@ -159,22 +158,22 @@ int TitleScene::thisCalculate(){
 void TitleScene::thisDraw()const{
 	//背景の描画
 	DrawGraph(0,0,m_backPic,TRUE);
-	//タイトルロゴの描画
-	DrawGraph(0,0,m_titleLogo,TRUE);
-	int verX,verY;
-	GetGraphSize(m_titleLogo,&verX,&verY);
-	DrawStringToHandle(verX,verY,"- DigigameExpo 6th Trial Edition -",GetColor(255,255,255),m_itemFont);
+	//バージョン情報
+	const std::string VERSION_STRING="- GAME^3 9th Trial Edition -";
+	const int verX=CommonConstParameter::gameResolutionX-GetDrawStringWidthToHandle(VERSION_STRING.c_str(),VERSION_STRING.size(),m_itemFont);
+	const int verY=CommonConstParameter::gameResolutionY-GetFontSizeToHandle(m_itemFont);
+	DrawStringToHandle(verX,verY,VERSION_STRING.c_str(),GetColor(0,0,0),m_itemFont);
 	//項目の描画
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
 		unsigned int inColor,frameColor,fontColor;
 		int strDy=0;
 		if(i!=m_selectItem){
-			inColor=GetColor(0,128,200);
-			frameColor=GetColor(0,64,128);
+			inColor=GetColor(224,224,224);
+			frameColor=GetColor(32,32,32);
 			fontColor=GetColor(0,0,0);
 		} else{
-			inColor=GetColor(0,64,128);
-			frameColor=GetColor(0,128,200);
+			inColor=GetColor(32,32,32);
+			frameColor=GetColor(224,224,224);
 			fontColor=GetColor(255,255,255);
 			strDy=std::abs((int)(std::cos(M_PI*2*m_frame/120)*5.0));
 		}
