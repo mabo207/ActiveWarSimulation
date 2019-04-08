@@ -108,6 +108,7 @@ std::pair<bool,int> PlayerMoveScene::WaitProcess(){
 	if(
 		(
 			keyboard_get(KEY_INPUT_V)==1
+			|| mouse_get(MOUSE_INPUT_MIDDLE)==1
 			|| m_waitButton.JudgePressMoment()
 			)
 		&& m_waitableOnlyChangeInherit

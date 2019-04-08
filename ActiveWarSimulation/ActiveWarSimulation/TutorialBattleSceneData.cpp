@@ -113,7 +113,7 @@ TutorialBattleSceneData::WaitTutorial::WaitTutorial()
 TutorialBattleSceneData::WaitTutorial::~WaitTutorial(){}
 
 void TutorialBattleSceneData::WaitTutorial::DrawSupplement(int font)const{
-	const int width=650,height=160;
+	const int width=650,height=195;
 	const int x=CommonConstParameter::gameResolutionX-width,y=((int)BattleSceneData::mapDrawSize.y)-height;
 	//黒バックを半透明で描画
 	int mode,pal;
@@ -125,7 +125,8 @@ void TutorialBattleSceneData::WaitTutorial::DrawSupplement(int font)const{
 	DrawStringNewLineToHandle(x+5,y+5,width-10,height-10
 		,"その場で待機してみよう。\n\n"
 		"待機\n"
-		"　マウス　　　：右下のNEXTボタンを左クリック\n"
+		"　マウス　　　：マウスホイールを押す\n"
+		"　　　　または　右下のNEXTボタンを左クリック\n"
 		"　ゲームパッド：ボタン２\n"
 		"　キーボード　：Vキー"
 		,GetColor(255,255,255),font,2);
