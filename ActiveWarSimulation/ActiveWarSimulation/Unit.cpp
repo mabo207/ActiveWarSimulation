@@ -340,8 +340,15 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 //		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,255);
 		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//面
-		SetDrawBlendMode(mode,pal);
 		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
+		//選択ユニットの当たり判定部分の輝度加算
+		if(animationFlag){
+			const int addMax=120;
+			SetDrawBlendMode(DX_BLENDMODE_ADD,(frame%60)*(60-frame%60)*addMax/900);
+			m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//面
+			m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
+		}
+		SetDrawBlendMode(mode,pal);
 	}
 	//アニメーションパラメータの設定
 	int ux=(int)(pos.x),uy=(int)(pos.y);
@@ -359,6 +366,7 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 	}
 	//ユニットグラフィックを描画
 	DrawRotaGraph3(ux,uy,cx,cy,exRateX,exRateY,angle,m_gHandle,TRUE,FALSE);
+
 	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
 }
