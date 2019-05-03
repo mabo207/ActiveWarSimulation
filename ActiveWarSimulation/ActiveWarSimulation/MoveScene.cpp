@@ -356,8 +356,6 @@ int MoveScene::UpdateNextScene(int index){
 		m_nextScene=std::shared_ptr<BattleSceneElement>(new ResearchScene(m_battleSceneData));
 		return index;
 	case(SceneKind::e_systemMenu):
-		//スコアシステム処理
-
 		m_nextScene=std::shared_ptr<BattleSceneElement>(new SystemMenu(m_battleSceneData));
 		return index;
 	case(0):

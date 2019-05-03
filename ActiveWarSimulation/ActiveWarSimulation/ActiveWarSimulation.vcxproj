@@ -153,6 +153,7 @@
     <ClCompile Include="..\FieldBase\ShapeHaving.cpp" />
     <ClCompile Include="..\StageEditor\BattleObject.cpp" />
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
+    <ClCompile Include="LogElement.cpp" />
     <ClCompile Include="BattleScene.cpp" />
     <ClCompile Include="BattleSceneData.cpp" />
     <ClCompile Include="BattleSceneElement.cpp" />
@@ -172,6 +173,7 @@
     <ClCompile Include="PlayerMoveScene.cpp" />
     <ClCompile Include="MyPolygon.cpp" />
     <ClCompile Include="ResearchScene.cpp" />
+    <ClCompile Include="ScoreObserver.cpp" />
     <ClCompile Include="StageClearScene.cpp" />
     <ClCompile Include="StageSelectScene.cpp" />
     <ClCompile Include="SwitchUnitScene.cpp" />
@@ -183,6 +185,7 @@
     <ClCompile Include="TutorialScene.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="AttackScene.cpp" />
+    <ClCompile Include="WaitLog.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +195,7 @@
     <ClInclude Include="..\FieldBase\ShapeHaving.h" />
     <ClInclude Include="..\StageEditor\BattleObject.h" />
     <ClInclude Include="..\StageEditor\Terrain.h" />
+    <ClInclude Include="LogElement.h" />
     <ClInclude Include="BattleScene.h" />
     <ClInclude Include="BattleSceneData.h" />
     <ClInclude Include="BattleSceneElement.h" />
@@ -205,6 +209,7 @@
     <ClInclude Include="GeneralPurposeResourceManager.h" />
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
+    <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="StageClearSceme.h" />
     <ClInclude Include="StageSelectScene.h" />
     <ClInclude Include="SystemMenu.h" />
@@ -221,6 +226,7 @@
     <ClInclude Include="TutorialScene.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="AttackScene.h" />
+    <ClInclude Include="WaitLog.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
