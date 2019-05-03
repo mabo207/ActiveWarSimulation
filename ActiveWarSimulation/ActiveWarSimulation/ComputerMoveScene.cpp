@@ -409,9 +409,6 @@ int ComputerMoveScene::thisCalculate(){
 			if(JudgeAttackCommandUsable() && m_aimedUnit==m_targetUnit && m_attackFailedInfo.JudgeAttackProcessProceed()){
 				//m_aimerUnitがAIが決めていた攻撃対象に一致した時、攻撃処理を行う
 				//ただし、m_attackFailedInfoから分かる再移動の際は規定フレームを待つ
-				//FinishUnitOperation();//行動終了処理(あとで)
-				//return SceneKind::e_attackNormal;//攻撃場面へ
-				//m_nextScene=SceneKind::e_attackNormal;//BranchingWaitingProcess()を用いて、効果がない行動をしないようにする。
 				m_nextScene=BranchingWaitingProcess();
 				m_actionWaiting=true;
 			} else if(m_targetUnit!=nullptr && m_battleSceneData->m_operateUnit->JudgeAttackable(m_targetUnit) && m_aimedUnit!=m_targetUnit){
@@ -427,7 +424,6 @@ int ComputerMoveScene::thisCalculate(){
 				)
 			{
 				//移動できなくなったら、または10秒経ったら待機
-				//return BranchingWaitingProcess();//行動対象がいれば行動する
 				m_nextScene=BranchingWaitingProcess();
 				m_actionWaiting=true;
 			} else if((moveSqLength<0.1f && processedFrame>120)){
@@ -435,7 +431,6 @@ int ComputerMoveScene::thisCalculate(){
 				if(m_latticeRoute.size()<2){
 					//進む場所がないまたは最後の1点にたどり着かずに止まっている場合は待機でよい
 					//最後の1点の場合も待機を行う理由は、先頭点を進入不可にする事でルート変更を行うが、最後の1点は大抵は元々進入不可でルートが変わらず、無限ループとなってしまうから。
-					//return BranchingWaitingProcess();//行動対象がいれば行動する
 					m_nextScene=BranchingWaitingProcess();
 					m_actionWaiting=true;
 				} else{
@@ -459,16 +454,18 @@ int ComputerMoveScene::thisCalculate(){
 				//攻撃選択の場合、JudgeAttackCommandUsable()をする。図形押し出し処理の影響で、「攻撃できると思ったらできない」が発生する事があるため。
 				//こうなるパターンは様々あるため、１度だけ再探索を行わせ、それでもダメなら待機する処理にする。
 				if(m_attackFailedInfo.JudgeRetry()){
-					//規定回数内の失敗の時
+					//規定回数内の失敗の時、やり直しをする
 					m_actionWaiting=!m_actionWaiting;
 					m_waitingFrame=0;
 					m_attackFailedInfo.RetryProcess();
 				}else{
+					//やり直し回数をオーバーしたら、もう何もせずにターン終了
 					FinishUnitOperation();//再現が難しすぎるので、自然発生的に発生するのを待つ
 					m_battleSceneData->m_fpsMesuring.RecordTime();
 					return 0;
 				}
 			} else{
+				//問題なく行動できるなら、行動処理に移行する
 				m_battleSceneData->m_fpsMesuring.RecordTime();
 				return m_nextScene;
 			}

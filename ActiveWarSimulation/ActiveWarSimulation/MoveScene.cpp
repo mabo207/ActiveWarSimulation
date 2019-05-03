@@ -347,14 +347,26 @@ int MoveScene::UpdateNextScene(int index){
 	switch(index){
 	case(SceneKind::e_attackNormal):
 		m_nextScene=std::shared_ptr<BattleSceneElement>(new AttackScene(m_battleSceneData,m_aimedUnit));
+		//スコアシステム処理
+
 		return index;
 	case(SceneKind::e_research):
+		//スコアシステム処理
+
 		m_nextScene=std::shared_ptr<BattleSceneElement>(new ResearchScene(m_battleSceneData));
 		return index;
 	case(SceneKind::e_systemMenu):
+		//スコアシステム処理
+
 		m_nextScene=std::shared_ptr<BattleSceneElement>(new SystemMenu(m_battleSceneData));
 		return index;
+	case(0):
+		//待機する時
+		//スコアシステム処理
+
+		return index;
 	default:
+		//移動場面を続ける場合など
 		return index;
 	}
 }
