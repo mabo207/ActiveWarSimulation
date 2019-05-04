@@ -40,6 +40,8 @@ private:
 	virtual ~ScoreObserver();
 
 	std::vector<std::shared_ptr<LogElement>> m_logList;
+	size_t m_researchCount;
+	size_t m_cancelCount;
 };
 
 #endif // !DEF_SCOREOBSERVER_H
