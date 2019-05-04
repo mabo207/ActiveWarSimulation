@@ -6,6 +6,10 @@
 #include"Unit.h"
 #include"Terrain.h"
 #include"ToolsLib.h"
+#include"ScoreObserver.h"
+
+//"BattleSceneData.h"と"ScoreSystem.h"と"LogElement.h"は循環参照
+class ScoreObserver;
 
 //バトル場面で、各クラスに渡すゲーム全体で扱うデータを一括管理するクラス
 struct BattleSceneData{
@@ -33,6 +37,7 @@ public:
 
 	//評価に使用する変数
 	float m_totalOP;//今までに消費されたOPの合計値。ターン数を計測するのに使う。
+	std::shared_ptr<ScoreObserver> m_scoreObserver;
 
 	//描画に必要な変数
 	std::shared_ptr<Terrain> m_mapRange;//マップ全体を表す線分(対角線)

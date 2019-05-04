@@ -4,8 +4,11 @@
 #include<vector>
 #include<memory>
 #include<set>
-#include"BattleSceneData.h"
 #include"LogElement.h"
+
+//"BattleSceneData.h"と"ScoreSystem.h"と"LogElement.h"は循環参照
+struct BattleSceneData;
+class LogElement;
 
 class ScoreObserver{
 public:
@@ -29,15 +32,16 @@ public:
 	};
 
 	//各場面に応じたスコアの更新処理
-	void AttackUpdate(const BattleSceneData * const battleData,const Unit * const aimedUnit);
+	void AttackUpdate(const std::shared_ptr<const BattleSceneData> battleData,const Unit * const aimedUnit);
 	void ResearchUpdate();
-	void WaitUpdate(const BattleSceneData * const battleData);
+	void WaitUpdate(const std::shared_ptr<const BattleSceneData> battleData);
 	void CancelUpdate();
-	void ClearUpdate(const BattleSceneData * const battleData);
+	void ClearUpdate(const std::shared_ptr<const BattleSceneData> battleData);
 
-private:
 	ScoreObserver();
 	virtual ~ScoreObserver();
+
+private:
 
 	std::vector<std::shared_ptr<LogElement>> m_logList;
 	size_t m_researchCount;

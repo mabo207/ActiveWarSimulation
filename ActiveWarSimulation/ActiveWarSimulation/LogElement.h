@@ -2,8 +2,12 @@
 #define DEF_LOGELEMENT_H
 
 #include"Unit.h"
-#include<BattleSceneData.h>
+#include"BattleSceneData.h"
 #include<list>
+#include<memory>
+
+//"BattleSceneData.h"と"ScoreSystem.h"と"LogElement.h"は循環参照
+struct BattleSceneData;
 
 //全ての種類のログの基本となるもの
 class LogElement{
@@ -44,7 +48,7 @@ public:
 		const std::string name;
 	};
 
-	LogElement(LogKind kind,const BattleSceneData * const battleData);
+	LogElement(LogKind kind,const std::shared_ptr<const BattleSceneData> battleData);
 	virtual ~LogElement(){}
 	LogKind GetLogKind()const{
 		return m_kind;
@@ -54,7 +58,7 @@ protected:
 	const std::vector<UnitLogData> m_unitDataList;
 
 private:
-	static std::vector<UnitLogData> CreateUnitDataList(const BattleSceneData * const battleData);
+	static std::vector<UnitLogData> CreateUnitDataList(const std::shared_ptr<const BattleSceneData> battleData);
 
 	const LogKind m_kind;
 };

@@ -1,12 +1,12 @@
 #include"LogElement.h"
 #include<algorithm>
 
-LogElement::LogElement(LogKind kind,const BattleSceneData * const battleData)
+LogElement::LogElement(LogKind kind,const std::shared_ptr<const BattleSceneData> battleData)
 	:m_kind(kind)
 	,m_unitDataList(CreateUnitDataList(battleData))
 {}
 
-std::vector<LogElement::UnitLogData> LogElement::CreateUnitDataList(const BattleSceneData * const battleData){
+std::vector<LogElement::UnitLogData> LogElement::CreateUnitDataList(const std::shared_ptr<const BattleSceneData> battleData){
 	std::vector<UnitLogData> retVec;
 	const size_t vecSize=battleData->m_unitList.size();
 	retVec.reserve(vecSize);

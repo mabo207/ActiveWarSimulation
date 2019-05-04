@@ -150,7 +150,7 @@ std::pair<bool,int> PlayerMoveScene::CancelProcess(){
 			PositionUpdate(Vector2D());
 		}
 		//スコアシステム処理
-
+		m_battleSceneData->m_scoreObserver->CancelUpdate();
 		//キャンセル処理をしたので、trueを返す
 		return std::pair<bool,int>(true,SceneKind::e_move);
 	}
