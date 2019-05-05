@@ -305,6 +305,65 @@ std::string ScoreObserver::GetScoreExplain()const{
 			}
 		}
 	}
+	//–‚“¹mŠÖ˜A
+	{
+		size_t armerAttackCount=0;//d‘••ºUŒ‚‰ñ”
+		size_t nearAttackedCount=0;//‹ßÚUŒ‚”í’e‰ñ”
+		for(const std::shared_ptr<const LogElement> logData:m_logList){
+			if(logData->GetLogKind()==LogElement::LogKind::e_attack){
+				const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(logData);
+				if(attackLog.get()!=nullptr
+					&& attackLog->GetOperateUnitData().punit!=nullptr
+					&& attackLog->GetAimedUnit()!=nullptr)
+				{
+					//d‘••º‚Ö‚ÌUŒ‚
+					if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_player
+						&& attackLog->GetOperateUnitData().punit->GetBaseStatus().profession==Unit::Profession::e_mage
+						&& attackLog->GetAimedUnit()->GetBaseStatus().profession==Unit::Profession::e_armer)
+					{
+						armerAttackCount++;
+					}
+					//‹ßÚUŒ‚‚Ì”í’e
+					if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_enemy
+						&& attackLog->GetAimedUnit()->GetBaseStatus().profession==Unit::Profession::e_mage)
+					{
+						switch(attackLog->GetOperateUnitData().punit->GetBaseStatus().profession){
+						case(Unit::Profession::e_soldier):
+						case(Unit::Profession::e_armer):
+							nearAttackedCount++;
+							break;
+						}
+					}
+				}
+			}
+		}
+		const auto judgeExistMage=[&judgeExistProfession](const LogElement::UnitLogData &logData){
+			return judgeExistProfession(logData,Unit::Profession::e_mage);
+		};
+		if(initLog->JudgeEveryUnitData(judgeExistMage,false)){
+			//–‚“¹m‚ª©ŒR‚É‚¢‚éê‡‚Íƒ{[ƒiƒXˆ—‚ğ‚·‚é
+			//d‘••º‚Ö‚ÌUŒ‚‰ñ”
+			size_t armerCount=0;
+			for(const LogElement::UnitLogData &unitData:initLog->m_unitDataList){
+				if(unitData.punit!=nullptr && unitData.punit->GetBaseStatus().profession==Unit::Profession::e_armer){
+					armerCount++;
+				}
+			}
+			if(armerCount>0){
+				const double average=1.0*armerAttackCount/armerCount;
+				if(average>=1.5){
+					bonus.push_back(std::make_pair("d‘••ºƒLƒ‰[",2000));
+				} else if(average>=1.0){
+					bonus.push_back(std::make_pair("–‚“¹m‚Åd‘••º‘_‚¢",1000));
+				}
+			}
+			//‹ßÚUŒ‚”í’e‰ñ”
+			if(nearAttackedCount<=0){
+				bonus.push_back(std::make_pair("–‚“¹m‚ª‹ßÚUŒ‚‚ğó‚¯‚È‚¢",1500));
+			}
+		}
+	}
+	//
 
 	return "";
 }
