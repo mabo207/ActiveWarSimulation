@@ -5,6 +5,7 @@
 #include"BattleSceneData.h"
 #include<list>
 #include<memory>
+#include<functional>
 
 //"BattleSceneData.h"と"ScoreSystem.h"と"LogElement.h"は循環参照
 struct BattleSceneData;
@@ -52,6 +53,7 @@ public:
 		return m_kind;
 	}
 	const UnitLogData GetOperateUnitData()const;
+	bool JudgeEveryUnitData(const std::function<bool(const UnitLogData &)> &func,bool all)const;//allがtrueなら「全て成立」を、falseなら「成立しているものがある」(exist)を調べる。
 
 	const std::vector<UnitLogData> m_unitDataList;
 
