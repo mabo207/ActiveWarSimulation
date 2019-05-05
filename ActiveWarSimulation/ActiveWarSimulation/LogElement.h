@@ -49,6 +49,7 @@ public:
 	LogKind GetLogKind()const{
 		return m_kind;
 	}
+	const Unit *GetOperateUnit()const;
 
 protected:
 	const std::vector<UnitLogData> m_unitDataList;

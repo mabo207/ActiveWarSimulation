@@ -207,6 +207,9 @@
     <ClCompile Include="WaitLog.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
     </ClCompile>
+    <ClCompile Include="AttackLog.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -324,6 +327,9 @@
       <Filter>ヘッダー ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
     </ClInclude>
     <ClInclude Include="WaitLog.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackLog.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,7 +12,8 @@ public:
 	virtual ~WaitLog(){}
 
 private:
-	const std::vector<MoveScene::RouteInfo> m_route;
+	//ƒƒ‚ƒŠ•‰’S‚É‚È‚éã‚É‚¢‚é‚©‚æ‚­•ª‚©‚ç‚È‚¢A‚»‚Ì‚¤‚¿g‚¢‚½‚­‚È‚é‚©‚àB
+	//const std::vector<MoveScene::RouteInfo> m_route;
 };
 
 #endif // !DEF_WAITLOG_H

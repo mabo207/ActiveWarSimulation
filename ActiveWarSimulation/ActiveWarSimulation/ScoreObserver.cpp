@@ -1,8 +1,9 @@
 #include"ScoreObserver.h"
 #include"WaitLog.h"
+#include"AttackLog.h"
 
 void ScoreObserver::AttackUpdate(const std::shared_ptr<const BattleSceneData> battleData,const Unit * const aimedUnit){
-	m_logList.push_back(std::shared_ptr<LogElement>(new WaitLog(battleData)));
+	m_logList.push_back(std::make_shared<AttackLog>(battleData,aimedUnit));
 }
 
 void ScoreObserver::ResearchUpdate(){
@@ -10,7 +11,7 @@ void ScoreObserver::ResearchUpdate(){
 }
 
 void ScoreObserver::WaitUpdate(const std::shared_ptr<const BattleSceneData> battleData){
-	m_logList.push_back(std::shared_ptr<LogElement>(new WaitLog(battleData)));
+	m_logList.push_back(std::make_shared<WaitLog>(battleData));
 }
 
 void ScoreObserver::CancelUpdate(){
