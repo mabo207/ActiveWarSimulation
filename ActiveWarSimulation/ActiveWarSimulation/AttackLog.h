@@ -12,6 +12,7 @@ public:
 	const Unit *GetAimedUnit()const{
 		return m_aimedUnit;
 	}
+	UnitLogData GetAimedUnitData()const;//GetAimedUnit()‚ÌãˆÊŒİŠ·‚Á‚Û‚¢‚ªAˆ—‚ª’x‚¢‚Ì‚Å‚Å‚«‚é‚¾‚¯g‚í‚È‚¢‚æ‚¤‚É‚µ‚½‚¢B
 	Weapon::AttackInfo GetAttackInfo()const;
 
 private:
