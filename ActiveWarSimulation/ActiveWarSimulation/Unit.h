@@ -13,7 +13,7 @@ public:
 	struct Profession{
 		//ХЇОн
 		enum Kind{
-			e_lancer,
+			e_soldier,
 			e_archer,
 			e_armer,
 			e_mage,
