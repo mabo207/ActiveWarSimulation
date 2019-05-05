@@ -319,12 +319,14 @@ std::string ScoreObserver::GetScoreExplain()const{
 					//重装兵への攻撃
 					if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_player
 						&& attackLog->GetOperateUnitData().punit->GetBaseStatus().profession==Unit::Profession::e_mage
+						&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_enemy
 						&& attackLog->GetAimedUnit()->GetBaseStatus().profession==Unit::Profession::e_armer)
 					{
 						armerAttackCount++;
 					}
 					//近接攻撃の被弾
 					if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_enemy
+						&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player
 						&& attackLog->GetAimedUnit()->GetBaseStatus().profession==Unit::Profession::e_mage)
 					{
 						switch(attackLog->GetOperateUnitData().punit->GetBaseStatus().profession){
@@ -363,7 +365,69 @@ std::string ScoreObserver::GetScoreExplain()const{
 			}
 		}
 	}
-	//
+	//衛生兵関連
+	{
+		size_t physicAttackedCount=0;//物理攻撃被弾回数
+		int totalRecoverPoint=0;//合計回復量
+		int totalDamage=0;//合計被ダメージ
+		for(const std::shared_ptr<const LogElement> logData:m_logList){
+			if(logData->GetLogKind()==LogElement::LogKind::e_attack){
+				const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(logData);
+				if(attackLog.get()!=nullptr
+					&& attackLog->GetOperateUnitData().punit!=nullptr
+					&& attackLog->GetAimedUnit()!=nullptr)
+				{
+					//物理攻撃被弾
+					if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_enemy
+						&& attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()==WeaponActionKind::e_physicalAttack
+						&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player
+						&& attackLog->GetAimedUnit()->GetBaseStatus().profession==Unit::Profession::e_healer)
+					{
+						physicAttackedCount++;
+					}
+					//回復量
+					if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_player
+						&& attackLog->GetOperateUnitData().punit->GetBaseStatus().profession==Unit::Profession::e_healer
+						&& attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()==WeaponActionKind::e_recover
+						&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_enemy)
+					{
+						//回復量は負の値で表現される
+						totalRecoverPoint+=-(attackLog->GetAttackInfo().damage);
+					}
+					//被ダメージ
+					if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_enemy
+						&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player)
+					{
+						switch(attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()){
+						case(WeaponActionKind::e_physicalAttack):
+						case(WeaponActionKind::e_magicAttack):
+							totalDamage+=attackLog->GetAttackInfo().damage;
+							break;
+						}
+					}
+				}
+			}
+		}
+		const auto judgeExistHealer=[&judgeExistProfession](const LogElement::UnitLogData &logData){
+			return judgeExistProfession(logData,Unit::Profession::e_healer);
+		};
+		if(initLog->JudgeEveryUnitData(judgeExistHealer,false)){
+			//味方に衛生兵がいる場合、ボーナス処理をする
+			//物理攻撃被弾回数
+			if(physicAttackedCount==0){
+				bonus.push_back(std::make_pair("衛生兵が物理攻撃を受けない",2000));
+			}
+			//回復量
+			if(totalDamage>0){
+				const double rate=1.0*totalRecoverPoint/totalDamage;
+				if(rate>=0.75){
+					bonus.push_back(std::make_pair("回復のスペシャリスト",1500));
+				} else if(rate>=0.50){
+					bonus.push_back(std::make_pair("回復役",1000));
+				}
+			}
+		}
+	}
 
 	return "";
 }
