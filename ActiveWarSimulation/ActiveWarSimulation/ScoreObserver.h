@@ -12,6 +12,7 @@ class LogElement;
 
 class ScoreObserver{
 public:
+/*
 	//スコア計算の項目
 	struct ScoreRule{
 		//どの場面で更新するか
@@ -30,6 +31,7 @@ public:
 		//この項目はどの場面でスコア更新処理をするか(複数場面を想定)
 		const std::set<UpdateScene> m_updateSceneSet;
 	};
+//*/
 
 	//各場面に応じたスコアの更新処理
 	void InitUpdate(const BattleSceneData * const battleData);
@@ -38,7 +40,9 @@ public:
 	void ResearchUpdate();
 	void WaitUpdate(const BattleSceneData * const battleData);
 	void CancelUpdate();
-
+	//スコアの結果出力処理
+	std::string GetScoreExplain()const;
+	//コンストラクタ等
 	ScoreObserver();
 	virtual ~ScoreObserver();
 
