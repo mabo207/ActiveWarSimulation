@@ -51,12 +51,12 @@ public:
 	}
 	const Unit *GetOperateUnit()const;
 
+	const std::vector<UnitLogData> m_unitDataList;
+
 protected:
 	//battleDataは、必要な値を取り出すだけなのでstd::shared_ptr<>である必要はない。
 	LogElement(LogKind kind,const BattleSceneData * const battleData);
 	virtual ~LogElement(){}
-
-	const std::vector<UnitLogData> m_unitDataList;
 
 private:
 	static std::vector<UnitLogData> CreateUnitDataList(const BattleSceneData * const battleData);
