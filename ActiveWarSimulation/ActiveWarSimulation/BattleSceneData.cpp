@@ -337,6 +337,10 @@ bool BattleSceneData::CanOperateUnitMove()const{
 	return m_operateUnit->GetBattleStatus().OP>0.0f;
 }
 
+int BattleSceneData::CalculateTurn()const{
+	return (int)(m_totalOP/Unit::BattleStatus::maxOP)+1;
+}
+
 void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{
 	//背景データをそのまま描画
 	//背景をアニメーションするとかなったらここで処理を記述

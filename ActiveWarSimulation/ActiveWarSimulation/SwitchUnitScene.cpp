@@ -27,7 +27,7 @@ SwitchUnitScene::~SwitchUnitScene(){
 }
 
 int SwitchUnitScene::CalculateTurn()const{
-	return (int)(m_battleSceneData->m_totalOP/Unit::BattleStatus::maxOP)+1;
+	return m_battleSceneData->CalculateTurn();
 }
 
 std::shared_ptr<BattleSceneElement> SwitchUnitScene::GetPlayerMoveScene()const{
