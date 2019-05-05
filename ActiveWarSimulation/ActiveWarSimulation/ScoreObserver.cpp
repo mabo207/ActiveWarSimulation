@@ -5,16 +5,16 @@
 #include"FinishLog.h"
 #include"InitLog.h"
 
-void ScoreObserver::InitUpdate(const std::shared_ptr<const BattleSceneData> battleData){
+void ScoreObserver::InitUpdate(const BattleSceneData * const battleData){
 	m_logList.clear();
 	m_logList.push_back(std::make_shared<InitLog>(battleData));
 }
 
-void ScoreObserver::FinishUpdate(const std::shared_ptr<const BattleSceneData> battleData){
+void ScoreObserver::FinishUpdate(const BattleSceneData * const battleData){
 	m_logList.push_back(std::make_shared<FinishLog>(battleData));
 }
 
-void ScoreObserver::AttackUpdate(const std::shared_ptr<const BattleSceneData> battleData,const Unit * const aimedUnit){
+void ScoreObserver::AttackUpdate(const BattleSceneData * const battleData,const Unit * const aimedUnit){
 	m_logList.push_back(std::make_shared<AttackLog>(battleData,aimedUnit));
 }
 
@@ -22,7 +22,7 @@ void ScoreObserver::ResearchUpdate(){
 	m_researchCount++;
 }
 
-void ScoreObserver::WaitUpdate(const std::shared_ptr<const BattleSceneData> battleData){
+void ScoreObserver::WaitUpdate(const BattleSceneData * const battleData){
 	m_logList.push_back(std::make_shared<WaitLog>(battleData));
 }
 

@@ -52,13 +52,14 @@ public:
 	const Unit *GetOperateUnit()const;
 
 protected:
-	LogElement(LogKind kind,const std::shared_ptr<const BattleSceneData> battleData);
+	//battleDataは、必要な値を取り出すだけなのでstd::shared_ptr<>である必要はない。
+	LogElement(LogKind kind,const BattleSceneData * const battleData);
 	virtual ~LogElement(){}
 
 	const std::vector<UnitLogData> m_unitDataList;
 
 private:
-	static std::vector<UnitLogData> CreateUnitDataList(const std::shared_ptr<const BattleSceneData> battleData);
+	static std::vector<UnitLogData> CreateUnitDataList(const BattleSceneData * const battleData);
 
 	const LogKind m_kind;
 };

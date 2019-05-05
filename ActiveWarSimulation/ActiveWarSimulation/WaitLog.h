@@ -7,7 +7,7 @@
 
 class WaitLog:public LogElement{
 public:
-	explicit WaitLog(const std::shared_ptr<const BattleSceneData> battleData)
+	explicit WaitLog(const BattleSceneData * const battleData)
 		:LogElement(LogKind::e_wait,battleData){}
 	virtual ~WaitLog(){}
 

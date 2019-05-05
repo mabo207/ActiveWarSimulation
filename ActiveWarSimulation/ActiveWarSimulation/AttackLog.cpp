@@ -1,6 +1,6 @@
 #include"AttackLog.h"
 
-AttackLog::AttackLog(const std::shared_ptr<const BattleSceneData> battleData,const Unit * const aimedUnit)
+AttackLog::AttackLog(const BattleSceneData * const battleData,const Unit * const aimedUnit)
 	:LogElement(LogKind::e_attack,battleData)
 	,m_aimedUnit(aimedUnit)
 {}

@@ -6,7 +6,7 @@
 //バトルの最初のユニットの状態を取るログ
 class InitLog:public LogElement{
 public:
-	InitLog(const std::shared_ptr<const BattleSceneData> battleData)
+	InitLog(const BattleSceneData * const battleData)
 		:LogElement(LogKind::e_init,battleData){}
 	virtual ~InitLog(){}
 };

@@ -101,6 +101,7 @@ int SwitchUnitScene::UpdateNextScene(int index){
 		}
 		return index;
 	case(SceneKind::e_clear):
+		m_battleSceneData->m_scoreObserver->FinishUpdate(m_battleSceneData.get());
 		if(m_judgeEnd==JudgeEnd::e_playerWin){
 			//プレイヤーの勝利
 			//撤退数の記録

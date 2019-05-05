@@ -7,7 +7,7 @@
 
 class AttackLog:public LogElement{
 public:
-	AttackLog(const std::shared_ptr<const BattleSceneData> battleData,const Unit * const aimedUnit);
+	AttackLog(const BattleSceneData * const battleData,const Unit * const aimedUnit);
 	virtual ~AttackLog(){}
 	const Unit *GetAimedUnit()const{
 		return m_aimedUnit;

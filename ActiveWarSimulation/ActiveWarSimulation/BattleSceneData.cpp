@@ -168,7 +168,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneD
 	SortUnitList();
 
 	//スコアシステムの初期化
-	
+	m_scoreObserver->InitUpdate(this);
 	//タイマーセット
 	m_fpsMesuring.RecordTime();
 

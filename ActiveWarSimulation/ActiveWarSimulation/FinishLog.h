@@ -6,7 +6,7 @@
 //バトル終了時のユニットの状態を取るログ
 class FinishLog:public LogElement{
 public:
-	FinishLog(const std::shared_ptr<const BattleSceneData> battleData)
+	FinishLog(const BattleSceneData * const battleData)
 		:LogElement(LogKind::e_finish,battleData){}
 	virtual ~FinishLog(){}
 };
