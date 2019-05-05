@@ -210,6 +210,12 @@
     <ClCompile Include="AttackLog.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
     </ClCompile>
+    <ClCompile Include="InitLog.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="FinishLog.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -330,6 +336,12 @@
       <Filter>ヘッダー ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
     </ClInclude>
     <ClInclude Include="AttackLog.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="InitLog.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="FinishLog.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\ScoreObserver\Logger</Filter>
     </ClInclude>
   </ItemGroup>

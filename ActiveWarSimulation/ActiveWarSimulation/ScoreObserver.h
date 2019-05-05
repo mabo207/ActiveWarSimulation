@@ -32,11 +32,12 @@ public:
 	};
 
 	//各場面に応じたスコアの更新処理
+	void InitUpdate(const std::shared_ptr<const BattleSceneData> battleData);
+	void FinishUpdate(const std::shared_ptr<const BattleSceneData> battleData);
 	void AttackUpdate(const std::shared_ptr<const BattleSceneData> battleData,const Unit * const aimedUnit);
 	void ResearchUpdate();
 	void WaitUpdate(const std::shared_ptr<const BattleSceneData> battleData);
 	void CancelUpdate();
-	void ClearUpdate(const std::shared_ptr<const BattleSceneData> battleData);
 
 	ScoreObserver();
 	virtual ~ScoreObserver();

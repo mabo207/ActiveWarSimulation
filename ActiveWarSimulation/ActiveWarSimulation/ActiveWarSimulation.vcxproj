@@ -154,6 +154,8 @@
     <ClCompile Include="..\StageEditor\BattleObject.cpp" />
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
     <ClCompile Include="AttackLog.cpp" />
+    <ClCompile Include="FinishLog.cpp" />
+    <ClCompile Include="InitLog.cpp" />
     <ClCompile Include="LogElement.cpp" />
     <ClCompile Include="BattleScene.cpp" />
     <ClCompile Include="BattleSceneData.cpp" />
@@ -197,6 +199,7 @@
     <ClInclude Include="..\StageEditor\BattleObject.h" />
     <ClInclude Include="..\StageEditor\Terrain.h" />
     <ClInclude Include="AttackLog.h" />
+    <ClInclude Include="FinishLog.h" />
     <ClInclude Include="LogElement.h" />
     <ClInclude Include="BattleScene.h" />
     <ClInclude Include="BattleSceneData.h" />
@@ -214,6 +217,7 @@
     <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="StageClearSceme.h" />
     <ClInclude Include="StageSelectScene.h" />
+    <ClInclude Include="InitLog.h" />
     <ClInclude Include="SystemMenu.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="input.h" />

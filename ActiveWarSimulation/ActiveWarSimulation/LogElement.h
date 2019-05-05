@@ -16,6 +16,8 @@ public:
 	enum class LogKind{
 		e_wait
 		,e_attack
+		,e_init
+		,e_finish
 	};
 	//ユニット1体についてのデータ形式
 	struct UnitLogData{
@@ -44,14 +46,15 @@ public:
 		const Unit * const punit;
 	};
 
-	LogElement(LogKind kind,const std::shared_ptr<const BattleSceneData> battleData);
-	virtual ~LogElement(){}
 	LogKind GetLogKind()const{
 		return m_kind;
 	}
 	const Unit *GetOperateUnit()const;
 
 protected:
+	LogElement(LogKind kind,const std::shared_ptr<const BattleSceneData> battleData);
+	virtual ~LogElement(){}
+
 	const std::vector<UnitLogData> m_unitDataList;
 
 private:

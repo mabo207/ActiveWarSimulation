@@ -166,6 +166,9 @@ BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneD
 	}
 	//m_unitListソートをし直す
 	SortUnitList();
+
+	//スコアシステムの初期化
+	
 	//タイマーセット
 	m_fpsMesuring.RecordTime();
 
