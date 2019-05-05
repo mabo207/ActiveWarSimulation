@@ -21,7 +21,7 @@ void DamageCalculator::VDrawPredict(const int centerX,const int centerY,const in
 
 //---------------PhysicalCalculator-----------------
 PhysicalCalculator::PhysicalCalculator(double powerRate,double defRate,double weaponRate)
-	:DamageCalculator(),m_powerRate(powerRate),m_defRate(defRate),m_weaponRate(weaponRate){}
+	:DamageCalculator(WeaponActionKind::e_physicalAttack),m_powerRate(powerRate),m_defRate(defRate),m_weaponRate(weaponRate){}
 
 PhysicalCalculator::~PhysicalCalculator(){}
 
@@ -48,7 +48,7 @@ std::string PhysicalCalculator::VGetPowerString(const Unit *attacker)const{
 
 //---------------MagicCalculator-----------------
 MagicCalculator::MagicCalculator(double powerRate,double defRate,double weaponRate)
-	:DamageCalculator(),m_powerRate(powerRate),m_defRate(defRate),m_weaponRate(weaponRate){}
+	:DamageCalculator(WeaponActionKind::e_magicAttack),m_powerRate(powerRate),m_defRate(defRate),m_weaponRate(weaponRate){}
 
 MagicCalculator::~MagicCalculator(){}
 
@@ -75,7 +75,7 @@ std::string MagicCalculator::VGetPowerString(const Unit *attacker)const{
 
 //---------------RecoverCalculator-----------------
 RecoverCalculator::RecoverCalculator(double powerRate,double weaponRate)
-	:DamageCalculator(),m_powerRate(powerRate),m_weaponRate(weaponRate){}
+	:DamageCalculator(WeaponActionKind::e_recover),m_powerRate(powerRate),m_weaponRate(weaponRate){}
 
 RecoverCalculator::~RecoverCalculator(){}
 
