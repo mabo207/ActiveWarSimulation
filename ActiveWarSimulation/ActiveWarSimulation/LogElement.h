@@ -27,6 +27,8 @@ public:
 			,pos(i_pos)
 			,punit(i_punit)
 		{}
+		UnitLogData()
+			:UnitLogData(0,0.0f,Vector2D(),nullptr){}
 		explicit UnitLogData(const Unit * const punit)
 			:UnitLogData(punit->GetBattleStatus().HP
 				,punit->GetBattleStatus().OP
@@ -49,7 +51,7 @@ public:
 	LogKind GetLogKind()const{
 		return m_kind;
 	}
-	const Unit *GetOperateUnit()const;
+	const UnitLogData GetOperateUnitData()const;
 
 	const std::vector<UnitLogData> m_unitDataList;
 

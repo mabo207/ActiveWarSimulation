@@ -6,11 +6,11 @@ LogElement::LogElement(LogKind kind,const BattleSceneData * const battleData)
 	,m_unitDataList(CreateUnitDataList(battleData))
 {}
 
-const Unit *LogElement::GetOperateUnit()const{
+const LogElement::UnitLogData LogElement::GetOperateUnitData()const{
 	if(!m_unitDataList.empty()){
-		return m_unitDataList[0].punit;
+		return m_unitDataList[0];
 	}
-	return nullptr;
+	return UnitLogData();
 }
 
 std::vector<LogElement::UnitLogData> LogElement::CreateUnitDataList(const BattleSceneData * const battleData){

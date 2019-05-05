@@ -6,7 +6,7 @@ AttackLog::AttackLog(const BattleSceneData * const battleData,const Unit * const
 {}
 
 Weapon::AttackInfo AttackLog::GetAttackInfo()const{
-	const Unit *operateUnit=GetOperateUnit();
+	const Unit *operateUnit=GetOperateUnitData().punit;
 	if(operateUnit!=nullptr){
 		return operateUnit->GetBattleStatus().weapon->GetAttackInfo(operateUnit,m_aimedUnit);
 	}
