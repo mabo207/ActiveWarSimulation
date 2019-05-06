@@ -429,7 +429,22 @@ std::string ScoreObserver::GetScoreExplain()const{
 		}
 	}
 
-	return "";
+	//ボーナスを全て計算したら、スコア計算
+	int score=turnScore.second+liveScore.second;
+	for(const std::pair<std::string,int> &pair:bonus){
+		score+=pair.second;
+	}
+	//説明文の表示
+	std::string explain;
+	explain+="トータルスコア："+std::to_string(score)+"\n\n";
+	explain+=turnScore.first+"　　　"+std::to_string(turnScore.second)+"\n";
+	explain+=liveScore.first+"　　　"+std::to_string(liveScore.second)+"\n\n";
+	explain+="BONUS SCORE\n";
+	for(const std::pair<std::string,int> &pair:bonus){
+		explain+=pair.first+"　　　"+std::to_string(pair.second)+"\n";
+	}
+
+	return explain;
 }
 
 ScoreObserver::ScoreObserver()

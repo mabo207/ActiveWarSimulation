@@ -128,9 +128,12 @@ int SwitchUnitScene::UpdateNextScene(int index){
 			//クリアターン数の記録
 			int clearTurn=(int)(m_battleSceneData->m_totalOP/Unit::BattleStatus::maxOP)+1;//0~150.0fが1ターンなので+1する
 			//nextSceneの作成
+/*
 			const std::string str=
 				"撤退数："+std::to_string(deathUnitNum)+"人\n"
 				+"クリアターン数："+std::to_string(clearTurn);
+//*/
+			const std::string str=m_battleSceneData->m_scoreObserver->GetScoreExplain();
 			m_nextScene=std::shared_ptr<BattleSceneElement>(new StageClearScene(m_battleSceneData,true,str));
 		} else if(m_judgeEnd==JudgeEnd::e_playerLose){
 			//プレイヤーの敗北
