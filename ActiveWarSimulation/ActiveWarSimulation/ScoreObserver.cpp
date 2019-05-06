@@ -399,7 +399,7 @@ std::string ScoreObserver::GetScoreExplain()const{
 					if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_player
 						&& attackLog->GetOperateUnitData().punit->GetBaseStatus().profession==Unit::Profession::e_healer
 						&& attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()==WeaponActionKind::e_recover
-						&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_enemy)
+						&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player)
 					{
 						//‰ñ•œ—Ê‚Í•‰‚Ì’l‚Å•\Œ»‚³‚ê‚é
 						totalRecoverPoint+=-(attackLog->GetAttackInfo().damage);
