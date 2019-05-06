@@ -127,10 +127,10 @@ std::string ScoreObserver::GetScoreExplain()const{
 			//全員生存時のみ評価項目の計算
 			double minMinRate=1.0,maxMinRate=0.0;//全味方ユニットの最小HP割合について最小値と最大値を求める
 			for(const std::pair<const Unit *,double> &pair:minRateMap){
-				if(minMinRate<pair.second){
+				if(minMinRate>pair.second){
 					minMinRate=pair.second;
 				}
-				if(maxMinRate>pair.second){
+				if(maxMinRate<pair.second){
 					maxMinRate=pair.second;
 				}
 			}
