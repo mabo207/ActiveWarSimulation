@@ -224,11 +224,18 @@ std::string ScoreObserver::GetScoreExplain()const{
 		};
 		if(initLog->JudgeEveryUnitData(judgeExistArmer,false)){
 			//–¡•û‚Éd‘••º‚ª‚¢‚éê‡‚Ì‚Ýƒ{[ƒiƒXˆ—‚ð‚·‚é
-			//–‚–@”í’e‰ñ”
-			if(magicAttackedCount==0){
-				bonus.push_back(std::make_pair("d‘••º‚Å–‚–@UŒ‚‚ðŽó‚¯‚È‚¢",2000));
-			} else if(magicAttackedCount==magicTotalCount){
-				bonus.push_back(std::make_pair("d‘••º‚ªŽã“_‚ð“Ë‚©‚ê‘±‚¯‚½",100));
+			//–‚–@”í’e‰ñ”(“G‚É–‚“¹Žm‚ª‚¢‚éê‡‚Ì‚Ý)
+			const auto judgeExistEnemyMage=[](const LogElement::UnitLogData &unitData){
+				return (unitData.punit!=nullptr
+					&& unitData.punit->GetBattleStatus().team==Unit::Team::e_enemy
+					&& unitData.punit->GetBaseStatus().profession==Unit::Profession::e_mage);
+			};
+			if(initLog->JudgeEveryUnitData(judgeExistEnemyMage,false)){
+				if(magicAttackedCount==0){
+					bonus.push_back(std::make_pair("d‘••º‚Å–‚–@UŒ‚‚ðŽó‚¯‚È‚¢",2000));
+				} else if(magicAttackedCount==magicTotalCount){
+					bonus.push_back(std::make_pair("d‘••º‚ªŽã“_‚ð“Ë‚©‚ê‘±‚¯‚½",100));
+				}
 			}
 			//•¨—”í’e‰ñ”
 			if(physicTotalCount>0){
@@ -345,9 +352,12 @@ std::string ScoreObserver::GetScoreExplain()const{
 		if(initLog->JudgeEveryUnitData(judgeExistMage,false)){
 			//–‚“¹Žm‚ªŽ©ŒR‚É‚¢‚éê‡‚Íƒ{[ƒiƒXˆ—‚ð‚·‚é
 			//d‘••º‚Ö‚ÌUŒ‚‰ñ”
-			size_t armerCount=0;
+			size_t armerCount=0;//“Gd‘••º‚Ì”
 			for(const LogElement::UnitLogData &unitData:initLog->m_unitDataList){
-				if(unitData.punit!=nullptr && unitData.punit->GetBaseStatus().profession==Unit::Profession::e_armer){
+				if(unitData.punit!=nullptr
+					&& unitData.punit->GetBaseStatus().profession==Unit::Profession::e_armer
+					&& unitData.punit->GetBattleStatus().team==Unit::Team::e_enemy)
+				{
 					armerCount++;
 				}
 			}
