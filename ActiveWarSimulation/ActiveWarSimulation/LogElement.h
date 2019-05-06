@@ -54,6 +54,7 @@ public:
 	}
 	const UnitLogData GetOperateUnitData()const;
 	bool JudgeEveryUnitData(const std::function<bool(const UnitLogData &)> &func,bool all)const;//allがtrueなら「全て成立」を、falseなら「成立しているものがある」(exist)を調べる。
+	const UnitLogData FindUnitData(const Unit *punit)const;
 
 	const std::vector<UnitLogData> m_unitDataList;
 

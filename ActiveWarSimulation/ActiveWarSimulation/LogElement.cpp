@@ -17,6 +17,16 @@ bool LogElement::JudgeEveryUnitData(const std::function<bool(const UnitLogData &
 	return all;
 }
 
+const LogElement::UnitLogData LogElement::FindUnitData(const Unit *punit)const{
+	for(const UnitLogData &logData:m_unitDataList){
+		if(logData.punit==punit){
+			return logData;
+		}
+	}
+	//見つからない場合はデフォルト値を返す
+	return UnitLogData();
+}
+
 LogElement::LogElement(LogKind kind,const BattleSceneData * const battleData)
 	:m_kind(kind)
 	,m_unitDataList(CreateUnitDataList(battleData))

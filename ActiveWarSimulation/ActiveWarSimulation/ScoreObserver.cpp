@@ -254,7 +254,7 @@ std::string ScoreObserver::GetScoreExplain()const{
 		size_t effectiveAttackCount=0;//効果的な攻撃の回数（射手・魔道士・衛生兵狙い）
 		float totalAttackLengthRate=0.0f;//攻撃射程割合の総和
 		const auto judgeEffective=[](const Unit *punit){
-			if(punit!=nullptr){
+			if(punit!=nullptr && punit->GetBattleStatus().team==Unit::Team::e_enemy){
 				switch(punit->GetBaseStatus().profession){
 				case(Unit::Profession::e_archer):
 				case(Unit::Profession::e_mage):
@@ -380,9 +380,9 @@ std::string ScoreObserver::GetScoreExplain()const{
 		size_t physicAttackedCount=0;//物理攻撃被弾回数
 		int totalRecoverPoint=0;//合計回復量
 		int totalDamage=0;//合計被ダメージ
-		for(const std::shared_ptr<const LogElement> logData:m_logList){
-			if(logData->GetLogKind()==LogElement::LogKind::e_attack){
-				const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(logData);
+		for(std::vector<std::shared_ptr<LogElement>>::const_iterator it=m_logList.begin(),ite=m_logList.end();it!=ite;it++){
+			if((*it)->GetLogKind()==LogElement::LogKind::e_attack){
+				const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<AttackLog>(*it);
 				if(attackLog.get()!=nullptr
 					&& attackLog->GetOperateUnitData().punit!=nullptr
 					&& attackLog->GetAimedUnit()!=nullptr)
@@ -395,24 +395,38 @@ std::string ScoreObserver::GetScoreExplain()const{
 					{
 						physicAttackedCount++;
 					}
-					//回復量
-					if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_player
-						&& attackLog->GetOperateUnitData().punit->GetBaseStatus().profession==Unit::Profession::e_healer
-						&& attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()==WeaponActionKind::e_recover
-						&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player)
-					{
-						//回復量は負の値で表現される
-						totalRecoverPoint+=-(attackLog->GetAttackInfo().damage);
-					}
-					//被ダメージ
-					if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_enemy
-						&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player)
-					{
-						switch(attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()){
-						case(WeaponActionKind::e_physicalAttack):
-						case(WeaponActionKind::e_magicAttack):
-							totalDamage+=attackLog->GetAttackInfo().damage;
-							break;
+					//次の２つは次のログデータを用いて計算するので、その検査をする
+					std::vector<std::shared_ptr<LogElement>>::const_iterator next=it;
+					next++;
+					if(next!=ite){
+						//次のデータがあるなら、回復についてのデータを計算できる
+						const LogElement::UnitLogData afterData=(*next)->FindUnitData(attackLog->GetAimedUnit());
+						int afterHP;
+						if(afterData.punit!=nullptr){
+							//次のログにaimedUnitが存在していたら、そのログデータを用いる
+							afterHP=afterData.hp;
+						} else{
+							//存在していないということは、HPが0になって死んだということ。
+							afterHP=0;
+						}
+						//回復量
+						if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_player
+							&& attackLog->GetOperateUnitData().punit->GetBaseStatus().profession==Unit::Profession::e_healer
+							&& attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()==WeaponActionKind::e_recover
+							&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player)
+						{
+							totalRecoverPoint+=(afterHP-attackLog->GetAimedUnitData().hp);
+						}
+						//被ダメージ
+						if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_enemy
+							&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player)
+						{
+							switch(attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()){
+							case(WeaponActionKind::e_physicalAttack):
+							case(WeaponActionKind::e_magicAttack):
+								totalDamage+=(attackLog->GetAimedUnitData().hp-afterHP);
+								break;
+							}
 						}
 					}
 				}
