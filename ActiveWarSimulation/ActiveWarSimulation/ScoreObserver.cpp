@@ -163,7 +163,7 @@ std::string ScoreObserver::GetScoreExplain()const{
 				case(LogElement::LogKind::e_wait):
 					moveCount++;
 					//ログ出力の後に行動分のOP消費が行われるので、待機と攻撃のどちらも同じ処理で良い
-					totalWalkOP+=Unit::BattleStatus::maxOP-operateData.op;
+					totalWalkOP+=Unit::BattleStatus::maxOP-Unit::reduceStartActionCost-operateData.op;
 					break;
 				}
 			}
