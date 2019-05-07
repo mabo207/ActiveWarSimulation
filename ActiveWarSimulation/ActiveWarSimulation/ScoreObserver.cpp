@@ -293,9 +293,9 @@ std::string ScoreObserver::GetScoreExplain()const{
 			//攻撃射程
 			if(attackCount>0){
 				const double averageRate=totalAttackLengthRate/attackCount;
-				if(averageRate>=0.80){
+				if(averageRate>=0.75){
 					bonus.push_back(std::make_pair("狙撃手",2000));
-				} else if(averageRate>=0.60){
+				} else if(averageRate>=0.50){
 					bonus.push_back(std::make_pair("後衛",1000));
 				}
 			}
@@ -450,6 +450,44 @@ std::string ScoreObserver::GetScoreExplain()const{
 					bonus.push_back(std::make_pair("回復役",1000));
 				}
 			}
+		}
+	}
+	//移動キャンセル回数
+	{
+		if(m_cancelCount==0){
+			bonus.push_back(std::make_pair("ノーキャンセル",1200));
+		}
+	}
+	//合計移動距離
+	{
+		double totalMoveDistance=0.0;
+		for(const std::shared_ptr<const LogElement> logData:m_logList){
+			switch(logData->GetLogKind()){
+			case(LogElement::LogKind::e_wait):
+			case(LogElement::LogKind::e_attack):
+			{
+				if(logData->GetOperateUnitData().punit!=nullptr
+					&& logData->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_player)
+				{
+					const float moveOP=Unit::BattleStatus::maxOP-Unit::reduceStartActionCost-logData->GetOperateUnitData().op;
+					const int movePal=logData->GetOperateUnitData().punit->GetBaseStatus().move;
+					totalMoveDistance+=moveOP*movePal;
+				}
+			}
+				break;
+			}
+		}
+		//ボーナス処理
+		if(totalMoveDistance==0.0f){
+			bonus.push_back(std::make_pair("移動せずにクリア",6000));
+		}
+	}
+	//探索使用回数
+	{
+		if(m_researchCount==0){
+			bonus.push_back(std::make_pair("偵察いらず",3000));
+		} else if(m_researchCount>=10){
+			bonus.push_back(std::make_pair("偵察のプロフェッショナル",400));
 		}
 	}
 
