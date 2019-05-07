@@ -452,6 +452,33 @@ std::string ScoreObserver::GetScoreExplain()const{
 			}
 		}
 	}
+	//味方ユニットの待機回数とアクション回数
+	{
+		size_t orderCount=0;//手番の合計回数
+		size_t actionCount=0;//アクション回数
+		for(const std::shared_ptr<const LogElement> &logData:m_logList){
+			if(logData->GetOperateUnitData().punit!=nullptr
+				&& logData->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_player)
+			{
+				switch(logData->GetLogKind()){
+				case(LogElement::LogKind::e_attack):
+					actionCount++;
+				case(LogElement::LogKind::e_wait):
+					orderCount++;
+					break;
+				}
+			}
+		}
+		//ボーナス計算
+		if(orderCount>0){
+			const double rate=1.0*actionCount/orderCount;
+			if(rate>=0.80){
+				bonus.push_back(std::make_pair("超アクティブバトル",2400));
+			} else if(rate>=0.60){
+				bonus.push_back(std::make_pair("アクティブバトル",1300));
+			}
+		}
+	}
 	//移動キャンセル回数
 	{
 		if(m_cancelCount==0){
@@ -461,7 +488,7 @@ std::string ScoreObserver::GetScoreExplain()const{
 	//合計移動距離
 	{
 		double totalMoveDistance=0.0;
-		for(const std::shared_ptr<const LogElement> logData:m_logList){
+		for(const std::shared_ptr<const LogElement> &logData:m_logList){
 			switch(logData->GetLogKind()){
 			case(LogElement::LogKind::e_wait):
 			case(LogElement::LogKind::e_attack):
