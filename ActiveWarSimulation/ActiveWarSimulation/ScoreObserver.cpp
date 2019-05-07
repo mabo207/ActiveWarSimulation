@@ -452,6 +452,69 @@ std::string ScoreObserver::GetScoreExplain()const{
 			}
 		}
 	}
+	//敵ユニットを撃破するまでのアクション密度
+	{
+		std::map<const Unit *,std::pair<bool,std::pair<size_t,size_t>>> enemyAttackTendency;//順番に「どのユニットか」「計測中か」「何回攻撃されたか」「行動が何回起こったか」
+		for(const LogElement::UnitLogData &unitData:initLog->m_unitDataList){
+			if(unitData.punit!=nullptr
+				&& unitData.punit->GetBattleStatus().team==Unit::Team::e_enemy)
+			{
+				enemyAttackTendency.insert(std::make_pair(unitData.punit,std::make_pair(false,std::make_pair(0,0))));
+			}
+		}
+		for(const std::shared_ptr<const LogElement> &logData:m_logList){
+			if(logData->GetOperateUnitData().punit!=nullptr
+				&& logData->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_player
+				&& logData->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()!=WeaponActionKind::e_recover)
+			{
+				//行動ユニットが「回復役以外の味方」の手番のみ調べる
+				if(logData->GetLogKind()==LogElement::LogKind::e_wait){
+					for(const LogElement::UnitLogData &unitData:logData->m_unitDataList){
+						const auto it=enemyAttackTendency.find(unitData.punit);
+						if(it!=enemyAttackTendency.end() && it->second.first){
+							//itのユニットは計測中かつ何もされていないので、行動が起こった回数のみ加算
+							//なお、itのユニットの消滅は調べる必要がない。m_unitDataListに存在しなくなるため、加算されなくなるから。
+							it->second.second.second++;
+						}
+					}
+				} else if(logData->GetLogKind()==LogElement::LogKind::e_attack){
+					const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(logData);
+					if(attackLog.get()!=nullptr
+						&& attackLog->GetAimedUnit()!=nullptr)
+					{
+						for(const LogElement::UnitLogData &unitData:logData->m_unitDataList){
+							const auto it=enemyAttackTendency.find(unitData.punit);
+							if(it!=enemyAttackTendency.end()){
+								//itのユニットについて、攻撃密度の処理をしていく
+								//計測状態更新
+								if(!it->second.first){
+									//まだ計測中でないなら
+									if(it->first==attackLog->GetAimedUnit()){
+										//初めてアクションを受けた場合、計測開始にして最初の処理をする
+										it->second.first=true;
+									}
+								}
+								//回数加算処理(状態更新を反映させるので、else ifにはしない！)
+								if(it->second.first){
+									//計測中であれば
+									if(it->first==attackLog->GetAimedUnit()){
+										//アクションを受けた場合、攻撃された回数と行動回数を加算
+										it->second.second.first++;
+										it->second.second.second++;
+									} else{
+										//アクションを受けなかったときは、行動回数のみ加算
+										it->second.second.second++;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		//ボーナス処理
+
+	}
 	//味方ユニットの待機回数とアクション回数
 	{
 		size_t orderCount=0;//手番の合計回数

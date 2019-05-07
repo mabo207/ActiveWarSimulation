@@ -1,4 +1,5 @@
 #include"Weapon.h"
+#include"Unit.h"
 
 //---------------Weapon----------------
 const float Weapon::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.15f;

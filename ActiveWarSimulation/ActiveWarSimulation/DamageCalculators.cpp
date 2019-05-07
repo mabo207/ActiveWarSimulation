@@ -3,6 +3,7 @@
 #include"DxLib.h"
 #include"ToolsLib.h"
 #include"Weapon.h"
+#include"Unit.h"
 #include<algorithm>
 
 //---------------DamageCalculator-----------------

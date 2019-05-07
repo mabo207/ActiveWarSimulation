@@ -1,7 +1,8 @@
 #ifndef DEF_DAMAGECALCULATORS_H
 #define DEF_DAMAGECALCULATORS_H
 
-#include"Unit.h"
+#include<string>
+
 class Unit;//循環参照を防ぐために宣言のみする
 
 //行動の種類はクラス外で定義

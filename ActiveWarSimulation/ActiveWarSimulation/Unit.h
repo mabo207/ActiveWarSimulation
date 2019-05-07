@@ -4,7 +4,6 @@
 #include<set>
 #include"BattleObject.h"
 #include"Weapon.h"
-class Weapon;//循環参照を防ぐために宣言のみする
 
 //ユニットを示す
 class Unit:public BattleObject{

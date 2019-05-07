@@ -4,10 +4,7 @@
 #include<string>
 #include<map>
 #include<memory>
-#include"Unit.h"
 #include"DamageCalculators.h"
-class DamageCalculator;//zŠÂQÆ‚ğ–h‚®‚½‚ß‚ÉéŒ¾‚Ì‚İ‚·‚é
-enum class WeaponActionKind;//zŠÂQÆ‚ğ–h‚®‚½‚ß‚ÉéŒ¾‚Ì‚İ‚·‚é
 class Unit;//zŠÂQÆ‚ğ–h‚®‚½‚ß‚ÉéŒ¾‚Ì‚İ‚·‚é
 
 //•Ší‚É‚Â‚¢‚Ä‚ÌƒNƒ‰ƒX
