@@ -1,4 +1,5 @@
 #include"AttackLog.h"
+#include"BattleSceneData.h"
 
 AttackLog::AttackLog(const BattleSceneData * const battleData,const Unit * const aimedUnit)
 	:LogElement(LogKind::e_attack,battleData)

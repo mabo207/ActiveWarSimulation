@@ -1,5 +1,20 @@
 #include"LogElement.h"
 #include<algorithm>
+#include"BattleSceneData.h"
+
+LogElement::UnitLogData::UnitLogData(const Unit * const punit)
+	:UnitLogData(punit->GetBattleStatus().HP
+		,punit->GetBattleStatus().OP
+		,punit->getPos()
+		,punit)
+{}
+
+bool LogElement::UnitLogData::operator==(const UnitLogData &otherObj)const{
+	return (this->hp==otherObj.hp
+		&& this->op==otherObj.op
+		&& this->pos==otherObj.pos
+		&& this->punit==otherObj.punit);
+}
 
 const LogElement::UnitLogData LogElement::GetOperateUnitData()const{
 	if(!m_unitDataList.empty()){

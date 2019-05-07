@@ -1,14 +1,13 @@
 #ifndef DEF_LOGELEMENT_H
 #define DEF_LOGELEMENT_H
 
-#include"Unit.h"
-#include"BattleSceneData.h"
-#include<list>
 #include<memory>
 #include<functional>
+#include<vector>
+#include"ToolsLib.h"
 
-//"BattleSceneData.h"と"ScoreSystem.h"と"LogElement.h"は循環参照
 struct BattleSceneData;
+class Unit;
 
 //全ての種類のログの基本となるもの
 class LogElement{
@@ -30,18 +29,8 @@ public:
 		{}
 		UnitLogData()
 			:UnitLogData(0,0.0f,Vector2D(),nullptr){}
-		explicit UnitLogData(const Unit * const punit)
-			:UnitLogData(punit->GetBattleStatus().HP
-				,punit->GetBattleStatus().OP
-				,punit->getPos()
-				,punit)
-		{}
-		bool operator==(const UnitLogData &otherObj)const{
-			return (this->hp==otherObj.hp
-				&& this->op==otherObj.op
-				&& this->pos==otherObj.pos
-				&& this->punit==otherObj.punit);
-		}
+		explicit UnitLogData(const Unit * const punit);
+		bool operator==(const UnitLogData &otherObj)const;
 		//変数を追加した場合は==やコンストラクタの変更を忘れずに！
 		const int hp;
 		const float op;

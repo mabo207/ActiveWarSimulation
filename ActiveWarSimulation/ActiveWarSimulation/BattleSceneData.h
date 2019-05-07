@@ -8,9 +8,6 @@
 #include"ToolsLib.h"
 #include"ScoreObserver.h"
 
-//"BattleSceneData.h"と"ScoreSystem.h"と"LogElement.h"は循環参照
-class ScoreObserver;
-
 //バトル場面で、各クラスに渡すゲーム全体で扱うデータを一括管理するクラス
 struct BattleSceneData{
 	//型・列挙体

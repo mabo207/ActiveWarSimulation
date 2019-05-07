@@ -2,6 +2,7 @@
 #include<algorithm>
 #include<cassert>
 #include<map>
+#include"BattleSceneData.h"
 
 #include"WaitLog.h"
 #include"AttackLog.h"
