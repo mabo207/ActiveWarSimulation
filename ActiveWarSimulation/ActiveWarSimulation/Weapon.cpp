@@ -6,7 +6,7 @@ const float Weapon::closeAttackLength=Unit::rivalInpenetratableCircleSize*1.15f;
 const float Weapon::openAttackLength=Weapon::closeAttackLength*2.0f;
 const float Weapon::longAttackLength=Weapon::closeAttackLength*3.0f;
 
-WeaponActionKind Weapon::GetActionKind()const{
+DamageCalculator::Kind Weapon::GetActionKind()const{
 	return m_calculator->GetKind();
 }
 

@@ -5,35 +5,27 @@
 
 class Unit;//循環参照を防ぐために宣言のみする
 
-//行動の種類はクラス外で定義
-enum class WeaponActionKind{
-	e_physicalAttack
-	,e_magicAttack
-	,e_recover
-};
-
 //ダメージの計算式回り
 //基底クラス
 class DamageCalculator{
 	//列挙体
 public:
-/*	//循環参照のせいで、ここで宣言するとコンパイルエラー。
 	enum class Kind{
 		e_physicalAttack
 		,e_magicAttack
 		,e_recover
 	};
-//*/
+
 	//変数
 private:
-	WeaponActionKind m_kind;
+	Kind m_kind;
 	
 	//関数
 protected:
-	DamageCalculator(WeaponActionKind kind):m_kind(kind){}
+	DamageCalculator(Kind kind):m_kind(kind){}
 	virtual ~DamageCalculator(){}
 public:
-	WeaponActionKind GetKind()const{
+	Kind GetKind()const{
 		return m_kind;
 	}
 	virtual int VCalculateDamage(const Unit *attacker,const Unit *defender)const=0;//ダメージを計算する関数

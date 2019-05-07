@@ -203,13 +203,13 @@ std::string ScoreObserver::GetScoreExplain()const{
 					&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player)
 				{
 					switch(attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()){
-					case(WeaponActionKind::e_physicalAttack):
+					case(DamageCalculator::Kind::e_physicalAttack):
 						physicTotalCount++;
 						if(attackLog->GetAimedUnit()->GetBaseStatus().profession==Unit::Profession::e_armer){
 							physicAttackedCount++;
 						}
 						break;
-					case(WeaponActionKind::e_magicAttack):
+					case(DamageCalculator::Kind::e_magicAttack):
 						magicTotalCount++;
 						if(attackLog->GetAimedUnit()->GetBaseStatus().profession==Unit::Profession::e_armer){
 							magicAttackedCount++;
@@ -389,7 +389,7 @@ std::string ScoreObserver::GetScoreExplain()const{
 				{
 					//物理攻撃被弾
 					if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_enemy
-						&& attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()==WeaponActionKind::e_physicalAttack
+						&& attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()==DamageCalculator::Kind::e_physicalAttack
 						&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player
 						&& attackLog->GetAimedUnit()->GetBaseStatus().profession==Unit::Profession::e_healer)
 					{
@@ -412,7 +412,7 @@ std::string ScoreObserver::GetScoreExplain()const{
 						//回復量
 						if(attackLog->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_player
 							&& attackLog->GetOperateUnitData().punit->GetBaseStatus().profession==Unit::Profession::e_healer
-							&& attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()==WeaponActionKind::e_recover
+							&& attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()==DamageCalculator::Kind::e_recover
 							&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player)
 						{
 							totalRecoverPoint+=(afterHP-attackLog->GetAimedUnitData().hp);
@@ -422,8 +422,8 @@ std::string ScoreObserver::GetScoreExplain()const{
 							&& attackLog->GetAimedUnit()->GetBattleStatus().team==Unit::Team::e_player)
 						{
 							switch(attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()){
-							case(WeaponActionKind::e_physicalAttack):
-							case(WeaponActionKind::e_magicAttack):
+							case(DamageCalculator::Kind::e_physicalAttack):
+							case(DamageCalculator::Kind::e_magicAttack):
 								totalDamage+=(attackLog->GetAimedUnitData().hp-afterHP);
 								break;
 							}
@@ -465,7 +465,7 @@ std::string ScoreObserver::GetScoreExplain()const{
 		for(const std::shared_ptr<const LogElement> &logData:m_logList){
 			if(logData->GetOperateUnitData().punit!=nullptr
 				&& logData->GetOperateUnitData().punit->GetBattleStatus().team==Unit::Team::e_player
-				&& logData->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()!=WeaponActionKind::e_recover)
+				&& logData->GetOperateUnitData().punit->GetBattleStatus().weapon->GetActionKind()!=DamageCalculator::Kind::e_recover)
 			{
 				//行動ユニットが「回復役以外の味方」の手番のみ調べる
 				if(logData->GetLogKind()==LogElement::LogKind::e_wait){
