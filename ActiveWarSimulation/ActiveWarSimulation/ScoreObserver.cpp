@@ -513,8 +513,24 @@ std::string ScoreObserver::GetScoreExplain()const{
 				}
 			}
 		}
+		//平均密度を求める
+		size_t enemyCount=0;
+		double totalEachRate=0.0;//それぞれの敵ユニットに対して(攻撃された回数)/(行動回数)を計算して合計を求める。こいつの平均値で評価する。
+		for(auto it=enemyAttackTendency.begin(),ite=enemyAttackTendency.end();it!=ite;it++){
+			if(it->second.second.second>0){
+				enemyCount++;
+				totalEachRate+=1.0*it->second.second.first/it->second.second.second;
+			}
+		}
 		//ボーナス処理
-
+		if(enemyCount>0){
+			const double rate=totalEachRate/enemyCount;
+			if(rate>=0.80){
+				bonus.push_back(std::make_pair("集中攻撃をとても心がけた",2500));
+			} else if(rate>=0.60){
+				bonus.push_back(std::make_pair("集中攻撃を心がけた",1500));
+			}
+		}
 	}
 	//味方ユニットの待機回数とアクション回数
 	{
