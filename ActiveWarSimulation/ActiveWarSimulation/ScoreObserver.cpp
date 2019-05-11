@@ -9,6 +9,86 @@
 #include"FinishLog.h"
 #include"InitLog.h"
 
+//---------------ScoreObserver::LatticeBonusData----------------
+ScoreObserver::LatticeBonusData::LatticeBonusData()
+	:m_playerCount(0)
+	,m_totalPlayerRate(0.0)
+	,m_enemyCount(0)
+	,m_totalEnemyRate(0.0)
+{}
+
+ScoreObserver::LatticeBonusData::~LatticeBonusData(){}
+
+void ScoreObserver::LatticeBonusData::InputData(const BattleSceneData * const battleData,const LogElement::UnitLogData &operateUnitData){
+	if(operateUnitData.punit!=nullptr){
+		//格子点情報の獲得
+		const auto latticeField=battleData->CalculateLatticeBattleField();
+		std::vector<LatticeBattleField::LatticeDistanceInfo> distanceInfo;
+		latticeField->CalculateLatticeDistanceInfo(distanceInfo,operateUnitData.punit->getPos());
+		//長さRについて「半径Rの円の中にある格子点の数」「距離がR以内にある格子点の数」を数える
+		//この数値は要調整
+		const float circleSizeF=Unit::unitCircleSize*5.0f;//狭めに絞って、自分の近くの密集度を測定する
+		const size_t circleSizeI=(size_t)circleSizeF;
+		size_t inCircleCount=0,arrivableCount=0;
+		//円内にある格子点の数を数え上げ。円が画面外に入り格子点が少なくなる事を防ぐため、円の半径によって一定に定まる計算方法を採用する。
+		for(size_t y=0;y<=circleSizeI;y+=LatticeBattleField::latticeIntervalSize){
+			for(size_t x=0;x<=circleSizeI;x+=LatticeBattleField::latticeIntervalSize){
+				if(x*x+y*y<=circleSizeI*circleSizeI){
+					inCircleCount++;
+				}
+			}
+		}
+		//上の計算で1/4円の数え上げができたため、軸に沿った２つの部分の内１つを除いて４倍すれば数え上げ終了。
+		inCircleCount=(inCircleCount-circleSizeI/LatticeBattleField::latticeIntervalSize)*4+1;
+		//実質距離R以内のものを数え上げ
+		for(const auto &info:distanceInfo){
+			if(latticeField->GetLatticeInShapeAt(info.index)!=LatticeBattleField::LatticePass::e_unpassable
+				&& info.dist<=circleSizeF)
+			{
+				//入れない部分は除くように
+				arrivableCount++;
+			}
+		}
+		//プレイヤーか敵かを見て記録
+		if(inCircleCount>0){
+			const double rate=1.0*arrivableCount/inCircleCount;
+			switch(operateUnitData.punit->GetBattleStatus().team){
+			case(Unit::Team::e_player):
+				m_playerCount++;
+				m_totalPlayerRate+=rate;
+				break;
+			case(Unit::Team::e_enemy):
+				m_enemyCount++;
+				m_totalEnemyRate+=rate;
+				break;
+			}
+		}
+	}
+}
+
+std::pair<std::string,int> ScoreObserver::LatticeBonusData::GetPlayerBonus()const{
+	if(m_playerCount>0){
+		const double rate=m_totalPlayerRate/m_playerCount;
+		if(rate>=0.50){
+			//この数値は要調整
+			return std::make_pair("広所確保",2000);
+		}
+	}
+	return std::make_pair("",0);
+}
+
+std::pair<std::string,int> ScoreObserver::LatticeBonusData::GetEnemyBonus()const{
+	if(m_enemyCount>0){
+		const double rate=m_totalEnemyRate/m_enemyCount;
+		if(rate<=0.35){
+			//この数値は要調整
+			return std::make_pair("敵に狭所を押し付けた",2000);
+		}
+	}
+	return std::make_pair("",0);
+}
+
+//---------------ScoreObserver--------------
 void ScoreObserver::InitUpdate(const BattleSceneData * const battleData){
 	m_logList.clear();
 	m_logList.push_back(std::make_shared<InitLog>(battleData));
@@ -19,7 +99,9 @@ void ScoreObserver::FinishUpdate(const BattleSceneData * const battleData){
 }
 
 void ScoreObserver::AttackUpdate(const BattleSceneData * const battleData,const Unit * const aimedUnit){
-	m_logList.push_back(std::make_shared<AttackLog>(battleData,aimedUnit));
+	const std::shared_ptr<LogElement> logData=std::make_shared<AttackLog>(battleData,aimedUnit);
+	m_latticeBonusData.InputData(battleData,logData->GetOperateUnitData());
+	m_logList.push_back(logData);
 }
 
 void ScoreObserver::ResearchUpdate(){
@@ -27,7 +109,9 @@ void ScoreObserver::ResearchUpdate(){
 }
 
 void ScoreObserver::WaitUpdate(const BattleSceneData * const battleData){
-	m_logList.push_back(std::make_shared<WaitLog>(battleData));
+	const std::shared_ptr<LogElement> logData=std::make_shared<WaitLog>(battleData);
+	m_latticeBonusData.InputData(battleData,logData->GetOperateUnitData());
+	m_logList.push_back(logData);
 }
 
 void ScoreObserver::CancelUpdate(){
@@ -453,6 +537,19 @@ std::string ScoreObserver::GetScoreExplain()const{
 			}
 		}
 	}
+	//位置取り関連
+	{
+		//味方の位置取り
+		std::pair<std::string,int> info=m_latticeBonusData.GetPlayerBonus();
+		if(info.second!=0){
+			bonus.push_back(info);
+		}
+		//敵の位置取り
+		info=m_latticeBonusData.GetEnemyBonus();
+		if(info.second!=0){
+			bonus.push_back(info);
+		}
+	}
 	//敵ユニットを撃破するまでのアクション密度
 	{
 		std::map<const Unit *,std::pair<bool,std::pair<size_t,size_t>>> enemyAttackTendency;//順番に「どのユニットか」「計測中か」「何回攻撃されたか」「行動が何回起こったか」
@@ -620,6 +717,7 @@ ScoreObserver::ScoreObserver()
 	:m_researchCount(0)
 	,m_cancelCount(0)
 	,m_logList()
+	,m_latticeBonusData()
 {}
 
 ScoreObserver::~ScoreObserver(){}
