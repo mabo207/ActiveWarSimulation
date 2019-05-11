@@ -37,7 +37,7 @@ protected:
 	//変数
 protected:
 	//格子点の定義のための情報
-	std::vector<int> m_latticeInShape;//すべての格子点において、ユニットが通れる場所かどうかを格納している。0:通れる 1:図形内で通れない 2:隣接格子点が1なので通れない可能性がある
+	std::vector<int> m_latticeInShape;//すべての格子点において、ユニットが通れる場所かどうかを格納している。CalculateLatticeRoute()がシーン初期化時以外でも呼ばれるので用意している。0:通れる 1:図形内で通れない 2:隣接格子点が1なので通れない可能性がある
 	const size_t m_xLatticeNum,m_yLatticeNum;//格子点が横・縦に何個存在するか。ステージの外にあっても動作としては問題ない。計算を楽に行うために用いる。
 
 	//AIのための情報
@@ -59,7 +59,7 @@ protected:
 	Vector2D CalculateLatticePointPos(size_t index)const;
 	std::pair<std::pair<size_t,Vector2D>,Unit *> DecideTargetPoint(const std::vector<LatticeDistanceInfo> &distanceInfo)const;//目標とする格子点とその格子点に到着したあとに狙う位置を決める
 	void CalculateLatticeDistanceInfo(std::vector<LatticeDistanceInfo> &latticeDistanceInfo)const;//各格子点までの距離と行き方を計算する関数。情報量が多いので情報の格納先を引数で渡す。
-	void CalculateLatticeRoute();//m_latticeInShapeからm_latticeRouteを計算する
+	void CalculateLatticeRoute();//m_latticeInShapeからm_latticeRouteを計算する。行動を再計算する場合にも用いる。
 	void ImpassableLatticeInShape(const size_t index);//indexの格子点を通れないようにする(1にする)。尚且つその隣接点が0であれば2にする。
 	void ImpassableLatticeInShape(const size_t x,const size_t y);
 	float CalculateEvaluate(const Unit *punit,const std::vector<LatticeDistanceInfo> &distanceInfo)const;

@@ -196,7 +196,7 @@ void ComputerMoveScene::CalculateLatticeDistanceInfo(std::vector<LatticeDistance
 	const size_t latticeNum=m_latticeInShape.size();//何度も使うので予め計算しておく
 	latticeDistanceInfo=std::vector<LatticeDistanceInfo>(latticeNum,LatticeDistanceInfo(latticeNum,latticeNum,-0.1f));//初期化
 	std::set<LatticeDistanceInfo> latticeSet;//探索していく格子点のリスト。近い順から探すためにsetを用いる。
-	auto SearchUpdate=[&latticeSet,&latticeDistanceInfo](const size_t from,const float dist,const size_t x,const size_t y,const size_t width,const size_t height,const std::vector<int> &latticeInShape){
+	const auto SearchUpdate=[&latticeSet,&latticeDistanceInfo](const size_t from,const float dist,const size_t x,const size_t y,const size_t width,const size_t height,const std::vector<int> &latticeInShape){
 		//latticeDistanceInfoを更新し、latticeSetに格納する。
 		if(x>=0 && x<width && y>=0 && y<height){
 			size_t index=x+y*width;
@@ -229,7 +229,7 @@ void ComputerMoveScene::CalculateLatticeDistanceInfo(std::vector<LatticeDistance
 		std::set<LatticeDistanceInfo>::iterator beginIt=latticeSet.begin();
 		LatticeDistanceInfo beginInfo(*beginIt);
 		latticeSet.erase(beginIt);//探索を今後行わないのでsetから取り除いておく
-								  //周囲8個の格子点について更新を行う
+		//周囲8個の格子点について更新を行う
 		const size_t x=beginInfo.index%m_xLatticeNum,y=beginInfo.index/m_xLatticeNum;
 		for(size_t i=0;i<8;i++){
 			SearchUpdate(beginInfo.index,beginInfo.dist+dis[i],x+dx[i],y+dy[i],m_xLatticeNum,m_yLatticeNum,m_latticeInShape);
