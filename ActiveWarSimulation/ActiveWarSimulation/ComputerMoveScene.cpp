@@ -40,14 +40,6 @@ ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleScen
 
 ComputerMoveScene::~ComputerMoveScene(){}
 
-Vector2D ComputerMoveScene::CalculateLatticePointPos(size_t x,size_t y)const{
-	return Vector2D((float)(x*LatticeBattleField::latticeIntervalSize),(float)(y*LatticeBattleField::latticeIntervalSize));
-}
-
-Vector2D ComputerMoveScene::CalculateLatticePointPos(size_t index)const{
-	return CalculateLatticePointPos(index%m_latticeField->GetXLatticeNum(),index/m_latticeField->GetXLatticeNum());
-}
-
 std::pair<std::pair<size_t,Vector2D>,Unit *> ComputerMoveScene::DecideTargetPoint(const std::vector<LatticeBattleField::LatticeDistanceInfo> &distanceInfo)const{
 	//狙うユニットを決める
 	Unit *targetUnit=nullptr;//この関数内では変更されない
@@ -83,7 +75,7 @@ std::pair<std::pair<size_t,Vector2D>,Unit *> ComputerMoveScene::DecideTargetPoin
 				const size_t index=x+y*m_latticeField->GetXLatticeNum();
 				if(distanceInfo[index].dist>=0.0f && (target>=vecSize || distanceInfo[index]<distanceInfo[target])){
 					//既に別のより近い目標地点候補が存在するなら新しい目標地点になる事はない
-					const Vector2D pos=CalculateLatticePointPos(x,y);
+					const Vector2D pos=m_latticeField->CalculateLatticePointPos(x,y);
 					copiedUnit.Warp(pos);
 					if(copiedUnit.JudgeAttackable(targetUnit)){
 						//攻撃可能ならこの位置を暫定の目標地点とする
@@ -155,7 +147,7 @@ void ComputerMoveScene::CalculateLatticeRoute(){
 		Vector2D v;
 		if(point<latticeNum){
 			//格子点が存在するならその位置に
-			v=CalculateLatticePointPos(point);
+			v=m_latticeField->CalculateLatticePointPos(point);
 		} else{
 			//格子点が存在しないならその場に(point==latticeNumの時のみ。これは「操作ユニットの位置にいること」を表す)
 			v=m_battleSceneData->m_operateUnit->getPos();
@@ -194,7 +186,7 @@ float ComputerMoveScene::CalculateEvaluate(const Unit *punit,const std::vector<L
 			for(size_t i=0;i<size;i++){
 				if(m_latticeField->GetLatticeInShapeAt(i)==LatticeBattleField::LatticePass::e_passable
 					&& distanceInfo[i].dist>=0.0f
-					&& c.VJudgePointInsideShape(CalculateLatticePointPos(i))
+					&& c.VJudgePointInsideShape(m_latticeField->CalculateLatticePointPos(i))
 					&& (nearestIndex>=size || distanceInfo[i].dist<distanceInfo[nearestIndex].dist))
 				{
 					//点iが侵入可能かつ到達可能で、攻撃可能範囲内にあり、尚且つ現在の最近点より近いのであれば

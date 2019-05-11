@@ -44,8 +44,6 @@ protected:
 
 	//関数
 protected:
-	Vector2D CalculateLatticePointPos(size_t x,size_t y)const;
-	Vector2D CalculateLatticePointPos(size_t index)const;
 	std::pair<std::pair<size_t,Vector2D>,Unit *> DecideTargetPoint(const std::vector<LatticeBattleField::LatticeDistanceInfo> &distanceInfo)const;//目標とする格子点とその格子点に到着したあとに狙う位置を決める
 	void CalculateLatticeRoute();//m_latticeInShapeからm_latticeRouteを計算する。行動を再計算する場合にも用いる。
 	float CalculateEvaluate(const Unit *punit,const std::vector<LatticeBattleField::LatticeDistanceInfo> &distanceInfo)const;

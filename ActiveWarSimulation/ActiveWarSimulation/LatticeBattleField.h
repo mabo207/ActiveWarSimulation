@@ -42,6 +42,8 @@ public:
 	void BecomeImpassibleLattice(size_t index);//m_latticeInShape[index]をe_unpassableにして、その周辺の格子点に対する処理もする
 	void BecomeImpassibleLattice(size_t x,size_t y);
 	void CalculateLatticeDistanceInfo(std::vector<LatticeDistanceInfo> &retPal,const Vector2D startPos)const;//m_latticeInShapeを元に、各格子点とスタート地点までの距離・ルートに関する情報を返す
+	Vector2D CalculateLatticePointPos(size_t x,size_t y)const;
+	Vector2D CalculateLatticePointPos(size_t index)const;
 
 	const static size_t latticeIntervalSize;//格子点は正方形状に並んでいるので、その大きさ
 

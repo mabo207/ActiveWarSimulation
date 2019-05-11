@@ -120,6 +120,14 @@ void LatticeBattleField::CalculateLatticeDistanceInfo(std::vector<LatticeDistanc
 	}
 }
 
+Vector2D LatticeBattleField::CalculateLatticePointPos(size_t x,size_t y)const{
+	return Vector2D((float)(x*latticeIntervalSize),(float)(y*latticeIntervalSize));
+}
+
+Vector2D LatticeBattleField::CalculateLatticePointPos(size_t index)const{
+	return CalculateLatticePointPos(index%m_xLatticeNum,index/m_xLatticeNum);
+}
+
 LatticeBattleField::LatticeBattleField(const BattleSceneData &battleData,const Unit * const punit)
 	:m_xLatticeNum((size_t)(battleData.m_stageSize.x)/latticeIntervalSize+1)
 	,m_yLatticeNum((size_t)(battleData.m_stageSize.y)/latticeIntervalSize+1)
