@@ -341,6 +341,10 @@ int BattleSceneData::CalculateTurn()const{
 	return (int)(m_totalOP/Unit::BattleStatus::maxOP)+1;
 }
 
+std::shared_ptr<LatticeBattleField> BattleSceneData::CalculateLatticeBattleField()const{
+	return LatticeBattleField::Create(*this,this->m_operateUnit);
+}
+
 void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{
 	//背景データをそのまま描画
 	//背景をアニメーションするとかなったらここで処理を記述

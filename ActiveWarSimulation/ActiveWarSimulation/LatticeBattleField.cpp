@@ -30,6 +30,15 @@ std::shared_ptr<LatticeBattleField> LatticeBattleField::Create(const BattleScene
 
 LatticeBattleField::~LatticeBattleField(){}
 
+LatticeBattleField::LatticePass LatticeBattleField::GetLatticeInShapeAt(size_t index)const{
+	if(index<m_xLatticeNum*m_yLatticeNum){
+		return m_latticeInShape[index];
+	} else{
+		//配列外参照した時は、存在しない点が通ろうとしているのでunpassableを返す
+		return LatticePass::e_unpassable;
+	}
+}
+
 void LatticeBattleField::BecomeImpassibleLattice(size_t index){
 	if(m_xLatticeNum>0){
 		BecomeImpassibleLattice(index%m_xLatticeNum,index/m_xLatticeNum);
