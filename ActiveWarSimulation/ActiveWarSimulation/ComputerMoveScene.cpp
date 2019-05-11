@@ -235,7 +235,6 @@ void ComputerMoveScene::CalculateLatticeDistanceInfo(std::vector<LatticeDistance
 			SearchUpdate(beginInfo.index,beginInfo.dist+dis[i],x+dx[i],y+dy[i],m_xLatticeNum,m_yLatticeNum,m_latticeInShape);
 		}
 	}
-
 }
 
 void ComputerMoveScene::CalculateLatticeRoute(){

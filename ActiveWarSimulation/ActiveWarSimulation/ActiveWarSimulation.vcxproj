@@ -156,6 +156,7 @@
     <ClCompile Include="AttackLog.cpp" />
     <ClCompile Include="FinishLog.cpp" />
     <ClCompile Include="InitLog.cpp" />
+    <ClCompile Include="LatticeBattleField.cpp" />
     <ClCompile Include="LogElement.cpp" />
     <ClCompile Include="BattleScene.cpp" />
     <ClCompile Include="BattleSceneData.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="..\StageEditor\Terrain.h" />
     <ClInclude Include="AttackLog.h" />
     <ClInclude Include="FinishLog.h" />
+    <ClInclude Include="LatticeBattleField.h" />
     <ClInclude Include="LogElement.h" />
     <ClInclude Include="BattleScene.h" />
     <ClInclude Include="BattleSceneData.h" />
