@@ -9,6 +9,14 @@
 #include"FinishLog.h"
 #include"InitLog.h"
 
+//--------------ScoreObserver::Bonus-----------------
+ScoreObserver::Bonus::Bonus(const std::string &explain,int score)
+	:m_score(score)
+	,m_explain(explain)
+{}
+
+ScoreObserver::Bonus::~Bonus(){}
+
 //---------------ScoreObserver::LatticeBonusData----------------
 ScoreObserver::LatticeBonusData::LatticeBonusData()
 	:m_playerCount(0)
@@ -66,26 +74,26 @@ void ScoreObserver::LatticeBonusData::InputData(const BattleSceneData * const ba
 	}
 }
 
-std::pair<std::string,int> ScoreObserver::LatticeBonusData::GetPlayerBonus()const{
+ScoreObserver::Bonus ScoreObserver::LatticeBonusData::GetPlayerBonus()const{
 	if(m_playerCount>0){
 		const double rate=m_totalPlayerRate/m_playerCount;
 		if(rate>=0.50){
 			//この数値は要調整
-			return std::make_pair("広所確保",2000);
+			return Bonus("広所確保",2000);
 		}
 	}
-	return std::make_pair("",0);
+	return Bonus("",0);
 }
 
-std::pair<std::string,int> ScoreObserver::LatticeBonusData::GetEnemyBonus()const{
+ScoreObserver::Bonus ScoreObserver::LatticeBonusData::GetEnemyBonus()const{
 	if(m_enemyCount>0){
 		const double rate=m_totalEnemyRate/m_enemyCount;
 		if(rate<=0.35){
 			//この数値は要調整
-			return std::make_pair("敵に狭所を押し付けた",2000);
+			return Bonus("敵に狭所を押し付けた",2000);
 		}
 	}
-	return std::make_pair("",0);
+	return Bonus("",0);
 }
 
 //---------------ScoreObserver--------------
@@ -120,7 +128,7 @@ void ScoreObserver::CancelUpdate(){
 
 std::string ScoreObserver::GetScoreExplain()const{
 	//スコア計算方法がベタ書きされている、リファクタリングの方法求む
-	std::vector<std::pair<std::string,int>> bonus;
+	std::vector<Bonus> bonus;
 	//基本スコア
 	std::pair<std::string,int> turnScore;//ターン数
 	std::pair<std::string,int> liveScore;//生存数
@@ -153,11 +161,11 @@ std::string ScoreObserver::GetScoreExplain()const{
 		turnScore.second=std::max(0,20-clearTurn)*500;
 		//クリアターン数のボーナス得点
 		if(clearTurn<5){
-			bonus.push_back(std::make_pair("神速進軍",3000));
+			bonus.push_back(Bonus("神速進軍",3000));
 		} else if(clearTurn<7){
-			bonus.push_back(std::make_pair("速攻進軍",2000));
+			bonus.push_back(Bonus("速攻進軍",2000));
 		} else if(clearTurn>15){
-			bonus.push_back(std::make_pair("ノロノロ進軍",100));
+			bonus.push_back(Bonus("ノロノロ進軍",100));
 		}
 	}
 	//生存数
@@ -183,9 +191,9 @@ std::string ScoreObserver::GetScoreExplain()const{
 		}
 		//生存数のボーナス得点
 		if(totalPlayerUnitCount-livePlayerUnitCount==0){
-			bonus.push_back(std::make_pair("全員生存",3000));
+			bonus.push_back(Bonus("全員生存",3000));
 		} else if(livePlayerUnitCount==1){
-			bonus.push_back(std::make_pair("ほぼ引き分け",200));
+			bonus.push_back(Bonus("ほぼ引き分け",200));
 		}
 	}
 	//被ダメージ%推移
@@ -221,13 +229,13 @@ std::string ScoreObserver::GetScoreExplain()const{
 			}
 			//最小HP割合が求まれば、それに応じたボーナスを出す
 			if(minMinRate>=1.00){
-				bonus.push_back(std::make_pair("ノーダメージ",5000));
+				bonus.push_back(Bonus("ノーダメージ",5000));
 			} else if(minMinRate>=0.75){
-				bonus.push_back(std::make_pair("HP75%キープ",2000));
+				bonus.push_back(Bonus("HP75%キープ",2000));
 			} else if(minMinRate>=0.50){
-				bonus.push_back(std::make_pair("HP50%キープ",1000));
+				bonus.push_back(Bonus("HP50%キープ",1000));
 			} else if(maxMinRate<=0.25){
-				bonus.push_back(std::make_pair("ギリギリの戦い",500));
+				bonus.push_back(Bonus("ギリギリの戦い",500));
 			}
 		}
 	}
@@ -262,14 +270,14 @@ std::string ScoreObserver::GetScoreExplain()const{
 			if(moveCount>0){
 				double averageWalkOP=totalWalkOP/moveCount;
 				if(averageWalkOP>80.0){
-					bonus.push_back(std::make_pair("遊撃のプロフェッショナル",1500));
+					bonus.push_back(Bonus("遊撃のプロフェッショナル",1500));
 				} else if(averageWalkOP>60.0){
-					bonus.push_back(std::make_pair("遊撃兵士",1000));
+					bonus.push_back(Bonus("遊撃兵士",1000));
 				}
 			}
 			//攻撃回数
 			if(attackCount>=finishLog->GetClearTurn()){
-				bonus.push_back(std::make_pair("生粋のアタッカー",2000));
+				bonus.push_back(Bonus("生粋のアタッカー",2000));
 			}
 		}
 	}
@@ -317,18 +325,18 @@ std::string ScoreObserver::GetScoreExplain()const{
 			};
 			if(initLog->JudgeEveryUnitData(judgeExistEnemyMage,false)){
 				if(magicAttackedCount==0){
-					bonus.push_back(std::make_pair("重装兵で魔法攻撃を受けない",2000));
+					bonus.push_back(Bonus("重装兵で魔法攻撃を受けない",2000));
 				} else if(magicAttackedCount==magicTotalCount){
-					bonus.push_back(std::make_pair("重装兵が弱点を突かれ続けた",100));
+					bonus.push_back(Bonus("重装兵が弱点を突かれ続けた",100));
 				}
 			}
 			//物理被弾回数
 			if(physicTotalCount>0){
 				double rate=1.0*physicAttackedCount/physicTotalCount;
 				if(rate>=0.75){
-					bonus.push_back(std::make_pair("物理鉄壁",1500));
+					bonus.push_back(Bonus("物理鉄壁",1500));
 				} else if(rate>=0.50){
-					bonus.push_back(std::make_pair("物理壁",1000));
+					bonus.push_back(Bonus("物理壁",1000));
 				}
 			}
 		}
@@ -379,9 +387,9 @@ std::string ScoreObserver::GetScoreExplain()const{
 			if(attackCount>0){
 				const double averageRate=totalAttackLengthRate/attackCount;
 				if(averageRate>=0.75){
-					bonus.push_back(std::make_pair("狙撃手",2000));
+					bonus.push_back(Bonus("狙撃手",2000));
 				} else if(averageRate>=0.50){
-					bonus.push_back(std::make_pair("後衛",1000));
+					bonus.push_back(Bonus("後衛",1000));
 				}
 			}
 			//狙う兵種
@@ -393,7 +401,7 @@ std::string ScoreObserver::GetScoreExplain()const{
 			}
 			if(effectiveAttackCount>0 && effectiveAttackCount>=effectiveUnitCount){
 				//効果的な攻撃相手に１回ずつ攻撃しているなら（ただし、厳密にはせず回数の合計だけみる）
-				bonus.push_back(std::make_pair("弱点狙いの射手",1500));
+				bonus.push_back(Bonus("弱点狙いの射手",1500));
 			}
 		}
 	}
@@ -449,14 +457,14 @@ std::string ScoreObserver::GetScoreExplain()const{
 			if(armerCount>0){
 				const double average=1.0*armerAttackCount/armerCount;
 				if(average>=1.5){
-					bonus.push_back(std::make_pair("重装兵キラー",2000));
+					bonus.push_back(Bonus("重装兵キラー",2000));
 				} else if(average>=1.0){
-					bonus.push_back(std::make_pair("魔道士で重装兵狙い",1000));
+					bonus.push_back(Bonus("魔道士で重装兵狙い",1000));
 				}
 			}
 			//近接攻撃被弾回数
 			if(nearAttackedCount<=0){
-				bonus.push_back(std::make_pair("魔道士が近接攻撃を受けない",1500));
+				bonus.push_back(Bonus("魔道士が近接攻撃を受けない",1500));
 			}
 		}
 	}
@@ -524,15 +532,15 @@ std::string ScoreObserver::GetScoreExplain()const{
 			//味方に衛生兵がいる場合、ボーナス処理をする
 			//物理攻撃被弾回数
 			if(physicAttackedCount==0){
-				bonus.push_back(std::make_pair("衛生兵が物理攻撃を受けない",2000));
+				bonus.push_back(Bonus("衛生兵が物理攻撃を受けない",2000));
 			}
 			//回復量
 			if(totalDamage>0){
 				const double rate=1.0*totalRecoverPoint/totalDamage;
 				if(rate>=0.75){
-					bonus.push_back(std::make_pair("回復のスペシャリスト",1500));
+					bonus.push_back(Bonus("回復のスペシャリスト",1500));
 				} else if(rate>=0.50){
-					bonus.push_back(std::make_pair("回復役",1000));
+					bonus.push_back(Bonus("回復役",1000));
 				}
 			}
 		}
@@ -540,14 +548,14 @@ std::string ScoreObserver::GetScoreExplain()const{
 	//位置取り関連
 	{
 		//味方の位置取り
-		std::pair<std::string,int> info=m_latticeBonusData.GetPlayerBonus();
-		if(info.second!=0){
-			bonus.push_back(info);
+		Bonus playerInfo=m_latticeBonusData.GetPlayerBonus();
+		if(playerInfo.GetScore()!=0){
+			bonus.push_back(playerInfo);
 		}
 		//敵の位置取り
-		info=m_latticeBonusData.GetEnemyBonus();
-		if(info.second!=0){
-			bonus.push_back(info);
+		Bonus enemyInfo=m_latticeBonusData.GetEnemyBonus();
+		if(enemyInfo.GetScore()!=0){
+			bonus.push_back(enemyInfo);
 		}
 	}
 	//敵ユニットを撃破するまでのアクション密度
@@ -623,9 +631,9 @@ std::string ScoreObserver::GetScoreExplain()const{
 		if(enemyCount>0){
 			const double rate=totalEachRate/enemyCount;
 			if(rate>=0.80){
-				bonus.push_back(std::make_pair("集中攻撃をとても心がけた",2500));
+				bonus.push_back(Bonus("集中攻撃をとても心がけた",2500));
 			} else if(rate>=0.60){
-				bonus.push_back(std::make_pair("集中攻撃を心がけた",1500));
+				bonus.push_back(Bonus("集中攻撃を心がけた",1500));
 			}
 		}
 	}
@@ -650,16 +658,16 @@ std::string ScoreObserver::GetScoreExplain()const{
 		if(orderCount>0){
 			const double rate=1.0*actionCount/orderCount;
 			if(rate>=0.80){
-				bonus.push_back(std::make_pair("超アクティブバトル",2400));
+				bonus.push_back(Bonus("超アクティブバトル",2400));
 			} else if(rate>=0.60){
-				bonus.push_back(std::make_pair("アクティブバトル",1300));
+				bonus.push_back(Bonus("アクティブバトル",1300));
 			}
 		}
 	}
 	//移動キャンセル回数
 	{
 		if(m_cancelCount==0){
-			bonus.push_back(std::make_pair("ノーキャンセル",1200));
+			bonus.push_back(Bonus("ノーキャンセル",1200));
 		}
 	}
 	//合計移動距離
@@ -683,22 +691,22 @@ std::string ScoreObserver::GetScoreExplain()const{
 		}
 		//ボーナス処理
 		if(totalMoveDistance==0.0f){
-			bonus.push_back(std::make_pair("移動せずにクリア",6000));
+			bonus.push_back(Bonus("移動せずにクリア",6000));
 		}
 	}
 	//探索使用回数
 	{
 		if(m_researchCount==0){
-			bonus.push_back(std::make_pair("偵察いらず",3000));
+			bonus.push_back(Bonus("偵察いらず",3000));
 		} else if(m_researchCount>=10){
-			bonus.push_back(std::make_pair("偵察のプロフェッショナル",400));
+			bonus.push_back(Bonus("偵察のプロフェッショナル",400));
 		}
 	}
 
 	//ボーナスを全て計算したら、スコア計算
 	int score=turnScore.second+liveScore.second;
-	for(const std::pair<std::string,int> &pair:bonus){
-		score+=pair.second;
+	for(const Bonus &b:bonus){
+		score+=b.GetScore();
 	}
 	//説明文の表示
 	std::string explain;
@@ -706,8 +714,8 @@ std::string ScoreObserver::GetScoreExplain()const{
 	explain+=turnScore.first+"　　　"+std::to_string(turnScore.second)+"\n";
 	explain+=liveScore.first+"　　　"+std::to_string(liveScore.second)+"\n\n";
 	explain+="BONUS SCORE\n";
-	for(const std::pair<std::string,int> &pair:bonus){
-		explain+=pair.first+"　　　"+std::to_string(pair.second)+"\n";
+	for(const Bonus &b:bonus){
+		explain+=b.GetExplain()+"　　　"+std::to_string(b.GetScore())+"\n";
 	}
 
 	return explain;

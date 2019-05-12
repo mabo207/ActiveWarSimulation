@@ -11,6 +11,23 @@ struct BattleSceneData;
 
 class ScoreObserver{
 public:
+	//ボーナスデータの形式
+	class Bonus{
+	public:
+		Bonus(const std::string &explain,int score);
+		virtual ~Bonus();
+		int GetScore()const{
+			return m_score;
+		}
+		std::string GetExplain()const{
+			return m_explain;
+		}
+
+	private:
+		const std::string m_explain;
+		const int m_score;
+	};
+
 	//各場面に応じたスコアの更新処理
 	void InitUpdate(const BattleSceneData * const battleData);
 	void FinishUpdate(const BattleSceneData * const battleData);
@@ -31,8 +48,8 @@ private:
 		LatticeBonusData();
 		~LatticeBonusData();
 		void InputData(const BattleSceneData * const battleData,const LogElement::UnitLogData &operateUnitData);
-		std::pair<std::string,int> GetPlayerBonus()const;
-		std::pair<std::string,int> GetEnemyBonus()const;
+		Bonus GetPlayerBonus()const;
+		Bonus GetEnemyBonus()const;
 
 	private:
 		size_t m_playerCount;//プレイヤーキャラの合計行動回数
