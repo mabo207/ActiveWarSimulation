@@ -130,8 +130,8 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 	//スコア計算方法がベタ書きされている、リファクタリングの方法求む
 	std::vector<Bonus> bonus;
 	//基本スコア
-	int turnScore;//ターン数
-	int liveScore;//生存数
+	int turnScore=0;//ターン数
+	int liveScore=0;//生存数
 	//よく使われる特徴的なログデータ
 	const FinishLog * finishLog=nullptr;
 	const InitLog *initLog=nullptr;
