@@ -765,13 +765,11 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 	//¶‘¶”
 	{
 		//¶‘¶”‚©‚ç‚Ì“¾“_ŒvŽZ(Q•Ô‚è‚ð‘z’è‚µ‚Ä‚¢‚È‚¢)
-		size_t totalPlayerUnitCount=0;
 		for(const LogElement::UnitLogData &unitData:initLog->m_unitDataList){
 			if(unitData.punit!=nullptr && unitData.punit->GetBattleStatus().team==Unit::Team::e_player){
 				totalPlayerUnitCount++;
 			}
 		}
-		size_t livePlayerUnitCount=0;
 		for(const LogElement::UnitLogData &unitData:finishLog->m_unitDataList){
 			if(unitData.punit!=nullptr && unitData.punit->GetBattleStatus().team==Unit::Team::e_player){
 				livePlayerUnitCount++;
