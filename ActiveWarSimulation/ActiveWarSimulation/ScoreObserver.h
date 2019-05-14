@@ -27,6 +27,27 @@ public:
 		const std::string m_explain;
 		const int m_score;
 	};
+	//出力するスコアの形式
+	struct ScoreExpression{
+		ScoreExpression(const std::vector<Bonus> &bonusVec
+			,size_t surviveCount
+			,size_t unitCount
+			,size_t turnCount
+			,int totalScorePoint)
+			:m_bonusVec(bonusVec)
+			,m_surviveCount(surviveCount)
+			,m_unitCount(unitCount)
+			,m_turnCount(turnCount)
+			,m_totalScorePoint(totalScorePoint)
+		{}
+		virtual ~ScoreExpression(){}
+
+		std::vector<Bonus> m_bonusVec;//ボーナス一覧
+		const int m_surviveCount;//生存数
+		const int m_unitCount;//自ユニット数
+		const int m_turnCount;//ターン数
+		const int m_totalScorePoint;//合計スコア
+	};
 
 	//各場面に応じたスコアの更新処理
 	void InitUpdate(const BattleSceneData * const battleData);
@@ -37,6 +58,7 @@ public:
 	void CancelUpdate();
 	//スコアの結果出力処理
 	std::string GetScoreExplain()const;
+	std::shared_ptr<ScoreExpression> GetScoreExpression()const;
 	//コンストラクタ等
 	ScoreObserver();
 	virtual ~ScoreObserver();
