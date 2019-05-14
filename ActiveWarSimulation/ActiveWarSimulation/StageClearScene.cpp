@@ -13,7 +13,7 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	:BattleSceneElement(SceneKind::e_clear)
 	,m_winFlag(winFlag)
 	,m_battleSceneData(battleSceneData)
-	,m_scoreExpression(battleSceneData->m_scoreObserver->GetScoreExpression())
+	,m_scoreExpression(battleSceneData->m_scoreObserver->GetScoreExpression(winFlag))
 	,m_backPic(LoadGraphEX("Graphic/result/back.png"),75)
 	,m_bonusBar(LoadGraphEX("Graphic/result/bonusBar.png"),75)
 	,m_turnBar(LoadGraphEX("Graphic/result/turnBar.png"),75)

@@ -126,7 +126,7 @@ void ScoreObserver::CancelUpdate(){
 	m_cancelCount++;
 }
 
-std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpression()const{
+std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpression(bool winFlag)const{
 	//スコア計算方法がベタ書きされている、リファクタリングの方法求む
 	std::vector<Bonus> bonus;
 	//基本スコア
@@ -153,20 +153,6 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 			&& logData.punit->GetBaseStatus().profession==profession
 			&& logData.punit->GetBattleStatus().team==Unit::Team::e_player);
 	};
-	//クリアターン数からの得点計算
-	const int clearTurn=finishLog->GetClearTurn();
-	//クリアターン数
-	{
-		turnScore=std::max(0,20-clearTurn)*500;
-		//クリアターン数のボーナス得点
-		if(clearTurn<5){
-			bonus.push_back(Bonus("神速進軍",3000));
-		} else if(clearTurn<7){
-			bonus.push_back(Bonus("速攻進軍",2000));
-		} else if(clearTurn>15){
-			bonus.push_back(Bonus("ノロノロ進軍",100));
-		}
-	}
 	//生存数
 	{
 		//生存数からの得点計算(寝返りを想定していない)
@@ -190,6 +176,23 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 			bonus.push_back(Bonus("全員生存",3000));
 		} else if(livePlayerUnitCount==1){
 			bonus.push_back(Bonus("ほぼ引き分け",200));
+		}
+	}
+	//クリアターン数からの得点計算
+	const int clearTurn=finishLog->GetClearTurn();
+	//クリアターン数
+	{
+		if(winFlag){
+			//勝利している時のみスコア計算
+			turnScore=std::max(0,20-clearTurn)*500;
+			//クリアターン数のボーナス得点
+			if(clearTurn<5){
+				bonus.push_back(Bonus("神速進軍",3000));
+			} else if(clearTurn<7){
+				bonus.push_back(Bonus("速攻進軍",2000));
+			} else if(clearTurn>15){
+				bonus.push_back(Bonus("ノロノロ進軍",100));
+			}
 		}
 	}
 	//被ダメージ%推移
