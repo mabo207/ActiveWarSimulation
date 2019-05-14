@@ -86,15 +86,17 @@ void StageClearScene::thisDraw()const{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_turnBar.second/100);
 		DrawGraph(backX+x,backY+y,m_turnBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
-		DrawStringToHandle(backX+x+400,backY+y+40,std::to_string(m_scoreExpression->m_turnCount).c_str(),GetColor(255,255,255),m_scoreFont);
+		DrawStringRightJustifiedToHandle(backX+x+500,backY+y+40,std::to_string(m_scoreExpression->m_turnCount),GetColor(255,255,255),m_scoreFont);
 	}
 	//生存数描画
 	{
 		const int x=50,y=200;
+		const int stringY=backY+y+40;
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_survivalBar.second/100);
 		DrawGraph(backX+x,backY+y,m_survivalBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
-		DrawStringToHandle(backX+x+400,backY+y+40,(std::to_string(m_scoreExpression->m_surviveCount)+"/"+std::to_string(m_scoreExpression->m_unitCount)).c_str(),GetColor(255,255,255),m_scoreFont);
+		DrawStringRightJustifiedToHandle(backX+x+500,stringY,std::to_string(m_scoreExpression->m_surviveCount).c_str(),GetColor(255,255,255),m_scoreFont);
+		DrawStringToHandle(backX+x+510,stringY,("/"+std::to_string(m_scoreExpression->m_unitCount)).c_str(),GetColor(255,255,255),m_scoreFont);
 	}
 	//ボーナス画面描画
 	{
