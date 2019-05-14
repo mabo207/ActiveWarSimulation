@@ -9,6 +9,9 @@ class StageClearScene:public BattleSceneElement{
 	//型・列挙体
 	
 	//定数
+protected:
+	static const int bonusFontSize;
+	static const int scoreFontSize;
 
 	//変数
 protected:
@@ -20,9 +23,16 @@ protected:
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
 
 	//グラフィック系
-	const int m_stageClearBox;//ステージクリア状況を描画するボックス
-	const int m_clearFont;
-	const int m_explainFont;
+	const std::pair<int,int> m_backPic;//背景のハンドルとその透明度
+	const std::pair<int,int> m_bonusBar;//ボーナス描画領域のハンドルとその透明度
+	const std::pair<int,int> m_turnBar;//ターン数描画領域のハンドルとその透明度
+	const std::pair<int,int> m_survivalBar;//生存数描画領域のハンドルとその透明度
+	const int m_resultBarPic;//勝った・負けたのバーの描画ハンドル
+	const int m_scoreBarPic;//合計スコア描画領域のハンドル
+
+	//フォント系
+	const int m_bonusFont;//ボーナス項目表示のフォント
+	const int m_scoreFont;//スコア数値表示のフォント
 
 	//関数
 protected:
