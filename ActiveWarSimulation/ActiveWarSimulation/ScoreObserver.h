@@ -57,7 +57,6 @@ public:
 	void WaitUpdate(const BattleSceneData * const battleData);
 	void CancelUpdate();
 	//スコアの結果出力処理
-	std::string GetScoreExplain()const;
 	std::shared_ptr<ScoreExpression> GetScoreExpression()const;
 	//コンストラクタ等
 	ScoreObserver();

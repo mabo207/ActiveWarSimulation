@@ -16,7 +16,6 @@ protected:
 	//変数
 protected:
 	const bool m_winFlag;//クリアしたかどうか。
-	const std::string m_explain;//補足情報
 	int m_frame;
 
 	//ゲームの進行データ
@@ -45,7 +44,7 @@ protected:
 	void ReturnProcess();//この場面に戻ってきた時の処理
 
 public:
-	StageClearScene(std::shared_ptr<BattleSceneData> battleSceneData,bool winFlag,const std::string &explain);
+	StageClearScene(std::shared_ptr<BattleSceneData> battleSceneData,bool winFlag);
 	~StageClearScene();
 };
 
