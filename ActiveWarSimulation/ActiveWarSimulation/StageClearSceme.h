@@ -21,6 +21,7 @@ protected:
 
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
+	const std::shared_ptr<ScoreObserver::ScoreExpression> m_scoreExpression;//スコア表示のためのデータ
 
 	//グラフィック系
 	const std::pair<int,int> m_backPic;//背景のハンドルとその透明度

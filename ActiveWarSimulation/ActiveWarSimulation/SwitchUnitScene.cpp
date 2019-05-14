@@ -133,7 +133,8 @@ int SwitchUnitScene::UpdateNextScene(int index){
 				"撤退数："+std::to_string(deathUnitNum)+"人\n"
 				+"クリアターン数："+std::to_string(clearTurn);
 //*/
-			const std::string str=m_battleSceneData->m_scoreObserver->GetScoreExplain();
+//			const std::string str=m_battleSceneData->m_scoreObserver->GetScoreExplain();
+			const std::string str="";
 			m_nextScene=std::shared_ptr<BattleSceneElement>(new StageClearScene(m_battleSceneData,true,str));
 		} else if(m_judgeEnd==JudgeEnd::e_playerLose){
 			//プレイヤーの敗北

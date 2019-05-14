@@ -14,6 +14,7 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_winFlag(winFlag)
 	,m_explain(explain)
 	,m_battleSceneData(battleSceneData)
+	,m_scoreExpression(battleSceneData->m_scoreObserver->GetScoreExpression())
 //	,m_stageClearBox(LoadGraphEX("Graphic/stageClearBox.png"))
 //	,m_clearFont(CreateFontToHandleEX("Bell MT",48,4,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,2))
 //	,m_clearFont(LoadFontDataToHandleEX("Font/StageClearFont.dft",2))
@@ -97,7 +98,7 @@ void StageClearScene::thisDraw()const{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_turnBar.second/100);
 		DrawGraph(backX+x,backY+y,m_turnBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
-		DrawStringToHandle(backX+x+400,backY+y+40,std::to_string(5).c_str(),GetColor(255,255,255),m_scoreFont);
+		DrawStringToHandle(backX+x+400,backY+y+40,std::to_string(m_scoreExpression->m_turnCount).c_str(),GetColor(255,255,255),m_scoreFont);
 	}
 	//生存数描画
 	{
@@ -105,7 +106,7 @@ void StageClearScene::thisDraw()const{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_survivalBar.second/100);
 		DrawGraph(backX+x,backY+y,m_survivalBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
-		DrawStringToHandle(backX+x+400,backY+y+40,(std::to_string(5)+"/"+std::to_string(6)).c_str(),GetColor(255,255,255),m_scoreFont);
+		DrawStringToHandle(backX+x+400,backY+y+40,(std::to_string(m_scoreExpression->m_surviveCount)+"/"+std::to_string(m_scoreExpression->m_unitCount)).c_str(),GetColor(255,255,255),m_scoreFont);
 	}
 	//ボーナス画面描画
 	{
@@ -115,17 +116,17 @@ void StageClearScene::thisDraw()const{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_bonusBar.second/100);
 		DrawGraph(backX+x,backY+y,m_bonusBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
-		for(int i=0;i<5;i++){
+		for(int i=0;i<(int)m_scoreExpression->m_bonusVec.size();i++){
 			const int drawY=backY+y+115+(int)(i*bonusFontSize*1.3);
-			DrawStringToHandle(backX+x+20,drawY,"hogehoge",GetColor(255,255,255),m_bonusFont);
-			DrawStringRightJustifiedToHandle(backX+x+bonusWidth-20,drawY,std::to_string(2000),GetColor(255,255,255),m_bonusFont);
+			DrawStringToHandle(backX+x+20,drawY,m_scoreExpression->m_bonusVec[i].GetExplain().c_str(),GetColor(255,255,255),m_bonusFont);
+			DrawStringRightJustifiedToHandle(backX+x+bonusWidth-20,drawY,std::to_string(m_scoreExpression->m_bonusVec[i].GetScore()),GetColor(255,255,255),m_bonusFont);
 		}
 	}
 	//合計スコア描画
 	{
 		const int x=840,y=670;
 		DrawGraph(backX+x,backY+y,m_scoreBarPic,TRUE);
-		DrawStringToHandle(backX+x+650,backY+y+30,(std::to_string(50000)).c_str(),GetColor(255,255,255),m_scoreFont);
+		DrawStringToHandle(backX+x+650,backY+y+30,(std::to_string(m_scoreExpression->m_totalScorePoint)).c_str(),GetColor(255,255,255),m_scoreFont);
 	}
 }
 
