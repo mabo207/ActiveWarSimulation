@@ -6,8 +6,25 @@
 #include"BattleScene.h"
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
+#include"ToolsLib.h"
 
 //----------------------StageSelectScene------------------
+StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirName,const std::string &stageInfo,const std::string &explain)
+	:m_mapPic(mapPic),m_dirName(dirName),m_explain(explain)
+{
+	//stageInfo.txtの生データを読み込み可能な形式に変換
+	const StringBuilder infoBuilder(stageInfo,',','(',')',true,true);
+	for(const StringBuilder &sb:infoBuilder.GetVector()){
+		if(sb.m_vec.size()>=2){
+			if(sb.m_vec[0].GetString()=="title"){
+				m_stageName=sb.m_vec[1].GetString();
+			} else if(sb.m_vec[0].GetString()=="level"){
+				m_level=std::atoi(sb.m_vec[1].GetString().c_str());
+			}
+		}
+	}
+}
+
 StageSelectScene::StageInfo::~StageInfo(){
 	//DeleteGraphEX(m_mapPic);
 }

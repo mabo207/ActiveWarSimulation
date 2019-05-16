@@ -1,2 +1,1 @@
-(name,橋ステージ１)
-(level,1)
+(title,橋ステージ１),(level,1)

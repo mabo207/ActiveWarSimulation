@@ -13,9 +13,9 @@ private:
 		int m_mapPic;//マップグラフィック(縮小表示)(push_back()の際にデストラクタが呼ばれグラフィックが消されるので、削除はデストラクタでは行わない。どうしてもデストラクタでしたくなったら、コピーコンストラクタを作って再度CopyGraph()をしよう。)
 		std::string m_dirName;//ディレクトリ名
 		std::string m_stageName;//ステージ名
+		int m_level;//レベル
 		std::string m_explain;//ステージ説明文
-		StageInfo(const int mapPic,const std::string &dirName,const std::string &stageName,const std::string &explain)
-			:m_mapPic(mapPic),m_dirName(dirName),m_stageName(stageName),m_explain(explain){}
+		StageInfo(const int mapPic,const std::string &dirName,const std::string &stageInfo,const std::string &explain);
 		~StageInfo();
 	};
 

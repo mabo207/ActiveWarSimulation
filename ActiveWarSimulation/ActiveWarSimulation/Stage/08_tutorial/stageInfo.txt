@@ -1,2 +1,1 @@
-(name,橋ステージ Expert)
-(level,4)
+(title,橋ステージ Expert),(level,4)
