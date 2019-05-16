@@ -2,7 +2,7 @@
 #include"SwitchUnitScene.h"
 #include"PlayerMoveScene.h"
 #include"ComputerMoveScene.h"
-#include"StageClearSceme.h"
+#include"StageClearScene.h"
 #include"GraphicControl.h"
 
 #include"TutorialPlayerMoveScene.h"

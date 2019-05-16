@@ -217,7 +217,7 @@
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
     <ClInclude Include="ScoreObserver.h" />
-    <ClInclude Include="StageClearSceme.h" />
+    <ClInclude Include="StageClearScene.h" />
     <ClInclude Include="StageSelectScene.h" />
     <ClInclude Include="InitLog.h" />
     <ClInclude Include="SystemMenu.h" />

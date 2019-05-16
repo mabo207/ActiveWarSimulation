@@ -1,4 +1,4 @@
-#include"StageClearSceme.h"
+#include"StageClearScene.h"
 #include"DxLib.h"
 #include"GraphicControl.h"
 #include"input.h"

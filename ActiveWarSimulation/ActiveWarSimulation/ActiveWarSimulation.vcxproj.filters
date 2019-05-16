@@ -305,7 +305,7 @@
     <ClInclude Include="StageSelectScene.h">
       <Filter>ヘッダー ファイル\GameScene\TitleScene</Filter>
     </ClInclude>
-    <ClInclude Include="StageClearSceme.h">
+    <ClInclude Include="StageClearScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
     <ClInclude Include="CommonConstParameter.h">
