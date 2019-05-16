@@ -29,6 +29,14 @@ StageSelectScene::StageInfo::~StageInfo(){
 	//DeleteGraphEX(m_mapPic);
 }
 
+std::string StageSelectScene::StageInfo::GetLevelStr()const{
+	std::string retStr="ìÔà’ìxÅ@";
+	for(int i=0;i<m_level;i++){
+		retStr+="Åö";
+	}
+	return retStr;
+}
+
 StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass> *const pReqInfo)
 	:m_pReqInfo(pReqInfo)
 	,m_beforeStageButton(100,300,LoadGraphEX("Graphic/beforeItem.png"))
@@ -166,6 +174,8 @@ void StageSelectScene::Draw()const{
 		GetGraphSize(m_stageInfoVec[m_selectStageIndex].m_mapPic,&stageDx,&stageDy);
 		DrawRotaGraph(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/3,((double)CommonConstParameter::gameResolutionY/2)/stageDy,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
 		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_selectStageIndex].m_stageName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
-		DrawStringNewLineToHandle(explainX,CommonConstParameter::gameResolutionY*2/3,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+		int explainY=CommonConstParameter::gameResolutionY*2/3;
+		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].GetLevelStr().c_str(),GetColor(255,255,255),m_explainFont);
+		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
 	}
 }
