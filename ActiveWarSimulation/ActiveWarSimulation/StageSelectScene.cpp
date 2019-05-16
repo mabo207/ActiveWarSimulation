@@ -65,7 +65,7 @@ StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::Requi
 			m_stageInfoVec.push_back(StageInfo(
 				LoadGraphEX(("Stage/"+dirName+"/nonfree/minimap.png").c_str())
 				,dirName
-				,FileStrRead(("Stage/"+dirName+"/stageName.txt").c_str())
+				,FileStrRead(("Stage/"+dirName+"/stageInfo.txt").c_str())
 				,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
 			));
 		}

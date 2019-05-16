@@ -1,0 +1,2 @@
+(name,橋ステージ Expert)
+(level,4)
