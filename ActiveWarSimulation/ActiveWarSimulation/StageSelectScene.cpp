@@ -12,8 +12,8 @@ StageSelectScene::StageInfo::~StageInfo(){
 	//DeleteGraphEX(m_mapPic);
 }
 
-StageSelectScene::StageSelectScene(std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass> *const pReqInfo)
-	:m_pReqInfo(pReqInfo)
+StageSelectScene::StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &sharedData)
+	:m_sharedData(sharedData)
 	,m_beforeStageButton(100,300,LoadGraphEX("Graphic/beforeItem.png"))
 	,m_afterStageButton(1770,300,LoadGraphEX("Graphic/afterItem.png"))
 	,m_backButton(60,940,LoadGraphEX("Graphic/backButton.png"))
@@ -114,8 +114,10 @@ int StageSelectScene::Calculate(){
 		)
 	{
 		//ゲームプレイへ進む
-		if(m_pReqInfo!=nullptr){
-			*m_pReqInfo=std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass>(new BattleScene::RequiredInfoToMakeBattleScene(m_stageInfoVec[m_selectStageIndex].m_dirName));//ゲームプレイ場面を作るのに必要な情報は渡しておく
+		if(!m_sharedData.expired()){
+			//元データが残っている場合のみ、アクセスできる。
+			auto sharedData=m_sharedData.lock();
+			sharedData->m_requiredInfo=std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass>(new BattleScene::RequiredInfoToMakeBattleScene(m_stageInfoVec[m_selectStageIndex].m_dirName));//ゲームプレイ場面を作るのに必要な情報を渡しておく
 		}
 		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音
 		return -1;

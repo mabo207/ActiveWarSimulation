@@ -12,7 +12,7 @@
 #include"GeneralPurposeResourceManager.h"
 #include"CommonConstParameter.h"
 
-//-------------------TitleScene-------------------
+//-------------------TitleScene::SelectItem-------------------
 std::string TitleScene::SelectItem::GetString(const Kind kind){
 	switch(kind){
 	case(e_stageSelect):
@@ -29,6 +29,14 @@ std::string TitleScene::SelectItem::GetString(const Kind kind){
 	return "";
 }
 
+//-------------------TitleScene::SharedData-------------------
+TitleScene::SharedData::SharedData()
+	:m_requiredInfo()
+{}
+
+TitleScene::SharedData::~SharedData(){}
+
+//-------------------TitleScene-------------------
 std::shared_ptr<Shape> TitleScene::MakeHexagon(const Vector2D center,const float size)const{
 	const size_t vecNum=6;
 	Vector2D vec[vecNum];
@@ -61,7 +69,7 @@ TitleScene::TitleScene()
 	,m_selectItem(SelectItem::e_stageSelect)
 	,m_frame(0)
 	,m_nextScene(nullptr)
-	,m_reqInfo(nullptr)
+	,m_sharedData(new SharedData())
 {
 	//当たり判定図形の用意
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
@@ -195,7 +203,7 @@ int TitleScene::Calculate(){
 			return 1;
 		case(SelectItem::e_stageSelect):
 			//ステージセレクト画面へ
-			m_nextScene=std::shared_ptr<GameScene>(new StageSelectScene(&m_reqInfo));
+			m_nextScene=std::shared_ptr<GameScene>(new StageSelectScene(m_sharedData));
 			break;
 		case(SelectItem::e_demo):
 			//デモ画面へ
@@ -226,7 +234,7 @@ int TitleScene::Calculate(){
 		case(-2):
 			//前のクラスからこのクラスに戻ると伝わってきた
 			m_nextScene=std::shared_ptr<GameScene>(nullptr);
-			m_reqInfo=std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass>(nullptr);//次のクラスをどうするかという情報も消しておく
+			m_sharedData->m_requiredInfo=std::shared_ptr<RequiredInfoToMakeClass>();
 			break;
 		}
 	}
@@ -246,12 +254,10 @@ void TitleScene::Draw()const{
 std::shared_ptr<MainControledGameScene> TitleScene::VGetNextMainControledScene()const{
 	switch(m_selectItem){
 	case(SelectItem::e_stageSelect):
-		if(m_reqInfo.get()==nullptr){
-			//次のクラスが作れない場合はnullptrを返す
-		} else{
-			//情報があれば、物は作れる
-			if(m_reqInfo->GetKind()==RequiredInfoToMakeClass::e_battleScene){
-				const BattleScene::RequiredInfoToMakeBattleScene *info=dynamic_cast<const BattleScene::RequiredInfoToMakeBattleScene *>(m_reqInfo.get());
+		if(m_sharedData->m_requiredInfo){
+			//有効なリソースを持っている場合は、次のクラスを作る
+			if(m_sharedData->m_requiredInfo->GetKind()==RequiredInfoToMakeClass::e_battleScene){
+				const BattleScene::RequiredInfoToMakeBattleScene *info=dynamic_cast<const BattleScene::RequiredInfoToMakeBattleScene *>(m_sharedData->m_requiredInfo.get());
 				if(info!=nullptr){
 					return std::shared_ptr<MainControledGameScene>(new BattleScene(info->m_stagename.c_str()));
 				}
