@@ -138,7 +138,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 				if(index!=0){
 					//std::shared_ptr<MainControledGameScene> pNextScene=pGameScene->VGetNextMainControledScene();
 					std::shared_ptr<MainControledGameScene> pNextActivateScene=pGameScene->VGetNextMainControledScene();
-					if(pNextActivateScene.get()!=nullptr){
+					if(pNextActivateScene){
 						//Ÿ‚Ìê–Ê‚ª‚ ‚ê‚ÎA‚»‚Ìê–Ê‚Ö‘JˆÚ
 						std::shared_ptr<MainControledGameScene> pNextScene(new MainControledFadeInOutGameScene(pNextActivateScene,0x03,15));
 						if(pNextScene.get()!=nullptr){

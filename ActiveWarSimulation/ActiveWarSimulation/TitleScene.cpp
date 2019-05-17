@@ -280,5 +280,5 @@ std::shared_ptr<MainControledGameScene> TitleScene::VGetNextMainControledScene()
 		return TutorialScene::TutorialSceneFactory("tutorial_2").CreateScene();
 		break;
 	}
-	return std::shared_ptr<MainControledGameScene>(nullptr);
+	return std::shared_ptr<MainControledGameScene>();
 }

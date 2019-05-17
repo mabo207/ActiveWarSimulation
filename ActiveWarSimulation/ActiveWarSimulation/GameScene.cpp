@@ -90,5 +90,5 @@ std::shared_ptr<MainControledGameScene> MainControledFadeInOutGameScene::VGetNex
 	if(pScene!=nullptr){
 		return pScene->VGetNextMainControledScene();
 	}
-	return std::shared_ptr<MainControledGameScene>(nullptr);
+	return std::shared_ptr<MainControledGameScene>();
 }
