@@ -25,12 +25,21 @@ private:
 		static std::string GetString(const Kind kind);
 	};
 public:
-	struct RequiredInfoToMakeTitleScene:public RequiredInfoToMakeClass{
+	//MainControledGameSceneを継承しているためクラスをfactoryクラスを作る必要がある
+	class TitleSceneFactory:public MainSceneFactory{
+	public:
 		//クラスを作るのに必要なデータはない
-		RequiredInfoToMakeTitleScene(){}
-		Kind GetKind()const{
-			return e_titleScene;
-		}
+		TitleSceneFactory();
+		virtual ~TitleSceneFactory();
+		std::shared_ptr<MainControledGameScene> CreateScene()const;
+	};
+	//TitleSceneで管理するデータの内、他のシーンクラスに共有したいデータ
+	//BattleSceneに対するBattleSceneData
+	struct SharedData{
+		SharedData();
+		virtual ~SharedData();
+
+		std::shared_ptr<MainSceneFactory> m_requiredInfo;//他のmain関数管理下のクラスを作るための情報
 	};
 
 	
@@ -46,8 +55,8 @@ protected:
 	std::array<std::shared_ptr<Shape>,SelectItem::COUNTER> m_hitJudgeShapeVec;
 	std::shared_ptr<GameScene> m_nextScene;//次のシーン。これがnullptrなら、タイトルの処理を行う。
 
-	//他のクラスを作るのに必要なデータ
-	std::shared_ptr<RequiredInfoToMakeClass> m_reqInfo;//こいつへのポインタを渡すことで、他のクラスでもこの値を弄れる。それを用いて、このクラスから戻る時に、次どのクラスに行けばいいかなどが計算できる。
+	//TitleSceneから直接遷移したクラスと共有するデータ(他クラスにはweak_ptrで渡すべき。)
+	std::shared_ptr<SharedData> m_sharedData;
 
 	//グラフィック
 	const int m_backPic;//背景
@@ -65,9 +74,11 @@ private:
 	int thisCalculate();//SelectItem::COUNTER:現状維持 0~SelectItem::COUNTER-1:遷移
 	void thisDraw()const;
 
-public:
+protected:
 	TitleScene();
-	~TitleScene();
+
+public:
+	virtual ~TitleScene();
 	int Calculate();
 	void Draw()const;
 	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;

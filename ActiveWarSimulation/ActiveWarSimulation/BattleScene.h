@@ -8,12 +8,13 @@
 class BattleScene:public MainControledGameScene{
 	//型・列挙体
 public:
-	struct RequiredInfoToMakeBattleScene:public RequiredInfoToMakeClass{
-		std::string m_stagename;
-		RequiredInfoToMakeBattleScene(const std::string &stagename):m_stagename(stagename){}
-		Kind GetKind()const{
-			return e_battleScene;
-		}
+	class BattleSceneFactory:public MainSceneFactory{
+	public:
+		BattleSceneFactory(const std::string &stagename);
+		~BattleSceneFactory();
+		std::shared_ptr<MainControledGameScene> CreateScene()const;
+	private:
+		const std::string m_stagename;
 	};
 
 	//定数
@@ -37,11 +38,11 @@ protected:
 	//関数
 protected:
 	BattleScene(std::shared_ptr<BattleSceneData> battleSceneData);//継承クラス用コンストラクタ
+	BattleScene(const char *stagename);
 	virtual std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
 	void ResetGame();
 
 public:
-	BattleScene(const char *stagename);
 	virtual ~BattleScene();
 	virtual int Calculate();
 	virtual void Draw()const;

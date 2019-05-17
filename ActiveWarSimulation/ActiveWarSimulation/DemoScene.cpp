@@ -6,6 +6,17 @@
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
 
+//--------------------DemoScene::DemoSceneFactory-------------------
+DemoScene::DemoSceneFactory::DemoSceneFactory()
+	:MainSceneFactory()
+{}
+
+DemoScene::DemoSceneFactory::~DemoSceneFactory(){}
+
+std::shared_ptr<MainControledGameScene> DemoScene::DemoSceneFactory::CreateScene()const{
+	return std::shared_ptr<MainControledGameScene>(new DemoScene());
+}
+
 //--------------------DemoScene-------------------
 DemoScene::DemoScene()
 	:BattleScene("demo")
