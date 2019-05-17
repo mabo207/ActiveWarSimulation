@@ -5,6 +5,7 @@
 #include<vector>
 #include<string>
 #include"input.h"
+#include"TitleScene.h"
 
 class StageSelectScene:public GameScene{
 	//型・列挙体
@@ -29,7 +30,7 @@ private:
 protected:
 	size_t m_selectStageIndex;//選択中のステージ
 	std::vector<StageInfo> m_stageInfoVec;//ステージ一覧情報
-	std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass> *const m_pReqInfo;
+	std::weak_ptr<TitleScene::SharedData> m_sharedData;//タイトルシーンの共有情報
 	
 	//マウスでクリックできるボタン群
 	const MouseButtonUI m_beforeStageButton;
@@ -48,7 +49,7 @@ protected:
 protected:
 
 public:
-	StageSelectScene(std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass> *const pReqInfo);
+	StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &sharedData);
 	~StageSelectScene();
 	int Calculate();
 	void Draw()const;

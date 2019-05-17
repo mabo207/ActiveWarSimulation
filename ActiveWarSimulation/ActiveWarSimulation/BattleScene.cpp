@@ -5,6 +5,18 @@
 #include"DxLib.h"
 #include"CommonConstParameter.h"
 
+//----------------------BattleScene::BattleSceneFactory----------------------
+BattleScene::BattleSceneFactory::BattleSceneFactory(const std::string &stagename)
+	:MainSceneFactory()
+	,m_stagename(stagename)
+{}
+
+BattleScene::BattleSceneFactory::~BattleSceneFactory(){}
+
+std::shared_ptr<MainControledGameScene> BattleScene::BattleSceneFactory::CreateScene()const{
+	return std::shared_ptr<BattleScene>(new BattleScene(m_stagename.c_str()));
+}
+
 //----------------------BattleScene----------------------
 const int BattleScene::resetInterval=60;
 
@@ -90,5 +102,5 @@ void BattleScene::Draw()const{
 
 std::shared_ptr<MainControledGameScene> BattleScene::VGetNextMainControledScene()const{
 	//ゲームプレイが終わった時は、タイトル画面へ
-	return std::shared_ptr<MainControledGameScene>(new TitleScene());
+	return TitleScene::TitleSceneFactory().CreateScene();
 }
