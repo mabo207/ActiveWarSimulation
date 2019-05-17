@@ -38,11 +38,11 @@ protected:
 	//関数
 protected:
 	BattleScene(std::shared_ptr<BattleSceneData> battleSceneData);//継承クラス用コンストラクタ
+	BattleScene(const char *stagename);
 	virtual std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
 	void ResetGame();
 
 public:
-	BattleScene(const char *stagename);
 	virtual ~BattleScene();
 	virtual int Calculate();
 	virtual void Draw()const;

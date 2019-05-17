@@ -74,8 +74,10 @@ private:
 	int thisCalculate();//SelectItem::COUNTER:Œ»óˆÛ 0~SelectItem::COUNTER-1:‘JˆÚ
 	void thisDraw()const;
 
-public:
+protected:
 	TitleScene();
+
+public:
 	virtual ~TitleScene();
 	int Calculate();
 	void Draw()const;

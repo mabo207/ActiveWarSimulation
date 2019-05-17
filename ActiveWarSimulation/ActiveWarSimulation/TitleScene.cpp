@@ -37,7 +37,7 @@ TitleScene::TitleSceneFactory::TitleSceneFactory()
 TitleScene::TitleSceneFactory::~TitleSceneFactory(){}
 
 std::shared_ptr<MainControledGameScene> TitleScene::TitleSceneFactory::CreateScene()const{
-	return std::make_shared<TitleScene>();
+	return std::shared_ptr<MainControledGameScene>(new TitleScene());
 }
 
 //-------------------TitleScene::SharedData-------------------

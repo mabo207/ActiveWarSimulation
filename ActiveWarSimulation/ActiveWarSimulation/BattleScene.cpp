@@ -14,7 +14,7 @@ BattleScene::BattleSceneFactory::BattleSceneFactory(const std::string &stagename
 BattleScene::BattleSceneFactory::~BattleSceneFactory(){}
 
 std::shared_ptr<MainControledGameScene> BattleScene::BattleSceneFactory::CreateScene()const{
-	return std::make_shared<BattleScene>(m_stagename.c_str());
+	return std::shared_ptr<BattleScene>(new BattleScene(m_stagename.c_str()));
 }
 
 //----------------------BattleScene----------------------
