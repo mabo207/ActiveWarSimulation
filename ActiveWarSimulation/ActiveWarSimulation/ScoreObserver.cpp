@@ -104,6 +104,8 @@ void ScoreObserver::InitUpdate(const BattleSceneData * const battleData){
 
 void ScoreObserver::FinishUpdate(const BattleSceneData * const battleData){
 	m_logList.push_back(std::make_shared<FinishLog>(battleData));
+	//クリア難易度もここで測定する
+	m_stageLevel=battleData->m_stageLevel;
 }
 
 void ScoreObserver::AttackUpdate(const BattleSceneData * const battleData,const Unit * const aimedUnit){
@@ -192,6 +194,21 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 				bonus.push_back(Bonus("速攻進軍",2000));
 			} else if(clearTurn>15){
 				bonus.push_back(Bonus("ノロノロ進軍",100));
+			}
+		}
+	}
+	//クリア難易度
+	{
+		if(winFlag){
+			//勝利している時のみボーナス付与
+			if(m_stageLevel==1){
+				bonus.push_back(Bonus("難易度EASYをクリア",2000));
+			}else if(m_stageLevel==2){
+				bonus.push_back(Bonus("難易度NORMALをクリア",4000));
+			} else if(m_stageLevel==3){
+				bonus.push_back(Bonus("難易度HARDをクリア",7000));
+			} else if(m_stageLevel>=4){
+				bonus.push_back(Bonus("難易度LUNATICをクリア",10000));
 			}
 		}
 	}
@@ -716,6 +733,7 @@ ScoreObserver::ScoreObserver()
 	,m_cancelCount(0)
 	,m_logList()
 	,m_latticeBonusData()
+	,m_stageLevel(0)
 {}
 
 ScoreObserver::~ScoreObserver(){}

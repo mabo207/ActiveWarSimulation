@@ -81,6 +81,7 @@ private:
 
 	std::vector<std::shared_ptr<LogElement>> m_logList;
 	//ログとして残さない些細なデータ
+	int m_stageLevel;
 	size_t m_researchCount;
 	size_t m_cancelCount;
 	//格子点関係についてはログを用いて計算すると処理が長過ぎになるので、Updateのたびにデータを格納する
