@@ -5,6 +5,15 @@
 
 class TutorialScene:public BattleScene{
 	//—ñ‹“‘ÌEŒ^
+public:
+	class TutorialSceneFactory:public MainSceneFactory{
+	public:
+		TutorialSceneFactory(const std::string &stageDirName);
+		~TutorialSceneFactory();
+		std::shared_ptr<MainControledGameScene> CreateScene()const;
+	private:
+		const std::string m_stageDirName;
+	};
 
 	//’è”
 

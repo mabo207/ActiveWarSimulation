@@ -7,6 +7,15 @@
 class DemoScene:public BattleScene{
 	//Œ^E—ñ‹“‘Ì
 public:
+	class DemoSceneFactory:public MainSceneFactory{
+	public:
+		DemoSceneFactory();
+		~DemoSceneFactory();
+		std::shared_ptr<MainControledGameScene> CreateScene()const;
+
+	protected:
+		//•K—v‚È•Ï”‚Í“Á‚É‘¶İ‚µ‚È‚¢
+	};
 
 	//’è”
 protected:
