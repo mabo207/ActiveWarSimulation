@@ -12,8 +12,8 @@ public:
 	public:
 		BattleSceneFactory(const std::string &stagename);
 		~BattleSceneFactory();
-		std::shared_ptr<MainControledGameScene> CreateScene()const;
-	private:
+		virtual std::shared_ptr<MainControledGameScene> CreateScene()const;
+	protected:
 		std::string m_stagename;
 	};
 
