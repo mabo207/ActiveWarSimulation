@@ -13,7 +13,7 @@ StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirNa
 	:m_mapPic(mapPic),m_dirName(dirName),m_explain(explain)
 {
 	const StageInfoReader reader(dirName);
-	m_stageName=reader.GetTitleName();
+	m_titleName=reader.GetTitleName();
 	m_level=reader.GetLevel();
 }
 
@@ -136,7 +136,7 @@ int StageSelectScene::Calculate(){
 			sharedData->m_requiredInfo=std::shared_ptr<MainControledGameScene::MainSceneFactory>(
 				new BattleScene::BattleSceneFactory(
 					m_stageInfoVec[m_selectStageIndex].m_dirName
-					,m_stageInfoVec[m_selectStageIndex].m_stageName
+					,m_stageInfoVec[m_selectStageIndex].m_titleName
 					,m_stageInfoVec[m_selectStageIndex].m_level
 				));//ゲームプレイ場面を作るのに必要な情報を渡しておく
 		}
@@ -171,7 +171,7 @@ void StageSelectScene::Draw()const{
 		const int explainX=400;
 		GetGraphSize(m_stageInfoVec[m_selectStageIndex].m_mapPic,&stageDx,&stageDy);
 		DrawRotaGraph(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/3,((double)CommonConstParameter::gameResolutionY/2)/stageDy,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
-		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_selectStageIndex].m_stageName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
+		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_selectStageIndex].m_titleName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
 		int explainY=CommonConstParameter::gameResolutionY*2/3;
 		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].GetLevelStr().c_str(),GetColor(255,255,255),m_explainFont);
 		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
