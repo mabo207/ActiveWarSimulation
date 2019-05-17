@@ -31,7 +31,7 @@ public:
 		//クラスを作るのに必要なデータはない
 		TitleSceneFactory();
 		virtual ~TitleSceneFactory();
-		virtual std::shared_ptr<MainControledGameScene> CreateScene()const;
+		std::shared_ptr<MainControledGameScene> CreateScene()const;
 	};
 	//TitleSceneで管理するデータの内、他のシーンクラスに共有したいデータ
 	//BattleSceneに対するBattleSceneData

@@ -12,9 +12,9 @@ public:
 	public:
 		BattleSceneFactory(const std::string &stagename);
 		~BattleSceneFactory();
-		virtual std::shared_ptr<MainControledGameScene> CreateScene()const;
-	protected:
-		std::string m_stagename;
+		std::shared_ptr<MainControledGameScene> CreateScene()const;
+	private:
+		const std::string m_stagename;
 	};
 
 	//’è”
