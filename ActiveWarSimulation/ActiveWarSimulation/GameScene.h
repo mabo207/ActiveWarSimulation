@@ -23,17 +23,13 @@ public:
 class MainControledGameScene:public GameScene{
 	//型
 public:
-	class RequiredInfoToMakeClass{
+	class MainSceneFactory{
 		//MainControledGameSceneクラスを作るために必要なデータ群
-	public:
-		enum Kind{
-			e_battleScene
-			,e_titleScene
-		};
 	protected:
-		RequiredInfoToMakeClass(){}
+		MainSceneFactory(){}
+		virtual ~MainSceneFactory(){}
 	public:
-		virtual Kind GetKind()const=0;//これのオーバーライドが必須な事で、継承先クラスを作るのを忘れないようにする。これは継承先クラスが該当するKindを返せば良い。
+		virtual std::shared_ptr<MainControledGameScene> CreateScene()const=0;//こいつをオーバーライド必須にして、各継承先クラスにFactoryを作らせる
 	};
 
 	//定数

@@ -26,12 +26,12 @@ private:
 	};
 public:
 	//MainControledGameSceneを継承しているためクラスをfactoryクラスを作る必要がある
-	struct RequiredInfoToMakeTitleScene:public RequiredInfoToMakeClass{
+	class TitleSceneFactory:public MainSceneFactory{
+	public:
 		//クラスを作るのに必要なデータはない
-		RequiredInfoToMakeTitleScene(){}
-		Kind GetKind()const{
-			return e_titleScene;
-		}
+		TitleSceneFactory();
+		virtual ~TitleSceneFactory();
+		std::shared_ptr<MainControledGameScene> CreateScene()const;
 	};
 	//TitleSceneで管理するデータの内、他のシーンクラスに共有したいデータ
 	//BattleSceneに対するBattleSceneData
@@ -39,7 +39,7 @@ public:
 		SharedData();
 		virtual ~SharedData();
 
-		std::shared_ptr<RequiredInfoToMakeClass> m_requiredInfo;//他のmain関数管理下のクラスを作るための情報
+		std::shared_ptr<MainSceneFactory> m_requiredInfo;//他のmain関数管理下のクラスを作るための情報
 	};
 
 	
@@ -76,7 +76,7 @@ private:
 
 public:
 	TitleScene();
-	~TitleScene();
+	virtual ~TitleScene();
 	int Calculate();
 	void Draw()const;
 	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;

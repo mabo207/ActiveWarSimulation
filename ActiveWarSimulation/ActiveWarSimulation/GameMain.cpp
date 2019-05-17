@@ -53,7 +53,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		{
 			//場面変数
 			//std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(new TitleScene());
-			std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene>(new TitleScene()),0x03,15));
+			std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(TitleScene::TitleSceneFactory().CreateScene(),0x03,15));
 
 			//画面縮小することによる撮影をする際はSetMouseDispFlagをFALSEにしてコンパイル
 			SetMouseDispFlag(TRUE);
@@ -98,7 +98,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					GraphicControler_Init();
 					FontControler_Init();
 					InitInputControler();
-					pGameScene=std::shared_ptr<MainControledGameScene>(new MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene>(new TitleScene()),0x03,15));
+					pGameScene=std::shared_ptr<MainControledGameScene>(new MainControledFadeInOutGameScene(TitleScene::TitleSceneFactory().CreateScene(),0x03,15));
 					mousePic=LoadGraphEX("Graphic/mouseCursor.png");//マウスの読み込みし直し
 					SetMouseDispFlag(mouseDispFlag);
 				} else if(keyboard_get(KEY_INPUT_F2)==60){

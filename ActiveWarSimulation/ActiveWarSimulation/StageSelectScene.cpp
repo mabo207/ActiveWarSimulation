@@ -117,7 +117,7 @@ int StageSelectScene::Calculate(){
 		if(!m_sharedData.expired()){
 			//元データが残っている場合のみ、アクセスできる。
 			auto sharedData=m_sharedData.lock();
-			sharedData->m_requiredInfo=std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass>(new BattleScene::RequiredInfoToMakeBattleScene(m_stageInfoVec[m_selectStageIndex].m_dirName));//ゲームプレイ場面を作るのに必要な情報を渡しておく
+			sharedData->m_requiredInfo=std::shared_ptr<MainControledGameScene::MainSceneFactory>(new BattleScene::BattleSceneFactory(m_stageInfoVec[m_selectStageIndex].m_dirName));//ゲームプレイ場面を作るのに必要な情報を渡しておく
 		}
 		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音
 		return -1;

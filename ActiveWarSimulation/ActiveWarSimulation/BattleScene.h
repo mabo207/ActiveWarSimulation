@@ -8,12 +8,13 @@
 class BattleScene:public MainControledGameScene{
 	//Œ^E—ñ‹“‘Ì
 public:
-	struct RequiredInfoToMakeBattleScene:public RequiredInfoToMakeClass{
+	class BattleSceneFactory:public MainSceneFactory{
+	public:
+		BattleSceneFactory(const std::string &stagename);
+		~BattleSceneFactory();
+		std::shared_ptr<MainControledGameScene> CreateScene()const;
+	private:
 		std::string m_stagename;
-		RequiredInfoToMakeBattleScene(const std::string &stagename):m_stagename(stagename){}
-		Kind GetKind()const{
-			return e_battleScene;
-		}
 	};
 
 	//’è”

@@ -29,6 +29,17 @@ std::string TitleScene::SelectItem::GetString(const Kind kind){
 	return "";
 }
 
+//-------------------TitleScene::TitleSceneFactory-------------------
+TitleScene::TitleSceneFactory::TitleSceneFactory()
+	:MainSceneFactory()
+{}
+
+TitleScene::TitleSceneFactory::~TitleSceneFactory(){}
+
+std::shared_ptr<MainControledGameScene> TitleScene::TitleSceneFactory::CreateScene()const{
+	return std::make_shared<TitleScene>();
+}
+
 //-------------------TitleScene::SharedData-------------------
 TitleScene::SharedData::SharedData()
 	:m_requiredInfo()
@@ -234,7 +245,7 @@ int TitleScene::Calculate(){
 		case(-2):
 			//前のクラスからこのクラスに戻ると伝わってきた
 			m_nextScene=std::shared_ptr<GameScene>(nullptr);
-			m_sharedData->m_requiredInfo=std::shared_ptr<RequiredInfoToMakeClass>();
+			m_sharedData->m_requiredInfo=std::shared_ptr<MainSceneFactory>();
 			break;
 		}
 	}
@@ -256,12 +267,7 @@ std::shared_ptr<MainControledGameScene> TitleScene::VGetNextMainControledScene()
 	case(SelectItem::e_stageSelect):
 		if(m_sharedData->m_requiredInfo){
 			//有効なリソースを持っている場合は、次のクラスを作る
-			if(m_sharedData->m_requiredInfo->GetKind()==RequiredInfoToMakeClass::e_battleScene){
-				const BattleScene::RequiredInfoToMakeBattleScene *info=dynamic_cast<const BattleScene::RequiredInfoToMakeBattleScene *>(m_sharedData->m_requiredInfo.get());
-				if(info!=nullptr){
-					return std::shared_ptr<MainControledGameScene>(new BattleScene(info->m_stagename.c_str()));
-				}
-			}
+			return m_sharedData->m_requiredInfo->CreateScene();
 		}
 		break;
 	case(SelectItem::e_demo):
