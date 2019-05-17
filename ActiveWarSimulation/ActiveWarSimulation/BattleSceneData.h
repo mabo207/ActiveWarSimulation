@@ -42,7 +42,7 @@ public:
 	Vector2D m_stageSize;//ステージの大きさ(なお、ステージで一番左上にある点は(0,0)とする)
 
 	//読み込みの情報
-	const std::string m_stageName;
+	const std::string m_stageDirName;
 
 	//グラフィックデータ
 	const int m_mapPic;//マップ全体のグラフィック

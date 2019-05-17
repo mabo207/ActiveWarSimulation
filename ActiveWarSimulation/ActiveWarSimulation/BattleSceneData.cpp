@@ -21,7 +21,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneD
 	,m_fpsMesuring(),m_operateUnit(nullptr)
 	,m_totalOP(0.0f)
 	,m_scoreObserver(new ScoreObserver())
-	,m_stageName(stagename)
+	,m_stageDirName(stagename)
 	,m_turnTimerPic(LoadGraphEX("Graphic/turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
 	,m_playMode(playMode)
