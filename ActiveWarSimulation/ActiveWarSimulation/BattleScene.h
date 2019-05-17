@@ -40,7 +40,7 @@ protected:
 	//関数
 protected:
 	BattleScene(std::shared_ptr<BattleSceneData> battleSceneData);//継承クラス用コンストラクタ
-	BattleScene(const char *stagename);
+	BattleScene(const std::string &stageDirName,const std::string &titleName,const int stageLevel);
 	virtual std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
 	void ResetGame();
 

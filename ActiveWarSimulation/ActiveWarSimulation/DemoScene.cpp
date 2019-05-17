@@ -19,7 +19,7 @@ std::shared_ptr<MainControledGameScene> DemoScene::DemoSceneFactory::CreateScene
 
 //--------------------DemoScene-------------------
 DemoScene::DemoScene()
-	:BattleScene("demo")
+	:BattleScene("demo","デモステージ",3)
 	,m_frame(0)
 	,m_font(CreateFontToHandleEX("メイリオ",36,5,DX_FONTTYPE_ANTIALIASING_EDGE,-1,3))
 {

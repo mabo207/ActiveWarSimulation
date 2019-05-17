@@ -13,19 +13,22 @@
 const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);
 const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonConstParameter::gameResolutionX-BattleSceneData::mapDrawSize.y);
 
-BattleSceneData::BattleSceneData(const std::string &stagename)
-	:BattleSceneData(stagename,BattleSceneData::PlayMode::e_normal){}
+BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const int level)
+	:BattleSceneData(stageDirName,titleName,level,BattleSceneData::PlayMode::e_normal)
+{}
 
-BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneData::PlayMode playMode)
+BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const int level,const BattleSceneData::PlayMode playMode)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr)
 	,m_totalOP(0.0f)
 	,m_scoreObserver(new ScoreObserver())
-	,m_stageDirName(stagename)
+	,m_stageDirName(stageDirName)
+	,m_stageTitleName(titleName)
+	,m_stageLevel(level)
 	,m_turnTimerPic(LoadGraphEX("Graphic/turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
 	,m_playMode(playMode)
-	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
+	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/wild-road_loop/"))
 	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
 	,m_attackSound(LoadSoundMem("Sound/effect/nonfree/damage.ogg"))
@@ -36,7 +39,7 @@ BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneD
 	LoadDivGraphEX("Graphic/drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
 
 	//ファイルからステージを読み込み
-	const std::string stagedir("Stage/"+std::string(stagename)+"/");
+	const std::string stagedir("Stage/"+std::string(stageDirName)+"/");
 	//ファイルを開きすべての文字列を書き出す
 	std::ifstream ifs((stagedir+"stage.txt").c_str());
 	if(!ifs){

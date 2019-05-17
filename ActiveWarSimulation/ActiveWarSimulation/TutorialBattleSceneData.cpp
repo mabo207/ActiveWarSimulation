@@ -170,8 +170,8 @@ TutorialBattleSceneData::BlankTutorial::BlankTutorial(int count)
 void TutorialBattleSceneData::BlankTutorial::DrawSupplement(int font)const{}
 
 //----------------TutorialBattleSceneData-----------------------
-TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageName)
-	:BattleSceneData(stageName,PlayMode::e_tutorial)
+TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName,const std::string &titleName,const int stageLevel)
+	:BattleSceneData(stageDirName,titleName,stageLevel,PlayMode::e_tutorial)
 	,m_tutorialFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 {
 	//チュートリアルデータの読み込み

@@ -16,7 +16,7 @@ BattleScene::BattleSceneFactory::BattleSceneFactory(const std::string &stageDirN
 BattleScene::BattleSceneFactory::~BattleSceneFactory(){}
 
 std::shared_ptr<MainControledGameScene> BattleScene::BattleSceneFactory::CreateScene()const{
-	return std::shared_ptr<BattleScene>(new BattleScene(m_stageDirName.c_str()));
+	return std::shared_ptr<BattleScene>(new BattleScene(m_stageDirName,m_title,m_level));
 }
 
 //----------------------BattleScene----------------------
@@ -34,8 +34,8 @@ BattleScene::BattleScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	m_sceneData=VGetSwitchUnitScene();
 }
 
-BattleScene::BattleScene(const char *stagename)
-	:BattleScene(std::shared_ptr<BattleSceneData>(new BattleSceneData(stagename))){}
+BattleScene::BattleScene(const std::string &stageDirName,const std::string &titleName,const int stageLevel)
+	:BattleScene(std::shared_ptr<BattleSceneData>(new BattleSceneData(stageDirName,titleName,stageLevel))){}
 
 BattleScene::~BattleScene(){}
 
@@ -44,7 +44,7 @@ std::shared_ptr<BattleSceneElement> BattleScene::VGetSwitchUnitScene()const{
 }
 
 void BattleScene::ResetGame(){
-	m_battleSceneData=std::shared_ptr<BattleSceneData>(new BattleSceneData(m_battleSceneData->m_stageDirName));//バトルデータを変える
+	m_battleSceneData=std::shared_ptr<BattleSceneData>(new BattleSceneData(m_battleSceneData->m_stageDirName,m_battleSceneData->m_stageTitleName,m_battleSceneData->m_stageLevel));//バトルデータを変える
 	m_sceneData=VGetSwitchUnitScene();//クラスを変える
 	PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);//bgm再生
 }

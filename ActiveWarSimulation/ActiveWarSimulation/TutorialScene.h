@@ -8,18 +8,21 @@ class TutorialScene:public BattleScene{
 public:
 	class TutorialSceneFactory:public MainSceneFactory{
 	public:
-		TutorialSceneFactory(const std::string &stageDirName);
+		TutorialSceneFactory(const std::string &stageDirName);//ディレクトリ情報しか取得できていない場合
+		TutorialSceneFactory(const std::string &stageDirName,const std::string &titleName,const int stageLevel);
 		~TutorialSceneFactory();
 		std::shared_ptr<MainControledGameScene> CreateScene()const;
 	private:
 		const std::string m_stageDirName;
+		std::string m_titleName;
+		int m_stageLevel;
 	};
 
 	//定数
 
 	//変数
 protected:
-	TutorialScene(const std::string &stageName);
+	TutorialScene(const std::string &stageDirName,const std::string &titleName,const int stageLevel);
 
 	//関数
 public:
