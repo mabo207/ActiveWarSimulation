@@ -18,10 +18,11 @@ public:
 	//’è”
 
 	//•Ï”
+protected:
+	TutorialScene(const std::string &stageName);
 
 	//ŠÖ”
 public:
-	TutorialScene(const std::string &stageName);
 	~TutorialScene();
 };
 

@@ -24,14 +24,14 @@ public:
 
 	//変数
 protected:
-
-   //関数
-protected:
 	int m_frame;//DemoScene専用のフレーム数カウンタ
 	int m_font;//注意書きのフォント
 
-public:
+   //関数
+protected:
 	DemoScene();
+
+public:
 	~DemoScene();
 	
 	//仮想関数のオーバーライド

@@ -271,13 +271,13 @@ std::shared_ptr<MainControledGameScene> TitleScene::VGetNextMainControledScene()
 		}
 		break;
 	case(SelectItem::e_demo):
-		return std::shared_ptr<MainControledGameScene>(new DemoScene());
+		return DemoScene::DemoSceneFactory().CreateScene();
 		break;
 	case(SelectItem::e_tutorial):
-		return std::shared_ptr<MainControledGameScene>(new TutorialScene("tutorial"));
+		return TutorialScene::TutorialSceneFactory("tutorial").CreateScene();
 		break;
 	case(SelectItem::e_tutorial_2):
-		return std::shared_ptr<MainControledGameScene>(new TutorialScene("tutorial_2"));
+		return TutorialScene::TutorialSceneFactory("tutorial_2").CreateScene();
 		break;
 	}
 	return std::shared_ptr<MainControledGameScene>(nullptr);
