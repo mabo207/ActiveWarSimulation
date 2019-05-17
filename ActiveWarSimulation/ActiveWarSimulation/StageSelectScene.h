@@ -19,7 +19,7 @@ private:
 		std::string m_explain;//ステージ説明文
 
 		//関数
-		StageInfo(const int mapPic,const std::string &dirName,const std::string &stageInfo,const std::string &explain);
+		StageInfo(const int mapPic,const std::string &dirName,const std::string &explain);
 		~StageInfo();
 		std::string GetLevelStr()const;//難易度を説明する文字列を返す
 	};

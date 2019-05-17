@@ -91,6 +91,12 @@
     <Filter Include="ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger">
       <UniqueIdentifier>{9c30a52a-5598-4cff-9ef0-95f8260f7efa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Uncategolized">
+      <UniqueIdentifier>{3dbbd473-06bb-4e5f-a188-830533a285a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Uncategolized">
+      <UniqueIdentifier>{d62062f2-d13a-426b-b789-0bacda04d975}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -225,6 +231,9 @@
     <ClCompile Include="LatticeBattleField.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData</Filter>
     </ClCompile>
+    <ClCompile Include="AnySceneCallable.cpp">
+      <Filter>ソース ファイル\Uncategolized</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -355,6 +364,9 @@
     </ClInclude>
     <ClInclude Include="LatticeBattleField.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData</Filter>
+    </ClInclude>
+    <ClInclude Include="AnySceneCallable.h">
+      <Filter>ヘッダー ファイル\Uncategolized</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
