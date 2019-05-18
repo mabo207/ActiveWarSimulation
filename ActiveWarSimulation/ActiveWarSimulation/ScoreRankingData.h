@@ -6,6 +6,7 @@
 #include<array>
 #include<map>
 #include<set>
+#include<exception>
 #include"ToolsLib.h"
 
 //クリアスコアのランキングを管理するクラス
@@ -18,6 +19,13 @@ public:
 	bool Save()const;//現在のメンバ変数を用いて記録する
 
 private:
+	class DataCreateException:public std::exception{
+	public:
+		//PlayerData,LevelData,StageScoreDataの作成に失敗した時に出す例外
+		DataCreateException()noexcept;
+		virtual ~DataCreateException()noexcept;
+		const char *what()const noexcept;
+	};
 	struct PlayerData{
 		//ランキングに載っている１つのスコアに関するデータ
 	public:

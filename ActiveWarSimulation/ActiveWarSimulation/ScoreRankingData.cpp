@@ -37,6 +37,15 @@ bool ScoreRankingData::Save()const{
 	return true;
 }
 
+//----------ScoreRankingData::DataCreateException-------------
+ScoreRankingData::DataCreateException::DataCreateException()noexcept{}
+
+ScoreRankingData::DataCreateException::~DataCreateException()noexcept{}
+
+const char *ScoreRankingData::DataCreateException::what()const noexcept{
+	return "Data Create Failed.";
+}
+
 //----------ScoreRankingData::PlayerData-------------
 bool ScoreRankingData::PlayerData::operator<(const PlayerData &otherobj)const{
 	//スコアで比較
@@ -76,7 +85,8 @@ ScoreRankingData::PlayerData ScoreRankingData::PlayerData::Create(const StringBu
 		//しっかりとデータが存在していればPlayerDataを作成
 		return PlayerData(score,name,date);
 	}
-	return PlayerData(0,"po","po");
+	//データ作成失敗
+	throw DataCreateException();
 }
 
 //----------ScoreRankingData::LevelData-------------
@@ -84,7 +94,11 @@ ScoreRankingData::LevelData::LevelData(const StringBuilder &infoBuilder){
 	//分割された文字列を認識
 	for(const StringBuilder &sb:infoBuilder.m_vec){
 		//要素挿入
-		playerDataVec.insert(PlayerData::Create(sb));
+		try{
+			playerDataVec.insert(PlayerData::Create(sb));
+		} catch(DataCreateException &exception){
+			//正常にPlayerDataが作られない時は、要素に追加しなければ良い
+		}
 	}
 }
 
