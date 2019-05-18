@@ -13,8 +13,8 @@ ScoreRankingData::ScoreRankingData()
 	for(StringBuilder &sb:strBuilder.m_vec){
 		sb.Split(',','(',')',true);
 		std::string dirName;
-		const std::array<const StringBuilder *,4> initArray={nullptr,nullptr,nullptr,nullptr};
-		std::array<const StringBuilder *,4> pBuilderArray=initArray;
+		const std::array<const StringBuilder *,StageScoreData::levelCount> initArray={nullptr,nullptr,nullptr,nullptr};
+		std::array<const StringBuilder *,StageScoreData::levelCount> pBuilderArray=initArray;
 		for(const StringBuilder &ssb:sb.m_vec){
 			if(ssb.m_vec.size()>=2 && ssb.m_vec[0].GetString()=="dir"){
 				//ディレクトリデータの読み込み
@@ -120,10 +120,10 @@ ScoreRankingData::StageScoreData::StageScoreData()
 	,levelArray{LevelData(),LevelData(),LevelData(),LevelData()}
 {}
 
-ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const std::string &i_dirName,const std::array<const StringBuilder *,4> &infoBuilderPointerArray){
+ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const std::string &i_dirName,const std::array<const StringBuilder *,levelCount> &infoBuilderPointerArray){
 	//分割された文字列を認識
-	std::array<LevelData,4> levelArray;
-	for(size_t i=0;i<4;i++){
+	std::array<LevelData,levelCount> levelArray;
+	for(size_t i=0;i<levelCount;i++){
 		if(infoBuilderPointerArray[i]->m_vec.size()>=2){
 			//ステージレベルを取得
 			int stageLevel=-1;
@@ -134,7 +134,7 @@ ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const 
 			}
 			//ステージレベルを取得できた場合のみ、LevelDataを作成
 			const int index=stageLevel-1;
-			if(index>=0 && index<4){
+			if(index>=0 && index<levelCount){
 				levelArray[index]=LevelData(infoBuilderPointerArray[i]->m_vec[1]);
 			}
 		}

@@ -18,7 +18,7 @@ StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirNa
 	m_level=reader.GetLevel();
 	//対応するステージ・レベルのランキングデータを取ってくる
 	const int index=m_level-1;
-	if(index>=0 && index<4){
+	if(index>=0 && index<ScoreRankingData::StageScoreData::levelCount){
 		const ScoreRankingData::LevelData levelData=rankingData.GetStageScoreData(dirName).levelArray[index];
 		for(const ScoreRankingData::PlayerData &pd:levelData.playerDataVec){
 			m_rankingVec.push_back(pd);
