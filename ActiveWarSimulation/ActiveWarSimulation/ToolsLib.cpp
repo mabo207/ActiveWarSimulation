@@ -884,41 +884,41 @@ void StringBuilder::Split(const std::string &str,char spliter,char beginer,char 
 		//分割が行われていない時のみ行う
 		//下準備
 		std::string splitStr;//分割された文字列
-		int tokenCount=0;//m_beginerを読み込んだ個数-m_enderを読み込んだ個数。負になる減少は無視する。
+		int tokenCount=0;//beginerを読み込んだ個数-enderを読み込んだ個数。負になる減少は無視する。
 		bool setExist=false;//既に集合を読み終わったかどうか。区切り文字を読み取るたびにfalseにする。「aa(cc,(dd,ee))bb(ff)」のaa,bb,ffのようなバグデータを無視するために用いる。
 		//新たなStringSpliterを生成する際の処理
 		const auto pushFunc=[&]()->void{
 			//deepenがfalseであるか、splitStrに集合が含まれていないならこれ以上深くならない
-			//最終引数がtrueである限りこの処理は再帰的に呼び出されるが、いずれ(next!=ite)がfalseになる。（処理のたびに集合外のm_spliterと最外のm_beginer,m_enderがstrから消滅するため）
-			m_vec.push_back(StringBuilder(splitStr,m_spliter,m_beginer,m_ender,true,deepen && setExist));
+			//最終引数がtrueである限りこの処理は再帰的に呼び出されるが、いずれ(next!=ite)がfalseになる。（処理のたびに集合外のspliterと最外のbeginer,enderがstrから消滅するため）
+			m_vec.push_back(StringBuilder(splitStr,spliter,beginer,ender,true,deepen && setExist));
 			splitStr.clear();
 			setExist=false;
 		};
 		//strの先頭から末尾まで読み込み
 		for(std::string::const_iterator it=str.begin(),ite=str.end();it!=ite;it++){
-			if(*it==m_spliter && tokenCount<=0 && !splitStr.empty()){
+			if(*it==spliter && tokenCount<=0 && !splitStr.empty()){
 				//区切り文字にたどり着いたらsplitStrを用いて新たなStringSpliterを作成する
 				pushFunc();
-			} else if(*it==m_beginer){
+			} else if(*it==beginer){
 				//集合の先頭文字を見つけた場合は、tokenCountを1増やす
 				if(!setExist){
 					//splitStrを弄るのはまだ集合を読み込んでいない時のみ。
 					if(tokenCount>0){
 						//既に集合内である場合は、splitStrに文字を追加
-						splitStr.push_back(m_beginer);
+						splitStr.push_back(beginer);
 					} else{
 						//集合外であるならここから集合が始まるので、splitStrに文字を追加しない。また、「aa(cc,(dd,ee))bb(ff)」のaa,bb,ffのようなバグデータを無視するためにaa部分は削除する。
 						splitStr.clear();
 					}
 				}
 				tokenCount++;
-			} else if(*it==m_ender){
+			} else if(*it==ender){
 				//集合の終端文字を見つけた場合は、tokenCountを1減らす。
 				tokenCount--;
 				if(!setExist){
 					if(tokenCount>0){
 						//集合の読み込みが終了しておらず、既存の完了した集合読み込みも存在しない場合は終端文字もsplitStrに追加する
-						splitStr.push_back(m_ender);
+						splitStr.push_back(ender);
 					} else if(tokenCount==0){
 						//集合の読み込みが終了した場合は、集合の読み込みフラグを操作する。
 						setExist=true;
