@@ -61,7 +61,7 @@ bool ScoreRankingData::PlayerData::operator<(const PlayerData &otherobj)const{
 		return false;
 	}
 	//dateで比較
-	return (this->score<otherobj.score);
+	return (this->date<otherobj.date);
 }
 
 ScoreRankingData::PlayerData ScoreRankingData::PlayerData::Create(const StringBuilder &infoBuilder){
@@ -96,7 +96,7 @@ ScoreRankingData::LevelData::LevelData(const StringBuilder &infoBuilder){
 		//要素挿入
 		try{
 			playerDataVec.insert(PlayerData::Create(sb));
-		} catch(DataCreateException &exception){
+		} catch(std::exception &e){
 			//正常にPlayerDataが作られない時は、要素に追加しなければ良い
 		}
 	}
@@ -116,8 +116,9 @@ ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const 
 				stageLevel=std::atoi(infoBuilderPointerArray[i]->m_vec[0].m_vec[1].GetString().c_str());
 			}
 			//ステージレベルを取得できた場合のみ、LevelDataを作成
-			if(stageLevel>=0 && stageLevel<4){
-				levelArray[stageLevel]=LevelData(infoBuilderPointerArray[i]->m_vec[1]);
+			const int index=stageLevel-1;
+			if(index>=0 && index<4){
+				levelArray[index]=LevelData(infoBuilderPointerArray[i]->m_vec[1]);
 			}
 		}
 	}
