@@ -37,6 +37,18 @@ bool ScoreRankingData::Save()const{
 	return true;
 }
 
+const ScoreRankingData::StageScoreData ScoreRankingData::GetStageScoreData(const std::string &dirName)const{
+	//dirNameに該当する要素がなければ、デフォルト値(ランキングデータ0件)が返される
+	//return m_stageDataMap[dirName];//const mapは[]を使えないという仕様がある。クソ。
+	//return m_stageDataMap.at(dirName);//該当しない要素があるとout_of_range例外が飛ぶ。それは困る。
+	const auto it=m_stageDataMap.find(dirName);
+	if(it!=m_stageDataMap.end()){
+		return it->second;
+	} else{
+		return StageScoreData();
+	}
+}
+
 //----------ScoreRankingData::DataCreateException-------------
 ScoreRankingData::DataCreateException::DataCreateException()noexcept{}
 
@@ -103,6 +115,11 @@ ScoreRankingData::LevelData::LevelData(const StringBuilder &infoBuilder){
 }
 
 //----------ScoreRankingData::StageScoreData-------------
+ScoreRankingData::StageScoreData::StageScoreData()
+	:dirName("")
+	,levelArray{LevelData(),LevelData(),LevelData(),LevelData()}
+{}
+
 ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const std::string &i_dirName,const std::array<const StringBuilder *,4> &infoBuilderPointerArray){
 	//分割された文字列を認識
 	std::array<LevelData,4> levelArray;

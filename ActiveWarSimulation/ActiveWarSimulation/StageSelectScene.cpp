@@ -9,12 +9,21 @@
 #include"AnySceneCallable.h"
 
 //----------------------StageSelectScene------------------
-StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirName,const std::string &explain)
+StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData)
 	:m_mapPic(mapPic),m_dirName(dirName),m_explain(explain)
 {
+	//ステージ情報の読み取り
 	const StageInfoReader reader(dirName);
 	m_titleName=reader.GetTitleName();
 	m_level=reader.GetLevel();
+	//対応するステージ・レベルのランキングデータを取ってくる
+	const int index=m_level-1;
+	if(index>=0 && index<4){
+		const ScoreRankingData::LevelData levelData=rankingData.GetStageScoreData(dirName).levelArray[index];
+		for(const ScoreRankingData::PlayerData &pd:levelData.playerDataVec){
+			m_rankingVec.push_back(pd);
+		}
+	}
 }
 
 StageSelectScene::StageInfo::~StageInfo(){
@@ -40,6 +49,8 @@ StageSelectScene::StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 {
 //	FpsMeasuring fps;
+	//スコアデータの作成
+	const ScoreRankingData rankingData;
 	//フォルダを検索
 	char cdir[1024];
 	GetCurrentDirectory(1024,cdir);
@@ -83,6 +94,7 @@ StageSelectScene::StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &
 				LoadGraphEX(("Stage/"+dirName+"/nonfree/minimap.png").c_str())
 				,dirName
 				,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
+				,rankingData
 			));
 		}
 	}
@@ -175,5 +187,9 @@ void StageSelectScene::Draw()const{
 		int explainY=CommonConstParameter::gameResolutionY*2/3;
 		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].GetLevelStr().c_str(),GetColor(255,255,255),m_explainFont);
 		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+		for(const ScoreRankingData::PlayerData &rankingData:m_stageInfoVec[m_selectStageIndex].m_rankingVec){
+			explainY+=30;
+			DrawStringToHandle(explainX,explainY,(rankingData.name+"        "+std::to_string(rankingData.score)).c_str(),GetColor(255,255,255),m_explainFont);
+		}
 	}
 }
