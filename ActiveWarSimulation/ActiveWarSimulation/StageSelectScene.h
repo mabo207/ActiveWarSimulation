@@ -11,13 +11,17 @@ class StageSelectScene:public GameScene{
 	//型・列挙体
 private:
 	struct StageInfo{
+		//変数
 		int m_mapPic;//マップグラフィック(縮小表示)(push_back()の際にデストラクタが呼ばれグラフィックが消されるので、削除はデストラクタでは行わない。どうしてもデストラクタでしたくなったら、コピーコンストラクタを作って再度CopyGraph()をしよう。)
 		std::string m_dirName;//ディレクトリ名
-		std::string m_stageName;//ステージ名
+		std::string m_titleName;//ステージ名
+		int m_level;//レベル
 		std::string m_explain;//ステージ説明文
-		StageInfo(const int mapPic,const std::string &dirName,const std::string &stageName,const std::string &explain)
-			:m_mapPic(mapPic),m_dirName(dirName),m_stageName(stageName),m_explain(explain){}
+
+		//関数
+		StageInfo(const int mapPic,const std::string &dirName,const std::string &explain);
 		~StageInfo();
+		std::string GetLevelStr()const;//難易度を説明する文字列を返す
 	};
 
 	//定数

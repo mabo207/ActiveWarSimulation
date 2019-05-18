@@ -9,20 +9,30 @@ class StageClearScene:public BattleSceneElement{
 	//型・列挙体
 	
 	//定数
+protected:
+	static const int bonusFontSize;
+	static const int scoreFontSize;
 
 	//変数
 protected:
 	const bool m_winFlag;//クリアしたかどうか。
-	const std::string m_explain;//補足情報
 	int m_frame;
 
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
+	const std::shared_ptr<ScoreObserver::ScoreExpression> m_scoreExpression;//スコア表示のためのデータ
 
 	//グラフィック系
-	const int m_stageClearBox;//ステージクリア状況を描画するボックス
-	const int m_clearFont;
-	const int m_explainFont;
+	const std::pair<int,int> m_backPic;//背景のハンドルとその透明度
+	const std::pair<int,int> m_bonusBar;//ボーナス描画領域のハンドルとその透明度
+	const std::pair<int,int> m_turnBar;//ターン数描画領域のハンドルとその透明度
+	const std::pair<int,int> m_survivalBar;//生存数描画領域のハンドルとその透明度
+	const int m_resultBarPic;//勝った・負けたのバーの描画ハンドル
+	const int m_scoreBarPic;//合計スコア描画領域のハンドル
+
+	//フォント系
+	const int m_bonusFont;//ボーナス項目表示のフォント
+	const int m_scoreFont;//スコア数値表示のフォント
 
 	//関数
 protected:
@@ -34,7 +44,7 @@ protected:
 	void ReturnProcess();//この場面に戻ってきた時の処理
 
 public:
-	StageClearScene(std::shared_ptr<BattleSceneData> battleSceneData,bool winFlag,const std::string &explain);
+	StageClearScene(std::shared_ptr<BattleSceneData> battleSceneData,bool winFlag);
 	~StageClearScene();
 };
 

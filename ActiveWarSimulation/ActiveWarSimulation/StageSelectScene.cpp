@@ -6,10 +6,27 @@
 #include"BattleScene.h"
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
+#include"AnySceneCallable.h"
 
 //----------------------StageSelectScene------------------
+StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirName,const std::string &explain)
+	:m_mapPic(mapPic),m_dirName(dirName),m_explain(explain)
+{
+	const StageInfoReader reader(dirName);
+	m_titleName=reader.GetTitleName();
+	m_level=reader.GetLevel();
+}
+
 StageSelectScene::StageInfo::~StageInfo(){
 	//DeleteGraphEX(m_mapPic);
+}
+
+std::string StageSelectScene::StageInfo::GetLevelStr()const{
+	std::string retStr="難易度　";
+	for(int i=0;i<m_level;i++){
+		retStr+="★";
+	}
+	return retStr;
 }
 
 StageSelectScene::StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &sharedData)
@@ -65,7 +82,6 @@ StageSelectScene::StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &
 			m_stageInfoVec.push_back(StageInfo(
 				LoadGraphEX(("Stage/"+dirName+"/nonfree/minimap.png").c_str())
 				,dirName
-				,FileStrRead(("Stage/"+dirName+"/stageName.txt").c_str())
 				,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
 			));
 		}
@@ -117,7 +133,12 @@ int StageSelectScene::Calculate(){
 		if(!m_sharedData.expired()){
 			//元データが残っている場合のみ、アクセスできる。
 			auto sharedData=m_sharedData.lock();
-			sharedData->m_requiredInfo=std::shared_ptr<MainControledGameScene::MainSceneFactory>(new BattleScene::BattleSceneFactory(m_stageInfoVec[m_selectStageIndex].m_dirName));//ゲームプレイ場面を作るのに必要な情報を渡しておく
+			sharedData->m_requiredInfo=std::shared_ptr<MainControledGameScene::MainSceneFactory>(
+				new BattleScene::BattleSceneFactory(
+					m_stageInfoVec[m_selectStageIndex].m_dirName
+					,m_stageInfoVec[m_selectStageIndex].m_titleName
+					,m_stageInfoVec[m_selectStageIndex].m_level
+				));//ゲームプレイ場面を作るのに必要な情報を渡しておく
 		}
 		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音
 		return -1;
@@ -150,7 +171,9 @@ void StageSelectScene::Draw()const{
 		const int explainX=400;
 		GetGraphSize(m_stageInfoVec[m_selectStageIndex].m_mapPic,&stageDx,&stageDy);
 		DrawRotaGraph(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/3,((double)CommonConstParameter::gameResolutionY/2)/stageDy,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
-		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_selectStageIndex].m_stageName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
-		DrawStringNewLineToHandle(explainX,CommonConstParameter::gameResolutionY*2/3,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_selectStageIndex].m_titleName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
+		int explainY=CommonConstParameter::gameResolutionY*2/3;
+		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].GetLevelStr().c_str(),GetColor(255,255,255),m_explainFont);
+		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
 	}
 }

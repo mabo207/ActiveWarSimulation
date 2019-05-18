@@ -4,7 +4,6 @@
 #include<set>
 #include"BattleObject.h"
 #include"Weapon.h"
-class Weapon;//循環参照を防ぐために宣言のみする
 
 //ユニットを示す
 class Unit:public BattleObject{
@@ -13,7 +12,7 @@ public:
 	struct Profession{
 		//兵種
 		enum Kind{
-			e_lancer,
+			e_soldier,
 			e_archer,
 			e_armer,
 			e_mage,

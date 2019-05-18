@@ -4,9 +4,7 @@
 #include<string>
 #include<map>
 #include<memory>
-#include"Unit.h"
 #include"DamageCalculators.h"
-class DamageCalculator;//zŠÂQÆ‚ğ–h‚®‚½‚ß‚ÉéŒ¾‚Ì‚İ‚·‚é
 class Unit;//zŠÂQÆ‚ğ–h‚®‚½‚ß‚ÉéŒ¾‚Ì‚İ‚·‚é
 
 //•Ší‚É‚Â‚¢‚Ä‚ÌƒNƒ‰ƒX
@@ -55,6 +53,7 @@ public:
 	std::string GetExplain()const{
 		return m_explain;
 	}
+	DamageCalculator::Kind GetActionKind()const;
 
 	AttackInfo GetAttackInfo(const Unit *attacker,const Unit *defender)const;
 	bool JudgeWeild(const Unit *attacker,const Unit *defender)const;//attacker¨defender‚Ö‚Ì’ÊíUŒ‚‚ğÀs‰Â”\‚Å‚ ‚é‚©

@@ -828,7 +828,7 @@ StringBuilder::StringBuilder(const std::string &str,char spliter,char beginer,ch
 		//下準備
 		std::string splitStr;//分割された文字列
 		int tokenCount=0;//m_beginerを読み込んだ個数-m_enderを読み込んだ個数。負になる減少は無視する。
-		bool setExist=false;//既に集合を読んだかどうか。区切り文字を読み取るたびにfalseにする。「aa(cc,(dd,ee))bb(ff)」のaa,bb,ffのようなバグデータを無視するために用いる。
+		bool setExist=false;//既に集合を読み終わったかどうか。区切り文字を読み取るたびにfalseにする。「aa(cc,(dd,ee))bb(ff)」のaa,bb,ffのようなバグデータを無視するために用いる。
 		//新たなStringSpliterを生成する際の処理
 		const auto pushFunc=[&]()->void{
 			//deepenがfalseであるか、splitStrに集合が含まれていないならこれ以上深くならない
@@ -858,19 +858,23 @@ StringBuilder::StringBuilder(const std::string &str,char spliter,char beginer,ch
 			} else if(*it==m_ender){
 				//集合の終端文字を見つけた場合は、tokenCountを1減らす。
 				tokenCount--;
-				if(tokenCount>0){
-					//集合の読み込みが終了しておらず、既存の完了した集合読み込みも存在しない場合は終端文字もsplitStrに追加する
-					splitStr.push_back(m_ender);
-				}else if(tokenCount==0){
-					//集合の読み込みが終了した場合は、集合の読み込みフラグを操作する。
-					setExist=true;
-				} else{
-					//tokenCountが負になるような終端文字の読み込みは無視する。
-					tokenCount=0;
+				if(!setExist){
+					if(tokenCount>0){
+						//集合の読み込みが終了しておらず、既存の完了した集合読み込みも存在しない場合は終端文字もsplitStrに追加する
+						splitStr.push_back(m_ender);
+					}else if(tokenCount==0){
+						//集合の読み込みが終了した場合は、集合の読み込みフラグを操作する。
+						setExist=true;
+					} else{
+						//tokenCountが負になるような終端文字の読み込みは無視する。
+						tokenCount=0;
+					}
 				}
 			} else{
 				//それ以外の文字は、splitStrに格納する
-				splitStr.push_back(*it);
+				if(!setExist){
+					splitStr.push_back(*it);
+				}
 			}
 		}
 		//末尾まで読んだ後に、splitStrに文字列が残っている場合はそれを用いてStringSpliterに追加する

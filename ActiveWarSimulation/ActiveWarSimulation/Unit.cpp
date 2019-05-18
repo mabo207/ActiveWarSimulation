@@ -10,7 +10,7 @@
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
-	std::pair<std::string,Unit::Profession::Kind>("ï∫ém",Unit::Profession::e_lancer)
+	std::pair<std::string,Unit::Profession::Kind>("ï∫ém",Unit::Profession::e_soldier)
 	,std::pair<std::string,Unit::Profession::Kind>("éÀéË",Unit::Profession::e_archer)
 	,std::pair<std::string,Unit::Profession::Kind>("èdëïï∫",Unit::Profession::e_armer)
 	,std::pair<std::string,Unit::Profession::Kind>("ñÇìπém",Unit::Profession::e_mage)
@@ -420,7 +420,7 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 	std::shared_ptr<Weapon> weapon;
 	int gHandle=-1;
 	switch(profession){
-	case(Profession::e_lancer):
+	case(Profession::e_soldier):
 		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),6+(int)(lv*0.5),5+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),5+(int)(lv*0.5),6);
 		weapon=Weapon::GetWeapon("ìSÇÃåï");
 		gHandle=LoadGraphEX("Graphic/nonfree/soldier.png");
