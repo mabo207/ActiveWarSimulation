@@ -452,6 +452,9 @@ protected:
 	bool m_splitFlag;
 
 	//ŠÖ”
+private:
+	void Split(const std::string &str,char spliter,char beginer,char ender,bool deepen);
+
 public:
 	StringBuilder(const std::string &str,char spliter,char beginer,char ender,bool deepen,bool setSplit);
 	~StringBuilder();
@@ -471,6 +474,13 @@ public:
 	std::string GetString()const;
 	std::vector<StringBuilder> GetVector()const;
 	std::vector<std::string> GetStringVector()const;
+	//Split()‚Í‘OŒã‚Åm_str‚ª•Ï‰»‚·‚é–‚É’ˆÓ
+	void Split(bool deepen){
+		Split(m_spliter,m_beginer,m_ender,deepen);
+	}
+	void Split(char spliter,char beginer,char ender,bool deepen){
+		Split(m_str,spliter,beginer,ender,deepen);
+	}
 };
 
 #endif // !DEF_TOOLSLIB_H
