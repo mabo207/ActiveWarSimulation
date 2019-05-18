@@ -97,6 +97,12 @@
     <Filter Include="ソース ファイル\Uncategolized">
       <UniqueIdentifier>{d62062f2-d13a-426b-b789-0bacda04d975}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\SaveData">
+      <UniqueIdentifier>{aa562877-7413-41a2-8a94-f23edce8d523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\SaveData">
+      <UniqueIdentifier>{0c9213e4-6c6c-4379-9c1b-1bc5b60b45d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -234,6 +240,9 @@
     <ClCompile Include="AnySceneCallable.cpp">
       <Filter>ソース ファイル\Uncategolized</Filter>
     </ClCompile>
+    <ClCompile Include="ScoreRankingData.cpp">
+      <Filter>ソース ファイル\SaveData</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -367,6 +376,9 @@
     </ClInclude>
     <ClInclude Include="AnySceneCallable.h">
       <Filter>ヘッダー ファイル\Uncategolized</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreRankingData.h">
+      <Filter>ヘッダー ファイル\SaveData</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
