@@ -5,6 +5,8 @@
 #include<vector>
 #include<array>
 #include<map>
+#include<set>
+#include"ToolsLib.h"
 
 //クリアスコアのランキングを管理するクラス
 //ローカルでは10KB~100KBくらいのテキストデータを想定している。
@@ -24,7 +26,7 @@ private:
 		const std::string date;//日時(これは数値で持つ必要がない。同一スコア同一ユーザーのデータを区別しやすくするためなため。)
 		~PlayerData(){}
 		bool operator<(const PlayerData &otherobj)const;
-		static PlayerData Create(const std::string &str);//文字列から作る
+		static PlayerData Create(const StringBuilder &infoBuilder);//文字列から作る
 
 	private:
 		//メンバ変数をconstにしているので、読み込み文字列の処理をコンストラクタ内でやりたくない。そのためCreate()関数にそれを移譲するため、コンストラクタをprivateにする。
@@ -33,8 +35,9 @@ private:
 	};
 	struct LevelData{
 		//１つのステージレベルに対するスコアデータ
-		std::vector<PlayerData> playerDataVec;//ランキングに表示されるプレイヤーデータ(挿入を可能にするためにconstにしない)
-		LevelData(const std::string &str);//メンバ変数をconstにする必用はないので、LevelData内で読み込み文字列の処理をして問題ない
+		std::set<PlayerData> playerDataVec;//ランキングに表示されるプレイヤーデータ(挿入を可能にするためにconstにしない)
+		LevelData(){}
+		explicit LevelData(const StringBuilder &infoBuilder);//メンバ変数をconstにする必用はないので、LevelData内で読み込み文字列の処理をして問題ない
 		~LevelData(){}
 	};
 	struct StageScoreData{
@@ -43,7 +46,7 @@ private:
 		const std::string dirName;//ステージのディレクトリ名
 		const std::array<LevelData,4> levelArray;//難易度ごとのスコアデータ
 		~StageScoreData(){}
-		static StageScoreData Create(const std::string &str);//文字列から作成
+		static StageScoreData Create(const std::string &i_dirName,const std::array<const StringBuilder *,4> &infoBuilderPointerArray);//文字列から作成
 
 	private:
 		StageScoreData(const std::string &i_dirName,const std::array<LevelData,4> &i_levelArray)
