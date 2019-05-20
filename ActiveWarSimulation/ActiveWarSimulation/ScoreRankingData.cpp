@@ -88,16 +88,16 @@ const char *ScoreRankingData::DataCreateException::what()const noexcept{
 
 //----------ScoreRankingData::PlayerData-------------
 bool ScoreRankingData::PlayerData::operator<(const PlayerData &otherobj)const{
-	//ƒXƒRƒA‚Å”äŠr
-	if(this->score<otherobj.score){
+	//ƒXƒRƒA‚Å”äŠr(ƒXƒRƒA‚ª‘å‚«‚¢‚Ù‚Çæ‚É—ˆ‚Ä—~‚µ‚¢)
+	if(this->score>otherobj.score){
 		return true;
-	} else if(this->score>otherobj.score){
+	} else if(this->score<otherobj.score){
 		return false;
 	}
-	//date‚Å”äŠr
-	if(this->date<otherobj.date){
+	//date‚Å”äŠr(date‚ªŒã‚Ì“úŽž‚Ù‚Çæ‚É—ˆ‚Ä—~‚µ‚¢)
+	if(this->date>otherobj.date){
 		return true;
-	} else if(this->date>otherobj.date){
+	} else if(this->date<otherobj.date){
 		return false;
 	}
 	//name‚Å”äŠr
