@@ -187,9 +187,14 @@ void StageSelectScene::Draw()const{
 		int explainY=CommonConstParameter::gameResolutionY*2/3;
 		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].GetLevelStr().c_str(),GetColor(255,255,255),m_explainFont);
 		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
-		for(const ScoreRankingData::PlayerData &rankingData:m_stageInfoVec[m_selectStageIndex].m_rankingVec){
+		for(size_t i=0,dataSize=m_stageInfoVec[m_selectStageIndex].m_rankingVec.size();i<5;i++){
 			explainY+=30;
-			DrawStringToHandle(explainX,explainY,(rankingData.name+"        "+std::to_string(rankingData.score)).c_str(),GetColor(255,255,255),m_explainFont);
+			if(i<dataSize){
+				DrawStringToHandle(explainX,explainY,(m_stageInfoVec[m_selectStageIndex].m_rankingVec[i].name+"        "+std::to_string(m_stageInfoVec[m_selectStageIndex].m_rankingVec[i].score)).c_str(),GetColor(255,255,255),m_explainFont);
+			} else{
+				//データが足りない場合は---を表示
+				DrawStringToHandle(explainX,explainY,"------        -----",GetColor(255,255,255),m_explainFont);
+			}
 		}
 	}
 }
