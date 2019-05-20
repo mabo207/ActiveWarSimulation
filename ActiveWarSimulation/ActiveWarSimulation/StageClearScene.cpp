@@ -4,6 +4,7 @@
 #include"input.h"
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
+#include"ScoreRankingData.h"
 
 //--------------------StageClearScene------------------
 const int StageClearScene::bonusFontSize=25;
@@ -56,10 +57,12 @@ int StageClearScene::thisCalculate(){
 		m_inputCharControler.Update();
 		if(!m_inputCharControler.GetInputFlag()){
 			//入力終了したら
-			//記録
-
-			//バトルパート終了
 			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
+			//記録
+			ScoreRankingData rankingData;
+			rankingData.InputData(ScoreRankingData::PlayerData(m_scoreExpression->m_totalScorePoint,m_inputCharControler.GetString(),"201905201900"),m_battleSceneData->m_stageDirName,m_battleSceneData->m_stageLevel);
+			rankingData.Save();
+			//バトルパート終了
 			return SceneKind::END;
 		}
 	}

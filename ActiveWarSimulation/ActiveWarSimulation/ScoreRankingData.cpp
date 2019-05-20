@@ -67,6 +67,16 @@ const ScoreRankingData::StageScoreData ScoreRankingData::GetStageScoreData(const
 	}
 }
 
+bool ScoreRankingData::InputData(PlayerData &inputData,const std::string &dirName,const int level){
+	const auto it=m_stageDataMap.find(dirName);
+	const int index=level-1;
+	if(it!=m_stageDataMap.end() && index>=0 && index<StageScoreData::levelCount){
+		it->second.levelArray[index].playerDataVec.insert(inputData);
+		return true;
+	}
+	return false;
+}
+
 //----------ScoreRankingData::DataCreateException-------------
 ScoreRankingData::DataCreateException::DataCreateException()noexcept{}
 

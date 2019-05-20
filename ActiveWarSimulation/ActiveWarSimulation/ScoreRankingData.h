@@ -33,9 +33,8 @@ public:
 		bool operator<(const PlayerData &otherobj)const;
 		void Output(std::ofstream &ofs)const;//データを出力する
 		static PlayerData Create(const StringBuilder &infoBuilder);//文字列から作る
-
-	private:
-		//メンバ変数をconstにしているので、読み込み文字列の処理をコンストラクタ内でやりたくない。そのためCreate()関数にそれを移譲するため、コンストラクタをprivateにする。
+		//メンバ変数をconstにしているので、読み込み文字列の処理をコンストラクタ内でやりたくない。そのためCreate()関数にそれを移譲する。
+		//ただし、PlayerDataを作って挿入、ということを行うので、publicにする。
 		PlayerData(const int i_score,const std::string &i_name,const std::string &i_date)
 			:score(i_score),name(i_name),date(i_date){}
 	};
@@ -54,7 +53,7 @@ public:
 		static const size_t levelCount=4;
 
 		const std::string dirName;//ステージのディレクトリ名
-		const std::array<LevelData,levelCount> levelArray;//難易度ごとのスコアデータ
+		std::array<LevelData,levelCount> levelArray;//難易度ごとのスコアデータ(挿入の可能性があるので、constにできない)
 
 		StageScoreData();//「ディレクトリのランキングデータがない」という場合でもプログラムをちゃんと動作させたいため。
 		~StageScoreData(){}
@@ -70,6 +69,7 @@ public:
 	~ScoreRankingData();
 	bool Save()const;//現在のメンバ変数を用いて記録する
 	const StageScoreData GetStageScoreData(const std::string &dirName)const;
+	bool InputData(PlayerData &inputData,const std::string &dirName,const int level);
 
 private:
 	std::map<std::string,StageScoreData> m_stageDataMap;//全ステージのスコア一覧
