@@ -6,9 +6,13 @@ const std::string ScoreRankingData::scoreRankingTxtPass="SaveData/scoreRanking.t
 
 ScoreRankingData::ScoreRankingData()
 {
-	//読み込み
+	//ステージ15,各ステージ難易度4つ,各レベル5つのデータが存在しているの時の速度（読み込み：0.96秒 コピー：0.30秒 書き込み：0.02秒）
+	FpsMeasuring fps;
+	//読み込み(0.30秒)
+	fps.RecordTime();
 	StringBuilder strBuilder(FileStrRead(scoreRankingTxtPass.c_str()),'\n','{','}',false,true);
-	//各ステージデータの読み込み
+	volatile const double t1=fps.GetProcessedTime();
+	//各ステージデータの読み込み(0.66秒)
 	for(StringBuilder &sb:strBuilder.m_vec){
 		sb.Split(',','(',')',true);
 		std::string dirName;
@@ -27,6 +31,9 @@ ScoreRankingData::ScoreRankingData()
 			m_stageDataMap.insert(std::make_pair(dirName,StageScoreData::Create(dirName,pBuilderArray)));
 		}
 	}
+	volatile const double totalT=fps.GetProcessedTime();
+	volatile const double t2=totalT-t1;
+	int a=0;
 }
 
 ScoreRankingData::~ScoreRankingData(){}

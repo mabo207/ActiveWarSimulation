@@ -13,7 +13,6 @@
 //クリアスコアのランキングを管理するクラス
 //ローカルでは10KB~100KBくらいのテキストデータを想定している。
 //速度にある程度気を遣う
-//ステージ15,各ステージ難易度4つ,各レベル5つのデータが存在しているの時の速度（読み込み：1.26秒 書き込み：0.02秒）
 class ScoreRankingData{
 public:
 	class DataCreateException:public std::exception{
