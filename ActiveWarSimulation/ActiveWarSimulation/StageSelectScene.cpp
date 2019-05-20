@@ -48,10 +48,9 @@ StageSelectScene::StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 {
-//	FpsMeasuring fps;
+	FpsMeasuring fps;
 	//スコアデータの作成
 	const ScoreRankingData rankingData;
-	rankingData.Save();
 	//フォルダを検索
 	char cdir[1024];
 	GetCurrentDirectory(1024,cdir);
