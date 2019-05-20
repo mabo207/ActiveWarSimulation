@@ -1,6 +1,5 @@
 #include"ScoreRankingData.h"
 #include"FileRead.h"
-#include<fstream>
 
 //----------ScoreRankingData-------------
 const std::string ScoreRankingData::scoreRankingTxtPass="SaveData/scoreRanking.txt";
@@ -33,7 +32,19 @@ ScoreRankingData::ScoreRankingData()
 ScoreRankingData::~ScoreRankingData(){}
 
 bool ScoreRankingData::Save()const{
-
+	//全て書き換えるモードでファイルを開く
+	std::ofstream ofs(scoreRankingTxtPass.c_str(),std::ios_base::trunc);
+	if(!ofs){
+		return false;
+	}
+	//書き込み
+	for(const std::pair<std::string,StageScoreData> &pair:m_stageDataMap){
+		ofs<<"{(dir,"<<pair.first<<"),";
+		pair.second.Output(ofs);
+		ofs<<'}'<<std::endl;
+	}
+	//終了処理
+	ofs.close();
 	return true;
 }
 
@@ -76,6 +87,10 @@ bool ScoreRankingData::PlayerData::operator<(const PlayerData &otherobj)const{
 	return (this->date<otherobj.date);
 }
 
+void ScoreRankingData::PlayerData::Output(std::ofstream &ofs)const{
+	ofs<<"((name,"<<name<<"),(score,"<<score<<"),(date,"<<date<<"))";
+}
+
 ScoreRankingData::PlayerData ScoreRankingData::PlayerData::Create(const StringBuilder &infoBuilder){
 	//文字列分割
 	std::string name="";
@@ -114,11 +129,40 @@ ScoreRankingData::LevelData::LevelData(const StringBuilder &infoBuilder){
 	}
 }
 
+void ScoreRankingData::LevelData::Output(std::ofstream &ofs)const{
+	ofs<<'(';
+	for(auto it=playerDataVec.begin(),ite=playerDataVec.end();;){
+		it->Output(ofs);
+		//末尾に','を入れたくないので、回りくどい処理をする
+		it++;
+		if(it!=ite){
+			ofs<<',';
+		} else{
+			break;
+		}		
+	}
+	ofs<<')';
+}
+
 //----------ScoreRankingData::StageScoreData-------------
 ScoreRankingData::StageScoreData::StageScoreData()
 	:dirName("")
 	,levelArray{LevelData(),LevelData(),LevelData(),LevelData()}
 {}
+
+void ScoreRankingData::StageScoreData::Output(std::ofstream &ofs)const{
+	ofs<<"(data,";
+	for(size_t i=0;i<levelCount;i++){
+		ofs<<"((level,"<<i+1<<"),";
+		levelArray[i].Output(ofs);
+		ofs<<')';
+		if(i+1<levelCount){
+			//末尾には','をつけない
+			ofs<<',';
+		}
+	}
+	ofs<<')';
+}
 
 ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const std::string &i_dirName,const std::array<const StringBuilder *,levelCount> &infoBuilderPointerArray){
 	//分割された文字列を認識

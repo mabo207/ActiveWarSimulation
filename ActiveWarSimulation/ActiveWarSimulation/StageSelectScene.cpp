@@ -51,6 +51,7 @@ StageSelectScene::StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &
 //	FpsMeasuring fps;
 	//スコアデータの作成
 	const ScoreRankingData rankingData;
+	rankingData.Save();
 	//フォルダを検索
 	char cdir[1024];
 	GetCurrentDirectory(1024,cdir);

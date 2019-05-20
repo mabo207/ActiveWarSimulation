@@ -8,6 +8,7 @@
 #include<set>
 #include<exception>
 #include"ToolsLib.h"
+#include<fstream>
 
 //クリアスコアのランキングを管理するクラス
 //ローカルでは10KB~100KBくらいのテキストデータを想定している。
@@ -27,8 +28,10 @@ public:
 		const int score;//スコア値
 		const std::string name;//ユーザー名
 		const std::string date;//日時(これは数値で持つ必要がない。同一スコア同一ユーザーのデータを区別しやすくするためなため。)
+
 		~PlayerData(){}
 		bool operator<(const PlayerData &otherobj)const;
+		void Output(std::ofstream &ofs)const;//データを出力する
 		static PlayerData Create(const StringBuilder &infoBuilder);//文字列から作る
 
 	private:
@@ -39,9 +42,11 @@ public:
 	struct LevelData{
 		//１つのステージレベルに対するスコアデータ
 		std::set<PlayerData> playerDataVec;//ランキングに表示されるプレイヤーデータ(挿入を可能にするためにconstにしない)
+		
 		LevelData(){}
 		explicit LevelData(const StringBuilder &infoBuilder);//メンバ変数をconstにする必用はないので、LevelData内で読み込み文字列の処理をして問題ない
 		~LevelData(){}
+		void Output(std::ofstream &ofs)const;//データ出力
 	};
 	struct StageScoreData{
 		//ステージが持っているランキングに関するデータ
@@ -50,8 +55,10 @@ public:
 
 		const std::string dirName;//ステージのディレクトリ名
 		const std::array<LevelData,levelCount> levelArray;//難易度ごとのスコアデータ
+
 		StageScoreData();//「ディレクトリのランキングデータがない」という場合でもプログラムをちゃんと動作させたいため。
 		~StageScoreData(){}
+		void Output(std::ofstream &ofs)const;//データ出力
 		static StageScoreData Create(const std::string &i_dirName,const std::array<const StringBuilder *,levelCount> &infoBuilderPointerArray);//文字列から作成
 
 	private:
