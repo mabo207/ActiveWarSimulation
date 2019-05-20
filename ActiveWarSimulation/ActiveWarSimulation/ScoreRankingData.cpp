@@ -77,14 +77,14 @@ bool ScoreRankingData::PlayerData::operator<(const PlayerData &otherobj)const{
 	} else if(this->score>otherobj.score){
 		return false;
 	}
-	//name‚Å”äŠr
-	if(this->name<otherobj.name){
+	//date‚Å”äŠr
+	if(this->date<otherobj.date){
 		return true;
-	} else if(this->name>otherobj.name){
+	} else if(this->date>otherobj.date){
 		return false;
 	}
-	//date‚Å”äŠr
-	return (this->date<otherobj.date);
+	//name‚Å”äŠr
+	return (this->name<otherobj.name);
 }
 
 void ScoreRankingData::PlayerData::Output(std::ofstream &ofs)const{
