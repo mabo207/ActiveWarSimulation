@@ -127,3 +127,84 @@ void StringBuilder::Split(const std::string &str,char spliter,char beginer,char 
 		m_str.clear();
 	}
 }
+
+//---------------NewSB--------------------
+NewSB::NewSB(const std::shared_ptr<const std::string> &originStr
+	,const size_t originStrSize
+	,const char spliter
+	,const char beginer
+	,const char ender
+	,const char parentBeginer
+	,const char parentEnder
+	,const size_t topIndex
+	,const bool deepen
+	,const bool splitFlag)
+	:m_spliter(spliter)
+	,m_beginer(beginer)
+	,m_ender(ender)
+	,m_parentBeginer(parentBeginer)
+	,m_parentEnder(parentEnder)
+	,m_originStr(originStr)
+	,m_topIndex(topIndex)
+	,m_length(originStrSize-topIndex)//最大の文字列数をひとまず格納
+{
+	//m_topIndexから文字を調べていく
+	bool subNewSBExist=false;
+	size_t subNewSBTopIndex=m_topIndex;//子要素となる
+	for(size_t i=m_topIndex;i<originStrSize;i++){
+		const char c=(*originStr)[i];
+		if(c==m_beginer){
+			//ここから先はm_enderが出現するまでしばらく区切り文字を無視するよ
+			const NewSB subNewSB=NewSB(m_originStr,originStrSize,m_spliter,m_beginer,m_ender,m_beginer,m_ender,i+1,deepen,deepen);
+			//読み込んだ要素を追加
+			m_vec.push_back(subNewSB);
+			subNewSBExist=true;
+			//読み込み位置をズラす
+			i=subNewSB.GetButtomIndex()+1;//subNewSBのm_enderの読み込みは無視して良いため、+1する
+		} else if(c==m_spliter){
+			//ここで区切る
+			if(subNewSBExist){
+				//まだ子要素のNewSBを作成していない場合は、ここまでで要素を作成する
+				m_vec.push_back(NewSB(m_originStr,m_beginer,m_ender,subNewSBTopIndex,i-subNewSBTopIndex));//長さはi番目の要素(m_spliter)を除くので、+1しなくて良い
+			}
+			//次の要素の読み取りの準備
+			subNewSBExist=false;
+			subNewSBTopIndex=i+1;
+		} else if(c==m_parentEnder){
+			//親要素の終端地点が来たら、このNewSBの読み取りは終了
+			if(subNewSBExist){
+				//まだ子要素のNewSBを作成していない場合は、ここまでで要素を作成する
+				m_vec.push_back(NewSB(m_originStr,m_beginer,m_ender,subNewSBTopIndex,i-subNewSBTopIndex));//長さはi番目の要素(m_spliter)を除くので、+1しなくて良い
+			}
+			//このNewSBの長さを再計算
+			m_length=i-m_topIndex;//m_parentEnderは除くので、+1はしなくて良い
+			//ループ脱出
+			break;
+		}
+	}
+}
+
+NewSB::NewSB(const std::shared_ptr<const std::string> &originStr
+	,const char parentBeginer
+	,const char parentEnder
+	,const size_t topIndex
+	,const size_t length)
+	:m_originStr(originStr)
+	,m_spliter('\0')
+	,m_beginer('\0')
+	,m_ender('\0')
+	,m_parentBeginer(parentBeginer)
+	,m_parentEnder(parentEnder)
+	,m_topIndex(topIndex)
+	,m_length(length)
+{}
+
+NewSB::~NewSB(){}
+
+std::string NewSB::GetString()const{
+	return m_originStr->substr(m_topIndex,m_length);
+}
+
+size_t NewSB::GetButtomIndex()const{
+	return m_topIndex+m_length-1;
+}
