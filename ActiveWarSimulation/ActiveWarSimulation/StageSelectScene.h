@@ -6,6 +6,7 @@
 #include<string>
 #include"input.h"
 #include"TitleScene.h"
+#include"ScoreRankingData.h"
 
 class StageSelectScene:public GameScene{
 	//型・列挙体
@@ -17,9 +18,10 @@ private:
 		std::string m_titleName;//ステージ名
 		int m_level;//レベル
 		std::string m_explain;//ステージ説明文
+		std::vector<ScoreRankingData::PlayerData> m_rankingVec;//ランキングデータ
 
 		//関数
-		StageInfo(const int mapPic,const std::string &dirName,const std::string &explain);
+		StageInfo(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData);
 		~StageInfo();
 		std::string GetLevelStr()const;//難易度を説明する文字列を返す
 	};

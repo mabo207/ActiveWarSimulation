@@ -3,11 +3,18 @@
 
 #include"BattleSceneElement.h"
 #include"BattleSceneData.h"
+#include"input.h"
 
 //ステージクリア（勝ち負け関係なし）の場面
 class StageClearScene:public BattleSceneElement{
 	//型・列挙体
-	
+private:
+	enum class ProcessKind{
+		//今何をしている状態か
+		e_watchScore
+		,e_inputName
+	};
+
 	//定数
 protected:
 	static const int bonusFontSize;
@@ -17,6 +24,8 @@ protected:
 protected:
 	const bool m_winFlag;//クリアしたかどうか。
 	int m_frame;
+	InputSingleCharStringControler m_inputCharControler;//文字入力を管理するクラス
+	ProcessKind m_nowProcess;
 
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
