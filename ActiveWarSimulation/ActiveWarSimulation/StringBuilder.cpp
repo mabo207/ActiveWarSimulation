@@ -163,7 +163,7 @@ NewSB::NewSB(const std::shared_ptr<const std::string> &originStr
 			i=subNewSB.GetButtomIndex()+1;//subNewSBのm_enderの読み込みは無視して良いため、+1する
 		} else if(c==m_spliter){
 			//ここで区切る
-			if(subNewSBExist){
+			if(!subNewSBExist){
 				//まだ子要素のNewSBを作成していない場合は、ここまでで要素を作成する
 				m_vec.push_back(NewSB(m_originStr,m_beginer,m_ender,subNewSBTopIndex,i-subNewSBTopIndex));//長さはi番目の要素(m_spliter)を除くので、+1しなくて良い
 			}
@@ -172,7 +172,7 @@ NewSB::NewSB(const std::shared_ptr<const std::string> &originStr
 			subNewSBTopIndex=i+1;
 		} else if(c==m_parentEnder){
 			//親要素の終端地点が来たら、このNewSBの読み取りは終了
-			if(subNewSBExist){
+			if(!subNewSBExist){
 				//まだ子要素のNewSBを作成していない場合は、ここまでで要素を作成する
 				m_vec.push_back(NewSB(m_originStr,m_beginer,m_ender,subNewSBTopIndex,i-subNewSBTopIndex));//長さはi番目の要素(m_spliter)を除くので、+1しなくて良い
 			}
