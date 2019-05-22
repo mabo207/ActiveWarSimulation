@@ -4,6 +4,7 @@
 #include"input.h"
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
+#include"ScoreRankingData.h"
 
 //--------------------StageClearScene------------------
 const int StageClearScene::bonusFontSize=25;
@@ -23,6 +24,8 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_bonusFont(CreateFontToHandleEX("りいポップ角 R",bonusFontSize,4,DX_FONTTYPE_ANTIALIASING_4X4))
 	,m_scoreFont(CreateFontToHandleEX("りいポップ角 R",scoreFontSize,7,DX_FONTTYPE_ANTIALIASING_4X4))
 	,m_frame(0)
+	,m_inputCharControler("\\\"\'",11)
+	,m_nowProcess(ProcessKind::e_watchScore)
 {}
 
 StageClearScene::~StageClearScene(){
@@ -41,13 +44,27 @@ StageClearScene::~StageClearScene(){
 int StageClearScene::thisCalculate(){
 	m_frame++;
 
-	//0.5秒たって以降に決定ボタンを押せばバトル場面の終了
-	if(m_frame>30 &&
-		(keyboard_get(KEY_INPUT_Z)==1 || mouse_get(MOUSE_INPUT_LEFT)==1)
-		)
-	{
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
-		return SceneKind::END;
+	if(m_nowProcess==ProcessKind::e_watchScore){
+		//スコアを見ている時に0.5秒たって以降に決定ボタンを押せば名前入力への終了
+		if(m_frame>30 &&
+			(keyboard_get(KEY_INPUT_Z)==1 || mouse_get(MOUSE_INPUT_LEFT)==1)
+			)
+		{
+			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
+			m_nowProcess=ProcessKind::e_inputName;
+		}
+	} else if(m_nowProcess==ProcessKind::e_inputName){
+		m_inputCharControler.Update();
+		if(!m_inputCharControler.GetInputFlag()){
+			//入力終了したら
+			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
+			//記録
+			ScoreRankingData rankingData;
+			rankingData.InputData(ScoreRankingData::PlayerData(m_scoreExpression->m_totalScorePoint,m_inputCharControler.GetString(),"201905201900"),m_battleSceneData->m_stageDirName,m_battleSceneData->m_stageLevel);
+			rankingData.Save();
+			//バトルパート終了
+			return SceneKind::END;
+		}
 	}
 
 	return SceneKind::e_clear;
@@ -118,13 +135,32 @@ void StageClearScene::thisDraw()const{
 		DrawGraph(backX+x,backY+y,m_scoreBarPic,TRUE);
 		DrawStringToHandle(backX+x+650,backY+y+30,(std::to_string(m_scoreExpression->m_totalScorePoint)).c_str(),GetColor(255,255,255),m_scoreFont);
 	}
+
+	//名前入力中の描画処理
+	if(m_nowProcess==ProcessKind::e_inputName){
+		//暗くする
+		{
+			int mode,pal;
+			GetDrawBlendMode(&mode,&pal);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
+			DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
+			SetDrawBlendMode(mode,pal);
+		}
+		//文字列の描画
+		{
+			DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/4,"名前を入力しよう！",GetColor(255,255,255),m_scoreFont,true);
+			DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/2,m_inputCharControler.GetStringCStr(),GetColor(255,255,255),m_scoreFont,true);
+			const int lineY=CommonConstParameter::gameResolutionY/2+scoreFontSize/2+5;
+			DrawLine(CommonConstParameter::gameResolutionX*2/7,lineY,CommonConstParameter::gameResolutionX*5/7,lineY,GetColor(255,255,255),6);
+		}
+	}
 }
 
 int StageClearScene::UpdateNextScene(int index){
-	//ここから先に進むことはない。
+	//次の場面なんてない
 	return index;
 }
 
 void StageClearScene::ReturnProcess(){
-	//ここから先に場面があるはずがない
+	//特に何もしない
 }

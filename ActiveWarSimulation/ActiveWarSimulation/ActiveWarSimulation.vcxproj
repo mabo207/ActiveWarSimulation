@@ -179,6 +179,7 @@
     <ClCompile Include="MyPolygon.cpp" />
     <ClCompile Include="ResearchScene.cpp" />
     <ClCompile Include="ScoreObserver.cpp" />
+    <ClCompile Include="ScoreRankingData.cpp" />
     <ClCompile Include="StageClearScene.cpp" />
     <ClCompile Include="StageSelectScene.cpp" />
     <ClCompile Include="SwitchUnitScene.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
     <ClInclude Include="ScoreObserver.h" />
+    <ClInclude Include="ScoreRankingData.h" />
     <ClInclude Include="StageClearScene.h" />
     <ClInclude Include="StageSelectScene.h" />
     <ClInclude Include="InitLog.h" />
