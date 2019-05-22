@@ -1,7 +1,7 @@
 #include"StringBuilder.h"
 
 //文字列の分割・結合を行うクラス
-StringBuilder::StringBuilder(const std::string &str,char spliter,char beginer,char ender,bool deepen,bool setSplit)
+StringBuilderOld::StringBuilderOld(const std::string &str,char spliter,char beginer,char ender,bool deepen,bool setSplit)
 	:m_spliter(spliter),m_beginer(beginer),m_ender(ender),m_splitFlag(false)
 {
 	if(!setSplit){
@@ -13,14 +13,14 @@ StringBuilder::StringBuilder(const std::string &str,char spliter,char beginer,ch
 	}
 }
 
-StringBuilder::~StringBuilder(){}
+StringBuilderOld::~StringBuilderOld(){}
 
-std::string StringBuilder::GetString()const{
+std::string StringBuilderOld::GetString()const{
 	if(m_splitFlag){
 		//区切りがあるのであれば、区切り文字を追加しながらstringを作っていく。
 		if(!m_vec.empty()){
 			std::string str="";
-			for(const StringBuilder &sb:m_vec){
+			for(const StringBuilderOld &sb:m_vec){
 				if(sb.GetSplitFlag()){
 					//sbが分割されたものなら集合文字を入れる
 					str+=m_beginer+sb.GetString()+m_ender+m_spliter;
@@ -41,21 +41,21 @@ std::string StringBuilder::GetString()const{
 	}
 }
 
-std::vector<StringBuilder> StringBuilder::GetVector()const{
+std::vector<StringBuilderOld> StringBuilderOld::GetVector()const{
 	if(m_splitFlag){
 		//区切りがあるのであれば、m_vecをそのまま返す
 		return m_vec;
 	} else{
 		//区切りが無いのであればthisのみの配列として返す。
-		return std::vector<StringBuilder>{*this};
+		return std::vector<StringBuilderOld>{*this};
 	}
 }
 
-std::vector<std::string> StringBuilder::GetStringVector()const{
+std::vector<std::string> StringBuilderOld::GetStringVector()const{
 	if(m_splitFlag){
 		//区切りがあるのであれば、m_vecの各要素のGetString()の配列を返す
 		std::vector<std::string> v;
-		for(const StringBuilder &sb:m_vec){
+		for(const StringBuilderOld &sb:m_vec){
 			v.push_back(sb.GetString());
 		}
 		return v;
@@ -65,7 +65,7 @@ std::vector<std::string> StringBuilder::GetStringVector()const{
 	}
 }
 
-void StringBuilder::Split(const std::string &str,char spliter,char beginer,char ender,bool deepen){
+void StringBuilderOld::Split(const std::string &str,char spliter,char beginer,char ender,bool deepen){
 	if(!m_splitFlag){
 		//分割が行われていない時のみ行う
 		//下準備
@@ -76,7 +76,7 @@ void StringBuilder::Split(const std::string &str,char spliter,char beginer,char 
 		const auto pushFunc=[&]()->void{
 			//deepenがfalseであるか、splitStrに集合が含まれていないならこれ以上深くならない
 			//最終引数がtrueである限りこの処理は再帰的に呼び出されるが、いずれ(next!=ite)がfalseになる。（処理のたびに集合外のspliterと最外のbeginer,enderがstrから消滅するため）
-			m_vec.push_back(StringBuilder(splitStr,spliter,beginer,ender,true,deepen && setExist));
+			m_vec.push_back(StringBuilderOld(splitStr,spliter,beginer,ender,true,deepen && setExist));
 			splitStr.clear();
 			setExist=false;
 		};
@@ -128,8 +128,8 @@ void StringBuilder::Split(const std::string &str,char spliter,char beginer,char 
 	}
 }
 
-//---------------NewSB--------------------
-NewSB::NewSB(const std::shared_ptr<const std::string> &originStr,
+//---------------StringBuilder--------------------
+StringBuilder::StringBuilder(const std::shared_ptr<const std::string> &originStr,
 	const size_t originStrSize,
 	const char spliter,
 	const char beginer,
@@ -146,7 +146,7 @@ NewSB::NewSB(const std::shared_ptr<const std::string> &originStr,
 	Split(originStrSize,spliter,beginer,ender,parentEnder);
 }
 
-NewSB::NewSB(const std::shared_ptr<const std::string> &originStr,
+StringBuilder::StringBuilder(const std::shared_ptr<const std::string> &originStr,
 	const size_t topIndex,
 	const size_t length)
 	:m_originStr(originStr)
@@ -157,17 +157,17 @@ NewSB::NewSB(const std::shared_ptr<const std::string> &originStr,
 	,m_length(length)
 {}
 
-NewSB::~NewSB(){}
+StringBuilder::~StringBuilder(){}
 
-std::string NewSB::GetString()const{
+std::string StringBuilder::GetString()const{
 	return m_originStr->substr(m_topIndex,m_length);
 }
 
-void NewSB::Split(){
+void StringBuilder::Split(){
 	Split(m_spliter,m_beginer,m_ender);
 }
 
-void NewSB::Split(const char spliter,const char beginer,const char ender){
+void StringBuilder::Split(const char spliter,const char beginer,const char ender){
 	//文字列の長さを計算
 	const size_t originSize=m_originStr->size();
 	//親の終端文字を確認
@@ -176,7 +176,7 @@ void NewSB::Split(const char spliter,const char beginer,const char ender){
 	if(parentEnderIndex<originSize){
 		parentEnderChar=(*m_originStr)[parentEnderIndex];
 	} else{
-		//一番rootのNewSBは、親の終端文字にアクセスできないので、'\0'を渡しておく
+		//一番rootのStringBuilderは、親の終端文字にアクセスできないので、'\0'を渡しておく
 		parentEnderChar='\0';
 	}
 	//分割文字を変更
@@ -187,7 +187,7 @@ void NewSB::Split(const char spliter,const char beginer,const char ender){
 	Split(originSize,m_spliter,m_beginer,m_ender,parentEnderChar);
 }
 
-void NewSB::Split(const size_t originStrSize,
+void StringBuilder::Split(const size_t originStrSize,
 	const char spliter,
 	const char beginer,
 	const char ender,
@@ -196,34 +196,34 @@ void NewSB::Split(const size_t originStrSize,
 	//分割処理の前に初期化
 	m_vec.clear();
 	//m_topIndexから文字を調べていく
-	bool subNewSBExist=false;
-	size_t subNewSBTopIndex=m_topIndex;//子要素となる
+	bool subStringBuilderExist=false;
+	size_t subStringBuilderTopIndex=m_topIndex;//子要素となる
 	for(size_t i=m_topIndex;i<originStrSize;i++){
 		const char c=(*m_originStr)[i];
 		if(c==m_beginer){
 			//ここから先はm_enderが出現するまでしばらく区切り文字を無視するよ
-			const NewSB subNewSB=NewSB(m_originStr,originStrSize,m_spliter,m_beginer,m_ender,m_ender,i+1);
+			const StringBuilder subStringBuilder=StringBuilder(m_originStr,originStrSize,m_spliter,m_beginer,m_ender,m_ender,i+1);
 			//読み込んだ要素を追加
-			m_vec.push_back(subNewSB);
-			subNewSBExist=true;
+			m_vec.push_back(subStringBuilder);
+			subStringBuilderExist=true;
 			//読み込み位置をズラす
-			i=subNewSB.GetButtomIndex()+1;//subNewSBのm_enderの読み込みは無視して良いため、+1する
+			i=subStringBuilder.GetButtomIndex()+1;//subStringBuilderのm_enderの読み込みは無視して良いため、+1する
 		} else if(c==m_spliter){
 			//ここで区切る
-			if(!subNewSBExist){
-				//まだ子要素のNewSBを作成していない場合は、ここまでで要素を作成する
-				m_vec.push_back(NewSB(m_originStr,subNewSBTopIndex,i-subNewSBTopIndex));//長さはi番目の要素(m_spliter)を除くので、+1しなくて良い
+			if(!subStringBuilderExist){
+				//まだ子要素のStringBuilderを作成していない場合は、ここまでで要素を作成する
+				m_vec.push_back(StringBuilder(m_originStr,subStringBuilderTopIndex,i-subStringBuilderTopIndex));//長さはi番目の要素(m_spliter)を除くので、+1しなくて良い
 			}
 			//次の要素の読み取りの準備
-			subNewSBExist=false;
-			subNewSBTopIndex=i+1;
+			subStringBuilderExist=false;
+			subStringBuilderTopIndex=i+1;
 		} else if(c==parentEnder){
-			//親要素の終端地点が来たら、このNewSBの読み取りは終了
-			if(!subNewSBExist){
-				//まだ子要素のNewSBを作成していない場合は、ここまでで要素を作成する
-				m_vec.push_back(NewSB(m_originStr,subNewSBTopIndex,i-subNewSBTopIndex));//長さはi番目の要素(m_spliter)を除くので、+1しなくて良い
+			//親要素の終端地点が来たら、このStringBuilderの読み取りは終了
+			if(!subStringBuilderExist){
+				//まだ子要素のStringBuilderを作成していない場合は、ここまでで要素を作成する
+				m_vec.push_back(StringBuilder(m_originStr,subStringBuilderTopIndex,i-subStringBuilderTopIndex));//長さはi番目の要素(m_spliter)を除くので、+1しなくて良い
 			}
-			//このNewSBの長さを再計算
+			//このStringBuilderの長さを再計算
 			m_length=i-m_topIndex;//m_parentEnderは除くので、+1はしなくて良い
 			//ループ脱出
 			break;
@@ -231,6 +231,6 @@ void NewSB::Split(const size_t originStrSize,
 	}
 }
 
-size_t NewSB::GetButtomIndex()const{
+size_t StringBuilder::GetButtomIndex()const{
 	return m_topIndex+m_length-1;
 }

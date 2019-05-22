@@ -11,15 +11,15 @@ ScoreRankingData::ScoreRankingData()
 	FpsMeasuring fps;
 	//読み込み(0.30秒)
 	fps.RecordTime();
-	StringBuilder strBuilder(FileStrRead(scoreRankingTxtPass.c_str()),'\n','{','}',false,true);
+	StringBuilderOld strBuilder(FileStrRead(scoreRankingTxtPass.c_str()),'\n','{','}',false,true);
 	volatile const double t1=fps.GetProcessedTime();
 	//各ステージデータの読み込み(0.66秒)
-	for(StringBuilder &sb:strBuilder.m_vec){
+	for(StringBuilderOld &sb:strBuilder.m_vec){
 		sb.Split(',','(',')',true);
 		std::string dirName;
-		const std::array<const StringBuilder *,StageScoreData::levelCount> initArray={nullptr,nullptr,nullptr,nullptr};
-		std::array<const StringBuilder *,StageScoreData::levelCount> pBuilderArray=initArray;
-		for(const StringBuilder &ssb:sb.m_vec){
+		const std::array<const StringBuilderOld *,StageScoreData::levelCount> initArray={nullptr,nullptr,nullptr,nullptr};
+		std::array<const StringBuilderOld *,StageScoreData::levelCount> pBuilderArray=initArray;
+		for(const StringBuilderOld &ssb:sb.m_vec){
 			if(ssb.m_vec.size()>=2 && ssb.m_vec[0].GetString()=="dir"){
 				//ディレクトリデータの読み込み
 				dirName=ssb.m_vec[1].GetString();
@@ -109,12 +109,12 @@ void ScoreRankingData::PlayerData::Output(std::ofstream &ofs)const{
 	ofs<<"((name,"<<name<<"),(score,"<<score<<"),(date,"<<date<<"))";
 }
 
-ScoreRankingData::PlayerData ScoreRankingData::PlayerData::Create(const StringBuilder &infoBuilder){
+ScoreRankingData::PlayerData ScoreRankingData::PlayerData::Create(const StringBuilderOld &infoBuilder){
 	//文字列分割
 	std::string name="";
 	int score=-99999;
 	std::string date="";
-	for(const StringBuilder &sb:infoBuilder.m_vec){
+	for(const StringBuilderOld &sb:infoBuilder.m_vec){
 		if(sb.m_vec.size()>=2){
 			const std::string str=sb.m_vec[0].GetString();
 			if(str=="name"){
@@ -135,9 +135,9 @@ ScoreRankingData::PlayerData ScoreRankingData::PlayerData::Create(const StringBu
 }
 
 //----------ScoreRankingData::LevelData-------------
-ScoreRankingData::LevelData::LevelData(const StringBuilder &infoBuilder){
+ScoreRankingData::LevelData::LevelData(const StringBuilderOld &infoBuilder){
 	//分割された文字列を認識
-	for(const StringBuilder &sb:infoBuilder.m_vec){
+	for(const StringBuilderOld &sb:infoBuilder.m_vec){
 		//要素挿入
 		try{
 			playerDataVec.insert(PlayerData::Create(sb));
@@ -182,7 +182,7 @@ void ScoreRankingData::StageScoreData::Output(std::ofstream &ofs)const{
 	ofs<<')';
 }
 
-ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const std::string &i_dirName,const std::array<const StringBuilder *,levelCount> &infoBuilderPointerArray){
+ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const std::string &i_dirName,const std::array<const StringBuilderOld *,levelCount> &infoBuilderPointerArray){
 	//分割された文字列を認識
 	std::array<LevelData,levelCount> levelArray;
 	for(size_t i=0;i<levelCount;i++){

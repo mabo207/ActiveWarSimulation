@@ -68,8 +68,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 				str.push_back(ch);
 			}
 			//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-			StringBuilder sb(str,'\n','{','}',false,true);
-			for(const StringBuilder &ssb:sb.m_vec){
+			StringBuilderOld sb(str,'\n','{','}',false,true);
+			for(const StringBuilderOld &ssb:sb.m_vec){
 				BattleObject *pb=BattleObject::CreateRawObject(ssb.GetString());
 				if(pb!=nullptr){
 					field.push_back(pb);

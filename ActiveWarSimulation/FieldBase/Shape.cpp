@@ -53,7 +53,7 @@ void Shape::Draw(Vector2D adjust,unsigned int color,int fillFlag,float lineThick
 std::shared_ptr<Shape> Shape::CreateShape(const std::string &infostr){
 	//「種類,位置,初期固定,図形情報」の順。それぞれの要素を抽出する。
 	//全て()が集合文字、,が区切り文字なので一括で分割する。
-	StringBuilder sb(infostr,spliter,beginer,ender,true,true);
+	StringBuilderOld sb(infostr,spliter,beginer,ender,true,true);
 	//strの解釈。sb.m_vec[0]:オブジェクトの種類 sb.m_vec[1]:当たり判定図形の情報((x,y)形式) sb.m_vec[2]:初期固定 sb.m_vec[3]:図形情報
 	std::shared_ptr<Shape> pShape(nullptr);
 	try{

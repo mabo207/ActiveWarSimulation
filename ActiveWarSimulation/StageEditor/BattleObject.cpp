@@ -40,7 +40,7 @@ std::shared_ptr<BattleObject> BattleObject::CreateObject(const std::string &info
 
 BattleObject *BattleObject::CreateRawObject(const std::string &infostr){
 	//strをStringBuilderを用いて分割する
-	StringBuilder sb(infostr,',','(',')',false,true);
+	StringBuilderOld sb(infostr,',','(',')',false,true);
 	//strの解釈。sb.m_vec[0]:オブジェクトの種類 strVec[1]:当たり判定図形の情報
 	if(sb.m_vec.size()<2){
 		return nullptr;

@@ -57,8 +57,8 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 			str.push_back(ch);
 		}
 		//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-		StringBuilder sb(str,'\n','{','}',false,true);
-		for(const StringBuilder &ssb:sb.m_vec){
+		StringBuilderOld sb(str,'\n','{','}',false,true);
+		for(const StringBuilderOld &ssb:sb.m_vec){
 			BattleObject *pb=BattleObject::CreateRawObject(ssb.GetString());
 			if(pb!=nullptr){
 				m_field.push_back(pb);
@@ -69,12 +69,12 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	m_stageSize=mapDrawSize;//本来はステージの大きさはグラフィックデータの縦横の大きさで決める
 
 	//ファイルからユニットを読み込み
-	StringBuilder unitlist(FileStrRead((stagedir+"unitlist.txt").c_str()),'\n','{','}',false,true);
-	for(const StringBuilder &unitdata:unitlist.m_vec){
-		const StringBuilder sb(unitdata.GetString(),',','(',')',true,true);
+	StringBuilderOld unitlist(FileStrRead((stagedir+"unitlist.txt").c_str()),'\n','{','}',false,true);
+	for(const StringBuilderOld &unitdata:unitlist.m_vec){
+		const StringBuilderOld sb(unitdata.GetString(),',','(',')',true,true);
 		//まずモブ用の設定をするか固定ユニット用の設定をするかを判定する
 		bool uniqueFlag=false;
-		for(const StringBuilder &ssb:sb.m_vec){
+		for(const StringBuilderOld &ssb:sb.m_vec){
 			if(ssb.m_vec.size()>=2 && ssb.m_vec[0].GetString()=="definition"){
 				//設定方法はdefinitionに記載されている
 				uniqueFlag=(ssb.m_vec[1].GetString()=="unique");
@@ -109,7 +109,7 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 			std::pair<float,bool> initOP;
 			initOP.second=false;
 			//各値の読み取り
-			for(const StringBuilder &ssb:sb.m_vec){
+			for(const StringBuilderOld &ssb:sb.m_vec){
 				if(!ssb.m_vec.empty()){
 					//先頭文字列があることを保障
 					if(ssb.m_vec[0].GetString()=="name" && ssb.m_vec.size()>=2){

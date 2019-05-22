@@ -6,7 +6,7 @@
 #include<memory>
 
 //文字列の分割・結合を行うクラス
-class StringBuilder{
+class StringBuilderOld{
 	//型・列挙体
 
 	//定数
@@ -17,7 +17,7 @@ protected:
 	//以下はどちらかにしか用いない
 	std::string m_str;//区切りのない１つの文字列
 public:
-	std::vector<StringBuilder> m_vec;//区切られた複数文字列、トークンを途中で変えられるようにStringBuilderの配列にし、publicにする。
+	std::vector<StringBuilderOld> m_vec;//区切られた複数文字列、トークンを途中で変えられるようにStringBuilderOldの配列にし、publicにする。
 protected:
 	//どちらに値が入っているか
 	bool m_splitFlag;
@@ -27,8 +27,8 @@ private:
 	void Split(const std::string &str,char spliter,char beginer,char ender,bool deepen);
 
 public:
-	StringBuilder(const std::string &str,char spliter,char beginer,char ender,bool deepen,bool setSplit);
-	~StringBuilder();
+	StringBuilderOld(const std::string &str,char spliter,char beginer,char ender,bool deepen,bool setSplit);
+	~StringBuilderOld();
 
 	char GetSpliter()const{
 		return m_spliter;
@@ -43,7 +43,7 @@ public:
 		return m_splitFlag;
 	}
 	std::string GetString()const;
-	std::vector<StringBuilder> GetVector()const;
+	std::vector<StringBuilderOld> GetVector()const;
 	std::vector<std::string> GetStringVector()const;
 	//Split()は前後でm_strが変化する事に注意
 	void Split(bool deepen){
@@ -57,24 +57,24 @@ public:
 //文字列の分割・結合を行うクラス
 //旧バージョンに比べて、deepen設定ができないが、計算速度はstd::vector<>::push_back()のコストを除けば旧バージョンでdeepenしないのと同等くらいの速度が出るので問題ない。
 //再Split()も、かかるメモリがそこまで大きくないので痛くない。
-class NewSB{
+class StringBuilder{
 public:
-	NewSB(const std::shared_ptr<const std::string> &originStr,
+	StringBuilder(const std::shared_ptr<const std::string> &originStr,
 		const size_t originStrSize,
 		const char spliter,
 		const char beginer,
 		const char ender,
 		const char parentEnder,
 		const size_t topIndex);
-	~NewSB();
+	~StringBuilder();
 	std::string GetString()const;
 	void Split();
 	void Split(const char spliter,const char beginer,const char ender);
 	
-	std::vector<NewSB> m_vec;
+	std::vector<StringBuilder> m_vec;
 
 private:
-	NewSB(const std::shared_ptr<const std::string> &originStr,
+	StringBuilder(const std::shared_ptr<const std::string> &originStr,
 		const size_t topIndex,
 		const size_t length);//末尾作成用コンストラクタ
 	size_t GetButtomIndex()const;
