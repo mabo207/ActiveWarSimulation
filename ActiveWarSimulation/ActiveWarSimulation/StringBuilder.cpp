@@ -157,6 +157,13 @@ StringBuilder::StringBuilder(const std::shared_ptr<const std::string> &originStr
 	,m_length(length)
 {}
 
+StringBuilder::StringBuilder(const std::string &originStr,
+	const char spliter,
+	const char beginer,
+	const char ender)
+	:StringBuilder(std::make_shared<const std::string>(originStr),originStr.size(),spliter,beginer,ender,'\0',0)
+{}
+
 StringBuilder::~StringBuilder(){}
 
 std::string StringBuilder::GetString()const{

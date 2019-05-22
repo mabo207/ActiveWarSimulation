@@ -59,13 +59,10 @@ public:
 //再Split()も、かかるメモリがそこまで大きくないので痛くない。
 class StringBuilder{
 public:
-	StringBuilder(const std::shared_ptr<const std::string> &originStr,
-		const size_t originStrSize,
+	StringBuilder(const std::string &originStr,
 		const char spliter,
 		const char beginer,
-		const char ender,
-		const char parentEnder,
-		const size_t topIndex);
+		const char ender);//先頭要素作成用コンストラクタ
 	~StringBuilder();
 	std::string GetString()const;
 	void Split();
@@ -77,6 +74,13 @@ private:
 	StringBuilder(const std::shared_ptr<const std::string> &originStr,
 		const size_t topIndex,
 		const size_t length);//末尾作成用コンストラクタ
+	StringBuilder(const std::shared_ptr<const std::string> &originStr,
+		const size_t originStrSize,
+		const char spliter,
+		const char beginer,
+		const char ender,
+		const char parentEnder,
+		const size_t topIndex);//分割要素作成用コンストラクタ
 	size_t GetButtomIndex()const;
 	void Split(const size_t originStrSize,
 		const char spliter,
