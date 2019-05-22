@@ -22,7 +22,7 @@ namespace UnitTest_StringBuilder
 				,inBeginer='('
 				,inEnder=')';
 			const StringBuilder oldBuilder(testStr,topSpliter,topBeginer,topEnder,false,true);
-			const NewSB newBuilder(std::shared_ptr<const std::string>(new std::string(testStr)),testStr.size(),topSpliter,topBeginer,topEnder,'\0','\0',0,false,true);
+			const NewSB newBuilder(std::shared_ptr<const std::string>(new std::string(testStr)),testStr.size(),topSpliter,topBeginer,topEnder,'\0',0);
 			Assert::AreEqual(oldBuilder.m_vec.size(),newBuilder.m_vec.size());
 		}
 	};
