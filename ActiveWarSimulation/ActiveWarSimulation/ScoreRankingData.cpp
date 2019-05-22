@@ -1,5 +1,6 @@
 #include"ScoreRankingData.h"
 #include"FileRead.h"
+#include"ToolsLib.h"
 
 //----------ScoreRankingData-------------
 const std::string ScoreRankingData::scoreRankingTxtPass="SaveData/scoreRanking.txt";

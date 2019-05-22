@@ -2,6 +2,7 @@
 #include"Circle.h"
 #include"Edge.h"
 #include"MyPolygon.h"
+#include"StringBuilder.h"
 
 //---------------------Shape::Type---------------------
 std::string Shape::Type::GetStr(Kind kind){

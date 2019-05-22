@@ -1,6 +1,7 @@
 #include"DxLib.h"
 #include"BattleObject.h"
 #include"GraphicControl.h"
+#include"StringBuilder.h"
 
 #include"Terrain.h"
 

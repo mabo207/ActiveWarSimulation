@@ -147,6 +147,9 @@
     <ClInclude Include="..\ActiveWarSimulation\FileRead.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\StringBuilder.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -231,6 +234,9 @@
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
     <ClCompile Include="..\ActiveWarSimulation\FileRead.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\StringBuilder.cpp">
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,6 +5,7 @@
 #include"GraphicControl.h"
 #include"BattleSceneData.h"
 #include"FileRead.h"
+#include"StringBuilder.h"
 
 //----------------TutorialBattleSceneData::MoveTutorial----------------------
 const float TutorialBattleSceneData::MoveTutorial::minDisplayPopOP=60.0f;

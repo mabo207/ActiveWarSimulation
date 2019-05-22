@@ -5,6 +5,7 @@
 #include"input.h"
 #include"ToolsLib.h"
 #include"GraphicControl.h"
+#include"StringBuilder.h"
 
 #include"Terrain.h"
 #include"Circle.h"

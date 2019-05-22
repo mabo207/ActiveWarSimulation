@@ -6,6 +6,7 @@
 #include"EditAction.h"
 #include"ShapeFactory.h"
 #include"PosSetting.h"
+#include"StringBuilder.h"
 
 #include"Terrain.h"
 #include"Circle.h"

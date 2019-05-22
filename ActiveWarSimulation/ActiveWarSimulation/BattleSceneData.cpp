@@ -8,6 +8,7 @@
 #include"FileRead.h"
 #include"GameScene.h"
 #include"CommonConstParameter.h"
+#include"StringBuilder.h"
 
 //----------------------BattleSceneData----------------------
 const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);

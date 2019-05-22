@@ -1,5 +1,6 @@
 #include"AnySceneCallable.h"
 #include"FileRead.h"
+#include"StringBuilder.h"
 
 StageInfoReader::StageInfoReader(const std::string &dirName){
 	//stageInfo.txtの生データを読み込み可能な形式に変換
