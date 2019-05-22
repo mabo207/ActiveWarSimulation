@@ -32,7 +32,7 @@ public:
 		~PlayerData(){}
 		bool operator<(const PlayerData &otherobj)const;
 		void Output(std::ofstream &ofs)const;//データを出力する
-		static PlayerData Create(const StringBuilderOld &infoBuilder);//文字列から作る
+		static PlayerData Create(const StringBuilder &infoBuilder);//文字列から作る
 		//メンバ変数をconstにしているので、読み込み文字列の処理をコンストラクタ内でやりたくない。そのためCreate()関数にそれを移譲する。
 		//ただし、PlayerDataを作って挿入、ということを行うので、publicにする。
 		PlayerData(const int i_score,const std::string &i_name,const std::string &i_date)
@@ -43,7 +43,7 @@ public:
 		std::set<PlayerData> playerDataVec;//ランキングに表示されるプレイヤーデータ(挿入を可能にするためにconstにしない)
 		
 		LevelData(){}
-		explicit LevelData(const StringBuilderOld &infoBuilder);//メンバ変数をconstにする必用はないので、LevelData内で読み込み文字列の処理をして問題ない
+		explicit LevelData(const StringBuilder &infoBuilder);//メンバ変数をconstにする必用はないので、LevelData内で読み込み文字列の処理をして問題ない
 		~LevelData(){}
 		void Output(std::ofstream &ofs)const;//データ出力
 	};
@@ -58,7 +58,7 @@ public:
 		StageScoreData();//「ディレクトリのランキングデータがない」という場合でもプログラムをちゃんと動作させたいため。
 		~StageScoreData(){}
 		void Output(std::ofstream &ofs)const;//データ出力
-		static StageScoreData Create(const std::string &i_dirName,const std::array<const StringBuilderOld *,levelCount> &infoBuilderPointerArray);//文字列から作成
+		static StageScoreData Create(const std::string &i_dirName,const std::array<const StringBuilder *,levelCount> &infoBuilderPointerArray);//文字列から作成
 
 	private:
 		StageScoreData(const std::string &i_dirName,const std::array<LevelData,levelCount> &i_levelArray)
