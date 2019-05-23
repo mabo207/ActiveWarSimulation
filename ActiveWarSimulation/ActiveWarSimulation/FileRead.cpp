@@ -2,6 +2,7 @@
 #include<fstream>
 #include<cassert>
 #include"FileRead.h"
+#include<climits>
 
 
 //ファイルを読み込みstd::vector<char>型にして返す
@@ -62,14 +63,36 @@ std::vector<std::vector<std::string>> CommaCutRead(const char *DatabaseName){
 
 //ファイルを読み込みstd::string型にして返す
 std::string FileStrRead(const char *DatabaseName){
-	//ファイルの読み込み
-	std::vector<char> OriginalData=FileRead(DatabaseName);
-	//std::string型に直す
-	std::string Str;
-	for(unsigned int i=0;i<OriginalData.size();i++){
-		Str=Str+OriginalData[i];
+	//ファイルを開く
+	std::ifstream ifs(DatabaseName);
+	if(!ifs){
+		assert(false);
+		return "";
 	}
-	return Str;
+	//ファイルサイズを取得
+	ifs.seekg(0,std::ifstream::end);
+	const auto endPos=ifs.tellg();//末尾の位置を取得
+	ifs.clear();
+	ifs.seekg(0,std::ifstream::beg);
+	const auto beginPos=ifs.tellg();//先頭の位置を取得
+	const auto fileSize=endPos-beginPos;//ファイルサイズが分かる(byte)
+	//文字を読み込む
+	std::string OriginalStr;
+	if(fileSize>=0 && fileSize<UINT_MAX){
+		OriginalStr.reserve(static_cast<size_t>(fileSize));//ファイルサイズ分だけメモリ確保
+	}
+	while(true){
+		char word=ifs.get();
+		if(word==EOF){//読み取ったものがEOFになるまでループする
+			break;
+		}
+		OriginalStr.push_back(word);
+	}
+
+	//ファイルを閉じる
+	ifs.close();
+
+	return OriginalStr;
 }
 
 //CSVフォルダを読み取ってstd::vector<std::vector<int>>型にして返す(特化形式)
