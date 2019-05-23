@@ -43,7 +43,7 @@ void TutorialBattleSceneData::MoveTutorial::DrawSupplement(int font)const{
 
 std::shared_ptr<TutorialBattleSceneData::TutorialBase> TutorialBattleSceneData::TutorialBase::Create(const std::string &str,const BattleSceneData &gameData){
 	//データを分割
-	const StringBuilderOld sb(str,',','(',')',true,true);
+	const StringBuilder sb(str,',','(',')');
 	//チュートリアルデータを作成
 	if(sb.m_vec.size()>=2){
 		if(sb.m_vec[0].GetString()=="move"){
@@ -177,8 +177,8 @@ TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName
 {
 	//チュートリアルデータの読み込み
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-	StringBuilderOld sb(FileStrRead(("Stage/"+m_stageDirName+"/tutorialList.txt").c_str()),'\n','{','}',false,true);
-	for(const StringBuilderOld &ssb:sb.m_vec){
+	StringBuilder sb(FileStrRead(("Stage/"+m_stageDirName+"/tutorialList.txt").c_str()),'\n','{','}');
+	for(const StringBuilder &ssb:sb.m_vec){
 		std::shared_ptr<TutorialBase> pt=TutorialBase::Create(ssb.GetString(),*this);
 		if(pt.get()!=nullptr){
 			m_tutorialData.push_back(pt);
