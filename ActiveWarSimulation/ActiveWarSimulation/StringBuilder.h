@@ -65,7 +65,6 @@ public:
 		const char ender);//先頭要素作成用コンストラクタ
 	~StringBuilder();
 	std::string GetString()const;
-	void Split();
 	void Split(const char spliter,const char beginer,const char ender);
 	
 	std::vector<StringBuilder> m_vec;

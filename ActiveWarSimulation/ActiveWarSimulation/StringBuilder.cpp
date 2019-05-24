@@ -170,11 +170,11 @@ std::string StringBuilder::GetString()const{
 	return m_originStr->substr(m_topIndex,m_length);
 }
 
-void StringBuilder::Split(){
-	Split(m_spliter,m_beginer,m_ender);
-}
-
 void StringBuilder::Split(const char spliter,const char beginer,const char ender){
+	if(spliter==m_spliter && beginer==m_beginer && ender==m_ender){
+		//既にしている分割処理と同じ分割処理をしようとしている時は、分割せずに関数を終了する
+		return;
+	}
 	//文字列の長さを計算
 	const size_t originSize=m_originStr->size();
 	//親の終端文字を確認
