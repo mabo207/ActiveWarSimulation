@@ -7,8 +7,8 @@
 #include<map>
 #include<set>
 #include<exception>
-#include"ToolsLib.h"
 #include<fstream>
+#include"StringBuilder.h"
 
 //クリアスコアのランキングを管理するクラス
 //ローカルでは10KB~100KBくらいのテキストデータを想定している。

@@ -1,5 +1,6 @@
 #include"ScoreRankingData.h"
 #include"FileRead.h"
+#include"ToolsLib.h"
 
 //----------ScoreRankingData-------------
 const std::string ScoreRankingData::scoreRankingTxtPass="SaveData/scoreRanking.txt";
@@ -8,13 +9,13 @@ ScoreRankingData::ScoreRankingData()
 {
 	//ステージ15,各ステージ難易度4つ,各レベル5つのデータが存在しているの時の速度（読み込み：0.96秒 コピー：0.30秒 書き込み：0.02秒）
 	FpsMeasuring fps;
-	//読み込み(0.30秒)
+	//読み込み(0.30秒→0.26秒)
 	fps.RecordTime();
-	StringBuilder strBuilder(FileStrRead(scoreRankingTxtPass.c_str()),'\n','{','}',false,true);
+	StringBuilder strBuilder(FileStrRead(scoreRankingTxtPass.c_str()),'\n','{','}');
 	volatile const double t1=fps.GetProcessedTime();
-	//各ステージデータの読み込み(0.66秒)
+	//各ステージデータの読み込み(0.66秒→0.28秒)
 	for(StringBuilder &sb:strBuilder.m_vec){
-		sb.Split(',','(',')',true);
+		sb.Split(',','(',')');
 		std::string dirName;
 		const std::array<const StringBuilder *,StageScoreData::levelCount> initArray={nullptr,nullptr,nullptr,nullptr};
 		std::array<const StringBuilder *,StageScoreData::levelCount> pBuilderArray=initArray;

@@ -5,6 +5,7 @@
 #include"GraphicControl.h"
 #include"BattleSceneData.h"
 #include"FileRead.h"
+#include"StringBuilder.h"
 
 //----------------TutorialBattleSceneData::MoveTutorial----------------------
 const float TutorialBattleSceneData::MoveTutorial::minDisplayPopOP=60.0f;
@@ -42,12 +43,12 @@ void TutorialBattleSceneData::MoveTutorial::DrawSupplement(int font)const{
 
 std::shared_ptr<TutorialBattleSceneData::TutorialBase> TutorialBattleSceneData::TutorialBase::Create(const std::string &str,const BattleSceneData &gameData){
 	//データを分割
-	const StringBuilder sb(str,',','(',')',true,true);
+	StringBuilder sb(str,',','(',')');
 	//チュートリアルデータを作成
 	if(sb.m_vec.size()>=2){
 		if(sb.m_vec[0].GetString()=="move"){
 			//MoveTutorialは、到達地点を表す図形が格納されている
-			const std::shared_ptr<Shape> pShape=Shape::CreateShape(sb.m_vec[1].GetString());
+			const std::shared_ptr<Shape> pShape=Shape::CreateShape(sb.m_vec[1]);
 			if(pShape.get()!=nullptr){
 				return std::shared_ptr<TutorialBase>(new MoveTutorial(pShape));
 			}
@@ -176,7 +177,7 @@ TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName
 {
 	//チュートリアルデータの読み込み
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-	StringBuilder sb(FileStrRead(("Stage/"+m_stageDirName+"/tutorialList.txt").c_str()),'\n','{','}',false,true);
+	StringBuilder sb(FileStrRead(("Stage/"+m_stageDirName+"/tutorialList.txt").c_str()),'\n','{','}');
 	for(const StringBuilder &ssb:sb.m_vec){
 		std::shared_ptr<TutorialBase> pt=TutorialBase::Create(ssb.GetString(),*this);
 		if(pt.get()!=nullptr){

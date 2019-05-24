@@ -7,7 +7,7 @@
 #include<fstream>
 #include"ToolsLib.h"
 #include"ShapeHaving.h"
-
+#include"StringBuilder.h"
 
 //バトル画面におけるオブジェクトの基底クラス
 class BattleObject:public ShapeHaving{
@@ -63,8 +63,8 @@ public:
 	}
 
 	//文字列からBattleObjectを作る関数
-	static std::shared_ptr<BattleObject> CreateObject(const std::string &infostr);
-	static BattleObject *CreateRawObject(const std::string &infostr);//newで生ポインタで作る。shared_ptrに突っ込まない場合は自分でメモリ解放する。
+	static std::shared_ptr<BattleObject> CreateObject(StringBuilder &info);
+	static BattleObject *CreateRawObject(StringBuilder &info);//newで生ポインタで作る。shared_ptrに突っ込まない場合は自分でメモリ解放する。
 };
 
 #endif // !DEF_BATTLEOBJECT_H
