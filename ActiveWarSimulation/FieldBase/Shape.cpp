@@ -50,17 +50,17 @@ void Shape::Draw(Vector2D adjust,unsigned int color,int fillFlag,float lineThick
 	Draw(m_position,adjust,color,fillFlag,lineThickness);
 }
 
-std::shared_ptr<Shape> Shape::CreateShape(const std::string &infostr){
+std::shared_ptr<Shape> Shape::CreateShape(StringBuilder &info){
 	//「種類,位置,初期固定,図形情報」の順。それぞれの要素を抽出する。
 	//全て()が集合文字、,が区切り文字なので一括で分割する。
-	StringBuilderOld sb(infostr,spliter,beginer,ender,true,true);
-	//strの解釈。sb.m_vec[0]:オブジェクトの種類 sb.m_vec[1]:当たり判定図形の情報((x,y)形式) sb.m_vec[2]:初期固定 sb.m_vec[3]:図形情報
+	info.Split(spliter,beginer,ender);
+	//strの解釈。info.m_vec[0]:オブジェクトの種類 info.m_vec[1]:当たり判定図形の情報((x,y)形式) info.m_vec[2]:初期固定 info.m_vec[3]:図形情報
 	std::shared_ptr<Shape> pShape(nullptr);
 	try{
 		//位置の生成(共通処理)
-		Vector2D pos(std::stof(sb.m_vec.at(1).m_vec.at(0).GetString()),std::stof(sb.m_vec.at(1).m_vec.at(1).GetString()));
+		Vector2D pos(std::stof(info.m_vec.at(1).m_vec.at(0).GetString()),std::stof(info.m_vec.at(1).m_vec.at(1).GetString()));
 		//初期固定の生成
-		const std::string fixName=sb.m_vec.at(2).GetString();
+		const std::string fixName=info.m_vec.at(2).GetString();
 		Fix::Kind fix;
 		if(fixName==Fix::GetStr(Fix::e_dynamic)){
 			fix=Fix::e_dynamic;
@@ -73,22 +73,22 @@ std::shared_ptr<Shape> Shape::CreateShape(const std::string &infostr){
 			throw std::invalid_argument("");
 		}
 		//図形各自の処理
-		if(sb.m_vec.at(0).GetString()==Type::GetStr(Type::e_circle)){
+		if(info.m_vec.at(0).GetString()==Type::GetStr(Type::e_circle)){
 			//円の生成を行う。m_vec[3]の中身は半径の値のみ。
-			float r=std::stof(sb.m_vec.at(3).GetString());
+			float r=std::stof(info.m_vec.at(3).GetString());
 			pShape=std::shared_ptr<Shape>(new Circle(pos,r,fix));
-		} else if(sb.m_vec.at(0).GetString()==Type::GetStr(Type::e_edge)){
+		} else if(info.m_vec.at(0).GetString()==Type::GetStr(Type::e_edge)){
 			//線分の生成を行う。m_vec[3]の中身は(x,y)形式の座標のみ。
-			Vector2D vec(std::stof(sb.m_vec.at(3).m_vec.at(0).GetString()),std::stof(sb.m_vec.at(3).m_vec.at(1).GetString()));
+			Vector2D vec(std::stof(info.m_vec.at(3).m_vec.at(0).GetString()),std::stof(info.m_vec.at(3).m_vec.at(1).GetString()));
 			pShape=std::shared_ptr<Shape>(new Edge(pos,vec,fix));
-		} else if(sb.m_vec.at(0).GetString()==Type::GetStr(Type::e_polygon)){
+		} else if(info.m_vec.at(0).GetString()==Type::GetStr(Type::e_polygon)){
 			//多角形の生成を行う。m_vec[3]の中身は()で全体が囲われ、その中に(x,y)形式の座標が格納されている
-			const size_t size=sb.m_vec.at(3).m_vec.size();
+			const size_t size=info.m_vec.at(3).m_vec.size();
 			std::vector<Vector2D> points;
 			points.reserve(size);
 			for(size_t i=0;i<size;i++){
 				//頂点座標を全て格納
-				points.push_back(Vector2D(std::stof(sb.m_vec.at(3).m_vec.at(i).m_vec.at(0).GetString()),std::stof(sb.m_vec.at(3).m_vec.at(i).m_vec.at(1).GetString())));
+				points.push_back(Vector2D(std::stof(info.m_vec.at(3).m_vec.at(i).m_vec.at(0).GetString()),std::stof(info.m_vec.at(3).m_vec.at(i).m_vec.at(1).GetString())));
 			}
 			pShape=std::shared_ptr<Shape>(new MyPolygon(pos,points,fix));
 		}

@@ -46,7 +46,7 @@ BattleObject *BattleObject::CreateRawObject(StringBuilder &info){
 		return nullptr;
 	}
 	//当たり判定図形の生成
-	std::shared_ptr<Shape> pShape=Shape::CreateShape(info.m_vec[1].GetString());
+	std::shared_ptr<Shape> pShape=Shape::CreateShape(info.m_vec[1]);
 	//オブジェクトの生成
 	BattleObject *pb(nullptr);
 	if(pShape.get()!=nullptr){

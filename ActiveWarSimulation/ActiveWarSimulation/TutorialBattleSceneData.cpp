@@ -43,12 +43,12 @@ void TutorialBattleSceneData::MoveTutorial::DrawSupplement(int font)const{
 
 std::shared_ptr<TutorialBattleSceneData::TutorialBase> TutorialBattleSceneData::TutorialBase::Create(const std::string &str,const BattleSceneData &gameData){
 	//データを分割
-	const StringBuilder sb(str,',','(',')');
+	StringBuilder sb(str,',','(',')');
 	//チュートリアルデータを作成
 	if(sb.m_vec.size()>=2){
 		if(sb.m_vec[0].GetString()=="move"){
 			//MoveTutorialは、到達地点を表す図形が格納されている
-			const std::shared_ptr<Shape> pShape=Shape::CreateShape(sb.m_vec[1].GetString());
+			const std::shared_ptr<Shape> pShape=Shape::CreateShape(sb.m_vec[1]);
 			if(pShape.get()!=nullptr){
 				return std::shared_ptr<TutorialBase>(new MoveTutorial(pShape));
 			}
