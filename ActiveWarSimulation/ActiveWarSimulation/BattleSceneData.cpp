@@ -45,8 +45,8 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	std::string str=FileStrRead((stagedir+"stage.txt").c_str());
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
 	StringBuilder objectList(str,'\n','{','}');
-	for(const StringBuilder &sb:objectList.m_vec){
-		BattleObject *pb=BattleObject::CreateRawObject(sb.GetString());
+	for(StringBuilder &sb:objectList.m_vec){
+		BattleObject *pb=BattleObject::CreateRawObject(sb);//sbは変更される
 		if(pb!=nullptr){
 			m_field.push_back(pb);
 		}

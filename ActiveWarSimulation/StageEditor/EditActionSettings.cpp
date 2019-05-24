@@ -183,9 +183,9 @@ void EditActionSettings::ReadStage(const char *filename){
 		str.push_back(ch);
 	}
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-	StringBuilderOld sb(str,'\n','{','}',false,true);
-	for(const StringBuilderOld &ssb:sb.m_vec){
-		std::shared_ptr<BattleObject> pb=BattleObject::CreateObject(ssb.GetString());
+	StringBuilder sb(str,'\n','{','}');
+	for(StringBuilder &ssb:sb.m_vec){
+		std::shared_ptr<BattleObject> pb=BattleObject::CreateObject(ssb);//sb,ssbは変更される
 		if(pb.get()!=nullptr){
 			m_objects.push_back(pb);
 		}
