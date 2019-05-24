@@ -21,9 +21,7 @@ namespace UnitTest_StringBuilder
 				,inSpliter=','
 				,inBeginer='('
 				,inEnder=')';
-			const StringBuilderOld oldBuilder(testStr,topSpliter,topBeginer,topEnder,false,true);
 			const StringBuilder newBuilder(testStr,topSpliter,topBeginer,topEnder);
-			Assert::AreEqual(oldBuilder.m_vec.size(),newBuilder.m_vec.size());
 		}
 	};
 }

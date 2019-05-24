@@ -6,55 +6,6 @@
 #include<memory>
 
 //文字列の分割・結合を行うクラス
-class StringBuilderOld{
-	//型・列挙体
-
-	//定数
-
-	//変数
-protected:
-	char m_spliter,m_beginer,m_ender;//それぞれ、区切り文字・集合の先頭文字・集合の終端文字
-	//以下はどちらかにしか用いない
-	std::string m_str;//区切りのない１つの文字列
-public:
-	std::vector<StringBuilderOld> m_vec;//区切られた複数文字列、トークンを途中で変えられるようにStringBuilderOldの配列にし、publicにする。
-protected:
-	//どちらに値が入っているか
-	bool m_splitFlag;
-
-	//関数
-private:
-	void Split(const std::string &str,char spliter,char beginer,char ender,bool deepen);
-
-public:
-	StringBuilderOld(const std::string &str,char spliter,char beginer,char ender,bool deepen,bool setSplit);
-	~StringBuilderOld();
-
-	char GetSpliter()const{
-		return m_spliter;
-	}
-	char GetBeginer()const{
-		return m_beginer;
-	}
-	char GetEnder()const{
-		return m_ender;
-	}
-	bool GetSplitFlag()const{
-		return m_splitFlag;
-	}
-	std::string GetString()const;
-	std::vector<StringBuilderOld> GetVector()const;
-	std::vector<std::string> GetStringVector()const;
-	//Split()は前後でm_strが変化する事に注意
-	void Split(bool deepen){
-		Split(m_spliter,m_beginer,m_ender,deepen);
-	}
-	void Split(char spliter,char beginer,char ender,bool deepen){
-		Split(m_str,spliter,beginer,ender,deepen);
-	}
-};
-
-//文字列の分割・結合を行うクラス
 //旧バージョンに比べて、deepen設定ができないが、計算速度はstd::vector<>::push_back()のコストを除けば旧バージョンでdeepenしないのと同等くらいの速度が出るので問題ない。
 //再Split()も、かかるメモリがそこまで大きくないので痛くない。
 class StringBuilder{
