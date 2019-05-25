@@ -371,33 +371,32 @@ void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsig
 
 void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsigned int leftDownColor,unsigned int rightUpColor,unsigned int rightDownColor){
 	//頂点色の取得
+	const int vertexPos[4][2]={{x1,y1},{x1,y2},{x2,y1},{x2,y2}};
 	int vertexColor[4][3];//0:(x1,y1) 1:(x1,y2) 2:(x2,y1) 3:(x2,y2)
 	GetColor2(leftUpColor,&vertexColor[0][0],&vertexColor[0][1],&vertexColor[0][2]);
 	GetColor2(leftDownColor,&vertexColor[1][0],&vertexColor[1][1],&vertexColor[1][2]);
 	GetColor2(rightUpColor,&vertexColor[2][0],&vertexColor[2][1],&vertexColor[2][2]);
 	GetColor2(rightDownColor,&vertexColor[3][0],&vertexColor[3][1],&vertexColor[3][2]);
-	//四角形の描画
-	if(x1<x2 && y1<y2){
-		for(int y=y1;y<y2;y++){
-			for(int x=x1;x<x2;x++){
-				//(x,y)に描画する色は
-				/*color=
-					vertexColor[0]*(x2-x)/(x2-x1)*(y2-y)/(y2-y1)
-					+vertexColor[1]*(x2-x)/(x2-x1)*(y-y1)/(y2-y1)
-					+vertexColor[2]*(x-x1)/(x2-x1)*(y2-y)/(y2-y1)
-					+vertexColor[3]*(x-x1)/(x2-x1)*(y-y1)/(y2-y1)
-				//*/
-				int colorValue[3];
-				for(size_t i=0;i<3;i++){
-					colorValue[i]=((vertexColor[0][i]*(x2-x)*(y2-y))+(vertexColor[1][i]*(x2-x)*(y-y1))+(vertexColor[2][i]*(x-x1)*(y2-y))+(vertexColor[3][i]*(x-x1)*(y-y1)))/(y2-y1)/(x2-x1);
-				}
-				DrawPixel(x,y,GetColor(colorValue[0],colorValue[1],colorValue[2]));
-			}
-		}
-	} else{
-		//0除算や方向でミスっている場合は普通のDrawBoxをする
-		DrawBox(x1,y1,x2,y2,leftUpColor,TRUE);
+	const size_t polygonNum=2;//四角形なので
+	VERTEX2D vertexArray[polygonNum*3];
+	//左上,左下,右上,右下の頂点情報を入力
+	for(size_t i = 0; i < 4; i++){
+		vertexArray[i].pos.x=(float)vertexPos[i][0];
+		vertexArray[i].pos.y=(float)vertexPos[i][1];
+		vertexArray[i].pos.z=0.0f;
+		vertexArray[i].rhw=1.0f;
+		vertexArray[i].dif.r=vertexColor[i][0];
+		vertexArray[i].dif.g=vertexColor[i][1];
+		vertexArray[i].dif.b=vertexColor[i][2];
+		vertexArray[i].dif.a=255;
+		vertexArray[i].u=0.0f;//テクスチャ座標、画像は使用しないので0でok
+		vertexArray[i].v=0.0f;//テクスチャ座標、画像は使用しないので0でok
 	}
+	//右下のポリゴン描画のために、(x1,y2)(x2,y1)の頂点情報をコピー
+	vertexArray[4]=vertexArray[1];
+	vertexArray[5]=vertexArray[2];
+	//ポリゴン２つを描画
+	DrawPolygon2D(vertexArray,polygonNum,DX_NONE_GRAPH,FALSE);//テクスチャは描画しない
 }
 
 //数値変化を様々な式で管理するクラス
