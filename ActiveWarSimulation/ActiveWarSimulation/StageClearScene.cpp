@@ -75,8 +75,6 @@ void StageClearScene::thisDraw()const{
 	m_battleSceneData->DrawField();
 	//ユニットの表示
 	m_battleSceneData->DrawUnit(false,{});
-	//HPゲージの描画
-	m_battleSceneData->DrawHPGage();
 
 	//マップ系は暗くするために黒い長方形を描画
 	int mode,pal;
