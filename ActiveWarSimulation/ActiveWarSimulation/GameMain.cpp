@@ -141,7 +141,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					if(pNextActivateScene){
 						//Ÿ‚Ìê–Ê‚ª‚ ‚ê‚ÎA‚»‚Ìê–Ê‚Ö‘JˆÚ
 						std::shared_ptr<MainControledGameScene> pNextScene(new MainControledFadeInOutGameScene(pNextActivateScene,0x03,15));
-						if(pNextScene.get()!=nullptr){
+						if(pNextScene){
 							//Ÿ‚Ìê–Ê‚Ì¶¬‚É¬Œ÷‚·‚ê‚Î
 							pGameScene=pNextScene;
 						} else{
