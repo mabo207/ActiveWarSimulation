@@ -41,32 +41,32 @@ void TutorialBattleSceneData::MoveTutorial::DrawSupplement(int font)const{
 		,GetColor(255,255,255),font,2);
 }
 
-std::shared_ptr<TutorialBattleSceneData::TutorialBase> TutorialBattleSceneData::TutorialBase::Create(const std::string &str,const BattleSceneData &gameData){
+std::shared_ptr<TutorialBattleSceneData::TutorialBase> TutorialBattleSceneData::TutorialBase::Create(StringBuilder &info,const BattleSceneData &gameData){
 	//データを分割
-	StringBuilder sb(str,',','(',')');
+	info.Split(',','(',')');
 	//チュートリアルデータを作成
-	if(sb.m_vec.size()>=2){
-		if(sb.m_vec[0].GetString()=="move"){
+	if(info.m_vec.size()>=2){
+		if(info.m_vec[0].GetString()=="move"){
 			//MoveTutorialは、到達地点を表す図形が格納されている
-			const std::shared_ptr<Shape> pShape=Shape::CreateShape(sb.m_vec[1]);
+			const std::shared_ptr<Shape> pShape=Shape::CreateShape(info.m_vec[1]);
 			if(pShape.get()!=nullptr){
 				return std::shared_ptr<TutorialBase>(new MoveTutorial(pShape));
 			}
-		} else if(sb.m_vec[0].GetString()=="attack"){
+		} else if(info.m_vec[0].GetString()=="attack"){
 			//AttackTutorialは、初期化された時のユニットの配列番号が格納されている
-			const size_t index=std::atoi(sb.m_vec[1].GetString().c_str());
+			const size_t index=std::atoi(info.m_vec[1].GetString().c_str());
 			if(index<gameData.m_unitList.size()){
 				return std::shared_ptr<TutorialBase>(new AttackTutorial(gameData.m_unitList[index]));
 			}
-		} else if(sb.m_vec[0].GetString()=="wait"){
+		} else if(info.m_vec[0].GetString()=="wait"){
 			//WaitTutorialには特に設定する項目はない
 			return std::shared_ptr<TutorialBase>(new WaitTutorial());
-		} else if(sb.m_vec[0].GetString()=="explain"){
+		} else if(info.m_vec[0].GetString()=="explain"){
 			//ExplainTutorialには画像ファイル名が入っている
-			return std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+gameData.m_stageDirName+sb.m_vec[1].GetString()).c_str()));
-		} else if(sb.m_vec[0].GetString()=="blank"){
+			return std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+gameData.m_stageDirName+info.m_vec[1].GetString()).c_str()));
+		} else if(info.m_vec[0].GetString()=="blank"){
 			//BlankTutorialには何もしない行動の回数が入っている
-			const int count=std::atoi(sb.m_vec[1].GetString().c_str());
+			const int count=std::atoi(info.m_vec[1].GetString().c_str());
 			if(count>0){
 				return std::shared_ptr<TutorialBase>(new BlankTutorial(count));
 			}
@@ -178,8 +178,8 @@ TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName
 	//チュートリアルデータの読み込み
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
 	StringBuilder sb(FileStrRead(("Stage/"+m_stageDirName+"/tutorialList.txt").c_str()),'\n','{','}');
-	for(const StringBuilder &ssb:sb.m_vec){
-		std::shared_ptr<TutorialBase> pt=TutorialBase::Create(ssb.GetString(),*this);
+	for(StringBuilder &ssb:sb.m_vec){
+		std::shared_ptr<TutorialBase> pt=TutorialBase::Create(ssb,*this);//sb,ssbは変更される
 		if(pt.get()!=nullptr){
 			m_tutorialData.push_back(pt);
 		}
