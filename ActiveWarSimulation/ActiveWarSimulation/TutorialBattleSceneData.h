@@ -4,6 +4,7 @@
 #include"BattleSceneData.h"
 #include"BattleSceneElement.h"
 #include"ToolsLib.h"
+#include"StringBuilder.h"
 
 struct TutorialBattleSceneData:public BattleSceneData{
 	//列挙体・型
@@ -21,7 +22,7 @@ public:
 		TutorialBase(TutorialKind kind):m_kind(kind){}
 		virtual ~TutorialBase(){}
 		virtual void DrawSupplement(int font)const=0;//補足説明を描画する
-		static std::shared_ptr<TutorialBase> Create(const std::string &str,const BattleSceneData &gameData);
+		static std::shared_ptr<TutorialBase> Create(StringBuilder &info,const BattleSceneData &gameData);
 	};
 	//移動に関するチュートリアルデータを管理するクラス
 	struct MoveTutorial:public TutorialBase{
@@ -79,7 +80,7 @@ public:
 protected:
 
 public:
-	TutorialBattleSceneData(const std::string &stageName);
+	TutorialBattleSceneData(const std::string &stageDirName,const std::string &titleName,const int stageLevel);
 	~TutorialBattleSceneData();
 
 

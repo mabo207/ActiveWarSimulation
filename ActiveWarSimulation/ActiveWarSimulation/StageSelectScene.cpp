@@ -6,10 +6,36 @@
 #include"BattleScene.h"
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
+#include"AnySceneCallable.h"
 
 //----------------------StageSelectScene------------------
+StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData)
+	:m_mapPic(mapPic),m_dirName(dirName),m_explain(explain)
+{
+	//ステージ情報の読み取り
+	const StageInfoReader reader(dirName);
+	m_titleName=reader.GetTitleName();
+	m_level=reader.GetLevel();
+	//対応するステージ・レベルのランキングデータを取ってくる
+	const int index=m_level-1;
+	if(index>=0 && index<ScoreRankingData::StageScoreData::levelCount){
+		const ScoreRankingData::LevelData levelData=rankingData.GetStageScoreData(dirName).levelArray[index];
+		for(const ScoreRankingData::PlayerData &pd:levelData.playerDataVec){
+			m_rankingVec.push_back(pd);
+		}
+	}
+}
+
 StageSelectScene::StageInfo::~StageInfo(){
 	//DeleteGraphEX(m_mapPic);
+}
+
+std::string StageSelectScene::StageInfo::GetLevelStr()const{
+	std::string retStr="難易度　";
+	for(int i=0;i<m_level;i++){
+		retStr+="★";
+	}
+	return retStr;
 }
 
 StageSelectScene::StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &sharedData)
@@ -22,7 +48,9 @@ StageSelectScene::StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 {
-//	FpsMeasuring fps;
+	FpsMeasuring fps;
+	//スコアデータの作成
+	const ScoreRankingData rankingData;
 	//フォルダを検索
 	char cdir[1024];
 	GetCurrentDirectory(1024,cdir);
@@ -65,8 +93,8 @@ StageSelectScene::StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &
 			m_stageInfoVec.push_back(StageInfo(
 				LoadGraphEX(("Stage/"+dirName+"/nonfree/minimap.png").c_str())
 				,dirName
-				,FileStrRead(("Stage/"+dirName+"/stageName.txt").c_str())
 				,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
+				,rankingData
 			));
 		}
 	}
@@ -117,7 +145,12 @@ int StageSelectScene::Calculate(){
 		if(!m_sharedData.expired()){
 			//元データが残っている場合のみ、アクセスできる。
 			auto sharedData=m_sharedData.lock();
-			sharedData->m_requiredInfo=std::shared_ptr<MainControledGameScene::MainSceneFactory>(new BattleScene::BattleSceneFactory(m_stageInfoVec[m_selectStageIndex].m_dirName));//ゲームプレイ場面を作るのに必要な情報を渡しておく
+			sharedData->m_requiredInfo=std::shared_ptr<MainControledGameScene::MainSceneFactory>(
+				new BattleScene::BattleSceneFactory(
+					m_stageInfoVec[m_selectStageIndex].m_dirName
+					,m_stageInfoVec[m_selectStageIndex].m_titleName
+					,m_stageInfoVec[m_selectStageIndex].m_level
+				));//ゲームプレイ場面を作るのに必要な情報を渡しておく
 		}
 		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音
 		return -1;
@@ -150,7 +183,18 @@ void StageSelectScene::Draw()const{
 		const int explainX=400;
 		GetGraphSize(m_stageInfoVec[m_selectStageIndex].m_mapPic,&stageDx,&stageDy);
 		DrawRotaGraph(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/3,((double)CommonConstParameter::gameResolutionY/2)/stageDy,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
-		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_selectStageIndex].m_stageName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
-		DrawStringNewLineToHandle(explainX,CommonConstParameter::gameResolutionY*2/3,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_selectStageIndex].m_titleName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
+		int explainY=CommonConstParameter::gameResolutionY*2/3;
+		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].GetLevelStr().c_str(),GetColor(255,255,255),m_explainFont);
+		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+		for(size_t i=0,dataSize=m_stageInfoVec[m_selectStageIndex].m_rankingVec.size();i<5;i++){
+			explainY+=30;
+			if(i<dataSize){
+				DrawStringToHandle(explainX,explainY,(m_stageInfoVec[m_selectStageIndex].m_rankingVec[i].name+"        "+std::to_string(m_stageInfoVec[m_selectStageIndex].m_rankingVec[i].score)).c_str(),GetColor(255,255,255),m_explainFont);
+			} else{
+				//データが足りない場合は---を表示
+				DrawStringToHandle(explainX,explainY,"------        -----",GetColor(255,255,255),m_explainFont);
+			}
+		}
 	}
 }

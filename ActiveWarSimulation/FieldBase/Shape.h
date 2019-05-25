@@ -6,6 +6,7 @@
 #include<memory>
 #include<iostream>
 #include<fstream>
+#include"StringBuilder.h"
 
 class ShapeHaving;//循環参照避け
 
@@ -87,7 +88,7 @@ public:
 	virtual Vector2D GetRetResize()const=0;//Resizeの逆関数。引数rでResizeすると現在の図形になるようなrを返す。
 	//読み込み・書き出し用仮想関数
 	virtual void WriteOutShape(std::ofstream &ofs)const=0;//書き出し用関数
-	static std::shared_ptr<Shape> CreateShape(const std::string &infostr);//文字列からShapeを生成する
+	static std::shared_ptr<Shape> CreateShape(StringBuilder &info);//文字列からShapeを生成する
 };
 
 #endif // !DEF_SHAPE_H

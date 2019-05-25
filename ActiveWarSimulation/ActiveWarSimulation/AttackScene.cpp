@@ -37,6 +37,7 @@ AttackScene::~AttackScene(){
 
 void AttackScene::ProcessAttack(){
 	//コストの消費
+	//攻撃実行時に攻撃分のOPを消費する仕様を変える場合は、波及箇所を考慮せよ（スコアの計算などはこの仕様を前提とした実装をしている）
 	//m_battleSceneData->m_operateUnit->AddOP(m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack());
 	m_battleSceneData->m_operateUnit->ConsumeOPByCost(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetCost());
 	//操作ユニット→対象ユニットへの攻撃情報の計算

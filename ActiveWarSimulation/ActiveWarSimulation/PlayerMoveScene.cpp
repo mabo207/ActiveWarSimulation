@@ -149,6 +149,9 @@ std::pair<bool,int> PlayerMoveScene::CancelProcess(){
 			//位置更新を行う
 			PositionUpdate(Vector2D());
 		}
+		//スコアシステム処理
+		m_battleSceneData->m_scoreObserver->CancelUpdate();
+		//キャンセル処理をしたので、trueを返す
 		return std::pair<bool,int>(true,SceneKind::e_move);
 	}
 	return std::pair<bool,int>(false,SceneKind::e_move);
@@ -263,8 +266,7 @@ int PlayerMoveScene::thisCalculate(){
 	if(keyboard_get(KEY_INPUT_LSHIFT)==60){
 		m_battleSceneData->m_drawObjectShapeFlag=!m_battleSceneData->m_drawObjectShapeFlag;
 	}
-	
-	
+
 	//キー入力受付
 	const Vector2D mousePos=GetMousePointVector2D();
 
