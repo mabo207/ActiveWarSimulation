@@ -9,7 +9,7 @@
 #include<string>
 
 //タイトル画面のクラス
-class TitleScene:public MainControledGameScene{
+class TitleScene:public GameScene{
 	//型・列挙体
 private:
 	struct SelectItem{
@@ -25,13 +25,13 @@ private:
 		static std::string GetString(const Kind kind);
 	};
 public:
-	//MainControledGameSceneを継承しているためクラスをfactoryクラスを作る必要がある
-	class TitleSceneFactory:public MainSceneFactory{
+	//GameSceneを継承しているためクラスをfactoryクラスを作る必要がある
+	class TitleSceneFactory:public SceneFactory{
 	public:
 		//クラスを作るのに必要なデータはない
 		TitleSceneFactory();
 		virtual ~TitleSceneFactory();
-		std::shared_ptr<MainControledGameScene> CreateScene()const;
+		std::shared_ptr<GameScene> CreateScene()const;
 	};
 	//TitleSceneで管理するデータの内、他のシーンクラスに共有したいデータ
 	//BattleSceneに対するBattleSceneData
@@ -39,7 +39,7 @@ public:
 		SharedData();
 		virtual ~SharedData();
 
-		std::shared_ptr<MainSceneFactory> m_requiredInfo;//他のmain関数管理下のクラスを作るための情報
+		std::shared_ptr<SceneFactory> m_requiredInfo;//他のmain関数管理下のクラスを作るための情報
 	};
 
 	
@@ -81,7 +81,7 @@ public:
 	virtual ~TitleScene();
 	int Calculate();
 	void Draw()const;
-	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;
+	std::shared_ptr<GameScene> VGetNextScene()const;
 };
 
 #endif // !DEF_TITLESCENE_H

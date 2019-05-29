@@ -79,16 +79,9 @@ void FadeInOutGameScene::Draw()const{
 	}
 }
 
-//--------------------MainControledFadeInOutGameScene--------------------
-MainControledFadeInOutGameScene::MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene> pActivateClass,int fadeFlag,int frame)
-	:FadeInOutGameScene(pActivateClass,fadeFlag,frame),MainControledGameScene()
-{}
-
-std::shared_ptr<MainControledGameScene> MainControledFadeInOutGameScene::VGetNextMainControledScene()const{
-	//m_pActivateClass‚ª‘S‚ÄMainControledGameScene‚Å‚ ‚éŽ–‚ð—p‚¢‚é
-	const auto pScene=std::dynamic_pointer_cast<const MainControledGameScene>(m_pActivateClass);
-	if(pScene){
-		return pScene->VGetNextMainControledScene();
+std::shared_ptr<GameScene> FadeInOutGameScene::VGetNextScene()const{
+	if(m_pActivateClass){
+		return m_pActivateClass->VGetNextScene();
 	}
-	return std::shared_ptr<MainControledGameScene>();
+	return std::shared_ptr<GameScene>();
 }

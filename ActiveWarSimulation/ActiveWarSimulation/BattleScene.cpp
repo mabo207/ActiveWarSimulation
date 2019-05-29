@@ -7,7 +7,7 @@
 
 //----------------------BattleScene::BattleSceneFactory----------------------
 BattleScene::BattleSceneFactory::BattleSceneFactory(const std::string &stageDirName,const std::string &title,const int level)
-	:MainSceneFactory()
+	:SceneFactory()
 	,m_stageDirName(stageDirName)
 	,m_title(title)
 	,m_level(level)
@@ -15,7 +15,7 @@ BattleScene::BattleSceneFactory::BattleSceneFactory(const std::string &stageDirN
 
 BattleScene::BattleSceneFactory::~BattleSceneFactory(){}
 
-std::shared_ptr<MainControledGameScene> BattleScene::BattleSceneFactory::CreateScene()const{
+std::shared_ptr<GameScene> BattleScene::BattleSceneFactory::CreateScene()const{
 	return std::shared_ptr<BattleScene>(new BattleScene(m_stageDirName,m_title,m_level));
 }
 
@@ -23,7 +23,7 @@ std::shared_ptr<MainControledGameScene> BattleScene::BattleSceneFactory::CreateS
 const int BattleScene::resetInterval=60;
 
 BattleScene::BattleScene(std::shared_ptr<BattleSceneData> battleSceneData)
-	:MainControledGameScene()
+	:GameScene()
 	,m_resetFlag(false)
 	,m_resetFrame(0)
 	,m_battleSceneData(battleSceneData)
@@ -102,7 +102,7 @@ void BattleScene::Draw()const{
 	}
 }
 
-std::shared_ptr<MainControledGameScene> BattleScene::VGetNextMainControledScene()const{
+std::shared_ptr<GameScene> BattleScene::VGetNextScene()const{
 	//ゲームプレイが終わった時は、タイトル画面へ
 	return TitleScene::TitleSceneFactory().CreateScene();
 }

@@ -8,38 +8,27 @@
 //かつこれだけあれば他クラスから動かすことが出来る
 class GameScene{
 	//型
+public:
+	class SceneFactory{
+		//GameSceneクラスを作るために必要なデータ群
+	protected:
+		SceneFactory(){}
+		virtual ~SceneFactory(){}
+	public:
+		virtual std::shared_ptr<GameScene> CreateScene()const=0;//こいつをオーバーライド必須にして、各継承先クラスにFactoryを作らせる
+	};
 	//定数
 
 	//変数
 	//関数
+protected:
+	GameScene(){}
+	virtual ~GameScene(){}
+
 public:
 	virtual int Calculate()=0;
 	virtual void Draw()const=0;
-	GameScene(){}
-	virtual ~GameScene(){}
-};
-
-//main関数で管理されるべきクラスのインターフェース
-class MainControledGameScene:public GameScene{
-	//型
-public:
-	class MainSceneFactory{
-		//MainControledGameSceneクラスを作るために必要なデータ群
-	protected:
-		MainSceneFactory(){}
-		virtual ~MainSceneFactory(){}
-	public:
-		virtual std::shared_ptr<MainControledGameScene> CreateScene()const=0;//こいつをオーバーライド必須にして、各継承先クラスにFactoryを作らせる
-	};
-
-	//定数
-	//変数
-
-	//関数
-public:
-	virtual std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const=0;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
-	MainControledGameScene():GameScene(){}
-	virtual ~MainControledGameScene(){}
+	virtual std::shared_ptr<GameScene> VGetNextScene()const=0;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
 };
 
 //フェードイン、フェードアウトをする機能をGameSceneに追加するクラス
@@ -50,6 +39,20 @@ public:
 	enum FADEFLAG{
 		FADEIN=0x01,
 		FADEOUT=0x02
+	};
+	class FadeInOutSceneFactory:public SceneFactory{
+	public:
+		FadeInOutSceneFactory(int i_fadeFlag,int i_frame,const std::shared_ptr<SceneFactory> &i_factory)
+			:SceneFactory(),fadeFlag(i_fadeFlag),frame(i_frame),factory(i_factory){}
+		~FadeInOutSceneFactory(){}
+		std::shared_ptr<GameScene> VGetNextScene()const{
+			return std::make_shared<FadeInOutGameScene>(factory->CreateScene(),fadeFlag,frame);
+		}
+
+	private:
+		int fadeFlag;
+		int frame;
+		std::shared_ptr<SceneFactory> factory;
 	};
 	//定数
 
@@ -68,24 +71,7 @@ public:
 	virtual ~FadeInOutGameScene();
 	int Calculate();
 	void Draw()const;
-};
-
-//FadeInOutGameSceneをMainControledGameSceneに対しても用いれるようにした
-class MainControledFadeInOutGameScene:public FadeInOutGameScene,public MainControledGameScene{
-	//変数
-	//m_pActivateClassは必ずMainControledGameSceneである
-
-	//関数
-public:
-	MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene> pActivateClass,int fadeFlag,int frame);
-	~MainControledFadeInOutGameScene(){}
-	int Calculate(){
-		return FadeInOutGameScene::Calculate();
-	}
-	void Draw()const{
-		FadeInOutGameScene::Draw();
-	}
-	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
+	std::shared_ptr<GameScene> VGetNextScene()const;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
 };
 
 #endif // !DEF_GAMESCENE_H

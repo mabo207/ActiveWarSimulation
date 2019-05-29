@@ -145,7 +145,7 @@ int StageSelectScene::Calculate(){
 		if(!m_sharedData.expired()){
 			//元データが残っている場合のみ、アクセスできる。
 			auto sharedData=m_sharedData.lock();
-			sharedData->m_requiredInfo=std::shared_ptr<MainControledGameScene::MainSceneFactory>(
+			sharedData->m_requiredInfo=std::shared_ptr<GameScene::SceneFactory>(
 				new BattleScene::BattleSceneFactory(
 					m_stageInfoVec[m_selectStageIndex].m_dirName
 					,m_stageInfoVec[m_selectStageIndex].m_titleName

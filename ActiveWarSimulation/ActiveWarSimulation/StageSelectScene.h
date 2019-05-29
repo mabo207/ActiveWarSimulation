@@ -55,6 +55,9 @@ public:
 	~StageSelectScene();
 	int Calculate();
 	void Draw()const;
+	std::shared_ptr<GameScene> VGetNextScene()const{
+		return std::shared_ptr<GameScene>();
+	}
 };
 
 #endif // !DEF_STAGESELECTSCENE_H

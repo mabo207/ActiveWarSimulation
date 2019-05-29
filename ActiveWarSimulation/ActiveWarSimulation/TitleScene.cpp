@@ -31,13 +31,13 @@ std::string TitleScene::SelectItem::GetString(const Kind kind){
 
 //-------------------TitleScene::TitleSceneFactory-------------------
 TitleScene::TitleSceneFactory::TitleSceneFactory()
-	:MainSceneFactory()
+	:SceneFactory()
 {}
 
 TitleScene::TitleSceneFactory::~TitleSceneFactory(){}
 
-std::shared_ptr<MainControledGameScene> TitleScene::TitleSceneFactory::CreateScene()const{
-	return std::shared_ptr<MainControledGameScene>(new TitleScene());
+std::shared_ptr<GameScene> TitleScene::TitleSceneFactory::CreateScene()const{
+	return std::shared_ptr<GameScene>(new TitleScene());
 }
 
 //-------------------TitleScene::SharedData-------------------
@@ -71,7 +71,7 @@ const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={
 };
 
 TitleScene::TitleScene()
-	:MainControledGameScene()
+	:GameScene()
 	,m_backPic(LoadGraphEX("Graphic/nonfree/titleScene.png"))
 	,m_itemFont(CreateFontToHandleEX("メイリオ",16,1,-1))
 	,m_bgm(LoadBGMMem("Sound/bgm/nonfree/title/"))
@@ -245,7 +245,7 @@ int TitleScene::Calculate(){
 		case(-2):
 			//前のクラスからこのクラスに戻ると伝わってきた
 			m_nextScene=std::shared_ptr<GameScene>(nullptr);
-			m_sharedData->m_requiredInfo=std::shared_ptr<MainSceneFactory>();
+			m_sharedData->m_requiredInfo=std::shared_ptr<SceneFactory>();
 			break;
 		}
 	}
@@ -262,7 +262,7 @@ void TitleScene::Draw()const{
 	}
 }
 
-std::shared_ptr<MainControledGameScene> TitleScene::VGetNextMainControledScene()const{
+std::shared_ptr<GameScene> TitleScene::VGetNextScene()const{
 	switch(m_selectItem){
 	case(SelectItem::e_stageSelect):
 		if(m_sharedData->m_requiredInfo){
@@ -280,5 +280,5 @@ std::shared_ptr<MainControledGameScene> TitleScene::VGetNextMainControledScene()
 		return TutorialScene::TutorialSceneFactory("tutorial_2").CreateScene();
 		break;
 	}
-	return std::shared_ptr<MainControledGameScene>();
+	return std::shared_ptr<GameScene>();
 }

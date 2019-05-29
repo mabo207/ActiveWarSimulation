@@ -21,7 +21,7 @@ TutorialScene::TutorialSceneFactory::TutorialSceneFactory(const std::string &sta
 
 TutorialScene::TutorialSceneFactory::~TutorialSceneFactory(){}
 
-std::shared_ptr<MainControledGameScene> TutorialScene::TutorialSceneFactory::CreateScene()const{
+std::shared_ptr<GameScene> TutorialScene::TutorialSceneFactory::CreateScene()const{
 	return std::shared_ptr<TutorialScene>(new TutorialScene(m_stageDirName,m_titleName,m_stageLevel));
 }
 
