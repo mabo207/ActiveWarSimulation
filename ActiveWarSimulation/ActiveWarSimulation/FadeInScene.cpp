@@ -6,6 +6,7 @@
 FadeInScene::FadeInScene(const std::shared_ptr<GameScene::SceneFactory> &nextFactory,int maxFrame)
 	:m_nextScene(nextFactory?nextFactory->CreateScene():std::shared_ptr<GameScene>())
 	,m_drawAlpha(255,0,maxFrame,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0)
+	,m_afterAlphaEndFrame(0)
 {}
 
 FadeInScene::~FadeInScene(){}
@@ -14,7 +15,11 @@ int FadeInScene::Calculate(){
 	// フェードイン処理
 	m_drawAlpha.Update();
 	if(m_drawAlpha.GetEndFlag()){
-		// フェードインが終了したら次の場面へ
+		// フェードアウトが終了したらm_afterAlphaEndFrameを加算
+		m_afterAlphaEndFrame++;
+	}
+	if(m_afterAlphaEndFrame>2){
+		// フェードアウトが終了してから2f経ったら次の場面へ
 		return 1;
 	}
 	return 0;

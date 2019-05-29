@@ -7,15 +7,20 @@ FadeOutScene::FadeOutScene(const std::shared_ptr<GameScene> &previousScene,const
 	:m_drawAlpha(0,255,maxFrame,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0)
 	,m_previousScene(previousScene)
 	,m_nextFactory(nextFactory)
+	,m_afterAlphaEndFrame(0)
 {}
 
 FadeOutScene::~FadeOutScene(){}
 
 int FadeOutScene::Calculate(){
-	// フェードイン処理
+	// フェードアウト処理
 	m_drawAlpha.Update();
 	if(m_drawAlpha.GetEndFlag()){
-		// フェードインが終了したら次の場面へ
+		// フェードアウトが終了したらm_afterAlphaEndFrameを加算
+		m_afterAlphaEndFrame++;
+	}
+	if(m_afterAlphaEndFrame>2){
+		// フェードアウトが終了してから2f経ったら次の場面へ
 		return 1;
 	}
 	return 0;
