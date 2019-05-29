@@ -2,6 +2,7 @@
 #define DEF_FADEINSCENE_H
 
 //シーンとシーンの合間のフェードインをする隙間場面
+//次のシーンはFadeInSceneの作成と同時に作成される
 #include"GameScene.h"
 #include"ToolsLib.h"
 
@@ -35,7 +36,5 @@ private:
 	Easing m_drawAlpha;		// 描画透明度をxに管理
 	const std::shared_ptr<GameScene> m_nextScene;	// 次の場面、描画の情報は得たいので実体を作成しておく
 };
-
-
 
 #endif // !DEF_FADEINSCENE_H
