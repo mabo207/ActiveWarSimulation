@@ -7,8 +7,8 @@
 
 
 //---------------------FadeInOutGameScene---------------------
-FadeInOutGameScene::FadeInOutGameScene(std::shared_ptr<GameScene> pActivateClass,int fadeFlag,int frame)
-	:GameScene(),m_fadeFlag(fadeFlag),m_nowProcess(0),m_retIndex(0),m_pActivateClass(pActivateClass),m_timer(0)
+FadeInOutGameScene::FadeInOutGameScene(const std::shared_ptr<GameScene::SceneFactory> &pActivateClassFactory,int fadeFlag,int frame)
+	:GameScene(),m_fadeFlag(fadeFlag),m_nowProcess(0),m_retIndex(0),m_pActivateClass(pActivateClassFactory->CreateScene()),m_timer(0)
 {
 	//フェードインの描画透明度の設定先を決める
 	if((m_fadeFlag & FADEIN)!=0){

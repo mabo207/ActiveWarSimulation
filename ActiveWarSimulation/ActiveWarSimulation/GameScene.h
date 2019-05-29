@@ -42,17 +42,17 @@ public:
 	};
 	class FadeInOutSceneFactory:public SceneFactory{
 	public:
-		FadeInOutSceneFactory(int i_fadeFlag,int i_frame,const std::shared_ptr<SceneFactory> &i_factory)
-			:SceneFactory(),fadeFlag(i_fadeFlag),frame(i_frame),factory(i_factory){}
+		FadeInOutSceneFactory(const std::shared_ptr<SceneFactory> &i_factory,int i_fadeFlag,int i_frame)
+			:SceneFactory(),factory(i_factory),fadeFlag(i_fadeFlag),frame(i_frame){}
 		~FadeInOutSceneFactory(){}
-		std::shared_ptr<GameScene> VGetNextScene()const{
-			return std::make_shared<FadeInOutGameScene>(factory->CreateScene(),fadeFlag,frame);
+		std::shared_ptr<GameScene> CreateScene()const{
+			return std::shared_ptr<GameScene>(new FadeInOutGameScene(factory,fadeFlag,frame));
 		}
 
 	private:
+		const std::shared_ptr<SceneFactory> factory;
 		const int fadeFlag;
 		const int frame;
-		const std::shared_ptr<SceneFactory> factory;
 	};
 	//íËêî
 
@@ -66,8 +66,10 @@ protected:
 	std::shared_ptr<GameScene> m_pActivateClass;//é¿ç€Ç…ìÆÇ©Ç∑èÍñ ÉNÉâÉX
 
 	//ä÷êî
+protected:
+	FadeInOutGameScene(const std::shared_ptr<GameScene::SceneFactory> &pActiveClassFactory,int fadeFlag,int frame);
+
 public:
-	FadeInOutGameScene(std::shared_ptr<GameScene> pActivateClass,int fadeFlag,int frame);
 	virtual ~FadeInOutGameScene();
 	int Calculate();
 	void Draw()const;

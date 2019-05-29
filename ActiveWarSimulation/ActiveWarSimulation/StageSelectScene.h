@@ -63,9 +63,9 @@ protected:
 
 	//ä÷êî
 protected:
+	StageSelectScene();
 
 public:
-	StageSelectScene();
 	~StageSelectScene();
 	int Calculate();
 	void Draw()const;
