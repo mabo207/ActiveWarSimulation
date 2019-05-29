@@ -197,7 +197,7 @@ void StageSelectScene::Draw()const{
 	}
 }
 
-std::shared_ptr<GameScene> StageSelectScene::VGetNextScene()const{
+std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	if(m_nextSceneName==NextSceneName::e_title){
 		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>(),0x03,15).CreateScene();
 	} else if(m_nextSceneName==NextSceneName::e_battle){

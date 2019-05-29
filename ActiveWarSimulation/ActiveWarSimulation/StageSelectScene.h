@@ -64,12 +64,12 @@ protected:
 	//ä÷êî
 protected:
 	StageSelectScene();
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
 
 public:
 	~StageSelectScene();
 	int Calculate();
 	void Draw()const;
-	std::shared_ptr<GameScene> VGetNextScene()const;
 };
 
 #endif // !DEF_STAGESELECTSCENE_H

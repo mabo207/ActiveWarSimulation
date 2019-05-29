@@ -42,7 +42,7 @@ void FadeOutScene::Draw()const{
 	}
 }
 
-std::shared_ptr<GameScene> FadeOutScene::VGetNextScene()const{
+std::shared_ptr<GameScene> FadeOutScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	//m_nextFactory‚ğ—p‚¢‚Äì¬
 	if(m_nextFactory){
 		//m_nextFactory‚ªÀ‘Ì‚ğ‚Â‚©‚Ç‚¤‚©

@@ -138,7 +138,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				//‘JˆÚˆ—
 				if(index!=0){
-					pGameScene=pGameScene->VGetNextScene();
+					pGameScene=GameScene::GetNextScene(pGameScene);
 					if(!pGameScene){
 						//Ÿ‚Ìê–Ê‚ª‚È‚¯‚ê‚Î‹­§I—¹
 						break;

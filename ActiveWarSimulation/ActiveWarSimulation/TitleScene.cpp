@@ -229,7 +229,7 @@ void TitleScene::Draw()const{
 	}
 }
 
-std::shared_ptr<GameScene> TitleScene::VGetNextScene()const{
+std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	if(m_selectItem==SelectItem::e_stageSelect){
 		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<StageSelectScene::StageSelectSceneFactory>(),0x03,15).CreateScene();
 	} else if(m_selectItem==SelectItem::e_demo){

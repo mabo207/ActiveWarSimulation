@@ -62,12 +62,12 @@ private:
 
 protected:
 	TitleScene();
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
 
 public:
 	virtual ~TitleScene();
 	int Calculate();
 	void Draw()const;
-	std::shared_ptr<GameScene> VGetNextScene()const;
 };
 
 #endif // !DEF_TITLESCENE_H

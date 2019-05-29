@@ -44,12 +44,12 @@ protected:
 	BattleScene(const std::string &stageDirName,const std::string &titleName,const int stageLevel);
 	virtual std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitScene‚©DemoSwitchUnitScene‚Ì‚Ç‚Á‚¿‚ðŽg‚¤‚©
 	void ResetGame();
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
 
 public:
 	virtual ~BattleScene();
 	virtual int Calculate();
 	virtual void Draw()const;
-	std::shared_ptr<GameScene> VGetNextScene()const;
 };
 
 

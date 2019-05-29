@@ -24,11 +24,19 @@ public:
 protected:
 	GameScene(){}
 	virtual ~GameScene(){}
+	virtual std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const=0;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
 
 public:
 	virtual int Calculate()=0;
 	virtual void Draw()const=0;
-	virtual std::shared_ptr<GameScene> VGetNextScene()const=0;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
+	//以下は、VGetNextScene()の呼び方を一定にするために用いる
+	static std::shared_ptr<GameScene> GetNextScene(const std::shared_ptr<GameScene> &scene){
+		if(scene){
+			//自分自身を引数に入れてVNextSceneを呼び出す
+			return scene->VGetNextScene(scene);
+		}
+		return std::shared_ptr<GameScene>();
+	}
 };
 
 //フェードイン、フェードアウトをする機能をGameSceneに追加するクラス
@@ -68,12 +76,12 @@ protected:
 	//関数
 protected:
 	FadeInOutGameScene(const std::shared_ptr<GameScene::SceneFactory> &pActiveClassFactory,int fadeFlag,int frame);
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
 
 public:
 	virtual ~FadeInOutGameScene();
 	int Calculate();
 	void Draw()const;
-	std::shared_ptr<GameScene> VGetNextScene()const;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
 };
 
 #endif // !DEF_GAMESCENE_H

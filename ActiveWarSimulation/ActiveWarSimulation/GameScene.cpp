@@ -79,9 +79,6 @@ void FadeInOutGameScene::Draw()const{
 	}
 }
 
-std::shared_ptr<GameScene> FadeInOutGameScene::VGetNextScene()const{
-	if(m_pActivateClass){
-		return m_pActivateClass->VGetNextScene();
-	}
-	return std::shared_ptr<GameScene>();
+std::shared_ptr<GameScene> FadeInOutGameScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
+	return GameScene::GetNextScene(m_pActivateClass);
 }

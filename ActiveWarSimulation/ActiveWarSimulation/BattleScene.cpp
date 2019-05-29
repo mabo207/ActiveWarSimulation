@@ -102,7 +102,7 @@ void BattleScene::Draw()const{
 	}
 }
 
-std::shared_ptr<GameScene> BattleScene::VGetNextScene()const{
+std::shared_ptr<GameScene> BattleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	//ゲームプレイが終わった時は、タイトル画面へ
 	return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>(),0x03,15).CreateScene();
 }

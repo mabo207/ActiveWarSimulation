@@ -41,7 +41,7 @@ void FadeInScene::Draw()const{
 	}
 }
 
-std::shared_ptr<GameScene> FadeInScene::VGetNextScene()const{
+std::shared_ptr<GameScene> FadeInScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	//‚»‚Ì‚Ü‚Ü•Ô‚·
 	return m_nextScene;
 }

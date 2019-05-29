@@ -28,10 +28,10 @@ public:
 	virtual ~FadeOutScene();
 	int Calculate();
 	void Draw()const;
-	std::shared_ptr<GameScene> VGetNextScene()const;
 
 protected:
 	FadeOutScene(const std::shared_ptr<GameScene> &previousScene,const std::shared_ptr<GameScene::SceneFactory> &nextFactory,int maxFrame);
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
 
 private:
 	Easing m_drawAlpha;		// •`‰æ“§–¾“x‚ğx‚ÉŠÇ—
