@@ -5,12 +5,15 @@
 #include"MyPolygon.h"
 #include"input.h"
 #include<cmath>
+#include"GeneralPurposeResourceManager.h"
+#include"CommonConstParameter.h"
+
 #include"StageSelectScene.h"
 #include"BattleScene.h"
 #include"DemoScene.h"
 #include"TutorialScene.h"
-#include"GeneralPurposeResourceManager.h"
-#include"CommonConstParameter.h"
+#include"FadeInScene.h"
+#include"FadeOutScene.h"
 
 //-------------------TitleScene::SelectItem-------------------
 std::string TitleScene::SelectItem::GetString(const Kind kind){
@@ -227,19 +230,14 @@ void TitleScene::Draw()const{
 }
 
 std::shared_ptr<GameScene> TitleScene::VGetNextScene()const{
-	switch(m_selectItem){
-	case(SelectItem::e_stageSelect):
+	if(m_selectItem==SelectItem::e_stageSelect){
 		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<StageSelectScene::StageSelectSceneFactory>(),0x03,15).CreateScene();
-		break;
-	case(SelectItem::e_demo):
+	} else if(m_selectItem==SelectItem::e_demo){
 		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<DemoScene::DemoSceneFactory>(),0x03,15).CreateScene();
-		break;
-	case(SelectItem::e_tutorial):
+	} else if(m_selectItem==SelectItem::e_tutorial){
 		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial"),0x03,15).CreateScene();
-		break;
-	case(SelectItem::e_tutorial_2):
+	} else if(m_selectItem==SelectItem::e_tutorial_2){
 		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial_2"),0x03,15).CreateScene();
-		break;
 	}
 	return std::shared_ptr<GameScene>();
 }
