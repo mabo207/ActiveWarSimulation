@@ -199,13 +199,14 @@ void StageSelectScene::Draw()const{
 
 std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	if(m_nextSceneName==NextSceneName::e_title){
-		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>(),0x03,15).CreateScene();
+		const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
+		return CreateFadeOutInScene(thisSharedPtr,titleFactory,15,15);
 	} else if(m_nextSceneName==NextSceneName::e_battle){
 		const std::shared_ptr<GameScene::SceneFactory> battleFactory=std::make_shared<BattleScene::BattleSceneFactory>(
 			m_stageInfoVec[m_selectStageIndex].m_dirName
 			,m_stageInfoVec[m_selectStageIndex].m_titleName
 			,m_stageInfoVec[m_selectStageIndex].m_level);
-		return FadeInOutGameScene::FadeInOutSceneFactory(battleFactory,0x03,15).CreateScene();
+		return CreateFadeOutInScene(thisSharedPtr,battleFactory,15,15);
 	}
 	return std::shared_ptr<GameScene>();
 }

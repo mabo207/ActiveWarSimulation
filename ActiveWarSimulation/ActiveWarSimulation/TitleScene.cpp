@@ -234,11 +234,14 @@ std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameS
 		const auto stageselect=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
 		return CreateFadeOutInScene(thisSharedPtr,stageselect,15,15);
 	} else if(m_selectItem==SelectItem::e_demo){
-		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<DemoScene::DemoSceneFactory>(),0x03,15).CreateScene();
+		const auto demo=std::make_shared<DemoScene::DemoSceneFactory>();
+		return CreateFadeOutInScene(thisSharedPtr,demo,15,15);
 	} else if(m_selectItem==SelectItem::e_tutorial){
-		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial"),0x03,15).CreateScene();
+		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial");
+		return CreateFadeOutInScene(thisSharedPtr,tutorial,15,15);
 	} else if(m_selectItem==SelectItem::e_tutorial_2){
-		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial_2"),0x03,15).CreateScene();
+		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial_2");
+		return CreateFadeOutInScene(thisSharedPtr,tutorial,15,15);
 	}
 	return std::shared_ptr<GameScene>();
 }
