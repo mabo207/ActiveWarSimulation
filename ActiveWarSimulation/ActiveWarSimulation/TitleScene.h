@@ -33,15 +33,6 @@ public:
 		virtual ~TitleSceneFactory();
 		std::shared_ptr<GameScene> CreateScene()const;
 	};
-	//TitleSceneで管理するデータの内、他のシーンクラスに共有したいデータ
-	//BattleSceneに対するBattleSceneData
-	struct SharedData{
-		SharedData();
-		virtual ~SharedData();
-
-		std::shared_ptr<SceneFactory> m_requiredInfo;//他のmain関数管理下のクラスを作るための情報
-	};
-
 	
 	//定数
 private:
@@ -53,10 +44,6 @@ protected:
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 	SelectItem::Kind m_selectItem;//現在選択している項目
 	std::array<std::shared_ptr<Shape>,SelectItem::COUNTER> m_hitJudgeShapeVec;
-	std::shared_ptr<GameScene> m_nextScene;//次のシーン。これがnullptrなら、タイトルの処理を行う。
-
-	//TitleSceneから直接遷移したクラスと共有するデータ(他クラスにはweak_ptrで渡すべき。)
-	std::shared_ptr<SharedData> m_sharedData;
 
 	//グラフィック
 	const int m_backPic;//背景
@@ -72,7 +59,6 @@ protected:
 private:
 	std::shared_ptr<Shape> MakeHexagon(const Vector2D center,const float size)const;
 	int thisCalculate();//SelectItem::COUNTER:現状維持 0~SelectItem::COUNTER-1:遷移
-	void thisDraw()const;
 
 protected:
 	TitleScene();

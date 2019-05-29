@@ -50,9 +50,9 @@ public:
 		}
 
 	private:
-		int fadeFlag;
-		int frame;
-		std::shared_ptr<SceneFactory> factory;
+		const int fadeFlag;
+		const int frame;
+		const std::shared_ptr<SceneFactory> factory;
 	};
 	//’è”
 
