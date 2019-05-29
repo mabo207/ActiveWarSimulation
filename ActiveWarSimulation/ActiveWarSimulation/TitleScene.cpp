@@ -229,16 +229,16 @@ void TitleScene::Draw()const{
 std::shared_ptr<GameScene> TitleScene::VGetNextScene()const{
 	switch(m_selectItem){
 	case(SelectItem::e_stageSelect):
-		return StageSelectScene::StageSelectSceneFactory().CreateScene();
+		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<StageSelectScene::StageSelectSceneFactory>(),0x03,15).CreateScene();
 		break;
 	case(SelectItem::e_demo):
-		return DemoScene::DemoSceneFactory().CreateScene();
+		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<DemoScene::DemoSceneFactory>(),0x03,15).CreateScene();
 		break;
 	case(SelectItem::e_tutorial):
-		return TutorialScene::TutorialSceneFactory("tutorial").CreateScene();
+		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial"),0x03,15).CreateScene();
 		break;
 	case(SelectItem::e_tutorial_2):
-		return TutorialScene::TutorialSceneFactory("tutorial_2").CreateScene();
+		return FadeInOutGameScene::FadeInOutSceneFactory(std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial_2"),0x03,15).CreateScene();
 		break;
 	}
 	return std::shared_ptr<GameScene>();
