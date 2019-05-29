@@ -2,6 +2,7 @@
 #define DEF_BATTLESCENE_H
 
 #include"BattleSceneData.h"
+#include"GameScene.h"
 #include"BattleSceneElement.h"
 
 //バトルのゲームプレイ場面全般の管理を行うクラス
