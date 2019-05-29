@@ -103,6 +103,12 @@
     <Filter Include="ソース ファイル\SaveData">
       <UniqueIdentifier>{0c9213e4-6c6c-4379-9c1b-1bc5b60b45d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameScene\PerformanceScene">
+      <UniqueIdentifier>{0d4a4183-d3df-4d74-b7f8-e826b374e674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\PerformanceScene">
+      <UniqueIdentifier>{96e3e5cd-cad3-48d4-829b-cc1d0e6fa81d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -246,6 +252,9 @@
     <ClCompile Include="StringBuilder.cpp">
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
+    <ClCompile Include="FadeInScene.cpp">
+      <Filter>ソース ファイル\GameScene\PerformanceScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -385,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="StringBuilder.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="FadeInScene.h">
+      <Filter>ヘッダー ファイル\GameScene\PerformanceScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
