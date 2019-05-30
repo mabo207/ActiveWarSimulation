@@ -8,13 +8,13 @@
 
 //--------------------DemoScene::DemoSceneFactory-------------------
 DemoScene::DemoSceneFactory::DemoSceneFactory()
-	:MainSceneFactory()
+	:SceneFactory()
 {}
 
 DemoScene::DemoSceneFactory::~DemoSceneFactory(){}
 
-std::shared_ptr<MainControledGameScene> DemoScene::DemoSceneFactory::CreateScene()const{
-	return std::shared_ptr<MainControledGameScene>(new DemoScene());
+std::shared_ptr<GameScene> DemoScene::DemoSceneFactory::CreateScene()const{
+	return std::shared_ptr<GameScene>(new DemoScene());
 }
 
 //--------------------DemoScene-------------------

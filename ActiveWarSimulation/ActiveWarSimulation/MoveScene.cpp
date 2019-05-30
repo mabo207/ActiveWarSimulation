@@ -34,6 +34,8 @@ MoveScene::~MoveScene(){
 	for(size_t i=0;i<attackedCursorPicNum;i++){
 		DeleteGraphEX(m_attackedCursor[i]);
 	}
+	DeleteFontToHandleEX(m_predictExplainFont);
+	DeleteFontToHandleEX(m_predictNumberFont);
 }
 
 bool MoveScene::PositionUpdate(const Vector2D inputVec){

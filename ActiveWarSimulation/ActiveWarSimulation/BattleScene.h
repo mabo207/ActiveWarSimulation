@@ -2,17 +2,18 @@
 #define DEF_BATTLESCENE_H
 
 #include"BattleSceneData.h"
+#include"GameScene.h"
 #include"BattleSceneElement.h"
 
 //バトルのゲームプレイ場面全般の管理を行うクラス
-class BattleScene:public MainControledGameScene{
+class BattleScene:public GameScene{
 	//型・列挙体
 public:
-	class BattleSceneFactory:public MainSceneFactory{
+	class BattleSceneFactory:public SceneFactory{
 	public:
 		BattleSceneFactory(const std::string &stageDirName,const std::string &title,const int level);
 		~BattleSceneFactory();
-		std::shared_ptr<MainControledGameScene> CreateScene()const;
+		std::shared_ptr<GameScene> CreateScene()const;
 	private:
 		const std::string m_stageDirName;
 		const std::string m_title;
@@ -43,12 +44,12 @@ protected:
 	BattleScene(const std::string &stageDirName,const std::string &titleName,const int stageLevel);
 	virtual std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
 	void ResetGame();
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
 
 public:
 	virtual ~BattleScene();
 	virtual int Calculate();
 	virtual void Draw()const;
-	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;
 };
 
 

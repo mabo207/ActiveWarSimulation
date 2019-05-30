@@ -5,12 +5,12 @@
 #include<vector>
 #include<string>
 #include"input.h"
-#include"TitleScene.h"
 #include"ScoreRankingData.h"
 
 class StageSelectScene:public GameScene{
 	//型・列挙体
 private:
+	//ステージ情報
 	struct StageInfo{
 		//変数
 		int m_mapPic;//マップグラフィック(縮小表示)(push_back()の際にデストラクタが呼ばれグラフィックが消されるので、削除はデストラクタでは行わない。どうしてもデストラクタでしたくなったら、コピーコンストラクタを作って再度CopyGraph()をしよう。)
@@ -25,6 +25,20 @@ private:
 		~StageInfo();
 		std::string GetLevelStr()const;//難易度を説明する文字列を返す
 	};
+	//次の場面を何にするか
+	enum class NextSceneName{
+		e_title
+		,e_battle
+	};
+
+public:
+	class StageSelectSceneFactory:public SceneFactory{
+		//クラスを作るのに特に必要なデータはない
+	public:
+		StageSelectSceneFactory():SceneFactory(){}
+		~StageSelectSceneFactory(){}
+		std::shared_ptr<GameScene> CreateScene()const;
+	};
 
 	//定数
 
@@ -32,7 +46,7 @@ private:
 protected:
 	size_t m_selectStageIndex;//選択中のステージ
 	std::vector<StageInfo> m_stageInfoVec;//ステージ一覧情報
-	std::weak_ptr<TitleScene::SharedData> m_sharedData;//タイトルシーンの共有情報
+	NextSceneName m_nextSceneName;//次の場面は何か、VGetNextScene()で使用
 	
 	//マウスでクリックできるボタン群
 	const MouseButtonUI m_beforeStageButton;
@@ -49,9 +63,10 @@ protected:
 
 	//関数
 protected:
+	StageSelectScene();
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
 
 public:
-	StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &sharedData);
 	~StageSelectScene();
 	int Calculate();
 	void Draw()const;

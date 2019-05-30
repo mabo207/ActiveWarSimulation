@@ -3,10 +3,12 @@
 #include"GraphicControl.h"
 #include"FileRead.h"
 #include<Windows.h>
-#include"BattleScene.h"
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
 #include"AnySceneCallable.h"
+
+#include"BattleScene.h"
+#include"TitleScene.h"
 
 //----------------------StageSelectScene------------------
 StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData)
@@ -30,6 +32,10 @@ StageSelectScene::StageInfo::~StageInfo(){
 	//DeleteGraphEX(m_mapPic);
 }
 
+std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateScene()const{
+	return std::shared_ptr<GameScene>(new StageSelectScene());
+}
+
 std::string StageSelectScene::StageInfo::GetLevelStr()const{
 	std::string retStr="難易度　";
 	for(int i=0;i<m_level;i++){
@@ -38,8 +44,8 @@ std::string StageSelectScene::StageInfo::GetLevelStr()const{
 	return retStr;
 }
 
-StageSelectScene::StageSelectScene(const std::weak_ptr<TitleScene::SharedData> &sharedData)
-	:m_sharedData(sharedData)
+StageSelectScene::StageSelectScene()
+	:m_nextSceneName(NextSceneName::e_title)
 	,m_beforeStageButton(100,300,LoadGraphEX("Graphic/beforeItem.png"))
 	,m_afterStageButton(1770,300,LoadGraphEX("Graphic/afterItem.png"))
 	,m_backButton(60,940,LoadGraphEX("Graphic/backButton.png"))
@@ -142,20 +148,12 @@ int StageSelectScene::Calculate(){
 		)
 	{
 		//ゲームプレイへ進む
-		if(!m_sharedData.expired()){
-			//元データが残っている場合のみ、アクセスできる。
-			auto sharedData=m_sharedData.lock();
-			sharedData->m_requiredInfo=std::shared_ptr<MainControledGameScene::MainSceneFactory>(
-				new BattleScene::BattleSceneFactory(
-					m_stageInfoVec[m_selectStageIndex].m_dirName
-					,m_stageInfoVec[m_selectStageIndex].m_titleName
-					,m_stageInfoVec[m_selectStageIndex].m_level
-				));//ゲームプレイ場面を作るのに必要な情報を渡しておく
-		}
+		m_nextSceneName=NextSceneName::e_battle;
 		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音
 		return -1;
 	} else if(keyboard_get(KEY_INPUT_X)==1 || m_backButton.JudgePressMoment()){
 		//タイトル画面へ戻る
+		m_nextSceneName=NextSceneName::e_title;
 		PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);//戻るの効果音(鳴ると同時にデータが消えるので鳴らない)
 		return -2;
 	}
@@ -197,4 +195,18 @@ void StageSelectScene::Draw()const{
 			}
 		}
 	}
+}
+
+std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
+	if(m_nextSceneName==NextSceneName::e_title){
+		const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
+		return CreateFadeOutInScene(thisSharedPtr,titleFactory,15,15);
+	} else if(m_nextSceneName==NextSceneName::e_battle){
+		const std::shared_ptr<GameScene::SceneFactory> battleFactory=std::make_shared<BattleScene::BattleSceneFactory>(
+			m_stageInfoVec[m_selectStageIndex].m_dirName
+			,m_stageInfoVec[m_selectStageIndex].m_titleName
+			,m_stageInfoVec[m_selectStageIndex].m_level);
+		return CreateFadeOutInScene(thisSharedPtr,battleFactory,15,15);
+	}
+	return std::shared_ptr<GameScene>();
 }

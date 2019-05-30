@@ -10,6 +10,7 @@
 #include"GeneralPurposeResourceManager.h"
 
 #include"TitleScene.h"
+#include"FadeInScene.h"
 
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
@@ -52,8 +53,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		{
 			//場面変数
-			//std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(new TitleScene());
-			std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(TitleScene::TitleSceneFactory().CreateScene(),0x03,15));
+			std::shared_ptr<GameScene> pGameScene=FadeInScene::FadeInSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>(),15).CreateScene();
 
 			//画面縮小することによる撮影をする際はSetMouseDispFlagをFALSEにしてコンパイル
 			SetMouseDispFlag(TRUE);
@@ -98,7 +98,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					GraphicControler_Init();
 					FontControler_Init();
 					InitInputControler();
-					pGameScene=std::shared_ptr<MainControledGameScene>(new MainControledFadeInOutGameScene(TitleScene::TitleSceneFactory().CreateScene(),0x03,15));
+					pGameScene=FadeInScene::FadeInSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>(),15).CreateScene();
 					mousePic=LoadGraphEX("Graphic/mouseCursor.png");//マウスの読み込みし直し
 					SetMouseDispFlag(mouseDispFlag);
 				} else if(keyboard_get(KEY_INPUT_F2)==60){
@@ -136,19 +136,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				//遷移処理
 				if(index!=0){
-					//std::shared_ptr<MainControledGameScene> pNextScene=pGameScene->VGetNextMainControledScene();
-					std::shared_ptr<MainControledGameScene> pNextActivateScene=pGameScene->VGetNextMainControledScene();
-					if(pNextActivateScene){
-						//次の場面があれば、その場面へ遷移
-						std::shared_ptr<MainControledGameScene> pNextScene(new MainControledFadeInOutGameScene(pNextActivateScene,0x03,15));
-						if(pNextScene.get()!=nullptr){
-							//次の場面の生成に成功すれば
-							pGameScene=pNextScene;
-						} else{
-							//失敗したら強制終了
-							break;
-						}
-					} else{
+					pGameScene=GameScene::GetNextScene(pGameScene);
+					if(!pGameScene){
 						//次の場面がなければ強制終了
 						break;
 					}
