@@ -188,4 +188,5 @@ TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName
 
 TutorialBattleSceneData::~TutorialBattleSceneData()
 {
+	DeleteFontToHandleEX(m_tutorialFont);
 }

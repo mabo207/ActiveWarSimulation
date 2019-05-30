@@ -24,6 +24,7 @@ SystemMenu::SystemMenu(std::shared_ptr<BattleSceneData> battleSceneData)
 
 SystemMenu::~SystemMenu(){
 	DeleteGraphEX(m_systemBoard);
+	DeleteFontToHandleEX(m_contentFont);
 }
 
 int SystemMenu::thisCalculate(){
