@@ -14,11 +14,11 @@
 const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);
 const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonConstParameter::gameResolutionX-BattleSceneData::mapDrawSize.y);
 
-BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const int level)
+BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel level)
 	:BattleSceneData(stageDirName,titleName,level,BattleSceneData::PlayMode::e_normal)
 {}
 
-BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const int level,const BattleSceneData::PlayMode playMode)
+BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel level,const BattleSceneData::PlayMode playMode)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr)
 	,m_totalOP(0.0f)

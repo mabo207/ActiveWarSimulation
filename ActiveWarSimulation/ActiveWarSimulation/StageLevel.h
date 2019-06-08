@@ -9,6 +9,7 @@ struct StageLevel{
 	//StageLevelを要素がStageLevel::Kindなenum classっぽく使えるように工夫する
 public:
 	enum Kind{
+		//要素追加時、levelCount変数も変えておくこと
 		e_easy
 		,e_normal
 		,e_hard
@@ -21,19 +22,13 @@ public:
 	bool operator==(const Kind kind)const{
 		return m_kind==kind;
 	}
-	std::string GetString()const{
-		for(const auto &pair:kindStringMap){
-			if(pair.second==m_kind){
-				return pair.first;
-			}
-		}
-		//例外処理
-		return "";
-	}
+	std::string GetString()const;
+	size_t GetIndex()const;
 
-	Kind m_kind;
+	static const size_t levelCount=e_lunatic+1;//レベルの数
 
 private:
+	Kind m_kind;
 	//種類と文字列の対応表
 	static const std::unordered_map<std::string,Kind> kindStringMap;
 };

@@ -80,7 +80,7 @@ public:
 protected:
 
 public:
-	TutorialBattleSceneData(const std::string &stageDirName,const std::string &titleName,const int stageLevel);
+	TutorialBattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel);
 	~TutorialBattleSceneData();
 
 

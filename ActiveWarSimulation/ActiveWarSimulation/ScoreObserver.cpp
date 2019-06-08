@@ -201,13 +201,13 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 	{
 		if(winFlag){
 			//勝利している時のみボーナス付与
-			if(m_stageLevel==1){
+			if(m_stageLevel==StageLevel::e_easy){
 				bonus.push_back(Bonus("難易度EASYをクリア",2000));
-			}else if(m_stageLevel==2){
+			}else if(m_stageLevel==StageLevel::e_normal){
 				bonus.push_back(Bonus("難易度NORMALをクリア",4000));
-			} else if(m_stageLevel==3){
+			} else if(m_stageLevel==StageLevel::e_hard){
 				bonus.push_back(Bonus("難易度HARDをクリア",7000));
-			} else if(m_stageLevel>=4){
+			} else if(m_stageLevel==StageLevel::e_lunatic){
 				bonus.push_back(Bonus("難易度LUNATICをクリア",10000));
 			}
 		}
@@ -733,7 +733,6 @@ ScoreObserver::ScoreObserver()
 	,m_cancelCount(0)
 	,m_logList()
 	,m_latticeBonusData()
-	,m_stageLevel(0)
 {}
 
 ScoreObserver::~ScoreObserver(){}

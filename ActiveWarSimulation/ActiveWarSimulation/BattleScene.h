@@ -11,13 +11,13 @@ class BattleScene:public GameScene{
 public:
 	class BattleSceneFactory:public SceneFactory{
 	public:
-		BattleSceneFactory(const std::string &stageDirName,const std::string &title,const int level);
+		BattleSceneFactory(const std::string &stageDirName,const std::string &title,const StageLevel level);
 		~BattleSceneFactory();
 		std::shared_ptr<GameScene> CreateScene()const;
 	private:
 		const std::string m_stageDirName;
 		const std::string m_title;
-		const int m_level;
+		const StageLevel m_level;
 	};
 
 	//定数
@@ -41,7 +41,7 @@ protected:
 	//関数
 protected:
 	BattleScene(std::shared_ptr<BattleSceneData> battleSceneData);//継承クラス用コンストラクタ
-	BattleScene(const std::string &stageDirName,const std::string &titleName,const int stageLevel);
+	BattleScene(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel);
 	virtual std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
 	void ResetGame();
 	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;

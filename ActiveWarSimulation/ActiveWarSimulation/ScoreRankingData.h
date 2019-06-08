@@ -9,6 +9,7 @@
 #include<exception>
 #include<fstream>
 #include"StringBuilder.h"
+#include"StageLevel.h"
 
 //クリアスコアのランキングを管理するクラス
 //ローカルでは10KB~100KBくらいのテキストデータを想定している。
@@ -50,7 +51,7 @@ public:
 	struct StageScoreData{
 		//ステージが持っているランキングに関するデータ
 	public:
-		static const size_t levelCount=4;
+		static const size_t levelCount=StageLevel::levelCount;
 
 		const std::string dirName;//ステージのディレクトリ名
 		std::array<LevelData,levelCount> levelArray;//難易度ごとのスコアデータ(挿入の可能性があるので、constにできない)
@@ -69,7 +70,7 @@ public:
 	~ScoreRankingData();
 	bool Save()const;//現在のメンバ変数を用いて記録する
 	const StageScoreData GetStageScoreData(const std::string &dirName)const;
-	bool InputData(PlayerData &inputData,const std::string &dirName,const int level);
+	bool InputData(PlayerData &inputData,const std::string &dirName,const StageLevel level);
 
 private:
 	std::map<std::string,StageScoreData> m_stageDataMap;//全ステージのスコア一覧

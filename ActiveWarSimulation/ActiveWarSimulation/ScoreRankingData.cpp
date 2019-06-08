@@ -68,10 +68,10 @@ const ScoreRankingData::StageScoreData ScoreRankingData::GetStageScoreData(const
 	}
 }
 
-bool ScoreRankingData::InputData(PlayerData &inputData,const std::string &dirName,const int level){
+bool ScoreRankingData::InputData(PlayerData &inputData,const std::string &dirName,const StageLevel level){
 	const auto it=m_stageDataMap.find(dirName);
-	const int index=level-1;
-	if(it!=m_stageDataMap.end() && index>=0 && index<StageScoreData::levelCount){
+	const size_t index=level.GetIndex();
+	if(it!=m_stageDataMap.end() && index<StageScoreData::levelCount){
 		it->second.levelArray[index].playerDataVec.insert(inputData);
 		return true;
 	}
@@ -188,16 +188,15 @@ ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const 
 	for(size_t i=0;i<levelCount;i++){
 		if(infoBuilderPointerArray[i]->m_vec.size()>=2){
 			//ステージレベルを取得
-			int stageLevel=-1;
 			if(infoBuilderPointerArray[i]->m_vec[0].m_vec.size()>=2
 				&& infoBuilderPointerArray[i]->m_vec[0].m_vec[0].GetString()=="level")
 			{
-				stageLevel=std::atoi(infoBuilderPointerArray[i]->m_vec[0].m_vec[1].GetString().c_str());
-			}
-			//ステージレベルを取得できた場合のみ、LevelDataを作成
-			const int index=stageLevel-1;
-			if(index>=0 && index<levelCount){
-				levelArray[index]=LevelData(infoBuilderPointerArray[i]->m_vec[1]);
+				StageLevel stageLevel=StageLevel(infoBuilderPointerArray[i]->m_vec[0].m_vec[1].GetString());
+				//ステージレベルを取得できた場合のみ、LevelDataを作成
+				const size_t index=stageLevel.GetIndex();
+				if(index<levelCount){
+					levelArray[index]=LevelData(infoBuilderPointerArray[i]->m_vec[1]);
+				}
 			}
 		}
 	}

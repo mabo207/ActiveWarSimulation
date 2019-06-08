@@ -16,7 +16,7 @@ private:
 		int m_mapPic;//マップグラフィック(縮小表示)(push_back()の際にデストラクタが呼ばれグラフィックが消されるので、削除はデストラクタでは行わない。どうしてもデストラクタでしたくなったら、コピーコンストラクタを作って再度CopyGraph()をしよう。)
 		std::string m_dirName;//ディレクトリ名
 		std::string m_titleName;//ステージ名
-		int m_level;//レベル
+		StageLevel m_level;//レベル
 		std::string m_explain;//ステージ説明文
 		std::vector<ScoreRankingData::PlayerData> m_rankingVec;//ランキングデータ
 

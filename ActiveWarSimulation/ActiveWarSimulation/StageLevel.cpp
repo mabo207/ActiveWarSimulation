@@ -13,3 +13,26 @@ const std::unordered_map<std::string,StageLevel::Kind> StageLevel::kindStringMap
 		,std::make_pair("lunatic",StageLevel::e_lunatic)
 	//*/
 };
+
+std::string StageLevel::GetString()const{
+	for(const auto &pair:kindStringMap){
+		if(pair.second==m_kind){
+			return pair.first;
+		}
+	}
+	//—áŠOˆ—
+	return "";
+}
+
+size_t StageLevel::GetIndex()const{
+	if(m_kind==StageLevel::e_easy){
+		return 0;
+	} else if(m_kind==StageLevel::e_normal){
+		return 1;
+	} else if(m_kind==StageLevel::e_hard){
+		return 2;
+	} else if(m_kind==StageLevel::e_lunatic){
+		return 3;
+	}
+	return levelCount;
+}

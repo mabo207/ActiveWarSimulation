@@ -19,7 +19,7 @@ StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirNa
 	m_titleName=reader.GetTitleName();
 	m_level=reader.GetLevel();
 	//対応するステージ・レベルのランキングデータを取ってくる
-	const int index=m_level-1;
+	const size_t index=m_level.GetIndex();
 	if(index>=0 && index<ScoreRankingData::StageScoreData::levelCount){
 		const ScoreRankingData::LevelData levelData=rankingData.GetStageScoreData(dirName).levelArray[index];
 		for(const ScoreRankingData::PlayerData &pd:levelData.playerDataVec){
@@ -38,7 +38,7 @@ std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateScen
 
 std::string StageSelectScene::StageInfo::GetLevelStr()const{
 	std::string retStr="難易度　";
-	for(int i=0;i<m_level;i++){
+	for(size_t i=0;i<=m_level.GetIndex();i++){
 		retStr+="★";
 	}
 	return retStr;

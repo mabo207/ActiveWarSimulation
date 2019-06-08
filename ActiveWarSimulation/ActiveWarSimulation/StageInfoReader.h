@@ -11,7 +11,7 @@ class StageInfoReader{
 public:
 	StageInfoReader(const std::string &dirName);
 	~StageInfoReader();
-	int GetLevel()const{
+	StageLevel GetLevel()const{
 		return stageLevel;
 	}
 	std::string GetTitleName()const{
@@ -19,7 +19,7 @@ public:
 	}
 
 private:
-	int stageLevel;
+	StageLevel stageLevel;
 	std::string titleName;
 };
 

@@ -13,7 +13,7 @@ TutorialScene::TutorialSceneFactory::TutorialSceneFactory(const std::string &sta
 	m_titleName=reader.GetTitleName();
 }
 
-TutorialScene::TutorialSceneFactory::TutorialSceneFactory(const std::string &stageDirName,const std::string &titleName,const int stageLevel)
+TutorialScene::TutorialSceneFactory::TutorialSceneFactory(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel)
 	:m_stageDirName(stageDirName)
 	,m_titleName(titleName)
 	,m_stageLevel(stageLevel)
@@ -26,7 +26,7 @@ std::shared_ptr<GameScene> TutorialScene::TutorialSceneFactory::CreateScene()con
 }
 
 //--------------------TutorialScene--------------------
-TutorialScene::TutorialScene(const std::string &stageDirName,const std::string &titleName,const int stageLevel)
+TutorialScene::TutorialScene(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel)
 	:BattleScene(std::shared_ptr<BattleSceneData>(new TutorialBattleSceneData(stageDirName,titleName,stageLevel)))
 {}
 

@@ -171,7 +171,7 @@ TutorialBattleSceneData::BlankTutorial::BlankTutorial(int count)
 void TutorialBattleSceneData::BlankTutorial::DrawSupplement(int font)const{}
 
 //----------------TutorialBattleSceneData-----------------------
-TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName,const std::string &titleName,const int stageLevel)
+TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel)
 	:BattleSceneData(stageDirName,titleName,stageLevel,PlayMode::e_tutorial)
 	,m_tutorialFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",24,1,-1))
 {
