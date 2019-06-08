@@ -109,6 +109,12 @@
     <Filter Include="ヘッダー ファイル\GameScene\PerformanceScene">
       <UniqueIdentifier>{96e3e5cd-cad3-48d4-829b-cc1d0e6fa81d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameScene\StageSelectScene">
+      <UniqueIdentifier>{2694beef-b48f-40c7-825c-cd76e5be54c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\StageSelectScene">
+      <UniqueIdentifier>{2fec23c1-1db0-4ed1-aa95-675f3c79aacb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -189,9 +195,6 @@
     <ClCompile Include="TitleScene.cpp">
       <Filter>ソース ファイル\GameScene\TitleScene</Filter>
     </ClCompile>
-    <ClCompile Include="StageSelectScene.cpp">
-      <Filter>ソース ファイル\GameScene\TitleScene</Filter>
-    </ClCompile>
     <ClCompile Include="StageClearScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
@@ -257,6 +260,9 @@
     </ClCompile>
     <ClCompile Include="FadeOutScene.cpp">
       <Filter>ソース ファイル\GameScene\PerformanceScene</Filter>
+    </ClCompile>
+    <ClCompile Include="StageSelectScene.cpp">
+      <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -335,9 +341,6 @@
     <ClInclude Include="TitleScene.h">
       <Filter>ヘッダー ファイル\GameScene\TitleScene</Filter>
     </ClInclude>
-    <ClInclude Include="StageSelectScene.h">
-      <Filter>ヘッダー ファイル\GameScene\TitleScene</Filter>
-    </ClInclude>
     <ClInclude Include="StageClearScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
@@ -403,6 +406,9 @@
     </ClInclude>
     <ClInclude Include="FadeOutScene.h">
       <Filter>ヘッダー ファイル\GameScene\PerformanceScene</Filter>
+    </ClInclude>
+    <ClInclude Include="StageSelectScene.h">
+      <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
