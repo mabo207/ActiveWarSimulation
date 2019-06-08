@@ -2,7 +2,7 @@
 #include"TutorialBattleSceneData.h"
 #include"ToolsLib.h"
 #include"FileRead.h"
-#include"AnySceneCallable.h"
+#include"StageInfoReader.h"
 
 //--------------------TutorialScene::TutorialSceneFactory--------------------
 TutorialScene::TutorialSceneFactory::TutorialSceneFactory(const std::string &stageDirName)

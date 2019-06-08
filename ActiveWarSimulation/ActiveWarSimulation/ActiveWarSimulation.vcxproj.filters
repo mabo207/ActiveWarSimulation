@@ -91,12 +91,6 @@
     <Filter Include="ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger">
       <UniqueIdentifier>{9c30a52a-5598-4cff-9ef0-95f8260f7efa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Uncategolized">
-      <UniqueIdentifier>{3dbbd473-06bb-4e5f-a188-830533a285a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Uncategolized">
-      <UniqueIdentifier>{d62062f2-d13a-426b-b789-0bacda04d975}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\SaveData">
       <UniqueIdentifier>{aa562877-7413-41a2-8a94-f23edce8d523}</UniqueIdentifier>
     </Filter>
@@ -114,6 +108,12 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\GameScene\StageSelectScene">
       <UniqueIdentifier>{2fec23c1-1db0-4ed1-aa95-675f3c79aacb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\AnySceneCallable">
+      <UniqueIdentifier>{3dbbd473-06bb-4e5f-a188-830533a285a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\AnySceneCallable">
+      <UniqueIdentifier>{d62062f2-d13a-426b-b789-0bacda04d975}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -246,9 +246,6 @@
     <ClCompile Include="LatticeBattleField.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData</Filter>
     </ClCompile>
-    <ClCompile Include="AnySceneCallable.cpp">
-      <Filter>ソース ファイル\Uncategolized</Filter>
-    </ClCompile>
     <ClCompile Include="ScoreRankingData.cpp">
       <Filter>ソース ファイル\SaveData</Filter>
     </ClCompile>
@@ -263,6 +260,12 @@
     </ClCompile>
     <ClCompile Include="StageSelectScene.cpp">
       <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
+    </ClCompile>
+    <ClCompile Include="StageInfoReader.cpp">
+      <Filter>ソース ファイル\AnySceneCallable</Filter>
+    </ClCompile>
+    <ClCompile Include="StageLevel.cpp">
+      <Filter>ソース ファイル\AnySceneCallable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -392,9 +395,6 @@
     <ClInclude Include="LatticeBattleField.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData</Filter>
     </ClInclude>
-    <ClInclude Include="AnySceneCallable.h">
-      <Filter>ヘッダー ファイル\Uncategolized</Filter>
-    </ClInclude>
     <ClInclude Include="ScoreRankingData.h">
       <Filter>ヘッダー ファイル\SaveData</Filter>
     </ClInclude>
@@ -409,6 +409,12 @@
     </ClInclude>
     <ClInclude Include="StageSelectScene.h">
       <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
+    </ClInclude>
+    <ClInclude Include="StageInfoReader.h">
+      <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
+    </ClInclude>
+    <ClInclude Include="StageLevel.h">
+      <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,7 +1,8 @@
-#include"AnySceneCallable.h"
+#include"StageInfoReader.h"
 #include"FileRead.h"
 #include"StringBuilder.h"
 
+//-----------------StageInfoReader--------------------
 StageInfoReader::StageInfoReader(const std::string &dirName){
 	//stageInfo.txtの生データを読み込み可能な形式に変換
 	const StringBuilder infoBuilder(FileStrRead(("Stage/"+dirName+"/stageInfo.txt").c_str()),',','(',')');
@@ -10,7 +11,7 @@ StageInfoReader::StageInfoReader(const std::string &dirName){
 			if(sb.m_vec[0].GetString()=="title"){
 				titleName=sb.m_vec[1].GetString();
 			} else if(sb.m_vec[0].GetString()=="level"){
-				stageLevel=std::atoi(sb.m_vec[1].GetString().c_str());
+				stageLevel=StageLevel(sb.m_vec[1].GetString().c_str()).m_kind;
 			}
 		}
 	}

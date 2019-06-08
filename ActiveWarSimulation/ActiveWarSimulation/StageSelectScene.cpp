@@ -5,7 +5,7 @@
 #include<Windows.h>
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
-#include"AnySceneCallable.h"
+#include"StageInfoReader.h"
 
 #include"BattleScene.h"
 #include"TitleScene.h"

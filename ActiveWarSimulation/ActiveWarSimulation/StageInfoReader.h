@@ -1,10 +1,10 @@
-#ifndef DEF_ANYSCENECALLABLE_H
-#define DEF_ANYSCENECALLABLE_H
+#ifndef DEF_STAGEINFOREADER_H
+#define DEF_STAGEINFOREADER_H
 
 //どのシーンでも呼んでも良いよ、という関数・クラス
 //このソリューションに使用が限られるのでToolsフォルダに入れられないが、色々な箇所で使いたい処理をここに書く。
 
-#include"ToolsLib.h"
+#include"StageLevel.h"
 
 //"Stage/hoge/stageInfo.txt"から、特定の値を取り出すためのクラス。
 class StageInfoReader{
@@ -23,4 +23,4 @@ private:
 	std::string titleName;
 };
 
-#endif // !DEF_ANYSCENECALLABLE_H
+#endif // !DEF_STAGEINFOREADER_H
