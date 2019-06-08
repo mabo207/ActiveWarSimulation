@@ -191,11 +191,16 @@ ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const 
 			if(infoBuilderPointerArray[i]->m_vec[0].m_vec.size()>=2
 				&& infoBuilderPointerArray[i]->m_vec[0].m_vec[0].GetString()=="level")
 			{
-				StageLevel stageLevel=StageLevel(infoBuilderPointerArray[i]->m_vec[0].m_vec[1].GetString());
-				//ステージレベルを取得できた場合のみ、LevelDataを作成
-				const size_t index=stageLevel.GetIndex();
-				if(index<levelCount){
-					levelArray[index]=LevelData(infoBuilderPointerArray[i]->m_vec[1]);
+				try{
+					//StageLevelを文字列で初期化する場合、out_of_range例外を投げる可能性がある。
+					StageLevel stageLevel=StageLevel::CreateFromString(infoBuilderPointerArray[i]->m_vec[0].m_vec[1].GetString());
+					//ステージレベルを取得できた場合のみ、LevelDataを作成
+					const size_t index=stageLevel.GetIndex();
+					if(index<levelCount){
+						levelArray[index]=LevelData(infoBuilderPointerArray[i]->m_vec[1]);
+					}
+				} catch(std::out_of_range &e){
+					//特に何もしない
 				}
 			}
 		}

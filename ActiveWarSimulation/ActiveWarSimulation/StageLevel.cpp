@@ -1,6 +1,18 @@
 #include"StageLevel.h"
 
 //-----------------StageLevel------------------
+StageLevel::StageLevel()noexcept
+	:StageLevel(e_easy)
+{}
+
+StageLevel::StageLevel(StageLevel::Kind kind)noexcept
+	:m_kind(kind)
+{}
+
+bool StageLevel::operator==(const StageLevel::Kind kind)const{
+	return m_kind==kind;
+}
+
 const std::unordered_map<std::string,StageLevel::Kind> StageLevel::kindStringMap={
 	std::make_pair("1",StageLevel::e_easy)
 	,std::make_pair("2",StageLevel::e_normal)
@@ -35,4 +47,8 @@ size_t StageLevel::GetIndex()const{
 		return 3;
 	}
 	return levelCount;
+}
+
+StageLevel StageLevel::CreateFromString(const std::string &str){
+	return StageLevel(kindStringMap.at(str));
 }

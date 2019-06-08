@@ -16,14 +16,12 @@ public:
 		,e_lunatic
 	};
 
-	StageLevel():m_kind(e_easy){}
-	StageLevel(Kind kind):m_kind(kind){}
-	explicit StageLevel(const std::string &str):StageLevel(kindStringMap.at(str)){}
-	bool operator==(const Kind kind)const{
-		return m_kind==kind;
-	}
+	StageLevel()noexcept;
+	StageLevel(Kind kind)noexcept;
+	bool operator==(const Kind kind)const;
 	std::string GetString()const;
 	size_t GetIndex()const;
+	static StageLevel CreateFromString(const std::string &str);
 
 	static const size_t levelCount=e_lunatic+1;//ƒŒƒxƒ‹‚Ì”
 
@@ -32,7 +30,5 @@ private:
 	//í—Ş‚Æ•¶š—ñ‚Ì‘Î‰•\
 	static const std::unordered_map<std::string,Kind> kindStringMap;
 };
-
-
 
 #endif // !DEF_STAGELEVEL_H
