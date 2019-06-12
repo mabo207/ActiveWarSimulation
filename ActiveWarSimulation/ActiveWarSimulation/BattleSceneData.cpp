@@ -31,7 +31,7 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_orderFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
 	,m_playMode(playMode)
 	,m_mapPic(LoadGraphEX((FilePath::stageDir+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
-	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/wild-road_loop/"))
+	,m_mapBGM(LoadBGMMem(FilePath::bgmDir+"/nonfree/wild-road_loop/"))
 	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
 	,m_attackSound(LoadSoundMem("Sound/effect/nonfree/damage.ogg"))
 	,m_healSound(LoadSoundMem("Sound/effect/nonfree/recover.ogg"))
