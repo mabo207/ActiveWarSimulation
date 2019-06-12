@@ -55,7 +55,8 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	//ファイルからステージのグラフィックデータの読み込み
 	m_stageSize=mapDrawSize;//本来はステージの大きさはグラフィックデータの縦横の大きさで決める
 	//ファイルからユニットを読み込み
-	StringBuilder unitlist(FileStrRead((stagedir+"unitlist.txt").c_str()),'\n','{','}');
+	const std::string unitListFileName="unitlist_"+m_stageLevel.GetString()+".txt";
+	StringBuilder unitlist(FileStrRead((stagedir+unitListFileName).c_str()),'\n','{','}');
 	for(StringBuilder &unitdata:unitlist.m_vec){
 		unitdata.Split(',','(',')');
 		//まずモブ用の設定をするか固定ユニット用の設定をするかを判定する

@@ -11,8 +11,6 @@ StageInfoReader::StageInfoReader(const std::string &dirName){
 		if(sb.m_vec.size()>=2){
 			if(sb.m_vec[0].GetString()=="title"){
 				titleName=sb.m_vec[1].GetString();
-			} else if(sb.m_vec[0].GetString()=="level"){
-				stageLevel=StageLevel::CreateFromString(sb.m_vec[1].GetString().c_str());
 			}
 		}
 	}
