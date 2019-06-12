@@ -27,7 +27,7 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_stageDirName(stageDirName)
 	,m_stageTitleName(titleName)
 	,m_stageLevel(level)
-	,m_turnTimerPic(LoadGraphEX("Graphic/turnTimer.png"))
+	,m_turnTimerPic(LoadGraphEX(FilePath::graphicDir+"turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
 	,m_playMode(playMode)
 	,m_mapPic(LoadGraphEX((FilePath::stageDir+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
@@ -38,7 +38,7 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_footSound(LoadSoundMem("Sound/effect/nonfree/foot.ogg"))
 {
 	//グラフィックデータの読み込み
-	LoadDivGraphEX("Graphic/drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
+	LoadDivGraphEX(FilePath::graphicDir+"drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
 
 	//ファイルからステージを読み込み
 	const std::string stagedir(FilePath::stageDir+std::string(stageDirName)+"/");

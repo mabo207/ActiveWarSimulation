@@ -47,11 +47,11 @@ std::string StageSelectScene::StageInfo::GetLevelStr()const{
 
 StageSelectScene::StageSelectScene()
 	:m_nextSceneName(NextSceneName::e_title)
-	,m_beforeStageButton(100,300,LoadGraphEX("Graphic/beforeItem.png"))
-	,m_afterStageButton(1770,300,LoadGraphEX("Graphic/afterItem.png"))
-	,m_backButton(60,940,LoadGraphEX("Graphic/backButton.png"))
-	,m_playButton(900,940,LoadGraphEX("Graphic/combatButton.png"))
-	,m_backPic(LoadGraphEX("Graphic/nonfree/titleScene.png"))
+	,m_beforeStageButton(100,300,LoadGraphEX(FilePath::graphicDir+"beforeItem.png"))
+	,m_afterStageButton(1770,300,LoadGraphEX(FilePath::graphicDir+"afterItem.png"))
+	,m_backButton(60,940,LoadGraphEX(FilePath::graphicDir+"backButton.png"))
+	,m_playButton(900,940,LoadGraphEX(FilePath::graphicDir+"combatButton.png"))
+	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 {

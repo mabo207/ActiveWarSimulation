@@ -4,6 +4,7 @@
 #include"GraphicControl.h"
 #include"GeneralPurposeResourceManager.h"
 #include"CommonConstParameter.h"
+#include"FilePath.h"
 
 //-------------------SystemMenu-----------------
 const int SystemMenu::contentX[SystemMenu::indexCount]={720,1200};
@@ -18,7 +19,7 @@ SystemMenu::SystemMenu(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_systemMenu)
 	,m_battleSceneData(battleSceneData)
 	,m_index(0)
-	,m_systemBoard(LoadGraphEX("Graphic/systemBoard.png"))
+	,m_systemBoard(LoadGraphEX(FilePath::graphicDir+"systemBoard.png"))
 	,m_contentFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",48,7,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,3))
 {}
 

@@ -2,6 +2,7 @@
 #include"DxLib.h"
 #include"GraphicControl.h"
 #include"CommonConstParameter.h"
+#include"FilePath.h"
 
 //-------------------ResearchScene---------------------
 const int ResearchScene::explainFontSize=16;
@@ -11,12 +12,12 @@ ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_palFont(CreateFontToHandleEX("メイリオ",28,1,-1))
 	,m_nameFont(CreateFontToHandleEX("メイリオ",32,1,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",explainFontSize,1,-1))
-	,m_palBackPic(LoadGraphEX("Graphic/researchInfoBack.png"))
+	,m_palBackPic(LoadGraphEX(FilePath::graphicDir+"researchInfoBack.png"))
 	,m_battleSceneData(battleSceneData)
-	,m_researchPic(LoadGraphEX("Graphic/operatedCursor.png"))
+	,m_researchPic(LoadGraphEX(FilePath::graphicDir+"operatedCursor.png"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_pointerVec(battleSceneData->m_operateUnit->getPos())
-	,m_moveButton(1620,980,80,80,LoadGraphEX("Graphic/backButton.png"))
+	,m_moveButton(1620,980,80,80,LoadGraphEX(FilePath::graphicDir+"backButton.png"))
 {
 	//操作ユニット等の初期化
 	UpdatePointer();

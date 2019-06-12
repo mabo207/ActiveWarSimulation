@@ -1,6 +1,7 @@
 #include"DxLib.h"
 #include"AttackScene.h"
 #include"GraphicControl.h"
+#include"FilePath.h"
 
 //-------------------AttackScene-------------------
 const int AttackScene::motionFrame=20;
@@ -24,7 +25,7 @@ AttackScene::AttackScene(std::shared_ptr<BattleSceneData> data,Unit *aimedUnit)
 	m_attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,m_aimedUnit);
 	m_damageFont=CreateFontToHandleEX("ÉÅÉCÉäÉI",30,4,DX_FONTTYPE_ANTIALIASING_EDGE);
 
-	LoadDivGraph("Graphic/effect/zangeki.png",30,30,1,100,100,m_effect);
+	LoadDivGraph((FilePath::graphicDir+"effect/zangeki.png").c_str(),30,30,1,100,100,m_effect);
 }
 
 AttackScene::~AttackScene(){

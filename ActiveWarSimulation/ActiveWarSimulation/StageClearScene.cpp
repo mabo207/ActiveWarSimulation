@@ -5,6 +5,7 @@
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
 #include"ScoreRankingData.h"
+#include"FilePath.h"
 
 //--------------------StageClearScene------------------
 const int StageClearScene::bonusFontSize=25;
@@ -15,12 +16,12 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_winFlag(winFlag)
 	,m_battleSceneData(battleSceneData)
 	,m_scoreExpression(battleSceneData->m_scoreObserver->GetScoreExpression(winFlag))
-	,m_backPic(LoadGraphEX("Graphic/result/back.png"),75)
-	,m_bonusBar(LoadGraphEX("Graphic/result/bonusBar.png"),75)
-	,m_turnBar(LoadGraphEX("Graphic/result/turnBar.png"),75)
-	,m_survivalBar(LoadGraphEX("Graphic/result/survivalBar.png"),75)
-	,m_resultBarPic(LoadGraphEX((winFlag?"Graphic/result/stageClear.png":"Graphic/result/missionFailed.png")))
-	,m_scoreBarPic(LoadGraphEX("Graphic/result/scoreBar.png"))
+	,m_backPic(LoadGraphEX(FilePath::graphicDir+"result/back.png"),75)
+	,m_bonusBar(LoadGraphEX(FilePath::graphicDir+"result/bonusBar.png"),75)
+	,m_turnBar(LoadGraphEX(FilePath::graphicDir+"result/turnBar.png"),75)
+	,m_survivalBar(LoadGraphEX(FilePath::graphicDir+"result/survivalBar.png"),75)
+	,m_resultBarPic(LoadGraphEX((winFlag?FilePath::graphicDir+"result/stageClear.png":FilePath::graphicDir+"result/missionFailed.png")))
+	,m_scoreBarPic(LoadGraphEX(FilePath::graphicDir+"result/scoreBar.png"))
 	,m_bonusFont(CreateFontToHandleEX("りいポップ角 R",bonusFontSize,4,DX_FONTTYPE_ANTIALIASING_4X4))
 	,m_scoreFont(CreateFontToHandleEX("りいポップ角 R",scoreFontSize,7,DX_FONTTYPE_ANTIALIASING_4X4))
 	,m_frame(0)

@@ -7,6 +7,7 @@
 #include<cmath>
 #include"GeneralPurposeResourceManager.h"
 #include"CommonConstParameter.h"
+#include"FilePath.h"
 
 #include"StageSelectScene.h"
 #include"BattleScene.h"
@@ -68,7 +69,7 @@ const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={
 
 TitleScene::TitleScene()
 	:GameScene()
-	,m_backPic(LoadGraphEX("Graphic/nonfree/titleScene.png"))
+	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
 	,m_itemFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",16,1,-1))
 	,m_bgm(LoadBGMMem("Sound/bgm/nonfree/title/"))
 	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
