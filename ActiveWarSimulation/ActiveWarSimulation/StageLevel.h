@@ -19,6 +19,7 @@ public:
 	StageLevel()noexcept;
 	StageLevel(Kind kind)noexcept;
 	bool operator==(const Kind kind)const;
+	bool operator<(const StageLevel &otherobj)const;
 	std::string GetString()const;
 	size_t GetIndex()const;
 	static StageLevel CreateFromString(const std::string &str);

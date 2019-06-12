@@ -3,7 +3,6 @@
 
 #include<string>
 #include<vector>
-#include<array>
 #include<map>
 #include<set>
 #include<exception>
@@ -44,25 +43,23 @@ public:
 		std::set<PlayerData> playerDataVec;//ランキングに表示されるプレイヤーデータ(挿入を可能にするためにconstにしない)
 		
 		LevelData(){}
-		explicit LevelData(const StringBuilder &infoBuilder);//メンバ変数をconstにする必用はないので、LevelData内で読み込み文字列の処理をして問題ない
+		LevelData(const StringBuilder &infoBuilder);//メンバ変数をconstにする必用はないので、LevelData内で読み込み文字列の処理をして問題ない
 		~LevelData(){}
 		void Output(std::ofstream &ofs)const;//データ出力
 	};
 	struct StageScoreData{
 		//ステージが持っているランキングに関するデータ
 	public:
-		static const size_t levelCount=StageLevel::levelCount;
-
 		const std::string dirName;//ステージのディレクトリ名
-		std::array<LevelData,levelCount> levelArray;//難易度ごとのスコアデータ(挿入の可能性があるので、constにできない)
+		std::map<StageLevel,LevelData> levelArray;//難易度ごとのスコアデータ(挿入の可能性があるので、constにできない)
 
 		StageScoreData();//「ディレクトリのランキングデータがない」という場合でもプログラムをちゃんと動作させたいため。
 		~StageScoreData(){}
 		void Output(std::ofstream &ofs)const;//データ出力
-		static StageScoreData Create(const std::string &i_dirName,const std::array<const StringBuilder *,levelCount> &infoBuilderPointerArray);//文字列から作成
+		static StageScoreData Create(const std::string &i_dirName,const StringBuilder &infoBuilder);//文字列から作成
 
 	private:
-		StageScoreData(const std::string &i_dirName,const std::array<LevelData,levelCount> &i_levelArray)
+		StageScoreData(const std::string &i_dirName,const std::map<StageLevel,LevelData> &i_levelArray)
 			:dirName(i_dirName),levelArray(i_levelArray){}
 	};
 

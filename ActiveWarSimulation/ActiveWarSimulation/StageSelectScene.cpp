@@ -175,8 +175,8 @@ void StageSelectScene::Draw()const{
 		for(const auto &levelData:m_stageInfoVec[m_selectStageIndex].m_rankingVec.levelArray){
 			int rankingStrY=explainY;
 			//hogehoge(); “ïˆÕ“x•¶Žš—ñ‚Ì•`‰æ
-			std::set<ScoreRankingData::PlayerData>::const_iterator it=levelData.playerDataVec.begin();
-			const std::set<ScoreRankingData::PlayerData>::const_iterator ite=levelData.playerDataVec.end();
+			std::set<ScoreRankingData::PlayerData>::const_iterator it=levelData.second.playerDataVec.begin();
+			const std::set<ScoreRankingData::PlayerData>::const_iterator ite=levelData.second.playerDataVec.end();
 			for(size_t i=0;i<5;i++){
 				rankingStrY+=30;
 				if(it!=ite){

@@ -13,6 +13,10 @@ bool StageLevel::operator==(const StageLevel::Kind kind)const{
 	return m_kind==kind;
 }
 
+bool StageLevel::operator<(const StageLevel &otherobj)const{
+	return (this->m_kind<otherobj.m_kind);
+}
+
 const std::unordered_map<std::string,StageLevel::Kind> StageLevel::kindStringMap={
 	std::make_pair("easy",StageLevel::e_easy)
 	,std::make_pair("normal",StageLevel::e_normal)

@@ -17,19 +17,18 @@ ScoreRankingData::ScoreRankingData()
 	for(StringBuilder &sb:strBuilder.m_vec){
 		sb.Split(',','(',')');
 		std::string dirName;
-		const std::array<const StringBuilder *,StageScoreData::levelCount> initArray={nullptr,nullptr,nullptr,nullptr};
-		std::array<const StringBuilder *,StageScoreData::levelCount> pBuilderArray=initArray;
+		const StringBuilder *pBuilder=nullptr;
 		for(const StringBuilder &ssb:sb.m_vec){
 			if(ssb.m_vec.size()>=2 && ssb.m_vec[0].GetString()=="dir"){
 				//ディレクトリデータの読み込み
 				dirName=ssb.m_vec[1].GetString();
 			} else if(ssb.m_vec.size()>=5 && ssb.m_vec[0].GetString()=="data"){
 				//データがどこにあるかを渡す
-				pBuilderArray={&ssb.m_vec[1],&ssb.m_vec[2],&ssb.m_vec[3],&ssb.m_vec[4]};
+				pBuilder=&ssb;
 			}
 		}
-		if(pBuilderArray!=initArray && !dirName.empty()){
-			m_stageDataMap.insert(std::make_pair(dirName,StageScoreData::Create(dirName,pBuilderArray)));
+		if(!dirName.empty()){
+			m_stageDataMap.insert(std::make_pair(dirName,StageScoreData::Create(dirName,*pBuilder)));
 		}
 	}
 //	volatile const double totalT=fps.GetProcessedTime();
@@ -69,11 +68,14 @@ const ScoreRankingData::StageScoreData ScoreRankingData::GetStageScoreData(const
 }
 
 bool ScoreRankingData::InputData(PlayerData &inputData,const std::string &dirName,const StageLevel level){
-	const auto it=m_stageDataMap.find(dirName);
-	const size_t index=level.GetIndex();
-	if(it!=m_stageDataMap.end() && index<StageScoreData::levelCount){
-		it->second.levelArray[index].playerDataVec.insert(inputData);
-		return true;
+	const auto itStage=m_stageDataMap.find(dirName);
+	if(itStage!=m_stageDataMap.end()){
+		//inputDataと同じステージのランキングデータが存在する場合
+		const auto itLevel=itStage->second.levelArray.find(level);
+		if(itLevel!=itStage->second.levelArray.end()){
+			//inputDataと同じレベルのランキングデータが存在する場合
+			itLevel->second.playerDataVec.insert(inputData);
+		}
 	}
 	return false;
 }
@@ -165,16 +167,17 @@ void ScoreRankingData::LevelData::Output(std::ofstream &ofs)const{
 //----------ScoreRankingData::StageScoreData-------------
 ScoreRankingData::StageScoreData::StageScoreData()
 	:dirName("")
-	,levelArray{LevelData(),LevelData(),LevelData(),LevelData()}
+	,levelArray{}
 {}
 
 void ScoreRankingData::StageScoreData::Output(std::ofstream &ofs)const{
 	ofs<<"(data,";
-	for(size_t i=0;i<levelCount;i++){
-		ofs<<"((level,"<<i+1<<"),";
-		levelArray[i].Output(ofs);
+	for(std::map<StageLevel,LevelData>::const_iterator it=levelArray.begin(),ite=levelArray.end();it!=ite;){
+		ofs<<"((level,"<<it->first.GetString()<<"),";
+		it->second.Output(ofs);
 		ofs<<')';
-		if(i+1<levelCount){
+		it++;
+		if(it!=ite){
 			//末尾には','をつけない
 			ofs<<',';
 		}
@@ -182,23 +185,18 @@ void ScoreRankingData::StageScoreData::Output(std::ofstream &ofs)const{
 	ofs<<')';
 }
 
-ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const std::string &i_dirName,const std::array<const StringBuilder *,levelCount> &infoBuilderPointerArray){
+ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const std::string &i_dirName,const StringBuilder &infoBuilder){
 	//分割された文字列を認識
-	std::array<LevelData,levelCount> levelArray;
-	for(size_t i=0;i<levelCount;i++){
-		if(infoBuilderPointerArray[i]->m_vec.size()>=2){
+	std::map<StageLevel,LevelData> levelArray;
+	for(const StringBuilder &sb:infoBuilder.m_vec){
+		if(sb.m_vec.size()>=2){
 			//ステージレベルを取得
-			if(infoBuilderPointerArray[i]->m_vec[0].m_vec.size()>=2
-				&& infoBuilderPointerArray[i]->m_vec[0].m_vec[0].GetString()=="level")
-			{
+			if(sb.m_vec[0].m_vec.size()>=2 && sb.m_vec[0].m_vec[0].GetString()=="level"){
 				try{
 					//StageLevelを文字列で初期化する場合、out_of_range例外を投げる可能性がある。
-					StageLevel stageLevel=StageLevel::CreateFromString(infoBuilderPointerArray[i]->m_vec[0].m_vec[1].GetString());
+					StageLevel stageLevel=StageLevel::CreateFromString(sb.m_vec[0].m_vec[1].GetString());
 					//ステージレベルを取得できた場合のみ、LevelDataを作成
-					const size_t index=stageLevel.GetIndex();
-					if(index<levelCount){
-						levelArray[index]=LevelData(infoBuilderPointerArray[i]->m_vec[1]);
-					}
+					levelArray.insert(std::make_pair(stageLevel,LevelData(sb.m_vec[1])));
 				} catch(std::out_of_range &e){
 					//特に何もしない
 				}
