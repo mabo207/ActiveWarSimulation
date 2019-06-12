@@ -7,6 +7,7 @@
 #include"CommonConstParameter.h"
 #include"BattleSceneData.h"
 #include<math.h>
+#include"FilePath.h"
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
@@ -114,7 +115,7 @@ Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D positio
 	,m_battleStatus(100,Unit::BattleStatus::maxOP,team,aitype,aiGroup,aiLinkage,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
 //	,m_hpFont(CreateFontToHandleEX("04かんじゅくゴシック",hpFontSize,2,DX_FONTTYPE_EDGE,-1,2))
-	,m_hpFont(LoadFontDataToHandleEX("Font/UnitHPFont.dft",2))
+	,m_hpFont(LoadFontDataToHandleEX(FilePath::fontDir+"UnitHPFont.dft",2))
 {
 	//テスト用のコンストラクタ
 	m_battleStatus.HP=m_baseStatus.maxHP;
