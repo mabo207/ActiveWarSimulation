@@ -156,6 +156,7 @@
     <ClCompile Include="AttackLog.cpp" />
     <ClCompile Include="FadeInScene.cpp" />
     <ClCompile Include="FadeOutScene.cpp" />
+    <ClCompile Include="FilePath.cpp" />
     <ClCompile Include="FinishLog.cpp" />
     <ClCompile Include="InitLog.cpp" />
     <ClCompile Include="LatticeBattleField.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="AttackLog.h" />
     <ClInclude Include="FadeInScene.h" />
     <ClInclude Include="FadeOutScene.h" />
+    <ClInclude Include="FilePath.h" />
     <ClInclude Include="FinishLog.h" />
     <ClInclude Include="LatticeBattleField.h" />
     <ClInclude Include="LogElement.h" />

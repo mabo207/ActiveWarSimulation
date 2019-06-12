@@ -267,6 +267,9 @@
     <ClCompile Include="StageLevel.cpp">
       <Filter>ソース ファイル\AnySceneCallable</Filter>
     </ClCompile>
+    <ClCompile Include="FilePath.cpp">
+      <Filter>ソース ファイル\AnySceneCallable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -414,6 +417,9 @@
       <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
     </ClInclude>
     <ClInclude Include="StageLevel.h">
+      <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
+    </ClInclude>
+    <ClInclude Include="FilePath.h">
       <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
     </ClInclude>
   </ItemGroup>
