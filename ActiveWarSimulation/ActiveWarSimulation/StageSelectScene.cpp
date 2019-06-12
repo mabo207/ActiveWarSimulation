@@ -6,6 +6,7 @@
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
 #include"StageInfoReader.h"
+#include"FilePath.h"
 
 #include"BattleScene.h"
 #include"TitleScene.h"
@@ -62,7 +63,7 @@ StageSelectScene::StageSelectScene()
 	GetCurrentDirectory(1024,cdir);
 	const std::string cdir_str(cdir);
 	WIN32_FIND_DATA find_dir_data;
-	HANDLE hFind=FindFirstFile((cdir_str+"/Stage/*").c_str(),&find_dir_data);
+	HANDLE hFind=FindFirstFile((cdir_str+"/"+FilePath::stageDir+"/*").c_str(),&find_dir_data);
 	auto GetFileName=[](WIN32_FIND_DATA data){
 		//find_dir_dataÇÃÉtÉ@ÉCÉãñºÇstd::stringå^Ç…ïœä∑Ç∑ÇÈä÷êî
 		std::string s;
@@ -97,9 +98,9 @@ StageSelectScene::StageSelectScene()
 	for(const std::string &dirName:dirNameVec){
 		if(dirName!="demo" && dirName!="tutorial" && dirName!="tutorial_2"){
 			m_stageInfoVec.push_back(StageInfo(
-				LoadGraphEX(("Stage/"+dirName+"/nonfree/minimap.png").c_str())
+				LoadGraphEX((FilePath::stageDir+dirName+"/nonfree/minimap.png").c_str())
 				,dirName
-				,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
+				,FileStrRead((FilePath::stageDir+dirName+"/explain.txt").c_str())
 				,rankingData
 			));
 		}

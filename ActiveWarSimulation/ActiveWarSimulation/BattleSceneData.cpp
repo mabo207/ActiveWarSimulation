@@ -9,6 +9,7 @@
 #include"GameScene.h"
 #include"CommonConstParameter.h"
 #include"StringBuilder.h"
+#include"FilePath.h"
 
 //----------------------BattleSceneData----------------------
 const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);
@@ -29,7 +30,7 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_turnTimerPic(LoadGraphEX("Graphic/turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
 	,m_playMode(playMode)
-	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
+	,m_mapPic(LoadGraphEX((FilePath::stageDir+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/wild-road_loop/"))
 	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
 	,m_attackSound(LoadSoundMem("Sound/effect/nonfree/damage.ogg"))
@@ -40,7 +41,7 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	LoadDivGraphEX("Graphic/drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
 
 	//ファイルからステージを読み込み
-	const std::string stagedir("Stage/"+std::string(stageDirName)+"/");
+	const std::string stagedir(FilePath::stageDir+std::string(stageDirName)+"/");
 	//ファイルを開きすべての文字列を書き出す
 	std::string str=FileStrRead((stagedir+"stage.txt").c_str());
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
