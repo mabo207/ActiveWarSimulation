@@ -1,5 +1,6 @@
 #include"GeneralPurposeResourceManager.h"
 #include"DxLib.h"
+#include"FilePath.h"
 
 //---------------------GeneralPurposeResourceManager---------------------
 int GeneralPurposeResourceManager::cancelSound=-1;
@@ -12,9 +13,9 @@ void GeneralPurposeResourceManager::LoadResource(){
 	//ƒtƒHƒ“ƒg
 
 	//‰¹
-	decideSound=LoadSoundMem("sound/effect/nonfree/decide.ogg");
-	cancelSound=LoadSoundMem("sound/effect/nonfree/cancel.ogg");
-	selectSound=LoadSoundMem("sound/effect/nonfree/select.ogg");
+	decideSound=LoadSoundMem((FilePath::effectSoundDir+"nonfree/decide.ogg").c_str());
+	cancelSound=LoadSoundMem((FilePath::effectSoundDir+"nonfree/cancel.ogg").c_str());
+	selectSound=LoadSoundMem((FilePath::effectSoundDir+"nonfree/select.ogg").c_str());
 }
 
 void GeneralPurposeResourceManager::ReleaseResource(){

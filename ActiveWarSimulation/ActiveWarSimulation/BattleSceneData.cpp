@@ -32,10 +32,10 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_playMode(playMode)
 	,m_mapPic(LoadGraphEX((FilePath::stageDir+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
 	,m_mapBGM(LoadBGMMem(FilePath::bgmDir+"/nonfree/wild-road_loop/"))
-	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
-	,m_attackSound(LoadSoundMem("Sound/effect/nonfree/damage.ogg"))
-	,m_healSound(LoadSoundMem("Sound/effect/nonfree/recover.ogg"))
-	,m_footSound(LoadSoundMem("Sound/effect/nonfree/foot.ogg"))
+	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
+	,m_attackSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/damage.ogg").c_str()))
+	,m_healSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/recover.ogg").c_str()))
+	,m_footSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/foot.ogg").c_str()))
 {
 	//グラフィックデータの読み込み
 	LoadDivGraphEX(FilePath::graphicDir+"drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
