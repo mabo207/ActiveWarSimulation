@@ -5,6 +5,7 @@
 //このソリューションに使用が限られるのでToolsフォルダに入れられないが、色々な箇所で使いたい処理をここに書く。
 
 #include<string>
+#include"ToolsLib.h"
 
 //"Stage/hoge/stageInfo.txt"から、特定の値を取り出すためのクラス。
 class StageInfoReader{
@@ -14,16 +15,13 @@ public:
 	std::string GetTitleName()const{
 		return titleName;
 	}
-	int GetX()const{
-		return x;
-	}
-	int GetY()const{
-		return y;
+	Vector2D GetPos()const{
+		return pos;
 	}
 
 private:
 	std::string titleName;
-	int x,y;
+	Vector2D pos;
 };
 
 #endif // !DEF_STAGEINFOREADER_H

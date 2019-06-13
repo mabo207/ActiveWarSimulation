@@ -12,8 +12,9 @@ StageInfoReader::StageInfoReader(const std::string &dirName){
 		if(vecSize>=2 && sb.m_vec[0].GetString()=="title"){
 			titleName=sb.m_vec[1].GetString();
 		} else if(vecSize>=3 && sb.m_vec[0].GetString()=="pos"){
-			x=std::atoi(sb.m_vec[1].GetString().c_str());
-			y=std::atoi(sb.m_vec[2].GetString().c_str());
+			float x=(float)std::atof(sb.m_vec[1].GetString().c_str());
+			float y=(float)std::atof(sb.m_vec[2].GetString().c_str());
+			pos=Vector2D(x,y);
 		}
 	}
 }

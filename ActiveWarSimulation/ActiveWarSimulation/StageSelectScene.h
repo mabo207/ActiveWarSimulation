@@ -7,6 +7,7 @@
 #include"input.h"
 #include"ScoreRankingData.h"
 #include"BaseUIInStageSelect.h"
+#include"ToolsLib.h"
 
 class StageSelectScene:public GameScene{
 	//型・列挙体
@@ -19,7 +20,7 @@ private:
 		std::string m_titleName;//ステージ名
 		std::string m_explain;//ステージ説明文
 		ScoreRankingData::StageScoreData m_rankingVec;//ランキングデータ
-		int m_x,m_y;//ボタンの位置
+		Vector2D m_pos;//ボタンの位置
 
 		//関数
 		StageInfo(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData);
