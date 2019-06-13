@@ -2,10 +2,12 @@
 #include"StageSelectUIInStageSelect.h"
 #include"input.h"
 #include"GeneralPurposeResourceManager.h"
+#include"CommonConstParameter.h"
 
-StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData,const size_t stageNum)
+StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData,const size_t stageNum,const std::vector<StageInfoInStageSelect> &stageInfoVec)
 	:BaseUIInStageSelect(controledData)
 	,m_stageNum(stageNum)
+	,m_stageInfoVec(stageInfoVec)
 {}
 
 StageSelectUIInStageSelect::~StageSelectUIInStageSelect(){}
@@ -50,7 +52,32 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 }
 
 void StageSelectUIInStageSelect::Draw()const{
-
+	if(!m_controledData.expired()){
+		//選択しているステージの表示と場所の強調
+		const std::shared_ptr<ControledData> lock=m_controledData.lock();
+		if(lock->stageIndex<m_stageInfoVec.size()){
+			//場所の協調
+			const Vector2D pos=m_stageInfoVec[lock->stageIndex].m_pos;
+			DrawCircleAA(pos.x,pos.y,30,10,GetColor(255,255,255),TRUE);
+			//ステージ絵の描画
+			int picX,picY;
+			if((int)pos.x<CommonConstParameter::gameResolutionX/2){
+				picX=CommonConstParameter::gameResolutionX*3/4;
+			} else{
+				picX=CommonConstParameter::gameResolutionX/4;
+			}
+			if((int)pos.y<CommonConstParameter::gameResolutionY/2){
+				picY=CommonConstParameter::gameResolutionY*3/4;
+			} else{
+				picY=CommonConstParameter::gameResolutionY/4;
+			}
+			int picDX,picDY;
+			GetGraphSize(m_stageInfoVec[lock->stageIndex].m_mapPic,&picDX,&picDY);
+			DrawGraph(picX-picDX/2,picY-picDY/2,m_stageInfoVec[lock->stageIndex].m_mapPic,TRUE);
+			//ステージ情報の描画
+			
+		}
+	}
 }
 
 std::shared_ptr<BaseUIInStageSelect> StageSelectUIInStageSelect::GetNextUI(const std::weak_ptr<ControledData> &controledData)const{
