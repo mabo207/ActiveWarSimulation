@@ -6,6 +6,7 @@
 #include<string>
 #include"input.h"
 #include"ScoreRankingData.h"
+#include"BaseUIInStageSelect.h"
 
 class StageSelectScene:public GameScene{
 	//型・列挙体
@@ -42,9 +43,11 @@ public:
 
 	//変数
 protected:
-	size_t m_selectStageIndex;//選択中のステージ
+	//size_t m_selectStageIndex;//選択中のステージ
 	std::vector<StageInfo> m_stageInfoVec;//ステージ一覧情報
 	NextSceneName m_nextSceneName;//次の場面は何か、VGetNextScene()で使用
+	std::shared_ptr<BaseUIInStageSelect> m_ui;//現在のUI
+	std::shared_ptr<BaseUIInStageSelect::ControledData> m_uiControledData;//UIが管理するデータ
 	
 	//マウスでクリックできるボタン群
 	const MouseButtonUI m_beforeStageButton;

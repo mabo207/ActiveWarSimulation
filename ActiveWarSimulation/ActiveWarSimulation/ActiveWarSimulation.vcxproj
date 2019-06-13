@@ -185,7 +185,9 @@
     <ClCompile Include="StageClearScene.cpp" />
     <ClCompile Include="StageInfoReader.cpp" />
     <ClCompile Include="StageLevel.cpp" />
+    <ClCompile Include="BaseUIInStageSelect.cpp" />
     <ClCompile Include="StageSelectScene.cpp" />
+    <ClCompile Include="StageSelectUIInStageSelect.cpp" />
     <ClCompile Include="StringBuilder.cpp" />
     <ClCompile Include="SwitchUnitScene.cpp" />
     <ClCompile Include="SystemMenu.cpp" />
@@ -231,8 +233,10 @@
     <ClInclude Include="StageClearScene.h" />
     <ClInclude Include="StageInfoReader.h" />
     <ClInclude Include="StageLevel.h" />
+    <ClInclude Include="BaseUIInStageSelect.h" />
     <ClInclude Include="StageSelectScene.h" />
     <ClInclude Include="InitLog.h" />
+    <ClInclude Include="StageSelectUIInStageSelect.h" />
     <ClInclude Include="StringBuilder.h" />
     <ClInclude Include="SystemMenu.h" />
     <ClInclude Include="TitleScene.h" />

@@ -11,6 +11,8 @@
 #include"BattleScene.h"
 #include"TitleScene.h"
 
+#include"StageSelectUIInStageSelect.h"
+
 //----------------------StageSelectScene------------------
 StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData)
 	:m_mapPic(mapPic)
@@ -40,6 +42,7 @@ StageSelectScene::StageSelectScene()
 	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
+	,m_uiControledData(new BaseUIInStageSelect::ControledData(0,StageLevel::e_easy))
 {
 	//スコアデータの読み込み
 	const ScoreRankingData rankingData;
@@ -90,12 +93,8 @@ StageSelectScene::StageSelectScene()
 			));
 		}
 	}
-	//インデックスの初期化
-	if(m_stageInfoVec.empty()){
-		m_selectStageIndex=-1;
-	} else{
-		m_selectStageIndex=0;
-	}
+	//UIの作成
+	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec.size()));
 }
 
 StageSelectScene::~StageSelectScene(){
@@ -113,35 +112,17 @@ StageSelectScene::~StageSelectScene(){
 
 int StageSelectScene::Calculate(){
 	//選択ステージの更新
-	if(m_selectStageIndex!=-1){
-		//-1の時は読み込んでいるステージがないので更新はできない
-		const size_t beforeIndex=m_selectStageIndex;//効果音再生の可否判定に用いる
-		const size_t infoSize=m_stageInfoVec.size();
-		if(keyboard_get(KEY_INPUT_LEFT)==1 || m_beforeStageButton.JudgePressMoment()){
-			m_selectStageIndex=(m_selectStageIndex+infoSize-1)%infoSize;
-		} else if(keyboard_get(KEY_INPUT_RIGHT)==1 || m_afterStageButton.JudgePressMoment()){
-			m_selectStageIndex=(m_selectStageIndex+1)%infoSize;
-		}
-		if(m_selectStageIndex!=beforeIndex){
-			//変更があれば効果音再生
-			PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);
-		}
-	}
-
-	//遷移系ボタンの処理
-	if(m_selectStageIndex!=-1 &&
-		(keyboard_get(KEY_INPUT_Z)==1 || m_playButton.JudgePressMoment())
-		)
-	{
+	const auto updateResult=m_ui->Update();
+	if(updateResult==BaseUIInStageSelect::UpdateResult::e_nextUI){
+		m_ui=m_ui->GetNextUI(m_uiControledData);
+	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoBattle){
 		//ゲームプレイへ進む
 		m_nextSceneName=NextSceneName::e_battle;
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音
 		return -1;
-	} else if(keyboard_get(KEY_INPUT_X)==1 || m_backButton.JudgePressMoment()){
+	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoTitle){
 		//タイトル画面へ戻る
 		m_nextSceneName=NextSceneName::e_title;
-		PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);//戻るの効果音(鳴ると同時にデータが消えるので鳴らない)
-		return -2;
+		return -1;
 	}
 
 	return 0;
@@ -162,14 +143,14 @@ void StageSelectScene::Draw()const{
 	m_backButton.DrawButton();
 	m_playButton.DrawButton();
 	//ステージ情報の描画
-	if(m_selectStageIndex!=-1){
+	if(m_uiControledData->stageIndex!=-1){
 		int stageDx,stageDy;
 		const int explainX=400;
-		GetGraphSize(m_stageInfoVec[m_selectStageIndex].m_mapPic,&stageDx,&stageDy);
-		DrawRotaGraph(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/3,((double)CommonConstParameter::gameResolutionY/2)/stageDy,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
-		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_selectStageIndex].m_titleName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
+		GetGraphSize(m_stageInfoVec[m_uiControledData->stageIndex].m_mapPic,&stageDx,&stageDy);
+		DrawRotaGraph(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/3,((double)CommonConstParameter::gameResolutionY/2)/stageDy,0.0,m_stageInfoVec[m_uiControledData->stageIndex].m_mapPic,TRUE);
+		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_uiControledData->stageIndex].m_titleName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
 		int explainY=CommonConstParameter::gameResolutionY*2/3;
-		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
+		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_uiControledData->stageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
 		//難易度ごとにランキング情報を描画
 		int rankingStrX=200;
 		for(const StageLevel &level:StageLevel::levelArray){
@@ -181,8 +162,8 @@ void StageSelectScene::Draw()const{
 			size_t drawCount=0;
 			const size_t totalDrawCount=5;
 			//スコアデータの描画
-			const std::map<StageLevel,ScoreRankingData::LevelData>::const_iterator itLevel=m_stageInfoVec[m_selectStageIndex].m_rankingVec.levelMap.find(level);
-			if(itLevel!=m_stageInfoVec[m_selectStageIndex].m_rankingVec.levelMap.end()){
+			const std::map<StageLevel,ScoreRankingData::LevelData>::const_iterator itLevel=m_stageInfoVec[m_uiControledData->stageIndex].m_rankingVec.levelMap.find(level);
+			if(itLevel!=m_stageInfoVec[m_uiControledData->stageIndex].m_rankingVec.levelMap.end()){
 				std::set<ScoreRankingData::PlayerData>::const_iterator it=itLevel->second.playerDataSet.begin();
 				const std::set<ScoreRankingData::PlayerData>::const_iterator ite=itLevel->second.playerDataSet.end();
 				for(;drawCount<totalDrawCount;drawCount++){
@@ -212,8 +193,8 @@ std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr
 		return CreateFadeOutInScene(thisSharedPtr,titleFactory,15,15);
 	} else if(m_nextSceneName==NextSceneName::e_battle){
 		const std::shared_ptr<GameScene::SceneFactory> battleFactory=std::make_shared<BattleScene::BattleSceneFactory>(
-			m_stageInfoVec[m_selectStageIndex].m_dirName
-			,m_stageInfoVec[m_selectStageIndex].m_titleName
+			m_stageInfoVec[m_uiControledData->stageIndex].m_dirName
+			,m_stageInfoVec[m_uiControledData->stageIndex].m_titleName
 			,StageLevel::e_easy);//難易度はひとまず選択できないように
 		return CreateFadeOutInScene(thisSharedPtr,battleFactory,15,15);
 	}
