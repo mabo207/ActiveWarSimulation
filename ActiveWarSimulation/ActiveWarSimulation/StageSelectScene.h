@@ -19,6 +19,7 @@ private:
 		std::string m_titleName;//ステージ名
 		std::string m_explain;//ステージ説明文
 		ScoreRankingData::StageScoreData m_rankingVec;//ランキングデータ
+		int m_x,m_y;//ボタンの位置
 
 		//関数
 		StageInfo(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData);
@@ -43,7 +44,6 @@ public:
 
 	//変数
 protected:
-	//size_t m_selectStageIndex;//選択中のステージ
 	std::vector<StageInfo> m_stageInfoVec;//ステージ一覧情報
 	NextSceneName m_nextSceneName;//次の場面は何か、VGetNextScene()で使用
 	std::shared_ptr<BaseUIInStageSelect> m_ui;//現在のUI

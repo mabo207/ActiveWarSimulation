@@ -9,7 +9,7 @@ TutorialScene::TutorialSceneFactory::TutorialSceneFactory(const std::string &sta
 	:m_stageDirName(stageDirName)
 {
 	const StageInfoReader reader(stageDirName);
-	m_stageLevel=reader.GetLevel();
+	m_stageLevel=StageLevel::e_easy;
 	m_titleName=reader.GetTitleName();
 }
 

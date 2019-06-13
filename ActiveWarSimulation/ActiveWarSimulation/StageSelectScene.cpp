@@ -23,6 +23,8 @@ StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirNa
 	//ステージ情報の読み取り
 	const StageInfoReader reader(dirName);
 	m_titleName=reader.GetTitleName();
+	m_x=reader.GetX();
+	m_y=reader.GetY();
 }
 
 StageSelectScene::StageInfo::~StageInfo(){

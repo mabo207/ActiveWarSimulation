@@ -8,10 +8,12 @@ StageInfoReader::StageInfoReader(const std::string &dirName){
 	//stageInfo.txtの生データを読み込み可能な形式に変換
 	const StringBuilder infoBuilder(FileStrRead((FilePath::stageDir+dirName+"/stageInfo.txt").c_str()),',','(',')');
 	for(const StringBuilder &sb:infoBuilder.m_vec){
-		if(sb.m_vec.size()>=2){
-			if(sb.m_vec[0].GetString()=="title"){
-				titleName=sb.m_vec[1].GetString();
-			}
+		const size_t vecSize=sb.m_vec.size();
+		if(vecSize>=2 && sb.m_vec[0].GetString()=="title"){
+			titleName=sb.m_vec[1].GetString();
+		} else if(vecSize>=3 && sb.m_vec[0].GetString()=="pos"){
+			x=std::atoi(sb.m_vec[1].GetString().c_str());
+			y=std::atoi(sb.m_vec[2].GetString().c_str());
 		}
 	}
 }
