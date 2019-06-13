@@ -172,20 +172,32 @@ void StageSelectScene::Draw()const{
 		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
 		//難易度ごとにランキング情報を描画
 		int rankingStrX=200;
-		for(const auto &levelData:m_stageInfoVec[m_selectStageIndex].m_rankingVec.levelArray){
-			int rankingStrY=explainY;
+		for(const StageLevel &level:StageLevel::levelArray){
 			//hogehoge(); 難易度文字列の描画
-			std::set<ScoreRankingData::PlayerData>::const_iterator it=levelData.second.playerDataVec.begin();
-			const std::set<ScoreRankingData::PlayerData>::const_iterator ite=levelData.second.playerDataVec.end();
-			for(size_t i=0;i<5;i++){
-				rankingStrY+=30;
-				if(it!=ite){
-					DrawStringToHandle(rankingStrX,rankingStrY,(it->name+"        "+std::to_string(it->score)).c_str(),GetColor(255,255,255),m_explainFont);
-					it++;
-				} else{
-					//データが足りない場合は---を表示
-					DrawStringToHandle(rankingStrX,rankingStrY,"------        -----",GetColor(255,255,255),m_explainFont);
+			size_t drawCount=0;
+			const size_t totalDrawCount=5;
+			int rankingStrY=explainY;
+			const int rankingStrDY=GetFontSizeToHandle(m_explainFont);
+			//スコアデータの描画
+			const std::map<StageLevel,ScoreRankingData::LevelData>::const_iterator itLevel=m_stageInfoVec[m_selectStageIndex].m_rankingVec.levelArray.find(level);
+			if(itLevel!=m_stageInfoVec[m_selectStageIndex].m_rankingVec.levelArray.end()){
+				std::set<ScoreRankingData::PlayerData>::const_iterator it=itLevel->second.playerDataVec.begin();
+				const std::set<ScoreRankingData::PlayerData>::const_iterator ite=itLevel->second.playerDataVec.end();
+				for(;drawCount<totalDrawCount;drawCount++){
+					rankingStrY+=rankingStrDY;
+					if(it!=ite){
+						DrawStringToHandle(rankingStrX,rankingStrY,(it->name+"        "+std::to_string(it->score)).c_str(),GetColor(255,255,255),m_explainFont);
+						it++;
+					} else{
+						break;
+					}
 				}
+			}
+			//スコアデータが足りない部分の描画
+			for(;drawCount<totalDrawCount;drawCount++){
+				rankingStrY+=rankingStrDY;
+				//データが足りない場合は---を表示
+				DrawStringToHandle(rankingStrX,rankingStrY,"------        -----",GetColor(255,255,255),m_explainFont);
 			}
 			rankingStrX+=400;
 		}

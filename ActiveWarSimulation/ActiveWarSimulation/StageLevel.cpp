@@ -1,6 +1,13 @@
 #include"StageLevel.h"
 
 //-----------------StageLevel------------------
+const std::array<StageLevel,StageLevel::levelCount> StageLevel::levelArray={
+	StageLevel::e_easy
+	,StageLevel::e_normal
+	,StageLevel::e_hard
+	,StageLevel::e_lunatic
+};
+
 StageLevel::StageLevel()noexcept
 	:StageLevel(e_easy)
 {}

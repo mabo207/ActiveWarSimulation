@@ -1,6 +1,7 @@
 #ifndef DEF_STAGELEVEL_H
 #define DEF_STAGELEVEL_H
 
+#include<array>
 #include<unordered_map>
 #include<string>
 
@@ -9,7 +10,7 @@ struct StageLevel{
 	//StageLevelを要素がStageLevel::Kindなenum classっぽく使えるように工夫する
 public:
 	enum Kind{
-		//要素追加時、levelCount変数も変えておくこと
+		//要素追加時、levelCountやlevelArray変数も変えておくこと
 		e_easy
 		,e_normal
 		,e_hard
@@ -25,6 +26,7 @@ public:
 	static StageLevel CreateFromString(const std::string &str);
 
 	static const size_t levelCount=e_lunatic+1;//レベルの数
+	static const std::array<StageLevel,levelCount> levelArray;//レベル一覧
 
 private:
 	Kind m_kind;
