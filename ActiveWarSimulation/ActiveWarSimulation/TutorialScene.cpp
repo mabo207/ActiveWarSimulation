@@ -9,20 +9,18 @@ TutorialScene::TutorialSceneFactory::TutorialSceneFactory(const std::string &sta
 	:m_stageDirName(stageDirName)
 {
 	const StageInfoReader reader(stageDirName);
-	m_stageLevel=StageLevel::e_easy;
 	m_titleName=reader.GetTitleName();
 }
 
-TutorialScene::TutorialSceneFactory::TutorialSceneFactory(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel)
+TutorialScene::TutorialSceneFactory::TutorialSceneFactory(const std::string &stageDirName,const std::string &titleName)
 	:m_stageDirName(stageDirName)
 	,m_titleName(titleName)
-	,m_stageLevel(stageLevel)
 {}
 
 TutorialScene::TutorialSceneFactory::~TutorialSceneFactory(){}
 
 std::shared_ptr<GameScene> TutorialScene::TutorialSceneFactory::CreateScene()const{
-	return std::shared_ptr<TutorialScene>(new TutorialScene(m_stageDirName,m_titleName,m_stageLevel));
+	return std::shared_ptr<TutorialScene>(new TutorialScene(m_stageDirName,m_titleName,StageLevel::e_easy));
 }
 
 //--------------------TutorialScene--------------------

@@ -9,13 +9,12 @@ public:
 	class TutorialSceneFactory:public SceneFactory{
 	public:
 		TutorialSceneFactory(const std::string &stageDirName);//ディレクトリ情報しか取得できていない場合
-		TutorialSceneFactory(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel);
+		TutorialSceneFactory(const std::string &stageDirName,const std::string &titleName);
 		~TutorialSceneFactory();
 		std::shared_ptr<GameScene> CreateScene()const;
 	private:
 		const std::string m_stageDirName;
 		std::string m_titleName;
-		StageLevel m_stageLevel;
 	};
 
 	//定数
