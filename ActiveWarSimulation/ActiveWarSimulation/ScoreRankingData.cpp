@@ -22,12 +22,12 @@ ScoreRankingData::ScoreRankingData()
 			if(ssb.m_vec.size()>=2 && ssb.m_vec[0].GetString()=="dir"){
 				//ディレクトリデータの読み込み
 				dirName=ssb.m_vec[1].GetString();
-			} else if(ssb.m_vec.size()>=5 && ssb.m_vec[0].GetString()=="data"){
+			} else if(ssb.m_vec.size()>=2 && ssb.m_vec[0].GetString()=="data"){
 				//データがどこにあるかを渡す
 				pBuilder=&ssb;
 			}
 		}
-		if(!dirName.empty()){
+		if(!dirName.empty() && pBuilder!=nullptr){
 			m_stageDataMap.insert(std::make_pair(dirName,StageScoreData::Create(dirName,*pBuilder)));
 		}
 	}
@@ -63,7 +63,7 @@ const ScoreRankingData::StageScoreData ScoreRankingData::GetStageScoreData(const
 	if(it!=m_stageDataMap.end()){
 		return it->second;
 	} else{
-		return StageScoreData();
+		return StageScoreData(dirName);
 	}
 }
 
@@ -75,7 +75,19 @@ bool ScoreRankingData::InputData(PlayerData &inputData,const std::string &dirNam
 		if(itLevel!=itStage->second.levelArray.end()){
 			//inputDataと同じレベルのランキングデータが存在する場合
 			itLevel->second.playerDataVec.insert(inputData);
+		} else{
+			//同じレベルのランキングデータが存在しない場合は、作成する
+			LevelData insertData;
+			insertData.playerDataVec.insert(inputData);
+			itStage->second.levelArray.insert(std::make_pair(level,insertData));
 		}
+	} else{
+		//同じステージのランキングデータが存在しない場合、作成する
+		LevelData insertLevelData;
+		insertLevelData.playerDataVec.insert(inputData);
+		StageScoreData insertScoreData(dirName);
+		insertScoreData.levelArray.insert(std::make_pair(level,insertLevelData));
+		m_stageDataMap.insert(std::make_pair(dirName,insertScoreData));
 	}
 	return false;
 }
@@ -165,8 +177,8 @@ void ScoreRankingData::LevelData::Output(std::ofstream &ofs)const{
 }
 
 //----------ScoreRankingData::StageScoreData-------------
-ScoreRankingData::StageScoreData::StageScoreData()
-	:dirName("")
+ScoreRankingData::StageScoreData::StageScoreData(const std::string &i_dirName)
+	:dirName(i_dirName)
 	,levelArray{}
 {}
 
