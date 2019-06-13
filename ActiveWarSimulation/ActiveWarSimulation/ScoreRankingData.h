@@ -50,17 +50,16 @@ public:
 	struct StageScoreData{
 		//ステージが持っているランキングに関するデータ
 	public:
-		const std::string dirName;//ステージのディレクトリ名
 		std::map<StageLevel,LevelData> levelArray;//難易度ごとのスコアデータ(挿入の可能性があるので、constにできない)
 
-		StageScoreData(const std::string &i_dirName);//「ディレクトリのランキングデータがない」という場合でもプログラムをちゃんと動作させたいため。
+		StageScoreData();//「ディレクトリのランキングデータがない」という場合でもプログラムをちゃんと動作させたいため。
 		~StageScoreData(){}
 		void Output(std::ofstream &ofs)const;//データ出力
-		static StageScoreData Create(const std::string &i_dirName,const StringBuilder &infoBuilder);//文字列から作成
+		static StageScoreData Create(const StringBuilder &infoBuilder);//文字列から作成
 
 	private:
-		StageScoreData(const std::string &i_dirName,const std::map<StageLevel,LevelData> &i_levelArray)
-			:dirName(i_dirName),levelArray(i_levelArray){}
+		StageScoreData(const std::map<StageLevel,LevelData> &i_levelArray)
+			:levelArray(i_levelArray){}
 	};
 
 	ScoreRankingData();

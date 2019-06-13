@@ -28,7 +28,7 @@ ScoreRankingData::ScoreRankingData()
 			}
 		}
 		if(!dirName.empty() && pBuilder!=nullptr){
-			m_stageDataMap.insert(std::make_pair(dirName,StageScoreData::Create(dirName,*pBuilder)));
+			m_stageDataMap.insert(std::make_pair(dirName,StageScoreData::Create(*pBuilder)));
 		}
 	}
 //	volatile const double totalT=fps.GetProcessedTime();
@@ -63,7 +63,7 @@ const ScoreRankingData::StageScoreData ScoreRankingData::GetStageScoreData(const
 	if(it!=m_stageDataMap.end()){
 		return it->second;
 	} else{
-		return StageScoreData(dirName);
+		return StageScoreData();
 	}
 }
 
@@ -85,7 +85,7 @@ bool ScoreRankingData::InputData(PlayerData &inputData,const std::string &dirNam
 		//同じステージのランキングデータが存在しない場合、作成する
 		LevelData insertLevelData;
 		insertLevelData.playerDataVec.insert(inputData);
-		StageScoreData insertScoreData(dirName);
+		StageScoreData insertScoreData;
 		insertScoreData.levelArray.insert(std::make_pair(level,insertLevelData));
 		m_stageDataMap.insert(std::make_pair(dirName,insertScoreData));
 	}
@@ -177,9 +177,8 @@ void ScoreRankingData::LevelData::Output(std::ofstream &ofs)const{
 }
 
 //----------ScoreRankingData::StageScoreData-------------
-ScoreRankingData::StageScoreData::StageScoreData(const std::string &i_dirName)
-	:dirName(i_dirName)
-	,levelArray{}
+ScoreRankingData::StageScoreData::StageScoreData()
+	:levelArray{}
 {}
 
 void ScoreRankingData::StageScoreData::Output(std::ofstream &ofs)const{
@@ -197,7 +196,7 @@ void ScoreRankingData::StageScoreData::Output(std::ofstream &ofs)const{
 	ofs<<')';
 }
 
-ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const std::string &i_dirName,const StringBuilder &infoBuilder){
+ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const StringBuilder &infoBuilder){
 	//分割された文字列を認識
 	std::map<StageLevel,LevelData> levelArray;
 	for(const StringBuilder &sb:infoBuilder.m_vec){
@@ -215,5 +214,5 @@ ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const 
 			}
 		}
 	}
-	return StageScoreData(i_dirName,levelArray);
+	return StageScoreData(levelArray);
 }
