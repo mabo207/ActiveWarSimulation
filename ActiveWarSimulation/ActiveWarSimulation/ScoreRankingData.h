@@ -40,7 +40,7 @@ public:
 	};
 	struct LevelData{
 		//１つのステージレベルに対するスコアデータ
-		std::set<PlayerData> playerDataVec;//ランキングに表示されるプレイヤーデータ(挿入を可能にするためにconstにしない)
+		std::set<PlayerData> playerDataSet;//ランキングに表示されるプレイヤーデータ(挿入を可能にするためにconstにしない)
 		
 		LevelData(){}
 		LevelData(const StringBuilder &infoBuilder);//メンバ変数をconstにする必用はないので、LevelData内で読み込み文字列の処理をして問題ない
@@ -50,7 +50,7 @@ public:
 	struct StageScoreData{
 		//ステージが持っているランキングに関するデータ
 	public:
-		std::map<StageLevel,LevelData> levelArray;//難易度ごとのスコアデータ(挿入の可能性があるので、constにできない)
+		std::map<StageLevel,LevelData> levelMap;//難易度ごとのスコアデータ(挿入の可能性があるので、constにできない)
 
 		StageScoreData();//「ディレクトリのランキングデータがない」という場合でもプログラムをちゃんと動作させたいため。
 		~StageScoreData(){}
@@ -59,7 +59,7 @@ public:
 
 	private:
 		StageScoreData(const std::map<StageLevel,LevelData> &i_levelArray)
-			:levelArray(i_levelArray){}
+			:levelMap(i_levelArray){}
 	};
 
 	ScoreRankingData();

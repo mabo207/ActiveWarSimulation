@@ -181,10 +181,10 @@ void StageSelectScene::Draw()const{
 			size_t drawCount=0;
 			const size_t totalDrawCount=5;
 			//スコアデータの描画
-			const std::map<StageLevel,ScoreRankingData::LevelData>::const_iterator itLevel=m_stageInfoVec[m_selectStageIndex].m_rankingVec.levelArray.find(level);
-			if(itLevel!=m_stageInfoVec[m_selectStageIndex].m_rankingVec.levelArray.end()){
-				std::set<ScoreRankingData::PlayerData>::const_iterator it=itLevel->second.playerDataVec.begin();
-				const std::set<ScoreRankingData::PlayerData>::const_iterator ite=itLevel->second.playerDataVec.end();
+			const std::map<StageLevel,ScoreRankingData::LevelData>::const_iterator itLevel=m_stageInfoVec[m_selectStageIndex].m_rankingVec.levelMap.find(level);
+			if(itLevel!=m_stageInfoVec[m_selectStageIndex].m_rankingVec.levelMap.end()){
+				std::set<ScoreRankingData::PlayerData>::const_iterator it=itLevel->second.playerDataSet.begin();
+				const std::set<ScoreRankingData::PlayerData>::const_iterator ite=itLevel->second.playerDataSet.end();
 				for(;drawCount<totalDrawCount;drawCount++){
 					if(it!=ite){
 						DrawStringToHandle(rankingStrX,rankingStrY,(it->name+"        "+std::to_string(it->score)).c_str(),GetColor(255,255,255),m_explainFont);
