@@ -50,12 +50,6 @@ protected:
 	std::shared_ptr<BaseUIInStageSelect> m_ui;//現在のUI
 	std::shared_ptr<BaseUIInStageSelect::ControledData> m_uiControledData;//UIが管理するデータ
 	
-	//マウスでクリックできるボタン群
-	const MouseButtonUI m_beforeStageButton;
-	const MouseButtonUI m_afterStageButton;
-	const MouseButtonUI m_backButton;
-	const MouseButtonUI m_playButton;
-
 	//グラフィック等
 	const int m_backPic;
 	const int m_stageNameFont;

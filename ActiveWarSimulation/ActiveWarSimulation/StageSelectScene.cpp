@@ -36,10 +36,6 @@ std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateScen
 
 StageSelectScene::StageSelectScene()
 	:m_nextSceneName(NextSceneName::e_title)
-	,m_beforeStageButton(100,300,LoadGraphEX(FilePath::graphicDir+"beforeItem.png"))
-	,m_afterStageButton(1770,300,LoadGraphEX(FilePath::graphicDir+"afterItem.png"))
-	,m_backButton(60,940,LoadGraphEX(FilePath::graphicDir+"backButton.png"))
-	,m_playButton(900,940,LoadGraphEX(FilePath::graphicDir+"combatButton.png"))
 	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
@@ -138,54 +134,12 @@ void StageSelectScene::Draw()const{
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
 	DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
 	SetDrawBlendMode(mode,pal);
-	//ボタンの描画
-	m_beforeStageButton.DrawButton();
-	m_afterStageButton.DrawButton();
-	m_backButton.DrawButton();
-	m_playButton.DrawButton();
-	//ステージ情報の描画
-	if(m_uiControledData->stageIndex!=-1){
-		int stageDx,stageDy;
-		const int explainX=400;
-		GetGraphSize(m_stageInfoVec[m_uiControledData->stageIndex].m_mapPic,&stageDx,&stageDy);
-		DrawRotaGraph(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/3,((double)CommonConstParameter::gameResolutionY/2)/stageDy,0.0,m_stageInfoVec[m_uiControledData->stageIndex].m_mapPic,TRUE);
-		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_uiControledData->stageIndex].m_titleName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
-		int explainY=CommonConstParameter::gameResolutionY*2/3;
-		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_uiControledData->stageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
-		//難易度ごとにランキング情報を描画
-		int rankingStrX=200;
-		for(const StageLevel &level:StageLevel::levelArray){
-			int rankingStrY=explainY;
-			const int rankingStrDY=GetFontSizeToHandle(m_explainFont);
-			//難易度文字列の描画
-			DrawStringToHandle(rankingStrX,rankingStrY,level.GetString().c_str(),GetColor(255,255,255),m_explainFont);
-			rankingStrY+=rankingStrDY;
-			size_t drawCount=0;
-			const size_t totalDrawCount=5;
-			//スコアデータの描画
-			const std::map<StageLevel,ScoreRankingData::LevelData>::const_iterator itLevel=m_stageInfoVec[m_uiControledData->stageIndex].m_rankingVec.levelMap.find(level);
-			if(itLevel!=m_stageInfoVec[m_uiControledData->stageIndex].m_rankingVec.levelMap.end()){
-				std::set<ScoreRankingData::PlayerData>::const_iterator it=itLevel->second.playerDataSet.begin();
-				const std::set<ScoreRankingData::PlayerData>::const_iterator ite=itLevel->second.playerDataSet.end();
-				for(;drawCount<totalDrawCount;drawCount++){
-					if(it!=ite){
-						DrawStringToHandle(rankingStrX,rankingStrY,(it->name+"        "+std::to_string(it->score)).c_str(),GetColor(255,255,255),m_explainFont);
-						it++;
-					} else{
-						break;
-					}
-					rankingStrY+=rankingStrDY;
-				}
-			}
-			//スコアデータが足りない部分の描画
-			for(;drawCount<totalDrawCount;drawCount++){
-				//データが足りない場合は---を表示
-				DrawStringToHandle(rankingStrX,rankingStrY,"------        -----",GetColor(255,255,255),m_explainFont);
-				rankingStrY+=rankingStrDY;
-			}
-			rankingStrX+=400;
-		}
+	//ステージ一覧の描画
+	for(const StageInfo &info:m_stageInfoVec){
+		DrawCircleAA(info.m_pos.x,info.m_pos.y,30,10,GetColor(0,0,255),TRUE);
 	}
+	//UIの描画
+	m_ui->Draw();
 }
 
 std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
