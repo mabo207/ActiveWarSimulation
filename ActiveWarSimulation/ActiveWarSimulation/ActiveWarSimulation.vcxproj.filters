@@ -276,6 +276,9 @@
     <ClCompile Include="BaseUIInStageSelect.cpp">
       <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
     </ClCompile>
+    <ClCompile Include="StageInfoInStageSelect.cpp">
+      <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -432,6 +435,9 @@
       <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
     </ClInclude>
     <ClInclude Include="StageSelectUIInStageSelect.h">
+      <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
+    </ClInclude>
+    <ClInclude Include="StageInfoInStageSelect.h">
       <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
     </ClInclude>
   </ItemGroup>

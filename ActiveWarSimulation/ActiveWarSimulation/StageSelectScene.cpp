@@ -5,7 +5,6 @@
 #include<Windows.h>
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
-#include"StageInfoReader.h"
 #include"FilePath.h"
 
 #include"BattleScene.h"
@@ -14,22 +13,6 @@
 #include"StageSelectUIInStageSelect.h"
 
 //----------------------StageSelectScene------------------
-StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData)
-	:m_mapPic(mapPic)
-	,m_dirName(dirName)
-	,m_explain(explain)
-	,m_rankingVec(rankingData.GetStageScoreData(dirName))
-{
-	//ステージ情報の読み取り
-	const StageInfoReader reader(dirName);
-	m_titleName=reader.GetTitleName();
-	m_pos=reader.GetPos();
-}
-
-StageSelectScene::StageInfo::~StageInfo(){
-	//DeleteGraphEX(m_mapPic);
-}
-
 std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateScene()const{
 	return std::shared_ptr<GameScene>(new StageSelectScene());
 }
@@ -79,10 +62,10 @@ StageSelectScene::StageSelectScene()
 			}
 		}
 	} while(FindNextFile(hFind,&find_dir_data));
-	//各フォルダの中身を検索して、StageInfoを構成していく
+	//各フォルダの中身を検索して、StageInfoInStageSelectを構成していく
 	for(const std::string &dirName:dirNameVec){
 		if(dirName!="demo" && dirName!="tutorial" && dirName!="tutorial_2"){
-			m_stageInfoVec.push_back(StageInfo(
+			m_stageInfoVec.push_back(StageInfoInStageSelect(
 				LoadGraphEX((FilePath::stageDir+dirName+"/nonfree/minimap.png").c_str())
 				,dirName
 				,FileStrRead((FilePath::stageDir+dirName+"/explain.txt").c_str())
@@ -97,7 +80,7 @@ StageSelectScene::StageSelectScene()
 StageSelectScene::~StageSelectScene(){
 	//グラフィックの解放
 	DeleteGraphEX(m_backPic);
-	for(const StageInfo &info:m_stageInfoVec){
+	for(const StageInfoInStageSelect &info:m_stageInfoVec){
 		DeleteGraphEX(info.m_mapPic);
 	}
 	//フォントの解放
@@ -135,7 +118,7 @@ void StageSelectScene::Draw()const{
 	DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
 	SetDrawBlendMode(mode,pal);
 	//ステージ一覧の描画
-	for(const StageInfo &info:m_stageInfoVec){
+	for(const StageInfoInStageSelect &info:m_stageInfoVec){
 		DrawCircleAA(info.m_pos.x,info.m_pos.y,30,10,GetColor(0,0,255),TRUE);
 	}
 	//UIの描画

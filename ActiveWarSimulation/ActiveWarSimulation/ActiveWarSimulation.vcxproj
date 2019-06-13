@@ -183,6 +183,7 @@
     <ClCompile Include="ScoreObserver.cpp" />
     <ClCompile Include="ScoreRankingData.cpp" />
     <ClCompile Include="StageClearScene.cpp" />
+    <ClCompile Include="StageInfoInStageSelect.cpp" />
     <ClCompile Include="StageInfoReader.cpp" />
     <ClCompile Include="StageLevel.cpp" />
     <ClCompile Include="BaseUIInStageSelect.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="ScoreRankingData.h" />
     <ClInclude Include="StageClearScene.h" />
+    <ClInclude Include="StageInfoInStageSelect.h" />
     <ClInclude Include="StageInfoReader.h" />
     <ClInclude Include="StageLevel.h" />
     <ClInclude Include="BaseUIInStageSelect.h" />
