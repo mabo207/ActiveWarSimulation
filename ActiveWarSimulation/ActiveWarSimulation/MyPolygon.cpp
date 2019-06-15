@@ -397,3 +397,8 @@ void MyPolygon::WriteOutShape(std::ofstream &ofs)const{
 	}
 	ofs<<ender<<ender;//ofs<<"))";	
 }
+
+MyPolygon MyPolygon::CreateRectangle(Vector2D begin,Vector2D offset,Fix::Kind fix){
+	std::vector<Vector2D> points={begin+Vector2D(offset.x,0.0f),begin+offset,begin+Vector2D(0.0f,offset.y)};
+	return MyPolygon(begin,points,fix);
+}
