@@ -3,12 +3,12 @@
 
 #include<string>
 #include<vector>
-#include<array>
 #include<map>
 #include<set>
 #include<exception>
 #include<fstream>
 #include"StringBuilder.h"
+#include"StageLevel.h"
 
 //クリアスコアのランキングを管理するクラス
 //ローカルでは10KB~100KBくらいのテキストデータを想定している。
@@ -40,36 +40,33 @@ public:
 	};
 	struct LevelData{
 		//１つのステージレベルに対するスコアデータ
-		std::set<PlayerData> playerDataVec;//ランキングに表示されるプレイヤーデータ(挿入を可能にするためにconstにしない)
+		std::set<PlayerData> playerDataSet;//ランキングに表示されるプレイヤーデータ(挿入を可能にするためにconstにしない)
 		
 		LevelData(){}
-		explicit LevelData(const StringBuilder &infoBuilder);//メンバ変数をconstにする必用はないので、LevelData内で読み込み文字列の処理をして問題ない
+		LevelData(const StringBuilder &infoBuilder);//メンバ変数をconstにする必用はないので、LevelData内で読み込み文字列の処理をして問題ない
 		~LevelData(){}
 		void Output(std::ofstream &ofs)const;//データ出力
 	};
 	struct StageScoreData{
 		//ステージが持っているランキングに関するデータ
 	public:
-		static const size_t levelCount=4;
-
-		const std::string dirName;//ステージのディレクトリ名
-		std::array<LevelData,levelCount> levelArray;//難易度ごとのスコアデータ(挿入の可能性があるので、constにできない)
+		std::map<StageLevel,LevelData> levelMap;//難易度ごとのスコアデータ(挿入の可能性があるので、constにできない)
 
 		StageScoreData();//「ディレクトリのランキングデータがない」という場合でもプログラムをちゃんと動作させたいため。
 		~StageScoreData(){}
 		void Output(std::ofstream &ofs)const;//データ出力
-		static StageScoreData Create(const std::string &i_dirName,const std::array<const StringBuilder *,levelCount> &infoBuilderPointerArray);//文字列から作成
+		static StageScoreData Create(const StringBuilder &infoBuilder);//文字列から作成
 
 	private:
-		StageScoreData(const std::string &i_dirName,const std::array<LevelData,levelCount> &i_levelArray)
-			:dirName(i_dirName),levelArray(i_levelArray){}
+		StageScoreData(const std::map<StageLevel,LevelData> &i_levelArray)
+			:levelMap(i_levelArray){}
 	};
 
 	ScoreRankingData();
 	~ScoreRankingData();
 	bool Save()const;//現在のメンバ変数を用いて記録する
 	const StageScoreData GetStageScoreData(const std::string &dirName)const;
-	bool InputData(PlayerData &inputData,const std::string &dirName,const int level);
+	bool InputData(PlayerData &inputData,const std::string &dirName,const StageLevel level);
 
 private:
 	std::map<std::string,StageScoreData> m_stageDataMap;//全ステージのスコア一覧

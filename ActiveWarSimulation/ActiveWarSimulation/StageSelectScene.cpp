@@ -5,64 +5,34 @@
 #include<Windows.h>
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
-#include"AnySceneCallable.h"
+#include"FilePath.h"
 
 #include"BattleScene.h"
 #include"TitleScene.h"
 
+#include"StageSelectUIInStageSelect.h"
+#include"LevelSelectUIInStageSelect.h"
+
 //----------------------StageSelectScene------------------
-StageSelectScene::StageInfo::StageInfo(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData)
-	:m_mapPic(mapPic),m_dirName(dirName),m_explain(explain)
-{
-	//ステージ情報の読み取り
-	const StageInfoReader reader(dirName);
-	m_titleName=reader.GetTitleName();
-	m_level=reader.GetLevel();
-	//対応するステージ・レベルのランキングデータを取ってくる
-	const int index=m_level-1;
-	if(index>=0 && index<ScoreRankingData::StageScoreData::levelCount){
-		const ScoreRankingData::LevelData levelData=rankingData.GetStageScoreData(dirName).levelArray[index];
-		for(const ScoreRankingData::PlayerData &pd:levelData.playerDataVec){
-			m_rankingVec.push_back(pd);
-		}
-	}
-}
-
-StageSelectScene::StageInfo::~StageInfo(){
-	//DeleteGraphEX(m_mapPic);
-}
-
 std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateScene()const{
 	return std::shared_ptr<GameScene>(new StageSelectScene());
 }
 
-std::string StageSelectScene::StageInfo::GetLevelStr()const{
-	std::string retStr="難易度　";
-	for(int i=0;i<m_level;i++){
-		retStr+="★";
-	}
-	return retStr;
-}
-
 StageSelectScene::StageSelectScene()
 	:m_nextSceneName(NextSceneName::e_title)
-	,m_beforeStageButton(100,300,LoadGraphEX("Graphic/beforeItem.png"))
-	,m_afterStageButton(1770,300,LoadGraphEX("Graphic/afterItem.png"))
-	,m_backButton(60,940,LoadGraphEX("Graphic/backButton.png"))
-	,m_playButton(900,940,LoadGraphEX("Graphic/combatButton.png"))
-	,m_backPic(LoadGraphEX("Graphic/nonfree/titleScene.png"))
+	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
+	,m_uiControledData(new BaseUIInStageSelect::ControledData(0,StageLevel::e_easy))
 {
-	FpsMeasuring fps;
-	//スコアデータの作成
+	//スコアデータの読み込み
 	const ScoreRankingData rankingData;
 	//フォルダを検索
 	char cdir[1024];
 	GetCurrentDirectory(1024,cdir);
 	const std::string cdir_str(cdir);
 	WIN32_FIND_DATA find_dir_data;
-	HANDLE hFind=FindFirstFile((cdir_str+"/Stage/*").c_str(),&find_dir_data);
+	HANDLE hFind=FindFirstFile((cdir_str+"/"+FilePath::stageDir+"/*").c_str(),&find_dir_data);
 	auto GetFileName=[](WIN32_FIND_DATA data){
 		//find_dir_dataのファイル名をstd::string型に変換する関数
 		std::string s;
@@ -93,29 +63,25 @@ StageSelectScene::StageSelectScene()
 			}
 		}
 	} while(FindNextFile(hFind,&find_dir_data));
-	//各フォルダの中身を検索して、StageInfoを構成していく
+	//各フォルダの中身を検索して、StageInfoInStageSelectを構成していく
 	for(const std::string &dirName:dirNameVec){
 		if(dirName!="demo" && dirName!="tutorial" && dirName!="tutorial_2"){
-			m_stageInfoVec.push_back(StageInfo(
-				LoadGraphEX(("Stage/"+dirName+"/nonfree/minimap.png").c_str())
+			m_stageInfoVec.push_back(StageInfoInStageSelect(
+				LoadGraphEX((FilePath::stageDir+dirName+"/nonfree/minimap.png").c_str())
 				,dirName
-				,FileStrRead(("Stage/"+dirName+"/explain.txt").c_str())
+				,FileStrRead((FilePath::stageDir+dirName+"/explain.txt").c_str())
 				,rankingData
 			));
 		}
 	}
-	//インデックスの初期化
-	if(m_stageInfoVec.empty()){
-		m_selectStageIndex=-1;
-	} else{
-		m_selectStageIndex=0;
-	}
+	//UIの作成
+	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec,m_stageNameFont,m_explainFont));
 }
 
 StageSelectScene::~StageSelectScene(){
 	//グラフィックの解放
 	DeleteGraphEX(m_backPic);
-	for(const StageInfo &info:m_stageInfoVec){
+	for(const StageInfoInStageSelect &info:m_stageInfoVec){
 		DeleteGraphEX(info.m_mapPic);
 	}
 	//フォントの解放
@@ -127,35 +93,21 @@ StageSelectScene::~StageSelectScene(){
 
 int StageSelectScene::Calculate(){
 	//選択ステージの更新
-	if(m_selectStageIndex!=-1){
-		//-1の時は読み込んでいるステージがないので更新はできない
-		const size_t beforeIndex=m_selectStageIndex;//効果音再生の可否判定に用いる
-		const size_t infoSize=m_stageInfoVec.size();
-		if(keyboard_get(KEY_INPUT_LEFT)==1 || m_beforeStageButton.JudgePressMoment()){
-			m_selectStageIndex=(m_selectStageIndex+infoSize-1)%infoSize;
-		} else if(keyboard_get(KEY_INPUT_RIGHT)==1 || m_afterStageButton.JudgePressMoment()){
-			m_selectStageIndex=(m_selectStageIndex+1)%infoSize;
-		}
-		if(m_selectStageIndex!=beforeIndex){
-			//変更があれば効果音再生
-			PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);
-		}
-	}
-
-	//遷移系ボタンの処理
-	if(m_selectStageIndex!=-1 &&
-		(keyboard_get(KEY_INPUT_Z)==1 || m_playButton.JudgePressMoment())
-		)
-	{
+	const auto updateResult=m_ui->Update();
+	if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoBattle){
 		//ゲームプレイへ進む
 		m_nextSceneName=NextSceneName::e_battle;
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音
 		return -1;
-	} else if(keyboard_get(KEY_INPUT_X)==1 || m_backButton.JudgePressMoment()){
+	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoTitle){
 		//タイトル画面へ戻る
 		m_nextSceneName=NextSceneName::e_title;
-		PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);//戻るの効果音(鳴ると同時にデータが消えるので鳴らない)
-		return -2;
+		return -1;
+	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoStageSelect){
+		//ステージセレクトにUI遷移
+		m_ui=std::shared_ptr<BaseUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec,m_stageNameFont,m_explainFont));
+	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoLevelSelect){
+		//レベルセレクトにUI遷移
+		m_ui=std::shared_ptr<BaseUIInStageSelect>(new LevelSelectUIInStageSelect(m_uiControledData,m_stageInfoVec[m_uiControledData->stageIndex],m_stageNameFont,m_explainFont));
 	}
 
 	return 0;
@@ -170,31 +122,12 @@ void StageSelectScene::Draw()const{
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
 	DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
 	SetDrawBlendMode(mode,pal);
-	//ボタンの描画
-	m_beforeStageButton.DrawButton();
-	m_afterStageButton.DrawButton();
-	m_backButton.DrawButton();
-	m_playButton.DrawButton();
-	//ステージ情報の描画
-	if(m_selectStageIndex!=-1){
-		int stageDx,stageDy;
-		const int explainX=400;
-		GetGraphSize(m_stageInfoVec[m_selectStageIndex].m_mapPic,&stageDx,&stageDy);
-		DrawRotaGraph(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/3,((double)CommonConstParameter::gameResolutionY/2)/stageDy,0.0,m_stageInfoVec[m_selectStageIndex].m_mapPic,TRUE);
-		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY*3/5,m_stageInfoVec[m_selectStageIndex].m_titleName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
-		int explainY=CommonConstParameter::gameResolutionY*2/3;
-		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].GetLevelStr().c_str(),GetColor(255,255,255),m_explainFont);
-		explainY+=DrawStringNewLineToHandle(explainX,explainY,CommonConstParameter::gameResolutionX-explainX*2,CommonConstParameter::gameResolutionY/4,m_stageInfoVec[m_selectStageIndex].m_explain.c_str(),GetColor(255,255,255),m_explainFont);
-		for(size_t i=0,dataSize=m_stageInfoVec[m_selectStageIndex].m_rankingVec.size();i<5;i++){
-			explainY+=30;
-			if(i<dataSize){
-				DrawStringToHandle(explainX,explainY,(m_stageInfoVec[m_selectStageIndex].m_rankingVec[i].name+"        "+std::to_string(m_stageInfoVec[m_selectStageIndex].m_rankingVec[i].score)).c_str(),GetColor(255,255,255),m_explainFont);
-			} else{
-				//データが足りない場合は---を表示
-				DrawStringToHandle(explainX,explainY,"------        -----",GetColor(255,255,255),m_explainFont);
-			}
-		}
+	//ステージ一覧の描画
+	for(const StageInfoInStageSelect &info:m_stageInfoVec){
+		DrawCircleAA(info.m_pos.x,info.m_pos.y,30,10,GetColor(0,0,255),TRUE);
 	}
+	//UIの描画
+	m_ui->Draw();
 }
 
 std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
@@ -203,9 +136,9 @@ std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr
 		return CreateFadeOutInScene(thisSharedPtr,titleFactory,15,15);
 	} else if(m_nextSceneName==NextSceneName::e_battle){
 		const std::shared_ptr<GameScene::SceneFactory> battleFactory=std::make_shared<BattleScene::BattleSceneFactory>(
-			m_stageInfoVec[m_selectStageIndex].m_dirName
-			,m_stageInfoVec[m_selectStageIndex].m_titleName
-			,m_stageInfoVec[m_selectStageIndex].m_level);
+			m_stageInfoVec[m_uiControledData->stageIndex].m_dirName
+			,m_stageInfoVec[m_uiControledData->stageIndex].m_titleName
+			,m_uiControledData->selectLevel);
 		return CreateFadeOutInScene(thisSharedPtr,battleFactory,15,15);
 	}
 	return std::shared_ptr<GameScene>();

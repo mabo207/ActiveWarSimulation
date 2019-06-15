@@ -5,6 +5,7 @@
 #include"GeneralPurposeResourceManager.h"
 #include<cmath>
 #include"CommonConstParameter.h"
+#include"FilePath.h"
 
 //-------------------TutorialPlayerMoveScene---------------
 TutorialPlayerMoveScene::TutorialPlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
@@ -75,7 +76,7 @@ bool TutorialPlayerMoveScene::TutorialMoveProcess(int retIntPal){
 				//ポップアップを閉じた時にすぐにポップアップが出ないようにする
 				data->m_displayPopFlag=false;
 				//到達していないのに動けなくなった場合は、ポップアップを出す
-				const std::shared_ptr<TutorialBattleSceneData::TutorialBase> insertData(new TutorialBattleSceneData::ExplainTutorial("Graphic/tutorial/nonfree/moveCancel.png"));
+				const std::shared_ptr<TutorialBattleSceneData::TutorialBase> insertData(new TutorialBattleSceneData::ExplainTutorial((FilePath::graphicDir+"tutorial/nonfree/moveCancel.png").c_str()));
 				m_tutorialBattleSceneData->m_tutorialData.insert(m_tutorialBattleSceneData->m_tutorialData.begin(),insertData);
 				//フラグの更新
 				UpdateFlagOnlyInherit();

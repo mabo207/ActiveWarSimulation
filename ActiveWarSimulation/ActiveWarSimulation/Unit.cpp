@@ -7,6 +7,7 @@
 #include"CommonConstParameter.h"
 #include"BattleSceneData.h"
 #include<math.h>
+#include"FilePath.h"
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
@@ -114,7 +115,7 @@ Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D positio
 	,m_battleStatus(100,Unit::BattleStatus::maxOP,team,aitype,aiGroup,aiLinkage,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
 //	,m_hpFont(CreateFontToHandleEX("04かんじゅくゴシック",hpFontSize,2,DX_FONTTYPE_EDGE,-1,2))
-	,m_hpFont(LoadFontDataToHandleEX("Font/UnitHPFont.dft",2))
+	,m_hpFont(LoadFontDataToHandleEX(FilePath::fontDir+"UnitHPFont.dft",2))
 {
 	//テスト用のコンストラクタ
 	m_battleStatus.HP=m_baseStatus.maxHP;
@@ -423,27 +424,27 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 	case(Profession::e_soldier):
 		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),6+(int)(lv*0.5),5+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),5+(int)(lv*0.5),6);
 		weapon=Weapon::GetWeapon("鉄の剣");
-		gHandle=LoadGraphEX("Graphic/nonfree/soldier.png");
+		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/soldier.png");
 		break;
 	case(Profession::e_archer):
 		baseStatus=BaseStatus(name,profession,lv,18+(int)(lv*0.75),5+(int)(lv*0.45),4+(int)(lv*0.4),2+(int)(lv*0.1),4+(int)(lv*0.4),3+(int)(lv*0.3),6);
 		weapon=Weapon::GetWeapon("鉄の弓");
-		gHandle=LoadGraphEX("Graphic/nonfree/archer.png");
+		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/archer.png");
 		break;
 	case(Profession::e_armer):
 		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),7+(int)(lv*0.6),7+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),1+(int)(lv*0.2),3);
 		weapon=Weapon::GetWeapon("鉄の槍");
-		gHandle=LoadGraphEX("Graphic/nonfree/armerknight.png");
+		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/armerknight.png");
 		break;
 	case(Profession::e_mage):
 		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),6+(int)(lv*0.45),5+(int)(lv*0.5),4);
 		weapon=Weapon::GetWeapon("ファイアーの書");
-		gHandle=LoadGraphEX("Graphic/nonfree/mage.png");
+		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/mage.png");
 		break;
 	case(Profession::e_healer):
 		baseStatus=BaseStatus(name,profession,lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
 		weapon=Weapon::GetWeapon("ヒールの杖");
-		gHandle=LoadGraphEX("Graphic/nonfree/healer.png");
+		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/healer.png");
 		break;
 	}
 	return new Unit(baseStatus,weapon,position,gHandle,team,aitype,aiGroup,aiLinkage);

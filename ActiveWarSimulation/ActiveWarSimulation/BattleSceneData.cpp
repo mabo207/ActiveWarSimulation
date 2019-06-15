@@ -9,16 +9,17 @@
 #include"GameScene.h"
 #include"CommonConstParameter.h"
 #include"StringBuilder.h"
+#include"FilePath.h"
 
 //----------------------BattleSceneData----------------------
 const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);
 const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonConstParameter::gameResolutionX-BattleSceneData::mapDrawSize.y);
 
-BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const int level)
+BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel level)
 	:BattleSceneData(stageDirName,titleName,level,BattleSceneData::PlayMode::e_normal)
 {}
 
-BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const int level,const BattleSceneData::PlayMode playMode)
+BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel level,const BattleSceneData::PlayMode playMode)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr)
 	,m_totalOP(0.0f)
@@ -26,21 +27,21 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_stageDirName(stageDirName)
 	,m_stageTitleName(titleName)
 	,m_stageLevel(level)
-	,m_turnTimerPic(LoadGraphEX("Graphic/turnTimer.png"))
-	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
+	,m_turnTimerPic(LoadGraphEX(FilePath::graphicDir+"turnTimer.png"))
+	,m_orderFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
 	,m_playMode(playMode)
-	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
-	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/wild-road_loop/"))
-	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
-	,m_attackSound(LoadSoundMem("Sound/effect/nonfree/damage.ogg"))
-	,m_healSound(LoadSoundMem("Sound/effect/nonfree/recover.ogg"))
-	,m_footSound(LoadSoundMem("Sound/effect/nonfree/foot.ogg"))
+	,m_mapPic(LoadGraphEX((FilePath::stageDir+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
+	,m_mapBGM(LoadBGMMem(FilePath::bgmDir+"/nonfree/wild-road_loop/"))
+	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
+	,m_attackSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/damage.ogg").c_str()))
+	,m_healSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/recover.ogg").c_str()))
+	,m_footSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/foot.ogg").c_str()))
 {
 	//グラフィックデータの読み込み
-	LoadDivGraphEX("Graphic/drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
+	LoadDivGraphEX(FilePath::graphicDir+"drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
 
 	//ファイルからステージを読み込み
-	const std::string stagedir("Stage/"+std::string(stageDirName)+"/");
+	const std::string stagedir(FilePath::stageDir+std::string(stageDirName)+"/");
 	//ファイルを開きすべての文字列を書き出す
 	std::string str=FileStrRead((stagedir+"stage.txt").c_str());
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
@@ -54,7 +55,8 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	//ファイルからステージのグラフィックデータの読み込み
 	m_stageSize=mapDrawSize;//本来はステージの大きさはグラフィックデータの縦横の大きさで決める
 	//ファイルからユニットを読み込み
-	StringBuilder unitlist(FileStrRead((stagedir+"unitlist.txt").c_str()),'\n','{','}');
+	const std::string unitListFileName="unitlist_"+m_stageLevel.GetString()+".txt";
+	StringBuilder unitlist(FileStrRead((stagedir+unitListFileName).c_str()),'\n','{','}');
 	for(StringBuilder &unitdata:unitlist.m_vec){
 		unitdata.Split(',','(',')');
 		//まずモブ用の設定をするか固定ユニット用の設定をするかを判定する

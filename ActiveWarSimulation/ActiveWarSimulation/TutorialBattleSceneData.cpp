@@ -6,6 +6,7 @@
 #include"BattleSceneData.h"
 #include"FileRead.h"
 #include"StringBuilder.h"
+#include"FilePath.h"
 
 //----------------TutorialBattleSceneData::MoveTutorial----------------------
 const float TutorialBattleSceneData::MoveTutorial::minDisplayPopOP=60.0f;
@@ -63,7 +64,7 @@ std::shared_ptr<TutorialBattleSceneData::TutorialBase> TutorialBattleSceneData::
 			return std::shared_ptr<TutorialBase>(new WaitTutorial());
 		} else if(info.m_vec[0].GetString()=="explain"){
 			//ExplainTutorialには画像ファイル名が入っている
-			return std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+gameData.m_stageDirName+info.m_vec[1].GetString()).c_str()));
+			return std::shared_ptr<TutorialBase>(new ExplainTutorial((FilePath::stageDir+gameData.m_stageDirName+info.m_vec[1].GetString()).c_str()));
 		} else if(info.m_vec[0].GetString()=="blank"){
 			//BlankTutorialには何もしない行動の回数が入っている
 			const int count=std::atoi(info.m_vec[1].GetString().c_str());
@@ -171,13 +172,13 @@ TutorialBattleSceneData::BlankTutorial::BlankTutorial(int count)
 void TutorialBattleSceneData::BlankTutorial::DrawSupplement(int font)const{}
 
 //----------------TutorialBattleSceneData-----------------------
-TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName,const std::string &titleName,const int stageLevel)
+TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel)
 	:BattleSceneData(stageDirName,titleName,stageLevel,PlayMode::e_tutorial)
 	,m_tutorialFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 {
 	//チュートリアルデータの読み込み
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-	StringBuilder sb(FileStrRead(("Stage/"+m_stageDirName+"/tutorialList.txt").c_str()),'\n','{','}');
+	StringBuilder sb(FileStrRead((FilePath::stageDir+m_stageDirName+"/tutorialList.txt").c_str()),'\n','{','}');
 	for(StringBuilder &ssb:sb.m_vec){
 		std::shared_ptr<TutorialBase> pt=TutorialBase::Create(ssb,*this);//sb,ssbは変更される
 		if(pt.get()!=nullptr){

@@ -3,6 +3,8 @@
 #include"GraphicControl.h"
 #include"GeneralPurposeResourceManager.h"
 #include<iostream>
+#include"FilePath.h"
+
 //----------------------PlayerMoveScene------------------------
 const std::array<std::function<std::pair<bool,int>(PlayerMoveScene&)>,11> PlayerMoveScene::inCalculateProcessFunction={
 	&PlayerMoveScene::AttackProcess
@@ -203,9 +205,9 @@ void PlayerMoveScene::EnableAllChangeInherit(){
 
 PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:MoveScene(battleSceneData)
-	,m_waitButton(1520,980,80,80,LoadGraphEX("Graphic/nextButton.png"))
-	,m_researchButton(1620,980,80,80,LoadGraphEX("Graphic/researchButton.png"))
-	,m_menuButton(1820,980,80,80,LoadGraphEX("Graphic/menuButton.png"))
+	,m_waitButton(1520,980,80,80,LoadGraphEX(FilePath::graphicDir+"nextButton.png"))
+	,m_researchButton(1620,980,80,80,LoadGraphEX(FilePath::graphicDir+"researchButton.png"))
+	,m_menuButton(1820,980,80,80,LoadGraphEX(FilePath::graphicDir+"menuButton.png"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_mouseLeftFlag(false)
 	,m_attackableOnlyChangeInherit(true)

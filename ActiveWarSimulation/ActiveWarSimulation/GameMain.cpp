@@ -8,6 +8,7 @@
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResourceManager.h"
+#include"FilePath.h"
 
 #include"TitleScene.h"
 #include"FadeInScene.h"
@@ -57,7 +58,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 			//画面縮小することによる撮影をする際はSetMouseDispFlagをFALSEにしてコンパイル
 			SetMouseDispFlag(TRUE);
-			int mousePic=LoadGraphEX("Graphic/mouseCursor.png");
+			int mousePic=LoadGraphEX(FilePath::graphicDir+"mouseCursor.png");
 			
 
 			//デバッグ用、処理時間の計測と表示
@@ -99,7 +100,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					FontControler_Init();
 					InitInputControler();
 					pGameScene=FadeInScene::FadeInSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>(),15).CreateScene();
-					mousePic=LoadGraphEX("Graphic/mouseCursor.png");//マウスの読み込みし直し
+					mousePic=LoadGraphEX(FilePath::graphicDir+"mouseCursor.png");//マウスの読み込みし直し
 					SetMouseDispFlag(mouseDispFlag);
 				} else if(keyboard_get(KEY_INPUT_F2)==60){
 					//F2長押しで、ウインドウサイズを1.0倍に

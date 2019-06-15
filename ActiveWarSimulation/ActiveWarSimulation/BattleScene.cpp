@@ -6,7 +6,7 @@
 #include"CommonConstParameter.h"
 
 //----------------------BattleScene::BattleSceneFactory----------------------
-BattleScene::BattleSceneFactory::BattleSceneFactory(const std::string &stageDirName,const std::string &title,const int level)
+BattleScene::BattleSceneFactory::BattleSceneFactory(const std::string &stageDirName,const std::string &title,const StageLevel level)
 	:SceneFactory()
 	,m_stageDirName(stageDirName)
 	,m_title(title)
@@ -34,7 +34,7 @@ BattleScene::BattleScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	m_sceneData=VGetSwitchUnitScene();
 }
 
-BattleScene::BattleScene(const std::string &stageDirName,const std::string &titleName,const int stageLevel)
+BattleScene::BattleScene(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel)
 	:BattleScene(std::shared_ptr<BattleSceneData>(new BattleSceneData(stageDirName,titleName,stageLevel))){}
 
 BattleScene::~BattleScene(){}
