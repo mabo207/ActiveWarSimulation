@@ -76,9 +76,7 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 void LevelSelectUIInStageSelect::Draw()const{
 	const int explainFontSize=GetFontSizeToHandle(m_explainFont);
 	//左側にステージを表示
-	DrawGraph(200,300,m_stageInfo.m_mapPic,TRUE);
-	DrawStringCenterBaseToHandle(400,600,m_stageInfo.m_titleName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
-	DrawStringNewLineToHandle(150,675,500,300,m_stageInfo.m_explain.c_str(),GetColor(255,255,255),m_explainFont,2);
+	m_stageInfo.DrawInfo(200,300,m_stageNameFont,m_explainFont);
 	//右側にレベル選択を表示
 	for(size_t i=0;i<StageLevel::levelCount;i++){
 		const int x=(int)levelBox[i].GetPosition().x,y=(int)levelBox[i].GetPosition().y;

@@ -81,23 +81,19 @@ void StageSelectUIInStageSelect::Draw()const{
 			//場所の協調
 			const Vector2D pos=m_stageInfoVec[lock->stageIndex].m_pos;
 			DrawCircleAA(pos.x,pos.y,30,10,GetColor(255,255,255),TRUE);
-			//ステージ絵の描画
+			//ステージ情報の描画
 			int picX,picY;
 			if((int)pos.x<CommonConstParameter::gameResolutionX/2){
-				picX=CommonConstParameter::gameResolutionX*3/4;
+				picX=CommonConstParameter::gameResolutionX*5/8;
 			} else{
-				picX=CommonConstParameter::gameResolutionX/4;
+				picX=CommonConstParameter::gameResolutionX/8;
 			}
 			if((int)pos.y<CommonConstParameter::gameResolutionY/2){
-				picY=CommonConstParameter::gameResolutionY*3/4;
+				picY=CommonConstParameter::gameResolutionY/2;
 			} else{
-				picY=CommonConstParameter::gameResolutionY/4;
+				picY=20;
 			}
-			int picDX,picDY;
-			GetGraphSize(m_stageInfoVec[lock->stageIndex].m_mapPic,&picDX,&picDY);
-			DrawGraph(picX-picDX/2,picY-picDY/2,m_stageInfoVec[lock->stageIndex].m_mapPic,TRUE);
-			//ステージ情報の描画
-			
+			m_stageInfoVec[lock->stageIndex].DrawInfo(picX,picY,m_stageNameFont,m_explainFont);
 		}
 	}
 }
