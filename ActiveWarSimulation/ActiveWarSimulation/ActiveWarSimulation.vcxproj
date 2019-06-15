@@ -160,6 +160,7 @@
     <ClCompile Include="FinishLog.cpp" />
     <ClCompile Include="InitLog.cpp" />
     <ClCompile Include="LatticeBattleField.cpp" />
+    <ClCompile Include="LevelSelectUIInStageSelect.cpp" />
     <ClCompile Include="LogElement.cpp" />
     <ClCompile Include="BattleScene.cpp" />
     <ClCompile Include="BattleSceneData.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FinishLog.h" />
     <ClInclude Include="LatticeBattleField.h" />
+    <ClInclude Include="LevelSelectUIInStageSelect.h" />
     <ClInclude Include="LogElement.h" />
     <ClInclude Include="BattleScene.h" />
     <ClInclude Include="BattleSceneData.h" />
