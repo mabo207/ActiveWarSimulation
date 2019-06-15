@@ -75,7 +75,7 @@ StageSelectScene::StageSelectScene()
 		}
 	}
 	//UIの作成
-	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec));
+	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec,m_stageNameFont,m_explainFont));
 }
 
 StageSelectScene::~StageSelectScene(){
@@ -104,10 +104,10 @@ int StageSelectScene::Calculate(){
 		return -1;
 	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoStageSelect){
 		//ステージセレクトにUI遷移
-		m_ui=std::shared_ptr<BaseUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec));
+		m_ui=std::shared_ptr<BaseUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec,m_stageNameFont,m_explainFont));
 	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoLevelSelect){
 		//レベルセレクトにUI遷移
-		m_ui=std::shared_ptr<BaseUIInStageSelect>(new LevelSelectUIInStageSelect(m_uiControledData,m_stageInfoVec[m_uiControledData->stageIndex],m_explainFont));
+		m_ui=std::shared_ptr<BaseUIInStageSelect>(new LevelSelectUIInStageSelect(m_uiControledData,m_stageInfoVec[m_uiControledData->stageIndex],m_stageNameFont,m_explainFont));
 	}
 
 	return 0;

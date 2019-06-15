@@ -15,9 +15,14 @@ namespace {
 }
 
 //-------------------LevelSelectUIInStageSelect----------------------
-LevelSelectUIInStageSelect::LevelSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData,const StageInfoInStageSelect &stageInfo,int explainFont)
+LevelSelectUIInStageSelect::LevelSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData
+	,const StageInfoInStageSelect &stageInfo
+	,int stageNameFont
+	,int explainFont
+)
 	:BaseUIInStageSelect(controledData)
 	,m_stageInfo(stageInfo)
+	,m_stageNameFont(stageNameFont)
 	,m_explainFont(explainFont)
 {}
 
@@ -69,9 +74,11 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 }
 
 void LevelSelectUIInStageSelect::Draw()const{
-	//左側にステージを表示
-	DrawGraph(200,400,m_stageInfo.m_mapPic,TRUE);
 	const int explainFontSize=GetFontSizeToHandle(m_explainFont);
+	//左側にステージを表示
+	DrawGraph(200,300,m_stageInfo.m_mapPic,TRUE);
+	DrawStringCenterBaseToHandle(400,600,m_stageInfo.m_titleName.c_str(),GetColor(255,255,255),m_stageNameFont,false);
+	DrawStringNewLineToHandle(150,675,500,300,m_stageInfo.m_explain.c_str(),GetColor(255,255,255),m_explainFont,2);
 	//右側にレベル選択を表示
 	for(size_t i=0;i<StageLevel::levelCount;i++){
 		const int x=(int)levelBox[i].GetPosition().x,y=(int)levelBox[i].GetPosition().y;

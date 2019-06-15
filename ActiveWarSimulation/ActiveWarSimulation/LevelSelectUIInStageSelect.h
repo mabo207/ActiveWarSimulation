@@ -8,7 +8,11 @@
 //レベル選択をするUI
 class LevelSelectUIInStageSelect:public BaseUIInStageSelect{
 public:
-	LevelSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData,const StageInfoInStageSelect &stageInfo,int explainFont);
+	LevelSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData
+		,const StageInfoInStageSelect &stageInfo
+		,int stageNameFont
+		,int explainFont
+	);
 	~LevelSelectUIInStageSelect();
 	UpdateResult Update();
 	void Draw()const;
@@ -17,6 +21,7 @@ private:
 	const StageInfoInStageSelect m_stageInfo;
 
 	//参照しているフォント（ここで削除はしない）
+	const int m_stageNameFont;
 	const int m_explainFont;
 };
 

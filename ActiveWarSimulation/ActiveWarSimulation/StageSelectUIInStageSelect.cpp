@@ -4,9 +4,15 @@
 #include"GeneralPurposeResourceManager.h"
 #include"CommonConstParameter.h"
 
-StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData,const std::vector<StageInfoInStageSelect> &stageInfoVec)
+StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData
+	,const std::vector<StageInfoInStageSelect> &stageInfoVec
+	,int stageNameFont
+	,int explainFont
+)
 	:BaseUIInStageSelect(controledData)
 	,m_stageInfoVec(stageInfoVec)
+	,m_stageNameFont(stageNameFont)
+	,m_explainFont(explainFont)
 {}
 
 StageSelectUIInStageSelect::~StageSelectUIInStageSelect(){}
