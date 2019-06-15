@@ -53,7 +53,7 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 			//Œˆ’è‰¹‚ğo‚·
 			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
 			//‘JˆÚ
-			return UpdateResult::e_gotoBattle;
+			return UpdateResult::e_gotoLevelSelect;
 		}
 		//–ß‚é
 		if(keyboard_get(KEY_INPUT_X)==1 || mouse_get(MOUSE_INPUT_RIGHT)==1){
@@ -94,8 +94,4 @@ void StageSelectUIInStageSelect::Draw()const{
 			
 		}
 	}
-}
-
-std::shared_ptr<BaseUIInStageSelect> StageSelectUIInStageSelect::GetNextUI(const std::weak_ptr<ControledData> &controledData)const{
-	return std::shared_ptr<BaseUIInStageSelect>();
 }

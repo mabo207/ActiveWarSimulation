@@ -57,11 +57,11 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 		{
 			//ŽŸ‚Ì‘I‘ð‚Ö
 			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
-			return UpdateResult::e_nextUI;
+			return UpdateResult::e_gotoBattle;
 		} else if(keyboard_get(KEY_INPUT_X)==1 || mouse_get(MOUSE_INPUT_RIGHT)==1){
 			//–ß‚é
 			PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);
-			return UpdateResult::e_nextUI;
+			return UpdateResult::e_gotoStageSelect;
 		}
 	}
 
@@ -101,8 +101,4 @@ void LevelSelectUIInStageSelect::Draw()const{
 			levelBox[index].Draw(levelBox[index].GetPosition(),Vector2D(),GetColor(255,255,0),FALSE,3.0f);
 		}
 	}
-}
-
-std::shared_ptr<BaseUIInStageSelect> LevelSelectUIInStageSelect::GetNextUI(const std::weak_ptr<BaseUIInStageSelect::ControledData> &controledData)const{
-	return std::shared_ptr<BaseUIInStageSelect>();
 }

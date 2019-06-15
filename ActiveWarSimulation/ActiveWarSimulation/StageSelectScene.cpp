@@ -11,6 +11,7 @@
 #include"TitleScene.h"
 
 #include"StageSelectUIInStageSelect.h"
+#include"LevelSelectUIInStageSelect.h"
 
 //----------------------StageSelectScene------------------
 std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateScene()const{
@@ -93,9 +94,7 @@ StageSelectScene::~StageSelectScene(){
 int StageSelectScene::Calculate(){
 	//選択ステージの更新
 	const auto updateResult=m_ui->Update();
-	if(updateResult==BaseUIInStageSelect::UpdateResult::e_nextUI){
-		m_ui=m_ui->GetNextUI(m_uiControledData);
-	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoBattle){
+	if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoBattle){
 		//ゲームプレイへ進む
 		m_nextSceneName=NextSceneName::e_battle;
 		return -1;
@@ -103,6 +102,12 @@ int StageSelectScene::Calculate(){
 		//タイトル画面へ戻る
 		m_nextSceneName=NextSceneName::e_title;
 		return -1;
+	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoStageSelect){
+		//ステージセレクトにUI遷移
+		m_ui=std::shared_ptr<BaseUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec));
+	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoLevelSelect){
+		//レベルセレクトにUI遷移
+		m_ui=std::shared_ptr<BaseUIInStageSelect>(new LevelSelectUIInStageSelect(m_uiControledData,m_stageInfoVec[m_uiControledData->stageIndex],m_explainFont));
 	}
 
 	return 0;

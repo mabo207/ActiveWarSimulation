@@ -115,6 +115,12 @@
     <Filter Include="ソース ファイル\AnySceneCallable">
       <UniqueIdentifier>{d62062f2-d13a-426b-b789-0bacda04d975}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameScene\StageSelectScene\ImplementedUI">
+      <UniqueIdentifier>{95d9f037-986e-4c37-af75-754ac42bb8f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\StageSelectScene\ImplementedUI">
+      <UniqueIdentifier>{e898bf11-ade6-4999-b78b-b1c6f191aeb5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -270,16 +276,16 @@
     <ClCompile Include="FilePath.cpp">
       <Filter>ソース ファイル\AnySceneCallable</Filter>
     </ClCompile>
-    <ClCompile Include="StageSelectUIInStageSelect.cpp">
-      <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseUIInStageSelect.cpp">
-      <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
-    </ClCompile>
     <ClCompile Include="StageInfoInStageSelect.cpp">
       <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
     </ClCompile>
     <ClCompile Include="LevelSelectUIInStageSelect.cpp">
+      <Filter>ソース ファイル\GameScene\StageSelectScene\ImplementedUI</Filter>
+    </ClCompile>
+    <ClCompile Include="StageSelectUIInStageSelect.cpp">
+      <Filter>ソース ファイル\GameScene\StageSelectScene\ImplementedUI</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseUIInStageSelect.cpp">
       <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -434,16 +440,16 @@
     <ClInclude Include="FilePath.h">
       <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
     </ClInclude>
-    <ClInclude Include="BaseUIInStageSelect.h">
-      <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
-    </ClInclude>
-    <ClInclude Include="StageSelectUIInStageSelect.h">
-      <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
-    </ClInclude>
     <ClInclude Include="StageInfoInStageSelect.h">
       <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
     </ClInclude>
     <ClInclude Include="LevelSelectUIInStageSelect.h">
+      <Filter>ヘッダー ファイル\GameScene\StageSelectScene\ImplementedUI</Filter>
+    </ClInclude>
+    <ClInclude Include="StageSelectUIInStageSelect.h">
+      <Filter>ヘッダー ファイル\GameScene\StageSelectScene\ImplementedUI</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseUIInStageSelect.h">
       <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
     </ClInclude>
   </ItemGroup>

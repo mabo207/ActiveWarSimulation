@@ -10,7 +10,6 @@ public:
 	~StageSelectUIInStageSelect();
 	UpdateResult Update();
 	void Draw()const;
-	std::shared_ptr<BaseUIInStageSelect> GetNextUI(const std::weak_ptr<ControledData> &controledData)const;
 
 private:
 	const std::vector<StageInfoInStageSelect> &m_stageInfoVec;

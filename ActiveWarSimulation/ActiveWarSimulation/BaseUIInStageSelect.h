@@ -18,16 +18,16 @@ public:
 
 	//更新処理の結果
 	enum class UpdateResult{
-		e_notTransition	//遷移しない
-		,e_nextUI		//次のUIに遷移
-		,e_gotoTitle	//タイトル場面に遷移
-		,e_gotoBattle	//バトル場面に遷移
+		e_notTransition		//遷移しない
+		,e_gotoTitle		//タイトル場面に遷移
+		,e_gotoBattle		//バトル場面に遷移
+		,e_gotoStageSelect	//ステージセレクトUIに遷移
+		,e_gotoLevelSelect	//レベル選択UIに遷移
 	};
 
 	virtual ~BaseUIInStageSelect();
 	virtual UpdateResult Update()=0;
 	virtual void Draw()const=0;//UIの表示
-	virtual std::shared_ptr<BaseUIInStageSelect> GetNextUI(const std::weak_ptr<ControledData> &controledData)const=0;
 
 protected:
 	BaseUIInStageSelect(const std::weak_ptr<ControledData> &controledData);
