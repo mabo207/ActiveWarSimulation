@@ -79,10 +79,14 @@ void LevelSelectUIInStageSelect::Draw()const{
 		//レベル名の描画
 		DrawStringToHandle(x+5,y+5,level.GetString().c_str(),GetColor(255,255,255),m_explainFont);
 		//ランキングデータ一覧
-		const auto itLevel=m_stageInfo.m_rankingVec.levelMap.find(level);
+		const std::map<StageLevel,ScoreRankingData::LevelData>::const_iterator itLevel=m_stageInfo.m_rankingVec.levelMap.find(level);
+		size_t counter=0;
+		const size_t rankingSize=5;
+		const int nameX=10,scoreX=350;
+		int rankingY=40;
 		if(itLevel!=m_stageInfo.m_rankingVec.levelMap.end()){
-			const int nameX=10,scoreX=350;
-			int rankingY=40;
+			//ランキングデータが存在する場合はデータを描画
+			std::set<ScoreRankingData::PlayerData>::const_iterator itPlayer;
 			for(const ScoreRankingData::PlayerData &data:itLevel->second.playerDataSet){
 				//名前
 				DrawStringToHandle(x+nameX,y+rankingY,data.name.c_str(),GetColor(255,255,255),m_explainFont);
@@ -90,7 +94,21 @@ void LevelSelectUIInStageSelect::Draw()const{
 				DrawStringRightJustifiedToHandle(x+scoreX,y+rankingY,to_string_0d(data.score,7),GetColor(255,255,255),m_explainFont);
 				//位置ずらし
 				rankingY+=explainFontSize;
+				//個数を増やして、rankingSize個以上の描画になったら描画を打ち切る
+				counter++;
+				if(counter>=rankingSize){
+					break;
+				}
 			}
+		}
+		for(;counter<rankingSize;counter++){
+			//足りない分は-----を描画
+			//名前
+			DrawStringToHandle(x+nameX,y+rankingY,"----------",GetColor(255,255,255),m_explainFont);
+			//点数
+			DrawStringRightJustifiedToHandle(x+scoreX,y+rankingY,"-------",GetColor(255,255,255),m_explainFont);
+			//位置ずらし
+			rankingY+=explainFontSize;
 		}
 	}
 	//選択しているレベルを強調
