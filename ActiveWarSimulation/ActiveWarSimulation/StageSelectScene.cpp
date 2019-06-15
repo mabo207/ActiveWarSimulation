@@ -138,7 +138,7 @@ std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr
 		const std::shared_ptr<GameScene::SceneFactory> battleFactory=std::make_shared<BattleScene::BattleSceneFactory>(
 			m_stageInfoVec[m_uiControledData->stageIndex].m_dirName
 			,m_stageInfoVec[m_uiControledData->stageIndex].m_titleName
-			,StageLevel::e_easy);//“ïˆÕ“x‚Í‚Ð‚Æ‚Ü‚¸‘I‘ð‚Å‚«‚È‚¢‚æ‚¤‚É
+			,m_uiControledData->selectLevel);
 		return CreateFadeOutInScene(thisSharedPtr,battleFactory,15,15);
 	}
 	return std::shared_ptr<GameScene>();
