@@ -4,9 +4,8 @@
 #include"GeneralPurposeResourceManager.h"
 #include"CommonConstParameter.h"
 
-StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData,const size_t stageNum,const std::vector<StageInfoInStageSelect> &stageInfoVec)
+StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData,const std::vector<StageInfoInStageSelect> &stageInfoVec)
 	:BaseUIInStageSelect(controledData)
-	,m_stageNum(stageNum)
 	,m_stageInfoVec(stageInfoVec)
 {}
 
@@ -19,17 +18,18 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 	if(!m_controledData.expired()){
 		const std::shared_ptr<ControledData> lock=m_controledData.lock();
 		const size_t beforeIndex=lock->stageIndex;//効果音再生の可否判定に用いる
-		if(m_stageNum>0){
+		const size_t stageNum=m_stageInfoVec.size();
+		if(stageNum>0){
 			//十字キーでの切り替え
 			if(keyboard_get(KEY_INPUT_LEFT)==1){
-				lock->stageIndex=(lock->stageIndex+m_stageNum-1)%m_stageNum;
+				lock->stageIndex=(lock->stageIndex+stageNum-1)%stageNum;
 			} else if(keyboard_get(KEY_INPUT_RIGHT)==1){
-				lock->stageIndex=(lock->stageIndex+1)%m_stageNum;
+				lock->stageIndex=(lock->stageIndex+1)%stageNum;
 			} else{
 				//マウスでの切り替え
 				const Vector2D mousePos=GetMousePointVector2D();
 				const float circleSize=30.0f;//当たり判定の円の大きさ
-				for(size_t i=0;i<m_stageNum;i++){
+				for(size_t i=0;i<stageNum;i++){
 					if((m_stageInfoVec[i].m_pos-mousePos).sqSize()<=circleSize*circleSize){
 						lock->stageIndex=i;
 						mouseInStage=true;

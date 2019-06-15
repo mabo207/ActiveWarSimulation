@@ -74,7 +74,7 @@ StageSelectScene::StageSelectScene()
 		}
 	}
 	//UI�̍쐬
-	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec.size(),m_stageInfoVec));
+	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec));
 }
 
 StageSelectScene::~StageSelectScene(){
