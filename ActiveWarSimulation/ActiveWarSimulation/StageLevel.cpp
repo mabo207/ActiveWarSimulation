@@ -16,8 +16,8 @@ StageLevel::StageLevel(StageLevel::Kind kind)noexcept
 	:m_kind(kind)
 {}
 
-bool StageLevel::operator==(const StageLevel::Kind kind)const{
-	return m_kind==kind;
+bool StageLevel::operator==(const StageLevel &otherobj)const{
+	return this->m_kind==otherobj.m_kind;
 }
 
 bool StageLevel::operator<(const StageLevel &otherobj)const{
@@ -52,6 +52,29 @@ size_t StageLevel::GetIndex()const{
 		return 3;
 	}
 	return levelCount;
+}
+
+StageLevel StageLevel::Shift(int shift)const{
+	//この値がlevelArrayのどこにあるかを確認
+	size_t index=0;
+	for(;index<levelCount;index++){
+		if(levelArray[index]==*this){
+			break;
+		}
+	}
+	if(index==levelCount){
+		//例外的な値が存在した場合は元と同じ値を返す
+		return *this;
+	}
+	//負の値の剰余は言語やコンパイラによって違う可能性があるので注意する。
+	size_t gap;
+	if(shift>=0){
+		gap=shift%levelCount;
+	} else{
+		gap=levelCount-((-shift)%levelCount);//減算をしているが正の値になる
+	}
+	index=(index+gap)%levelCount;
+	return levelArray[index];
 }
 
 StageLevel StageLevel::CreateFromString(const std::string &str){

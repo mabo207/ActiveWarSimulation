@@ -19,10 +19,11 @@ public:
 
 	StageLevel()noexcept;
 	StageLevel(Kind kind)noexcept;
-	bool operator==(const Kind kind)const;
+	bool operator==(const StageLevel &otherobj)const;
 	bool operator<(const StageLevel &otherobj)const;
 	std::string GetString()const;
 	size_t GetIndex()const;
+	StageLevel Shift(int shift)const;//levelArray‚É‰ˆ‚Á‚Ä—v‘f‚ª•À‚ñ‚Å‚¢‚éŽžAindex‚¾‚¯‚¸‚ç‚µ‚½Žž‚Ì—v‘f‚ª—~‚µ‚¢I
 	static StageLevel CreateFromString(const std::string &str);
 
 	static const size_t levelCount=e_lunatic+1;//ƒŒƒxƒ‹‚Ì”
