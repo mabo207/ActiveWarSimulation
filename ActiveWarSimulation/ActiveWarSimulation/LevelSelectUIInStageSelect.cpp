@@ -31,7 +31,8 @@ LevelSelectUIInStageSelect::~LevelSelectUIInStageSelect(){}
 BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 	//レベル選択更新処理
 	bool levelUpdate=false;
-	bool inLevelBox=false;
+	bool mouseInLevelBox=false;
+	const Vector2D mousePos=GetMousePointVector2D();//現在のフレームのマウスの位置
 	if(!m_controledData.expired()){
 		const std::shared_ptr<ControledData> lock=m_controledData.lock();
 		const StageLevel beforeLevel=lock->selectLevel;
@@ -41,11 +42,13 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 			lock->selectLevel=beforeLevel.Shift(1);
 		} else{
 			//マウスによる更新処理
-			const Vector2D mousePos=GetMousePointVector2D();
 			for(size_t i=0;i<StageLevel::levelCount;i++){
 				if(levelBox[i].VJudgePointInsideShape(mousePos)){
-					lock->selectLevel=StageLevel::levelArray[i];
-					inLevelBox=true;
+					if((mousePos-m_beforeFrameMousePos).sqSize()>=4.0f){
+						//一定距離以上マウスを動かさないと更新されない
+						lock->selectLevel=StageLevel::levelArray[i];
+					}
+					mouseInLevelBox=(lock->selectLevel==StageLevel::levelArray[i]);//マウスが指しているレベルと選択しているレベルが一致しているか
 					break;
 				}
 			}
@@ -58,7 +61,7 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 	} else{
 		//その他のUI処理(レベル更新が行われた時はこれらの処理はしないようにする)
 		if(keyboard_get(KEY_INPUT_Z)==1
-			|| (inLevelBox && mouse_get(MOUSE_INPUT_LEFT)==1))
+			|| (mouseInLevelBox && mouse_get(MOUSE_INPUT_LEFT)==1))
 		{
 			//次の選択へ
 			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
@@ -69,6 +72,8 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 			return UpdateResult::e_gotoStageSelect;
 		}
 	}
+	//m_beforeFrameMousePosの更新
+	m_beforeFrameMousePos=mousePos;
 
 	return UpdateResult::e_notTransition;
 }

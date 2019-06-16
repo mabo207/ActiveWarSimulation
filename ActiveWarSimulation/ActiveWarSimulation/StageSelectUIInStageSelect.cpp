@@ -20,11 +20,13 @@ StageSelectUIInStageSelect::~StageSelectUIInStageSelect(){}
 BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 	//選択ステージの更新
 	bool indexUpdate=false;
-	bool mouseInStage=false;//マウスがステージを示す円の中に入っているかどうか
+	bool mouseInStage=false;
+	const Vector2D mousePos=GetMousePointVector2D();//今のフレームのマウスの位置
 	if(!m_controledData.expired()){
+		const size_t stageNum=m_stageInfoVec.size();
 		const std::shared_ptr<ControledData> lock=m_controledData.lock();
 		const size_t beforeIndex=lock->stageIndex;//効果音再生の可否判定に用いる
-		const size_t stageNum=m_stageInfoVec.size();
+		//更新処理
 		if(stageNum>0){
 			//十字キーでの切り替え
 			if(keyboard_get(KEY_INPUT_LEFT)==1){
@@ -33,17 +35,20 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 				lock->stageIndex=(lock->stageIndex+1)%stageNum;
 			} else{
 				//マウスでの切り替え
-				const Vector2D mousePos=GetMousePointVector2D();
 				const float circleSize=30.0f;//当たり判定の円の大きさ
 				for(size_t i=0;i<stageNum;i++){
 					if((m_stageInfoVec[i].m_pos-mousePos).sqSize()<=circleSize*circleSize){
-						lock->stageIndex=i;
-						mouseInStage=true;
+						if((mousePos-m_beforeFrameMousePos).sqSize()>=4.0f){
+							//マウスを一定距離以上動かした場合のみ更新
+							lock->stageIndex=i;
+						}
+						mouseInStage=(lock->stageIndex==i);//マウスが指しているステージと現在選択しているステージが一致しているか
 						break;
 					}
 				}
 			}
 		}
+		//更新結果について記録
 		indexUpdate=(lock->stageIndex!=beforeIndex);//indexが更新されているならtrueに
 	}
 	//選択以外の入力処理
@@ -69,6 +74,8 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 			return UpdateResult::e_gotoTitle;
 		}
 	}
+	//m_beforeFrameMousePosの更新
+	m_beforeFrameMousePos=mousePos;
 
 	return UpdateResult::e_notTransition;
 }

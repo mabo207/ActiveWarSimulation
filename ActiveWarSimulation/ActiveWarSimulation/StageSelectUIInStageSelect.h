@@ -17,6 +17,7 @@ public:
 
 private:
 	const std::vector<StageInfoInStageSelect> &m_stageInfoVec;
+	Vector2D m_beforeFrameMousePos;//1フレーム前のマウスの位置
 
 	//参照しているフォント（ここで削除はしない）
 	const int m_stageNameFont;
