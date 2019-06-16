@@ -7,11 +7,12 @@
 namespace {
 	const Vector2D levelBoxSize=Vector2D(400.0f,180.0f);
 	const std::array<MyPolygon,StageLevel::levelCount> levelBox={
-		MyPolygon::CreateRectangle(Vector2D(1440.0f,100.0f),levelBoxSize,Shape::Fix::e_ignore)
-		,MyPolygon::CreateRectangle(Vector2D(1440.0f,300.0f),levelBoxSize,Shape::Fix::e_ignore)
-		,MyPolygon::CreateRectangle(Vector2D(1440.0f,500.0f),levelBoxSize,Shape::Fix::e_ignore)
-		,MyPolygon::CreateRectangle(Vector2D(1440.0f,700.0f),levelBoxSize,Shape::Fix::e_ignore)
+		MyPolygon::CreateRectangle(Vector2D(1280.0f,100.0f),levelBoxSize,Shape::Fix::e_ignore)
+		,MyPolygon::CreateRectangle(Vector2D(1280.0f,300.0f),levelBoxSize,Shape::Fix::e_ignore)
+		,MyPolygon::CreateRectangle(Vector2D(1280.0f,500.0f),levelBoxSize,Shape::Fix::e_ignore)
+		,MyPolygon::CreateRectangle(Vector2D(1280.0f,700.0f),levelBoxSize,Shape::Fix::e_ignore)
 	};
+	const int stageInfoX=400,stageInfoY=300;
 }
 
 //-------------------LevelSelectUIInStageSelect----------------------
@@ -80,12 +81,22 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 
 void LevelSelectUIInStageSelect::Draw()const{
 	const int explainFontSize=GetFontSizeToHandle(m_explainFont);
+	//背景を少し暗くする
+	{
+		int mode,pal;
+		GetDrawBlendMode(&mode,&pal);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+		DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
+		SetDrawBlendMode(mode,pal);
+	}
 	//左側にステージを表示
-	m_stageInfo.DrawInfo(200,300,m_stageNameFont,m_explainFont);
+	m_stageInfo.DrawInfo(stageInfoX,stageInfoY,m_stageNameFont,m_explainFont);
 	//右側にレベル選択を表示
 	for(size_t i=0;i<StageLevel::levelCount;i++){
 		const int x=(int)levelBox[i].GetPosition().x,y=(int)levelBox[i].GetPosition().y;
 		const StageLevel level=StageLevel::levelArray[i];
+		//背景の描画
+		levelBox[i].Draw(levelBox[i].GetPosition(),Vector2D(),GetColor(64,32,32),TRUE);
 		//レベル名の描画
 		DrawStringToHandle(x+5,y+5,level.GetString().c_str(),GetColor(255,255,255),m_explainFont);
 		//ランキングデータ一覧
@@ -126,7 +137,7 @@ void LevelSelectUIInStageSelect::Draw()const{
 		const std::shared_ptr<ControledData> lock=m_controledData.lock();
 		const size_t index=lock->selectLevel.GetIndex();
 		if(index<StageLevel::levelCount){
-			levelBox[index].Draw(levelBox[index].GetPosition(),Vector2D(),GetColor(255,255,0),FALSE,3.0f);
+			levelBox[index].Draw(levelBox[index].GetPosition(),Vector2D(),GetColor(196,255,64),FALSE,5.0f);
 		}
 	}
 }
