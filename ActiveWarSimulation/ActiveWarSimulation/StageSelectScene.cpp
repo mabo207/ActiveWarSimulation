@@ -116,9 +116,27 @@ int StageSelectScene::Calculate(){
 void StageSelectScene::Draw()const{
 	//背景の描画
 	DrawGraph(0,0,m_backPic,TRUE);
-	//ステージ一覧の描画
-	for(const StageInfoInStageSelect &info:m_stageInfoVec){
-		DrawCircleAA(info.m_pos.x,info.m_pos.y,30,10,GetColor(64,64,255),TRUE);
+	//ステージ一覧と経路の描画
+	for(size_t i=0,siz=m_stageInfoVec.size();i<siz;i++){
+		//ステージの経路の描画
+		if(i+1<siz){
+			//次のステージとの距離を求める
+			const Vector2D dir=m_stageInfoVec[i+1].m_pos-m_stageInfoVec[i].m_pos;
+			const float dist=dir.size();
+			//何個丸を描画するか決める
+			const float circleSize=10.0f;
+			const int num=(int)(dist/(circleSize*6.0f));
+			//描画
+			for(int j=1;j<num;j++){
+				//ここの中身はnum>0の時のみ処理されるので、numの0チェックは必要ない
+				const Vector2D pos=m_stageInfoVec[i].m_pos+dir*((float)j)/((float)num);
+				DrawCircleAA(pos.x,pos.y,circleSize,10,GetColor(64,64,128),TRUE);
+				DrawCircleAA(pos.x,pos.y,circleSize*0.6f,10,GetColor(64,128,196),TRUE);
+			}
+		}
+		//ステージの位置の描画
+		DrawCircleAA(m_stageInfoVec[i].m_pos.x,m_stageInfoVec[i].m_pos.y,30,10,GetColor(64,64,255),TRUE);
+		DrawCircleAA(m_stageInfoVec[i].m_pos.x,m_stageInfoVec[i].m_pos.y,20,10,GetColor(128,196,255),TRUE);
 	}
 	//UIの描画
 	m_ui->Draw();
