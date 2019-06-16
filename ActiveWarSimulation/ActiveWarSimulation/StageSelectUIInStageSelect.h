@@ -18,6 +18,7 @@ public:
 private:
 	const std::vector<StageInfoInStageSelect> &m_stageInfoVec;
 	Vector2D m_beforeFrameMousePos;//1フレーム前のマウスの位置
+	bool m_drawStageInfo;//マウスを動かしてステージを示す丸の外に出したらステージ情報は描画しないようにする
 
 	//参照しているフォント（ここで削除はしない）
 	const int m_stageNameFont;
