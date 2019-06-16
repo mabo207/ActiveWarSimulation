@@ -23,10 +23,12 @@ StageInfoInStageSelect::~StageInfoInStageSelect(){
 void StageInfoInStageSelect::DrawInfo(const int x,const int y,const int nameFont,const int explainFont)const{
 	//m_mapPicÇÕâ¡çHÇ≥ÇÍÇƒâÊñ ëSëÃÇÃècâ°ã§Ç…1/4ÇÃëÂÇ´Ç≥Ç…Ç»Ç¡ÇƒÇ¢ÇÈÇ±Ç∆ÇópÇ¢ÇÈ
 	const int offsetLeft=10,offsetTop=10;
-	const int stageNameY=y+offsetTop+CommonConstParameter::gameResolutionY/4+20;
+	const int picDX=CommonConstParameter::gameResolutionX/4,picDY=CommonConstParameter::gameResolutionY/4;
+	const int stageNameY=y+offsetTop+picDY+20;
 	const int explainY=stageNameY+GetFontSizeToHandle(nameFont)+20;
 	//ï`âÊ
+	DrawBox(x,y,x+offsetLeft*2+picDX,explainY+GetFontSizeToHandle(explainFont)*4+offsetTop,GetColor(32,64,32),TRUE);
 	DrawGraph(x+offsetLeft,y+offsetTop,m_mapPic,TRUE);
-	DrawStringCenterBaseToHandle(x+offsetLeft+CommonConstParameter::gameResolutionX/8,stageNameY,m_titleName.c_str(),GetColor(255,255,255),nameFont,false);
-	DrawStringNewLineToHandle(x+offsetLeft,explainY,CommonConstParameter::gameResolutionX/4,300,m_explain.c_str(),GetColor(255,255,255),explainFont,2);
+	DrawStringCenterBaseToHandle(x+offsetLeft+picDX/2,stageNameY,m_titleName.c_str(),GetColor(255,255,255),nameFont,false);
+	DrawStringNewLineToHandle(x+offsetLeft,explainY,picDX,300,m_explain.c_str(),GetColor(255,255,255),explainFont,2);
 }

@@ -20,7 +20,7 @@ std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateScen
 
 StageSelectScene::StageSelectScene()
 	:m_nextSceneName(NextSceneName::e_title)
-	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
+	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/stageSelectBack.png"))
 	,m_stageNameFont(CreateFontToHandleEX("ƒƒCƒŠƒI",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("ƒƒCƒŠƒI",24,1,-1))
 	,m_uiControledData(new BaseUIInStageSelect::ControledData(0,StageLevel::e_easy))
@@ -116,15 +116,9 @@ int StageSelectScene::Calculate(){
 void StageSelectScene::Draw()const{
 	//”wŒi‚Ì•`‰æ
 	DrawGraph(0,0,m_backPic,TRUE);
-	//ˆÃ‚ß‚É•`‰æ‚·‚é‚½‚ß‚ÉAã‚©‚ç•’·•ûŒ`‚ğ”¼“§–¾‚Åd‚Ë‚é
-	int mode,pal;
-	GetDrawBlendMode(&mode,&pal);
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
-	DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
-	SetDrawBlendMode(mode,pal);
 	//ƒXƒe[ƒWˆê——‚Ì•`‰æ
 	for(const StageInfoInStageSelect &info:m_stageInfoVec){
-		DrawCircleAA(info.m_pos.x,info.m_pos.y,30,10,GetColor(0,0,255),TRUE);
+		DrawCircleAA(info.m_pos.x,info.m_pos.y,30,10,GetColor(64,64,255),TRUE);
 	}
 	//UI‚Ì•`‰æ
 	m_ui->Draw();
