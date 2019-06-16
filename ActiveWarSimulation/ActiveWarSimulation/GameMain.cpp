@@ -63,7 +63,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 			//デバッグ用、処理時間の計測と表示
 			FpsMeasuring fpsMeasuring;
-			bool fpsdisp=false;
+			bool debugDisp=false;
 
 			//実行
 			while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
@@ -73,7 +73,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				fpsMeasuring.Update();
 				if(keyboard_get(KEY_INPUT_K)==60){
-					fpsdisp=!fpsdisp;
+					debugDisp=!debugDisp;
 				}
 
 				if(keyboard_get(KEY_INPUT_F1)==60){
@@ -116,7 +116,11 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				//描画
 				clsDx();
-				if(fpsdisp){ printfDx("FPS : %.1f/60\n",fpsMeasuring.GetFps()); }
+				if(debugDisp){
+					const Vector2D mousePos=GetMousePointVector2D();
+					printfDx("mouse : ( %.0f , %.0f )\n",mousePos.x,mousePos.y);
+					printfDx("FPS : %.1f/60\n",fpsMeasuring.GetFps());
+				}
 				fpsMeasuring.RecordTime();
 
 				pGameScene->Draw();
@@ -128,7 +132,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					DrawGraph(x,y,mousePic,TRUE);
 				}
 				
-				if(fpsdisp){ printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }//fps表示
+				if(debugDisp){ printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }//fps表示
 				
 				//情報更新
 				fpsMeasuring.RecordTime();
@@ -149,7 +153,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					//break;//Alt+F4でやってもらう
 				}
 
-				if(fpsdisp){ printfDx("Update : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }
+				if(debugDisp){ printfDx("Update : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }
 			}
 			DeleteGraphEX(mousePic);
 		}
