@@ -7,11 +7,12 @@
 namespace {
 	const Vector2D levelBoxSize=Vector2D(400.0f,180.0f);
 	const std::array<MyPolygon,StageLevel::levelCount> levelBox={
-		MyPolygon::CreateRectangle(Vector2D(1440.0f,100.0f),levelBoxSize,Shape::Fix::e_ignore)
-		,MyPolygon::CreateRectangle(Vector2D(1440.0f,300.0f),levelBoxSize,Shape::Fix::e_ignore)
-		,MyPolygon::CreateRectangle(Vector2D(1440.0f,500.0f),levelBoxSize,Shape::Fix::e_ignore)
-		,MyPolygon::CreateRectangle(Vector2D(1440.0f,700.0f),levelBoxSize,Shape::Fix::e_ignore)
+		MyPolygon::CreateRectangle(Vector2D(1280.0f,100.0f),levelBoxSize,Shape::Fix::e_ignore)
+		,MyPolygon::CreateRectangle(Vector2D(1280.0f,300.0f),levelBoxSize,Shape::Fix::e_ignore)
+		,MyPolygon::CreateRectangle(Vector2D(1280.0f,500.0f),levelBoxSize,Shape::Fix::e_ignore)
+		,MyPolygon::CreateRectangle(Vector2D(1280.0f,700.0f),levelBoxSize,Shape::Fix::e_ignore)
 	};
+	const int stageInfoX=400,stageInfoY=300;
 }
 
 //-------------------LevelSelectUIInStageSelect----------------------
@@ -31,7 +32,8 @@ LevelSelectUIInStageSelect::~LevelSelectUIInStageSelect(){}
 BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 	//レベル選択更新処理
 	bool levelUpdate=false;
-	bool inLevelBox=false;
+	bool mouseInLevelBox=false;
+	const Vector2D mousePos=GetMousePointVector2D();//現在のフレームのマウスの位置
 	if(!m_controledData.expired()){
 		const std::shared_ptr<ControledData> lock=m_controledData.lock();
 		const StageLevel beforeLevel=lock->selectLevel;
@@ -41,11 +43,13 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 			lock->selectLevel=beforeLevel.Shift(1);
 		} else{
 			//マウスによる更新処理
-			const Vector2D mousePos=GetMousePointVector2D();
 			for(size_t i=0;i<StageLevel::levelCount;i++){
 				if(levelBox[i].VJudgePointInsideShape(mousePos)){
-					lock->selectLevel=StageLevel::levelArray[i];
-					inLevelBox=true;
+					if((mousePos-m_beforeFrameMousePos).sqSize()>=4.0f){
+						//一定距離以上マウスを動かさないと更新されない
+						lock->selectLevel=StageLevel::levelArray[i];
+					}
+					mouseInLevelBox=(lock->selectLevel==StageLevel::levelArray[i]);//マウスが指しているレベルと選択しているレベルが一致しているか
 					break;
 				}
 			}
@@ -58,7 +62,7 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 	} else{
 		//その他のUI処理(レベル更新が行われた時はこれらの処理はしないようにする)
 		if(keyboard_get(KEY_INPUT_Z)==1
-			|| (inLevelBox && mouse_get(MOUSE_INPUT_LEFT)==1))
+			|| (mouseInLevelBox && mouse_get(MOUSE_INPUT_LEFT)==1))
 		{
 			//次の選択へ
 			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
@@ -69,18 +73,30 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 			return UpdateResult::e_gotoStageSelect;
 		}
 	}
+	//m_beforeFrameMousePosの更新
+	m_beforeFrameMousePos=mousePos;
 
 	return UpdateResult::e_notTransition;
 }
 
 void LevelSelectUIInStageSelect::Draw()const{
 	const int explainFontSize=GetFontSizeToHandle(m_explainFont);
+	//背景を少し暗くする
+	{
+		int mode,pal;
+		GetDrawBlendMode(&mode,&pal);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+		DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
+		SetDrawBlendMode(mode,pal);
+	}
 	//左側にステージを表示
-	m_stageInfo.DrawInfo(200,300,m_stageNameFont,m_explainFont);
+	m_stageInfo.DrawInfo(stageInfoX,stageInfoY,m_stageNameFont,m_explainFont);
 	//右側にレベル選択を表示
 	for(size_t i=0;i<StageLevel::levelCount;i++){
 		const int x=(int)levelBox[i].GetPosition().x,y=(int)levelBox[i].GetPosition().y;
 		const StageLevel level=StageLevel::levelArray[i];
+		//背景の描画
+		levelBox[i].Draw(levelBox[i].GetPosition(),Vector2D(),GetColor(64,32,32),TRUE);
 		//レベル名の描画
 		DrawStringToHandle(x+5,y+5,level.GetString().c_str(),GetColor(255,255,255),m_explainFont);
 		//ランキングデータ一覧
@@ -121,7 +137,7 @@ void LevelSelectUIInStageSelect::Draw()const{
 		const std::shared_ptr<ControledData> lock=m_controledData.lock();
 		const size_t index=lock->selectLevel.GetIndex();
 		if(index<StageLevel::levelCount){
-			levelBox[index].Draw(levelBox[index].GetPosition(),Vector2D(),GetColor(255,255,0),FALSE,3.0f);
+			levelBox[index].Draw(levelBox[index].GetPosition(),Vector2D(),GetColor(196,255,64),FALSE,5.0f);
 		}
 	}
 }

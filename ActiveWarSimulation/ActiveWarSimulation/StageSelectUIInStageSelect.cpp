@@ -10,6 +10,8 @@ StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<Contr
 	,int explainFont
 )
 	:BaseUIInStageSelect(controledData)
+	,m_beforeFrameMousePos(GetMousePointVector2D())
+	,m_drawStageInfo(true)
 	,m_stageInfoVec(stageInfoVec)
 	,m_stageNameFont(stageNameFont)
 	,m_explainFont(explainFont)
@@ -20,30 +22,48 @@ StageSelectUIInStageSelect::~StageSelectUIInStageSelect(){}
 BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 	//選択ステージの更新
 	bool indexUpdate=false;
-	bool mouseInStage=false;//マウスがステージを示す円の中に入っているかどうか
+	bool mouseInStage=false;
+	const Vector2D mousePos=GetMousePointVector2D();//今のフレームのマウスの位置
+	const bool mouseMoveFlag=((mousePos-m_beforeFrameMousePos).sqSize()>=4.0f);//このフレームでマウスの移動を行ったか
 	if(!m_controledData.expired()){
+		const size_t stageNum=m_stageInfoVec.size();
 		const std::shared_ptr<ControledData> lock=m_controledData.lock();
 		const size_t beforeIndex=lock->stageIndex;//効果音再生の可否判定に用いる
-		const size_t stageNum=m_stageInfoVec.size();
+		//更新処理
 		if(stageNum>0){
 			//十字キーでの切り替え
 			if(keyboard_get(KEY_INPUT_LEFT)==1){
 				lock->stageIndex=(lock->stageIndex+stageNum-1)%stageNum;
+				//m_drawStageInfoの更新
+				m_drawStageInfo=true;
 			} else if(keyboard_get(KEY_INPUT_RIGHT)==1){
 				lock->stageIndex=(lock->stageIndex+1)%stageNum;
+				//m_drawStageInfoの更新
+				m_drawStageInfo=true;
 			} else{
 				//マウスでの切り替え
-				const Vector2D mousePos=GetMousePointVector2D();
 				const float circleSize=30.0f;//当たり判定の円の大きさ
 				for(size_t i=0;i<stageNum;i++){
 					if((m_stageInfoVec[i].m_pos-mousePos).sqSize()<=circleSize*circleSize){
-						lock->stageIndex=i;
-						mouseInStage=true;
+						if(mouseMoveFlag){
+							//マウスを一定距離以上動かした場合のみ更新
+							lock->stageIndex=i;
+						}
+						mouseInStage=(lock->stageIndex==i);//マウスが指しているステージと現在選択しているステージが一致しているか
 						break;
 					}
 				}
+				//m_drawStageInfoの更新
+				if(mouseInStage){
+					//マウスがステージの中にあればステージ選択していることにする
+					m_drawStageInfo=true;
+				} else if(mouseMoveFlag){
+					//マウスを動かしたのにマウスがステージ選択をしていない場合はステージが何も選ばれていない状態にする
+					m_drawStageInfo=false;
+				}
 			}
 		}
+		//更新結果について記録
 		indexUpdate=(lock->stageIndex!=beforeIndex);//indexが更新されているならtrueに
 	}
 	//選択以外の入力処理
@@ -69,6 +89,8 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 			return UpdateResult::e_gotoTitle;
 		}
 	}
+	//m_beforeFrameMousePosの更新
+	m_beforeFrameMousePos=mousePos;
 
 	return UpdateResult::e_notTransition;
 }
@@ -82,18 +104,20 @@ void StageSelectUIInStageSelect::Draw()const{
 			const Vector2D pos=m_stageInfoVec[lock->stageIndex].m_pos;
 			DrawCircleAA(pos.x,pos.y,30,10,GetColor(255,255,255),TRUE);
 			//ステージ情報の描画
-			int picX,picY;
-			if((int)pos.x<CommonConstParameter::gameResolutionX/2){
-				picX=CommonConstParameter::gameResolutionX*5/8;
-			} else{
-				picX=CommonConstParameter::gameResolutionX/8;
+			if(m_drawStageInfo){
+				int picX,picY;
+				if((int)pos.x<CommonConstParameter::gameResolutionX/2){
+					picX=CommonConstParameter::gameResolutionX*5/8;
+				} else{
+					picX=CommonConstParameter::gameResolutionX/8;
+				}
+				if((int)pos.y<CommonConstParameter::gameResolutionY/2){
+					picY=CommonConstParameter::gameResolutionY/2;
+				} else{
+					picY=20;
+				}
+				m_stageInfoVec[lock->stageIndex].DrawInfo(picX,picY,m_stageNameFont,m_explainFont);
 			}
-			if((int)pos.y<CommonConstParameter::gameResolutionY/2){
-				picY=CommonConstParameter::gameResolutionY/2;
-			} else{
-				picY=20;
-			}
-			m_stageInfoVec[lock->stageIndex].DrawInfo(picX,picY,m_stageNameFont,m_explainFont);
 		}
 	}
 }
