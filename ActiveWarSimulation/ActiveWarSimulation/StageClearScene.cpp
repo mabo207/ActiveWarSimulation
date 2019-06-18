@@ -42,6 +42,23 @@ StageClearScene::~StageClearScene(){
 	DeleteFontToHandleEX(m_scoreFont);
 }
 
+void StageClearScene::ResisterScoreSave(){
+	//必要なデータを抽出（std::shared_ptrを渡すと循環参照になりそうで怖い）
+	const int totalPoint=m_scoreExpression->m_totalScorePoint;
+	const std::string playerName=m_inputCharControler.GetString();
+	const __time64_t now=_time64(nullptr);
+	const std::string dirName=m_battleSceneData->m_stageDirName;
+	const StageLevel level=m_battleSceneData->m_stageLevel;
+	//関数オブジェクト作成
+	const std::function<void(void)> saveFunc=[totalPoint,playerName,now,dirName,level](){
+		ScoreRankingData rankingData;
+		rankingData.InputData(ScoreRankingData::PlayerData(totalPoint,playerName,now),dirName,level);
+		rankingData.Save();
+	};
+	//登録
+	m_battleSceneData->ResisterProcessInDestructor(saveFunc);
+}
+
 int StageClearScene::thisCalculate(){
 	m_frame++;
 
@@ -59,11 +76,8 @@ int StageClearScene::thisCalculate(){
 		if(!m_inputCharControler.GetInputFlag()){
 			//入力終了したら
 			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
-			//記録
-			ScoreRankingData rankingData;
-			const __time64_t now=_time64(nullptr);
-			rankingData.InputData(ScoreRankingData::PlayerData(m_scoreExpression->m_totalScorePoint,m_inputCharControler.GetString(),now),m_battleSceneData->m_stageDirName,m_battleSceneData->m_stageLevel);
-			rankingData.Save();
+			//記録処理を登録
+			ResisterScoreSave();
 			//バトルパート終了
 			return SceneKind::END;
 		}

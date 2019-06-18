@@ -45,6 +45,7 @@ protected:
 
 	//関数
 protected:
+	void ResisterScoreSave();
 	
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了

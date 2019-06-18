@@ -9,6 +9,7 @@
 #include"ScoreObserver.h"
 #include"LatticeBattleField.h"
 #include"StageLevel.h"
+#include<functional>
 
 //バトル場面で、各クラスに渡すゲーム全体で扱うデータを一括管理するクラス
 struct BattleSceneData{
@@ -28,6 +29,10 @@ public:
 	static const Vector2D uiDrawSize;//UI描画部分の大きさ
 
 	//変数
+protected:
+	//破棄直前（＝画面暗転して重い処理を誤魔化せるタイミング）で行う処理群
+	std::vector<std::function<void(void)>> m_resisteredProcessInDestructor;
+
 public:
 	//ゲームに使用する変数
 	std::vector<BattleObject *> m_field;//フィールドに存在するオブジェクト一覧(動的ポインタの配列)
@@ -89,6 +94,7 @@ public:
 	bool CanOperateUnitMove()const;//m_operateUnitが移動することが可能か（周りに何があるかは考えない）
 	int CalculateTurn()const;
 	std::shared_ptr<LatticeBattleField> CalculateLatticeBattleField()const;//現在のステージの状態の格子点認識情報を計算して返す。
+	void ResisterProcessInDestructor(const std::function<void(void)> &func);//画面暗転時に行う処理を登録する
 
 	//情報描画関数
 	void DrawField(const std::set<const BattleObject *> &notDraw={})const;//フィールドの描画、ユニットの描画は別。こいつより前に描画したものはマップ絵で全て消えるはず。
