@@ -61,7 +61,8 @@ int StageClearScene::thisCalculate(){
 			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
 			//記録
 			ScoreRankingData rankingData;
-			rankingData.InputData(ScoreRankingData::PlayerData(m_scoreExpression->m_totalScorePoint,m_inputCharControler.GetString(),"201905201900"),m_battleSceneData->m_stageDirName,m_battleSceneData->m_stageLevel);
+			const __time64_t now=_time64(nullptr);
+			rankingData.InputData(ScoreRankingData::PlayerData(m_scoreExpression->m_totalScorePoint,m_inputCharControler.GetString(),now),m_battleSceneData->m_stageDirName,m_battleSceneData->m_stageLevel);
 			rankingData.Save();
 			//バトルパート終了
 			return SceneKind::END;

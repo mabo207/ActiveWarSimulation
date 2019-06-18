@@ -127,7 +127,7 @@ ScoreRankingData::PlayerData ScoreRankingData::PlayerData::Create(const StringBu
 	//•¶š—ñ•ªŠ„
 	std::string name="";
 	int score=-99999;
-	std::string date="";
+	__time64_t date=-99999;
 	for(const StringBuilder &sb:infoBuilder.m_vec){
 		if(sb.m_vec.size()>=2){
 			const std::string str=sb.m_vec[0].GetString();
@@ -136,11 +136,11 @@ ScoreRankingData::PlayerData ScoreRankingData::PlayerData::Create(const StringBu
 			} else if(str=="score"){
 				score=std::atoi(sb.m_vec[1].GetString().c_str());
 			} else if(str=="date"){
-				date=sb.m_vec[1].GetString();
+				date=std::atoll(sb.m_vec[1].GetString().c_str());
 			}
 		}
 	}
-	if(name!="" && score!=-99999 && date!=""){
+	if(name!="" && score!=-99999 && date!=-99999){
 		//‚µ‚Á‚©‚è‚Æƒf[ƒ^‚ª‘¶İ‚µ‚Ä‚¢‚ê‚ÎPlayerData‚ğì¬
 		return PlayerData(score,name,date);
 	}
