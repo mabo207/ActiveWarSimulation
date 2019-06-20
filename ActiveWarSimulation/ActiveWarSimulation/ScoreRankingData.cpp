@@ -126,24 +126,30 @@ void ScoreRankingData::PlayerData::Output(std::ofstream &ofs)const{
 
 ScoreRankingData::PlayerData ScoreRankingData::PlayerData::Create(const StringBuilder &infoBuilder){
 	//文字列分割
-	std::string name="";
-	int score=-99999;
-	__time64_t date=-99999;
-	for(const StringBuilder &sb:infoBuilder.m_vec){
-		if(sb.m_vec.size()>=2){
-			const std::string str=sb.m_vec[0].GetString();
-			if(str=="name"){
-				name=sb.m_vec[1].GetString();
-			} else if(str=="score"){
-				score=std::atoi(sb.m_vec[1].GetString().c_str());
-			} else if(str=="date"){
-				date=std::atoll(sb.m_vec[1].GetString().c_str());
+	try{
+		std::string name="";
+		int score=-99999;
+		__time64_t date=-99999;
+		for(const StringBuilder &sb:infoBuilder.m_vec){
+			if(sb.m_vec.size()>=2){
+				const std::string str=sb.m_vec[0].GetString();
+				if(str=="name"){
+					name=sb.m_vec[1].GetString();
+				} else if(str=="score"){
+					score=std::stoi(sb.m_vec[1].GetString().c_str());
+				} else if(str=="date"){
+					date=std::stoll(sb.m_vec[1].GetString().c_str());
+				}
 			}
 		}
-	}
-	if(name!="" && score!=-99999 && date!=-99999){
-		//しっかりとデータが存在していればPlayerDataを作成
-		return PlayerData(score,name,date);
+		if(name!="" && score!=-99999 && date!=-99999){
+			//しっかりとデータが存在していればPlayerDataを作成
+			return PlayerData(score,name,date);
+		}
+	} catch(const std::invalid_argument &){
+		//不正値が入っていた場合
+	} catch(const std::out_of_range &){
+		//範囲外の値が入っていた場合
 	}
 	//データ作成失敗
 	throw DataCreateException();
@@ -156,7 +162,7 @@ ScoreRankingData::LevelData::LevelData(const StringBuilder &infoBuilder){
 		//要素挿入
 		try{
 			playerDataSet.insert(PlayerData::Create(sb));
-		} catch(std::exception &e){
+		} catch(std::exception &){
 			//正常にPlayerDataが作られない時は、要素に追加しなければ良い
 		}
 	}
@@ -209,7 +215,7 @@ ScoreRankingData::StageScoreData ScoreRankingData::StageScoreData::Create(const 
 					StageLevel stageLevel=StageLevel::CreateFromString(sb.m_vec[0].m_vec[1].GetString());
 					//ステージレベルを取得できた場合のみ、LevelDataを作成
 					levelMap.insert(std::make_pair(stageLevel,LevelData(sb.m_vec[1])));
-				} catch(std::out_of_range &e){
+				} catch(std::out_of_range &){
 					//特に何もしない
 				}
 			}

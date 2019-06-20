@@ -97,39 +97,45 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 			initOP.second=false;
 			//各値の読み取り
 			for(const StringBuilder &sb:unitdata.m_vec){
-				if(!sb.m_vec.empty()){
-					//先頭文字列があることを保障
-					if(sb.m_vec[0].GetString()=="name" && sb.m_vec.size()>=2){
-						name.first=sb.m_vec[1].GetString();
-						name.second=true;
-					} else if(sb.m_vec[0].GetString()=="profession" && sb.m_vec.size()>=2){
-						prof.first=Unit::Profession::link(std::atoi(sb.m_vec[1].GetString().c_str()));
-						prof.second=true;
-					} else if(sb.m_vec[0].GetString()=="lv" && sb.m_vec.size()>=2){
-						lv.first=std::atoi(sb.m_vec[1].GetString().c_str());
-						lv.second=true;
-					} else if(sb.m_vec[0].GetString()=="pos" && sb.m_vec.size()>=3){
-						pos.first=Vector2D((float)std::atoi(sb.m_vec[1].GetString().c_str()),(float)std::atoi(sb.m_vec[2].GetString().c_str()));
-						pos.second=true;
-					} else if(sb.m_vec[0].GetString()=="team" && sb.m_vec.size()>=2){
-						team.first=Unit::Team::link(std::atoi(sb.m_vec[1].GetString().c_str()));
-						team.second=true;
-					} else if(sb.m_vec[0].GetString()=="ai" && sb.m_vec.size()>=3){
-						//aiのコンマ列に2つ以上の値が存在しても良いので、複数変数を受け取れるようにできている
-						//1つ目はAIの種類、2つ目は連動型AI用のグループ値、3つ目以降は自由(現状すべての値をaiLinkageに突っ込むようにしている)
-						aitype=Unit::AIType::link(std::atoi(sb.m_vec[1].GetString().c_str()));
-						aiGroup=std::atoi(sb.m_vec[2].GetString().c_str());
-						for(size_t i=3,size=sb.m_vec.size();i<size;i++){
-							aiLinkage.insert(std::atoi(sb.m_vec[i].GetString().c_str()));
+				try{
+					if(!sb.m_vec.empty()){
+						//先頭文字列があることを保障
+						if(sb.m_vec[0].GetString()=="name" && sb.m_vec.size()>=2){
+							name.first=sb.m_vec[1].GetString();
+							name.second=true;
+						} else if(sb.m_vec[0].GetString()=="profession" && sb.m_vec.size()>=2){
+							prof.first=Unit::Profession::link(std::stoi(sb.m_vec[1].GetString().c_str()));
+							prof.second=true;
+						} else if(sb.m_vec[0].GetString()=="lv" && sb.m_vec.size()>=2){
+							lv.first=std::stoi(sb.m_vec[1].GetString().c_str());
+							lv.second=true;
+						} else if(sb.m_vec[0].GetString()=="pos" && sb.m_vec.size()>=3){
+							pos.first=Vector2D((float)std::stoi(sb.m_vec[1].GetString().c_str()),(float)std::stoi(sb.m_vec[2].GetString().c_str()));
+							pos.second=true;
+						} else if(sb.m_vec[0].GetString()=="team" && sb.m_vec.size()>=2){
+							team.first=Unit::Team::link(std::stoi(sb.m_vec[1].GetString().c_str()));
+							team.second=true;
+						} else if(sb.m_vec[0].GetString()=="ai" && sb.m_vec.size()>=3){
+							//aiのコンマ列に2つ以上の値が存在しても良いので、複数変数を受け取れるようにできている
+							//1つ目はAIの種類、2つ目は連動型AI用のグループ値、3つ目以降は自由(現状すべての値をaiLinkageに突っ込むようにしている)
+							aitype=Unit::AIType::link(std::stoi(sb.m_vec[1].GetString().c_str()));
+							aiGroup=std::stoi(sb.m_vec[2].GetString().c_str());
+							for(size_t i=3,size=sb.m_vec.size();i<size;i++){
+								aiLinkage.insert(std::stoi(sb.m_vec[i].GetString().c_str()));
+							}
+							aiFlag=true;
+						} else if(sb.m_vec[0].GetString()=="initHP" && sb.m_vec.size()>=2){
+							initHP.first=std::stoi(sb.m_vec[1].GetString().c_str());
+							initHP.second=true;
+						} else if(sb.m_vec[0].GetString()=="initOP" && sb.m_vec.size()>=2){
+							initOP.first=(float)(std::stoi(sb.m_vec[1].GetString().c_str()));
+							initOP.second=true;
 						}
-						aiFlag=true;
-					} else if(sb.m_vec[0].GetString()=="initHP" && sb.m_vec.size()>=2){
-						initHP.first=std::atoi(sb.m_vec[1].GetString().c_str());
-						initHP.second=true;
-					} else if(sb.m_vec[0].GetString()=="initOP" && sb.m_vec.size()>=2){
-						initOP.first=(float)(std::atoi(sb.m_vec[1].GetString().c_str()));
-						initOP.second=true;
 					}
+				} catch(const std::invalid_argument &){
+					//数値じゃないものを検出した場合
+				} catch(const std::out_of_range &){
+					//表現の範囲外の数値を検出した場合
 				}
 			}
 			//各値からユニットを格納
