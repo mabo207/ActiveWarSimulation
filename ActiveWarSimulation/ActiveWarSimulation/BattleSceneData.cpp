@@ -171,11 +171,6 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 }
 
 BattleSceneData::~BattleSceneData(){
-	//破棄直前に行う処理群をこなす
-	for(const auto &func:m_resisteredProcessInDestructor){
-		func();
-	}
-
 	//グラフィック開放
 	DeleteGraphEX(m_mapPic);
 	DeleteGraphEX(m_turnTimerPic);
@@ -346,8 +341,17 @@ std::shared_ptr<LatticeBattleField> BattleSceneData::CalculateLatticeBattleField
 	return LatticeBattleField::Create(*this,this->m_operateUnit);
 }
 
-void BattleSceneData::ResisterProcessInDestructor(const std::function<void(void)> &func){
-	m_resisteredProcessInDestructor.push_back(func);
+void BattleSceneData::ResisterSceneEndProcess(const std::function<void(void)> &func){
+	m_resisteredSceneEndProcess.push_back(func);
+}
+
+void BattleSceneData::RunSceneEndProcess(){
+	//登録した処理群を全て実行
+	for(const auto &func:m_resisteredSceneEndProcess){
+		func();
+	}
+	//処理群を空っぽに
+	m_resisteredSceneEndProcess.clear();
 }
 
 void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{

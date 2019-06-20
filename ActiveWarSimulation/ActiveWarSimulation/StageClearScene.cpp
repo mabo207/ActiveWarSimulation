@@ -56,7 +56,7 @@ void StageClearScene::ResisterScoreSave(){
 		rankingData.Save();
 	};
 	//“o˜^
-	m_battleSceneData->ResisterProcessInDestructor(saveFunc);
+	m_battleSceneData->ResisterSceneEndProcess(saveFunc);
 }
 
 int StageClearScene::thisCalculate(){

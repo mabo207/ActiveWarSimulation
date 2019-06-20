@@ -37,7 +37,10 @@ BattleScene::BattleScene(std::shared_ptr<BattleSceneData> battleSceneData)
 BattleScene::BattleScene(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel)
 	:BattleScene(std::shared_ptr<BattleSceneData>(new BattleSceneData(stageDirName,titleName,stageLevel))){}
 
-BattleScene::~BattleScene(){}
+BattleScene::~BattleScene(){
+	//m_battleSceneDataにあるシーン終了時に行う処理群の一括処理をする
+	m_battleSceneData->RunSceneEndProcess();
+}
 
 std::shared_ptr<BattleSceneElement> BattleScene::VGetSwitchUnitScene()const{
 	return std::shared_ptr<BattleSceneElement>(new SwitchUnitScene(m_battleSceneData));
