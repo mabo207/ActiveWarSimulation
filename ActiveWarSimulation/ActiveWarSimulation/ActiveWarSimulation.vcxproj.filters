@@ -288,6 +288,9 @@
     <ClCompile Include="GeneralPurposeResource.cpp">
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
+    <ClCompile Include="LoadingScene.cpp">
+      <Filter>ソース ファイル\GameScene\PerformanceScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -451,6 +454,9 @@
     </ClInclude>
     <ClInclude Include="GeneralPurposeResource.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScene.h">
+      <Filter>ヘッダー ファイル\GameScene\PerformanceScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

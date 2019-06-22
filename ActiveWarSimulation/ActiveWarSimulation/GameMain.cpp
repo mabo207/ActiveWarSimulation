@@ -12,6 +12,7 @@
 
 #include"TitleScene.h"
 #include"FadeInScene.h"
+#include"LoadingScene.h"
 
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
@@ -54,7 +55,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		{
 			//ê–Ê•Ï”
-			std::shared_ptr<GameScene> pGameScene=FadeInScene::FadeInSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>(),15).CreateScene();
+			//std::shared_ptr<GameScene> pGameScene=FadeInScene::FadeInSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>(),15).CreateScene();
+			std::shared_ptr<GameScene> pGameScene=LoadingScene::LoadingSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>()).CreateScene();
 
 			//‰æ–Êk¬‚·‚é‚±‚Æ‚É‚æ‚éB‰e‚ğ‚·‚éÛ‚ÍSetMouseDispFlag‚ğFALSE‚É‚µ‚ÄƒRƒ“ƒpƒCƒ‹
 			SetMouseDispFlag(TRUE);
