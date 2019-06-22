@@ -2,6 +2,7 @@
 #include"FileRead.h"
 #include"ToolsLib.h"
 #include"FilePath.h"
+#include<optional>
 
 //----------ScoreRankingData-------------
 const std::string ScoreRankingData::scoreRankingTxtPass=FilePath::savedataDir+"scoreRanking.txt";
@@ -126,11 +127,11 @@ void ScoreRankingData::PlayerData::Output(std::ofstream &ofs)const{
 
 ScoreRankingData::PlayerData ScoreRankingData::PlayerData::Create(const StringBuilder &infoBuilder){
 	//文字列分割
-	try{
-		std::string name="";
-		int score=-99999;
-		__time64_t date=-99999;
-		for(const StringBuilder &sb:infoBuilder.m_vec){
+	std::optional<int> score;
+	std::optional<std::string> name;
+	std::optional<__time64_t> date;
+	for(const StringBuilder &sb:infoBuilder.m_vec){
+		try{
 			if(sb.m_vec.size()>=2){
 				const std::string str=sb.m_vec[0].GetString();
 				if(str=="name"){
@@ -141,15 +142,15 @@ ScoreRankingData::PlayerData ScoreRankingData::PlayerData::Create(const StringBu
 					date=std::stoll(sb.m_vec[1].GetString().c_str());
 				}
 			}
+		} catch(const std::invalid_argument &){
+			//不正値が入っていた場合
+		} catch(const std::out_of_range &){
+			//範囲外の値が入っていた場合
 		}
-		if(name!="" && score!=-99999 && date!=-99999){
-			//しっかりとデータが存在していればPlayerDataを作成
-			return PlayerData(score,name,date);
-		}
-	} catch(const std::invalid_argument &){
-		//不正値が入っていた場合
-	} catch(const std::out_of_range &){
-		//範囲外の値が入っていた場合
+	}
+	if(score && name && date){
+		//しっかりとデータが存在していればPlayerDataを作成
+		return PlayerData(score.value(),name.value(),date.value());
 	}
 	//データ作成失敗
 	throw DataCreateException();
