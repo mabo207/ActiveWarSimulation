@@ -1,7 +1,7 @@
 #include"DxLib.h"
 #include"StageSelectUIInStageSelect.h"
 #include"input.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
 
 StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData
@@ -69,7 +69,7 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 	//選択以外の入力処理
 	if(indexUpdate){
 		//変更があれば効果音再生
-		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);
+		PlaySoundMem(GeneralPurposeResource::selectSound,DX_PLAYTYPE_BACK,TRUE);
 	} else{
 		//以下の遷移は選択ステージの変更が行われていない時のみできる
 		//ステージの決定
@@ -77,14 +77,14 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 			|| (mouse_get(MOUSE_INPUT_LEFT)==1 && mouseInStage))
 		{
 			//決定音を出す
-			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 			//遷移
 			return UpdateResult::e_gotoLevelSelect;
 		}
 		//戻る
 		if(keyboard_get(KEY_INPUT_X)==1 || mouse_get(MOUSE_INPUT_RIGHT)==1){
 			//back音を出す
-			PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);
+			PlaySoundMem(GeneralPurposeResource::cancelSound,DX_PLAYTYPE_BACK,TRUE);
 			//遷移
 			return UpdateResult::e_gotoTitle;
 		}

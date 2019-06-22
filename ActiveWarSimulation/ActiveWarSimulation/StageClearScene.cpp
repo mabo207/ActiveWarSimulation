@@ -3,7 +3,7 @@
 #include"GraphicControl.h"
 #include"input.h"
 #include"CommonConstParameter.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"ScoreRankingData.h"
 #include"FilePath.h"
 
@@ -68,14 +68,14 @@ int StageClearScene::thisCalculate(){
 			(keyboard_get(KEY_INPUT_Z)==1 || mouse_get(MOUSE_INPUT_LEFT)==1)
 			)
 		{
-			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
 			m_nowProcess=ProcessKind::e_inputName;
 		}
 	} else if(m_nowProcess==ProcessKind::e_inputName){
 		m_inputCharControler.Update();
 		if(!m_inputCharControler.GetInputFlag()){
 			//入力終了したら
-			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
 			//記録処理を登録
 			ResisterScoreSave();
 			//バトルパート終了

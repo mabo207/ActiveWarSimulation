@@ -1,13 +1,13 @@
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"DxLib.h"
 #include"FilePath.h"
 
-//---------------------GeneralPurposeResourceManager---------------------
-int GeneralPurposeResourceManager::cancelSound=-1;
-int GeneralPurposeResourceManager::decideSound=-1;
-int GeneralPurposeResourceManager::selectSound=-1;
+//---------------------GeneralPurposeResource---------------------
+int GeneralPurposeResource::cancelSound=-1;
+int GeneralPurposeResource::decideSound=-1;
+int GeneralPurposeResource::selectSound=-1;
 
-void GeneralPurposeResourceManager::LoadResource(){
+void GeneralPurposeResource::LoadResource(){
 	//画像
 
 	//フォント
@@ -18,7 +18,7 @@ void GeneralPurposeResourceManager::LoadResource(){
 	selectSound=LoadSoundMem((FilePath::effectSoundDir+"nonfree/select.ogg").c_str());
 }
 
-void GeneralPurposeResourceManager::ReleaseResource(){
+void GeneralPurposeResource::ReleaseResource(){
 	//画像
 
 	//フォント

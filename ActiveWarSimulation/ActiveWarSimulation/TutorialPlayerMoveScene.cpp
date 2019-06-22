@@ -2,7 +2,7 @@
 #include"DxLib.h"
 #include"TutorialPlayerMoveScene.h"
 #include"Circle.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include<cmath>
 #include"CommonConstParameter.h"
 #include"FilePath.h"
@@ -100,7 +100,7 @@ bool TutorialPlayerMoveScene::TutorialAttackProcess(int retIntPal){
 				return true;//指定ユニットへの攻撃を指示した時のみ遷移処理を行う
 			} else{
 				//指定と違うユニットを狙っている場合は、攻撃ができないようにする。returnに到達させてはいけない。
-				PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);//失敗音を鳴らす
+				PlaySoundMem(GeneralPurposeResource::cancelSound,DX_PLAYTYPE_BACK,TRUE);//失敗音を鳴らす
 			}
 		}
 		return false;//攻撃ができない時は、遷移処理を行わない

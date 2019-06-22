@@ -1,7 +1,7 @@
 #include"LevelSelectUIInStageSelect.h"
 #include"DxLib.h"
 #include"input.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
 
 namespace {
@@ -58,18 +58,18 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 	}
 	if(levelUpdate){
 		//レベル更新が行われた場合は効果音を鳴らす
-		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);
+		PlaySoundMem(GeneralPurposeResource::selectSound,DX_PLAYTYPE_BACK,TRUE);
 	} else{
 		//その他のUI処理(レベル更新が行われた時はこれらの処理はしないようにする)
 		if(keyboard_get(KEY_INPUT_Z)==1
 			|| (mouseInLevelBox && mouse_get(MOUSE_INPUT_LEFT)==1))
 		{
 			//次の選択へ
-			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 			return UpdateResult::e_gotoBattle;
 		} else if(keyboard_get(KEY_INPUT_X)==1 || mouse_get(MOUSE_INPUT_RIGHT)==1){
 			//戻る
-			PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);
+			PlaySoundMem(GeneralPurposeResource::cancelSound,DX_PLAYTYPE_BACK,TRUE);
 			return UpdateResult::e_gotoStageSelect;
 		}
 	}

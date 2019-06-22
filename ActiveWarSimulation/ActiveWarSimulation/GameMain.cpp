@@ -7,7 +7,7 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"FilePath.h"
 
 #include"TitleScene.h"
@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		InitInputControler();
 
 		//共通素材のロード
-		GeneralPurposeResourceManager::LoadResource();
+		GeneralPurposeResource::LoadResource();
 
 		{
 			//場面変数
@@ -161,7 +161,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		//ここに来るまでにゲーム中で用いられていた変数は解放される
 
 		//終了処理
-		GeneralPurposeResourceManager::ReleaseResource();//共通リソースの解放
+		GeneralPurposeResource::ReleaseResource();//共通リソースの解放
 		DeleteInputControler();//入力機構の解放
 		GraphicControler_End();//グラフィック管理クラスの解放
 		FontControler_End();//フォント管理クラスの解放

@@ -1,11 +1,11 @@
-#ifndef DEF_GENERALPURPOSERESOURCEMANAGER_H
-#define DEF_GENERALPURPOSERESOURCEMANAGER_H
+#ifndef DEF_GENERALPURPOSERESOURCE_H
+#define DEF_GENERALPURPOSERESOURCE_H
 
 #include<vector>
 
 //ゲームのいかなる場面でも頻繁に用いられる素材を管理するクラス
 //インクルードすればどのソースコードでも呼び出せる
-struct GeneralPurposeResourceManager{
+struct GeneralPurposeResource{
 private:
 
 public:

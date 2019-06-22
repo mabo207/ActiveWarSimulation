@@ -172,7 +172,7 @@
     <ClCompile Include="DemoSwitchUnitScene.cpp" />
     <ClCompile Include="FileRead.cpp" />
     <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="GeneralPurposeResourceManager.cpp" />
+    <ClCompile Include="GeneralPurposeResource.cpp" />
     <ClCompile Include="GraphicControl.cpp" />
     <ClCompile Include="GraphicProgramming.cpp" />
     <ClCompile Include="input.cpp" />
@@ -228,7 +228,7 @@
     <ClInclude Include="DemoSwitchUnitScene.h" />
     <ClInclude Include="FileRead.h" />
     <ClInclude Include="GameScene.h" />
-    <ClInclude Include="GeneralPurposeResourceManager.h" />
+    <ClInclude Include="GeneralPurposeResource.h" />
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
     <ClInclude Include="ScoreObserver.h" />

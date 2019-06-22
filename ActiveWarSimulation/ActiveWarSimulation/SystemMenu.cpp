@@ -2,7 +2,7 @@
 #include"SystemMenu.h"
 #include"input.h"
 #include"GraphicControl.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
 #include"FilePath.h"
 
@@ -59,7 +59,7 @@ int SystemMenu::thisCalculate(){
 	}
 	if(m_index!=beforeIndex){
 		//項目が変わっていたら音を鳴らす
-		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);
+		PlaySoundMem(GeneralPurposeResource::selectSound,DX_PLAYTYPE_BACK,TRUE);
 	}
 
 	//場面遷移
@@ -73,7 +73,7 @@ int SystemMenu::thisCalculate(){
 			break;
 		case(1):
 			//ギブアップする
-			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 			return SceneKind::END;
 			break;
 		}
@@ -85,7 +85,7 @@ int SystemMenu::thisCalculate(){
 		)
 	{
 		//項目決定によって前に戻るか、戻るボタンを押したら
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 		return 0;
 	}
 

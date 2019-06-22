@@ -4,7 +4,7 @@
 #include"FileRead.h"
 #include<Windows.h>
 #include"CommonConstParameter.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"FilePath.h"
 
 #include"BattleScene.h"

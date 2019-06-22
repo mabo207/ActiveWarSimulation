@@ -5,7 +5,7 @@
 #include"MyPolygon.h"
 #include"input.h"
 #include<cmath>
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
 #include"FilePath.h"
 
@@ -159,7 +159,7 @@ int TitleScene::thisCalculate(){
 		)
 	{
 		//決定キー入力か、ボタンの上で左クリック
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
+		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
 		return m_selectItem;
 	}
 
