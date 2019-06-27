@@ -121,6 +121,12 @@
     <Filter Include="ヘッダー ファイル\GameScene\StageSelectScene\ImplementedUI">
       <UniqueIdentifier>{e898bf11-ade6-4999-b78b-b1c6f191aeb5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Tools\Resource">
+      <UniqueIdentifier>{544c0990-93de-43d5-9a54-d0b6f195e47c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Tools\Resource">
+      <UniqueIdentifier>{c936114d-557c-4c91-9410-dce45c446c89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -288,6 +294,9 @@
     <ClCompile Include="GeneralPurposeResource.cpp">
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>ソース ファイル\Tools\Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -451,6 +460,9 @@
     </ClInclude>
     <ClInclude Include="GeneralPurposeResource.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph.h">
+      <Filter>ヘッダー ファイル\Tools\Resource</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

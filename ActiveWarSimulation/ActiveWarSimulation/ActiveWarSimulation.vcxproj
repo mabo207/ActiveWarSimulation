@@ -160,6 +160,7 @@
     <ClCompile Include="FadeOutScene.cpp" />
     <ClCompile Include="FilePath.cpp" />
     <ClCompile Include="FinishLog.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="InitLog.cpp" />
     <ClCompile Include="LatticeBattleField.cpp" />
     <ClCompile Include="LevelSelectUIInStageSelect.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="FadeOutScene.h" />
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FinishLog.h" />
+    <ClInclude Include="Graph.h" />
     <ClInclude Include="LatticeBattleField.h" />
     <ClInclude Include="LevelSelectUIInStageSelect.h" />
     <ClInclude Include="LogElement.h" />
