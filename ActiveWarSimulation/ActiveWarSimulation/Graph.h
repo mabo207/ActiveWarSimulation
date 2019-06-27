@@ -38,6 +38,9 @@ namespace Resource{
 		static int Load(const LoadInfo &info);
 
 		static std::map<LoadInfo,std::pair<Graph,size_t>> s_graphMap;//読み込まれているグラフィックデータ一覧
+		static std::vector<LoadInfo> s_taskVec;//メインスレッドで読み込み待ちのグラフィックの読み込み方式一覧
+		static std::mutex s_loadMutex;//s_taseVecとs_graphMapへの安全な書き込みを実現するためのmutex
+		static std::thread::id s_loadThreadId;//ロードを行うのはどのスレッドかを判別できるようにする
 
 		//メンバ
 	public:
