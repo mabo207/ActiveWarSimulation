@@ -13,7 +13,7 @@ public:
 	public:
 		BattleSceneFactory(const std::string &stageDirName,const std::string &title,const StageLevel level);
 		~BattleSceneFactory();
-		std::shared_ptr<GameScene> CreateScene()const;
+		std::shared_ptr<GameScene> CreateIncompleteScene()const;
 	private:
 		const std::string m_stageDirName;
 		const std::string m_title;
@@ -48,6 +48,7 @@ protected:
 
 public:
 	virtual ~BattleScene();
+	void InitCompletely();
 	virtual int Calculate();
 	virtual void Draw()const;
 };

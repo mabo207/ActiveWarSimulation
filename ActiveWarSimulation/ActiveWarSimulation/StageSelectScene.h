@@ -23,7 +23,7 @@ public:
 	public:
 		StageSelectSceneFactory():SceneFactory(){}
 		~StageSelectSceneFactory(){}
-		std::shared_ptr<GameScene> CreateScene()const;
+		std::shared_ptr<GameScene> CreateIncompleteScene()const;
 	};
 
 	//íËêî
@@ -49,6 +49,7 @@ protected:
 
 public:
 	~StageSelectScene();
+	void InitCompletely();
 	int Calculate();
 	void Draw()const;
 };
