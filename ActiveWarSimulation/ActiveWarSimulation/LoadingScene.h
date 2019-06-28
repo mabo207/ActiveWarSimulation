@@ -3,7 +3,7 @@
 
 #include"GameScene.h"
 #include<thread>
-#include<mutex>
+#include<atomic>
 
 //ロード中に少しの画面変更をしたい時の繋ぎの場面
 //スレッドを用いて実現する
@@ -31,10 +31,9 @@ protected:
 private:
 	FpsMeasuring m_timer;	//描画用のタイマー
 	std::thread m_loadingThread;	//次の場面を読み込むスレッド
-	//以下は全てm_loadingThreadで変更されるので、スレッド作成以降はmutexを用いてアクセスする
+	//以下は全てm_loadingThreadで変更されるので、スレッド作成以降はmutexを用いてアクセスする(atomic_boolがこの役割を果たしてくれる)
 	std::shared_ptr<GameScene> m_nextScene;	//読み込み先
-	std::mutex m_loadingThreadMutex;	//m_loadingThreadの初期段階でlockされ、終わるとunlockされる
-	bool m_loadingEnd;	//読み込みが終わったかどうか（mutexの状態だけでは、スレッドが動き始める前にmutexでの状態判定が行われたら意図しない動作になってしまうため）
+	std::atomic_bool m_loadingEnd;	//読み込みが終わったかどうか（mutexの状態だけでは、スレッドが動き始める前にmutexでの状態判定が行われたら意図しない動作になってしまうため）
 };
 
 #endif // !DEF_LOADINGSCENE_H
