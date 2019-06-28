@@ -46,11 +46,14 @@ LoadingScene::LoadingScene(const std::shared_ptr<GameScene::SceneFactory> &nextF
 	//コンストラクタが作成されてからの時間を測る
 	m_timer.RecordTime();
 	//スレッドを作成し、読み込みをさせる
-	m_loadingThread=std::thread([this,&nextFactory]{
+	std::shared_ptr<GameScene> &nextScene=m_nextScene;
+	std::mutex &loadingThreadMutex=m_loadingThreadMutex;
+	bool &loadingEnd=m_loadingEnd;
+	m_loadingThread=std::thread([&nextScene,&loadingThreadMutex,&loadingEnd,nextFactory]{
 		//実はこれじゃだめ、LoadGraph()とかはスレッドセーフでないのでCreateScene()でグラフィックの読み込みとかが正常に行われない……
-		std::lock_guard<std::mutex> lock(m_loadingThreadMutex);
-		m_nextScene=nextFactory->CreateScene();
-		m_loadingEnd=true;
+		std::lock_guard<std::mutex> lock(loadingThreadMutex);
+		nextScene=nextFactory->CreateScene();
+		loadingEnd=true;
 	});
 }
 
