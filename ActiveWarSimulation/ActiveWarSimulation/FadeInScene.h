@@ -15,7 +15,7 @@ public:
 		FadeInSceneFactory(const std::shared_ptr<GameScene::SceneFactory> &i_nextFactory,const int i_maxFrame)
 			:nextFactory(i_nextFactory),maxFrame(i_maxFrame){}
 		~FadeInSceneFactory(){}
-		std::shared_ptr<GameScene> CreateScene()const{
+		std::shared_ptr<GameScene> CreateIncompleteScene()const{
 			return std::shared_ptr<GameScene>(new FadeInScene(nextFactory,maxFrame));
 		}
 
@@ -25,6 +25,7 @@ public:
 	};
 
 	virtual ~FadeInScene();
+	void InitCompletely();
 	int Calculate();
 	void Draw()const;
 

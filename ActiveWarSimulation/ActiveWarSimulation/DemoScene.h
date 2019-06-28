@@ -11,7 +11,7 @@ public:
 	public:
 		DemoSceneFactory();
 		~DemoSceneFactory();
-		std::shared_ptr<GameScene> CreateScene()const;
+		std::shared_ptr<GameScene> CreateIncompleteScene()const;
 
 	protected:
 		//•K—v‚È•Ï”‚Í“Á‚É‘¶İ‚µ‚È‚¢

@@ -13,7 +13,7 @@ DemoScene::DemoSceneFactory::DemoSceneFactory()
 
 DemoScene::DemoSceneFactory::~DemoSceneFactory(){}
 
-std::shared_ptr<GameScene> DemoScene::DemoSceneFactory::CreateScene()const{
+std::shared_ptr<GameScene> DemoScene::DemoSceneFactory::CreateIncompleteScene()const{
 	return std::shared_ptr<GameScene>(new DemoScene());
 }
 

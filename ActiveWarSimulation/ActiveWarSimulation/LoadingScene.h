@@ -13,7 +13,7 @@ public:
 	public:
 		LoadingSceneFactory(const std::shared_ptr<GameScene::SceneFactory> &nextFactory);
 		~LoadingSceneFactory();
-		std::shared_ptr<GameScene> CreateScene()const{
+		std::shared_ptr<GameScene> CreateIncompleteScene()const{
 			return std::shared_ptr<GameScene>(new LoadingScene(m_nextFactory));
 		}
 	private:
@@ -21,6 +21,7 @@ public:
 	};
 
 	virtual ~LoadingScene();
+	void InitCompletely();
 	int Calculate();
 	void Draw()const;
 

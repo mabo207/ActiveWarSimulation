@@ -15,7 +15,13 @@ public:
 		SceneFactory(){}
 		virtual ~SceneFactory(){}
 	public:
-		virtual std::shared_ptr<GameScene> CreateScene()const=0;//こいつをオーバーライド必須にして、各継承先クラスにFactoryを作らせる
+		virtual std::shared_ptr<GameScene> CreateIncompleteScene()const=0;//こいつをオーバーライド必須にして、各継承先クラスにFactoryを作らせる
+		std::shared_ptr<GameScene> CreateCompleteScene()const{
+			//InitCompletely()をした状態のものを返す
+			const std::shared_ptr<GameScene> scene=CreateIncompleteScene();
+			scene->InitCompletely();
+			return scene;
+		}
 	};
 	//定数
 
@@ -25,9 +31,11 @@ protected:
 	GameScene(){}
 	virtual ~GameScene(){}
 	virtual std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const=0;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
-	static std::shared_ptr<GameScene> CreateFadeOutInScene(const std::shared_ptr<GameScene> &thisSharedPtr,const std::shared_ptr<GameScene::SceneFactory> &nextFactory,const int fadeOutFrame,const int fadeInFrame);// フェードアウトしてからフェードインするクラスを作成する便利関数
+
+	static std::shared_ptr<GameScene> CreateFadeOutInSceneCompletely(const std::shared_ptr<GameScene> &thisSharedPtr,const std::shared_ptr<GameScene::SceneFactory> &nextFactory,const int fadeOutFrame,const int fadeInFrame);// フェードアウトしてからフェードインするクラスを作成する便利関数、completeである
 
 public:
+	virtual void InitCompletely()=0;//メインスレッド以外で行うことができる初期化処理群
 	virtual int Calculate()=0;
 	virtual void Draw()const=0;
 	//以下は、VGetNextScene()の呼び方を一定にするために用いる

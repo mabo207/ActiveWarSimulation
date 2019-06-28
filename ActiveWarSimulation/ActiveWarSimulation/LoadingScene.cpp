@@ -10,7 +10,10 @@ LoadingScene::LoadingSceneFactory::LoadingSceneFactory(const std::shared_ptr<Gam
 
 LoadingScene::LoadingSceneFactory::~LoadingSceneFactory(){}
 
-LoadingScene::~LoadingScene(){
+LoadingScene::~LoadingScene(){}
+
+void LoadingScene::InitCompletely(){
+	//並列的な処理を行わない
 }
 
 int LoadingScene::Calculate(){
@@ -40,12 +43,14 @@ LoadingScene::LoadingScene(const std::shared_ptr<GameScene::SceneFactory> &nextF
 {
 	//コンストラクタが作成されてからの時間を測る
 	m_timer.RecordTime();
+	//並列処理をするまでの初期化をする
+	m_nextScene=nextFactory->CreateIncompleteScene();
 	//スレッドを作成し、読み込みをさせる
 	std::shared_ptr<GameScene> &nextScene=m_nextScene;
 	std::atomic_bool &loadingEnd=m_loadingEnd;
-	m_loadingThread=std::thread([&nextScene,&loadingEnd,nextFactory]{
+	m_loadingThread=std::thread([&nextScene,&loadingEnd]{
 		//実はこれじゃだめ、LoadGraph()とかはスレッドセーフでないのでCreateScene()でグラフィックの読み込みとかが正常に行われない……
-		nextScene=nextFactory->CreateScene();
+		nextScene->InitCompletely();
 		loadingEnd.store(true,std::memory_order_release);
 	});
 }
