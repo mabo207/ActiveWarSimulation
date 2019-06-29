@@ -19,6 +19,7 @@
 #include"CircleFactory.h"
 #include"EdgeFactory.h"
 #include"PolygonFactory.h"
+#include"UnitFactory.h"
 
 #include"ConstPosSet.h"
 
@@ -33,9 +34,9 @@ const int StageEditor::leftUpPosX = 25;
 const int StageEditor::leftUpPosY = 25;
 const int StageEditor::buttonWidth = 400;
 const int StageEditor::buttonHeight=(leftUpPosY*2+mapSizeY)/4;
-const int StageEditor::shapeButtonHeightNum=1;
+const int StageEditor::shapeButtonHeightNum=3;
 const int StageEditor::shapeButtonWidthNum=3;
-const int StageEditor::shapeButtonHeight=StageEditor::buttonHeight/3;
+const int StageEditor::shapeButtonHeight=StageEditor::buttonHeight;
 const int StageEditor::shapeButtonWidth=StageEditor::buttonWidth;
 const int StageEditor::posButtonWidth=StageEditor::buttonWidth;
 const int StageEditor::posButtonHeight=StageEditor::buttonHeight/2;
@@ -139,6 +140,56 @@ StageEditor::StageEditor()
 			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*0)
 		)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+	)));
+
+	//戦士作成ボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
+		Vector2D(
+		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*0)
+			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*1)
+		)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+		,Unit::Profession::e_soldier
+	)));
+
+	//重装兵作成ボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
+		Vector2D(
+		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*1)
+			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*1)
+		)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+		,Unit::Profession::e_armer
+	)));
+
+	//射手作成ボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
+		Vector2D(
+		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*2)
+			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*1)
+		)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+		,Unit::Profession::e_archer
+	)));
+
+	//魔道士作成ボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
+		Vector2D(
+		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*0)
+			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*2)
+		)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+		,Unit::Profession::e_mage
+	)));
+
+	//衛生兵作成ボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
+		Vector2D(
+		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*1)
+			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*2)
+		)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+		,Unit::Profession::e_healer
 	)));
 
 	//1px位置調整ボタン
