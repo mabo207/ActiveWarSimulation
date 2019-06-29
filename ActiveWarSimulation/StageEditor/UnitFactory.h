@@ -18,7 +18,8 @@ public:
 	UnitFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned int lightColor,const Unit::Profession::Kind profession);
 	~UnitFactory();
 	std::shared_ptr<BattleObject> CreateObject(Vector2D point)const;
-
+	EditPut::PosSetKind VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings);//ëÂÇ´Ç≥í≤êÆÇ≈Ç´Ç»Ç¢ÇÊÇ§Ç…Ç∑ÇÈ
+	
 private:
 	const Unit::Profession::Kind m_profession;
 };

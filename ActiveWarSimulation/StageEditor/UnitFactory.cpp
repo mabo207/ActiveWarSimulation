@@ -41,3 +41,16 @@ std::shared_ptr<BattleObject> UnitFactory::CreateObject(Vector2D point)const{
 	//ひとまずプレイヤー側・Lv1・突撃AI・基本装備のユニットを作成する
 	return std::shared_ptr<BattleObject>(Unit::CreateMobUnit("mob",m_profession,1,point,Unit::Team::e_player,Unit::AIType::e_assult,0,{}));
 }
+
+EditPut::PosSetKind UnitFactory::VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings){
+	if(pskind==EditPut::PosSetKind::BASENONEXIST){
+		//置く場所を決めている時
+		//位置を確定
+		settings.m_pBattleObject->Warp(point);
+		//設置
+		settings.PutObject(settings.m_pBattleObject->getPos());
+		//作業終了、新しい図形の位置の確定へ
+		return EditPut::PosSetKind::BASENONEXIST;
+	}
+	return EditPut::NONEDIT;//例外的な処理
+}
