@@ -174,6 +174,8 @@ void EditActionSettings::WriteOutStage(const char *filename)const{
 			pObj->WriteOutObjectWholeInfo(ofs);
 		}
 	}
+	//終了処理
+	ofs.close();
 }
 
 //ユニットの書き出し
@@ -192,12 +194,29 @@ void EditActionSettings::WriteOutUnit(const char *filename)const{
 	//全てのユニット情報を書き出し
 	for(const std::shared_ptr<BattleObject> &pObj:m_objects){
 		if(pObj->GetType()==BattleObject::Type::e_unit){
+			//definitionがmob一択なので、Unitクラス内でなくここに処理を書く。
 			const std::shared_ptr<Unit> pUnit=std::dynamic_pointer_cast<Unit>(pObj);
 			if(pUnit){
-				pUnit->WriteOutObjectWholeInfo(ofs);
+				const Unit::BattleStatus battleStatus=pUnit->GetBattleStatus();
+				const Unit::BaseStatus baseStatus=pUnit->GetBaseStatus();
+				const Vector2D pos=pUnit->getPos();
+				ofs<<"{(definition,mob),";
+				ofs<<"(name,"<<baseStatus.name<<"),";
+				ofs<<"(profession,"<<baseStatus.profession<<"),";
+				ofs<<"(lv,"<<baseStatus.lv<<"),";
+				ofs<<"(pos,"<<(int)(pos.x)<<','<<(int)(pos.y)<<"),";
+				ofs<<"(team,"<<battleStatus.team<<"),";
+				ofs<<"(ai,"<<battleStatus.aitype<<','<<battleStatus.aiGroup<<')';
+				if(battleStatus.HP<baseStatus.maxHP){
+					//HPが減っている処理をしたなら、initHPの項目を追加
+					ofs<<",(initHP,"<<battleStatus.HP<<')';
+				}
+				ofs<<'}'<<std::endl;
 			}
 		}
 	}
+	//終了処理
+	ofs.close();
 }
 
 //ステージの読み込み
