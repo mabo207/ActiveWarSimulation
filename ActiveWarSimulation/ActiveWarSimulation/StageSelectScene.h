@@ -34,7 +34,7 @@ protected:
 	NextSceneName m_nextSceneName;//次の場面は何か、VGetNextScene()で使用
 	std::shared_ptr<BaseUIInStageSelect> m_ui;//現在のUI
 	std::shared_ptr<BaseUIInStageSelect::ControledData> m_uiControledData;//UIが管理するデータ
-	
+
 	//グラフィック等
 	const int m_backPic;
 	const int m_stageNameFont;

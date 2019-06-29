@@ -3,6 +3,7 @@
 
 #include<memory>
 #include"StageLevel.h"
+#include"ToolsLib.h"
 
 //バトルマップ選択場面のUIの基底クラス
 class BaseUIInStageSelect{
@@ -11,8 +12,9 @@ public:
 	struct ControledData{
 		size_t stageIndex;
 		StageLevel selectLevel;
-		ControledData(size_t i_stageIndex,StageLevel i_selectLevel)
-			:stageIndex(i_stageIndex),selectLevel(i_selectLevel){}
+		PositionControl stageInfoPos;
+		PositionControl levelInfoPos;
+		ControledData(size_t i_stageIndex,StageLevel i_selectLevel);
 		~ControledData(){}
 	};
 

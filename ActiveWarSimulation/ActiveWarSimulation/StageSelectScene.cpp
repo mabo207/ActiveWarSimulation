@@ -98,6 +98,9 @@ void StageSelectScene::Activate(){
 }
 
 int StageSelectScene::Calculate(){
+	//表示情報の位置更新
+	m_uiControledData->stageInfoPos.Update();
+	m_uiControledData->levelInfoPos.Update();
 	//選択ステージの更新
 	const auto updateResult=m_ui->Update();
 	if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoBattle){
@@ -143,6 +146,13 @@ void StageSelectScene::Draw()const{
 		//ステージの位置の描画
 		DrawCircleAA(m_stageInfoVec[i].m_pos.x,m_stageInfoVec[i].m_pos.y,30,10,GetColor(64,64,255),TRUE);
 		DrawCircleAA(m_stageInfoVec[i].m_pos.x,m_stageInfoVec[i].m_pos.y,20,10,GetColor(128,196,255),TRUE);
+	}
+	//ステージ情報とレベル情報の描画(ステージが選択されている時のみ描画可能)
+	if(m_uiControledData->stageIndex<m_stageInfoVec.size()){
+		//ステージ情報の描画
+		//m_stageInfoVec[m_uiControledData->stageIndex].DrawInfo(m_uiControledData->stageInfoPos.GetX(),m_uiControledData->stageInfoPos.GetY(),m_stageNameFont,m_explainFont);
+		//レベル情報の描画
+
 	}
 	//UIの描画
 	m_ui->Draw();
