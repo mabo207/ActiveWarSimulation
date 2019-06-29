@@ -19,7 +19,7 @@ TutorialScene::TutorialSceneFactory::TutorialSceneFactory(const std::string &sta
 
 TutorialScene::TutorialSceneFactory::~TutorialSceneFactory(){}
 
-std::shared_ptr<GameScene> TutorialScene::TutorialSceneFactory::CreateScene()const{
+std::shared_ptr<GameScene> TutorialScene::TutorialSceneFactory::CreateIncompleteScene()const{
 	return std::shared_ptr<TutorialScene>(new TutorialScene(m_stageDirName,m_titleName,StageLevel::e_easy));
 }
 

@@ -31,7 +31,7 @@ public:
 		//クラスを作るのに必要なデータはない
 		TitleSceneFactory();
 		virtual ~TitleSceneFactory();
-		std::shared_ptr<GameScene> CreateScene()const;
+		std::shared_ptr<GameScene> CreateIncompleteScene()const;
 	};
 	
 	//定数
@@ -66,6 +66,8 @@ protected:
 
 public:
 	virtual ~TitleScene();
+	void InitCompletely();
+	void Activate();
 	int Calculate();
 	void Draw()const;
 };

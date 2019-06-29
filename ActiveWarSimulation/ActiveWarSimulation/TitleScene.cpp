@@ -40,7 +40,7 @@ TitleScene::TitleSceneFactory::TitleSceneFactory()
 
 TitleScene::TitleSceneFactory::~TitleSceneFactory(){}
 
-std::shared_ptr<GameScene> TitleScene::TitleSceneFactory::CreateScene()const{
+std::shared_ptr<GameScene> TitleScene::TitleSceneFactory::CreateIncompleteScene()const{
 	return std::shared_ptr<GameScene>(new TitleScene());
 }
 
@@ -81,8 +81,6 @@ TitleScene::TitleScene()
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
 		m_hitJudgeShapeVec[i]=MakeHexagon(strPos[i],80.0f);
 	}
-	//bgmÄ¶
-	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
 }
 
 TitleScene::~TitleScene(){
@@ -93,6 +91,15 @@ TitleScene::~TitleScene(){
 	StopSoundMem(m_bgm);
 	DeleteSoundMem(m_bgm);
 	DeleteSoundMem(m_aimchangeSound);
+}
+
+void TitleScene::InitCompletely(){
+	//“Á‚É‚·‚éŽ–‚Í‚È‚¢
+}
+
+void TitleScene::Activate(){
+	//bgmÄ¶
+	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
 }
 
 int TitleScene::thisCalculate(){
@@ -233,16 +240,16 @@ void TitleScene::Draw()const{
 std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	if(m_selectItem==SelectItem::e_stageSelect){
 		const auto stageselect=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
-		return CreateFadeOutInScene(thisSharedPtr,stageselect,15,15);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,stageselect,15,15);
 	} else if(m_selectItem==SelectItem::e_demo){
 		const auto demo=std::make_shared<DemoScene::DemoSceneFactory>();
-		return CreateFadeOutInScene(thisSharedPtr,demo,15,15);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,demo,15,15);
 	} else if(m_selectItem==SelectItem::e_tutorial){
 		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial");
-		return CreateFadeOutInScene(thisSharedPtr,tutorial,15,15);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,tutorial,15,15);
 	} else if(m_selectItem==SelectItem::e_tutorial_2){
 		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial_2");
-		return CreateFadeOutInScene(thisSharedPtr,tutorial,15,15);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,tutorial,15,15);
 	}
 	return std::shared_ptr<GameScene>();
 }

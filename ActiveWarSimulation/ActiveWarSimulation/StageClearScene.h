@@ -18,7 +18,6 @@ private:
 	//定数
 protected:
 	static const int bonusFontSize;
-	static const int scoreFontSize;
 
 	//変数
 protected:
@@ -41,7 +40,6 @@ protected:
 
 	//フォント系
 	const int m_bonusFont;//ボーナス項目表示のフォント
-	const int m_scoreFont;//スコア数値表示のフォント
 
 	//関数
 protected:

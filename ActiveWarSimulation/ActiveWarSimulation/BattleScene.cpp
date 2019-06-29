@@ -15,7 +15,7 @@ BattleScene::BattleSceneFactory::BattleSceneFactory(const std::string &stageDirN
 
 BattleScene::BattleSceneFactory::~BattleSceneFactory(){}
 
-std::shared_ptr<GameScene> BattleScene::BattleSceneFactory::CreateScene()const{
+std::shared_ptr<GameScene> BattleScene::BattleSceneFactory::CreateIncompleteScene()const{
 	return std::shared_ptr<BattleScene>(new BattleScene(m_stageDirName,m_title,m_level));
 }
 
@@ -27,12 +27,7 @@ BattleScene::BattleScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_resetFlag(false)
 	,m_resetFrame(0)
 	,m_battleSceneData(battleSceneData)
-{
-	//bgm再生
-	PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);
-	//m_sceneDataの初期化、最初はユニット切り替え
-	m_sceneData=VGetSwitchUnitScene();
-}
+{}
 
 BattleScene::BattleScene(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel)
 	:BattleScene(std::shared_ptr<BattleSceneData>(new BattleSceneData(stageDirName,titleName,stageLevel))){}
@@ -40,6 +35,17 @@ BattleScene::BattleScene(const std::string &stageDirName,const std::string &titl
 BattleScene::~BattleScene(){
 	//m_battleSceneDataにあるシーン終了時に行う処理群の一括処理をする
 	m_battleSceneData->RunSceneEndProcess();
+}
+
+void BattleScene::InitCompletely(){
+	//m_battleSceneDataはグラフィックとともに初期化するべきデータが多いので、ここで初期化処理は行わずにコンストラクタで全て初期化する
+}
+
+void BattleScene::Activate(){
+	//bgm再生
+	PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);
+	//m_sceneDataの初期化、最初はユニット切り替え(m_battleSceneDataの初期化が終わった状態でこの処理はしたいのでActivate内で行う)
+	m_sceneData=VGetSwitchUnitScene();
 }
 
 std::shared_ptr<BattleSceneElement> BattleScene::VGetSwitchUnitScene()const{
@@ -108,5 +114,5 @@ void BattleScene::Draw()const{
 std::shared_ptr<GameScene> BattleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	//ゲームプレイが終わった時は、タイトル画面へ
 	const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
-	return CreateFadeOutInScene(thisSharedPtr,titleFactory,15,15);
+	return CreateFadeOutInSceneCompletely(thisSharedPtr,titleFactory,15,15);
 }
