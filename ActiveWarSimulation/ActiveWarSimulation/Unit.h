@@ -159,7 +159,7 @@ public:
 	//静的関数
 public:
 	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage);//モブユニットを動的生成する。
-
+	static Unit *CreateUnitFromBuilder(StringBuilder &unitdata);
 };
 
 #endif // !DEF_UNIT_H
