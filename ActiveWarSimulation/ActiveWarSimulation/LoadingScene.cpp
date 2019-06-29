@@ -1,7 +1,8 @@
 #define _USE_MATH_DEFINES
 #include"LoadingScene.h"
 #include"DxLib.h"
-#include<cmath>
+#include"GeneralPurposeResource.h"
+#include"CommonConstParameter.h"
 
 //----------------LoadingScene::LoadingSceneFactory--------------
 LoadingScene::LoadingSceneFactory::LoadingSceneFactory(const std::shared_ptr<GameScene::SceneFactory> &nextFactory)
@@ -35,10 +36,16 @@ int LoadingScene::Calculate(){
 }
 
 void LoadingScene::Draw()const{
-	//‚Æ‚è‚ ‚¦‚¸‰~‚ð‰ñ‚·
-	const double theta=m_timer.GetProcessedTime()*2*M_PI*3;
-	const int r=20,x=1800+(int)(r*std::cos(theta)),y=1000+(int)(r*std::sin(theta));
-	DrawCircle(x,y,4,GetColor(255,255,255),TRUE);
+	//•¶Žš‚Ì•`‰æ
+	const size_t maxDotNum=4;
+	const double increaseSpeed=3.0;
+	const int dotNum=((int)(m_timer.GetProcessedTime()*increaseSpeed))%maxDotNum;
+	std::string str="Now Loading";
+	str.reserve(str.size()+maxDotNum);
+	for(int i=0;i<dotNum;i++){
+		str+='.';
+	}
+	DrawStringToHandle(CommonConstParameter::gameResolutionX-500,CommonConstParameter::gameResolutionY-100,str.c_str(),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
 }
 
 LoadingScene::LoadingScene(const std::shared_ptr<GameScene::SceneFactory> &nextFactory)
