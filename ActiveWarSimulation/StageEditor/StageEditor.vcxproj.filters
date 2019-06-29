@@ -150,6 +150,12 @@
     <ClInclude Include="..\ActiveWarSimulation\StringBuilder.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="UnitFactory.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\Unit.h">
+      <Filter>ヘッダー ファイル\FieldObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -238,6 +244,12 @@
     </ClCompile>
     <ClCompile Include="..\ActiveWarSimulation\StringBuilder.cpp">
       <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitFactory.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\Unit.cpp">
+      <Filter>ソース ファイル\FieldObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

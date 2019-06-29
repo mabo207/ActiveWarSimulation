@@ -155,6 +155,7 @@
     <ClInclude Include="..\ActiveWarSimulation\MyPolygon.h" />
     <ClInclude Include="..\ActiveWarSimulation\StringBuilder.h" />
     <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h" />
+    <ClInclude Include="..\ActiveWarSimulation\Unit.h" />
     <ClInclude Include="..\FieldBase\Circle.h" />
     <ClInclude Include="..\FieldBase\Edge.h" />
     <ClInclude Include="..\FieldBase\Shape.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="ScrollBar.h" />
     <ClInclude Include="ShapeFactory.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="UnitFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\ActiveWarSimulation\CommonConstParameter.cpp" />
@@ -186,6 +188,7 @@
     <ClCompile Include="..\ActiveWarSimulation\MyPolygon.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\StringBuilder.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\Unit.cpp" />
     <ClCompile Include="..\FieldBase\Circle.cpp" />
     <ClCompile Include="..\FieldBase\Edge.cpp" />
     <ClCompile Include="..\FieldBase\Shape.cpp" />
@@ -207,6 +210,7 @@
     <ClCompile Include="ScrollBar.cpp" />
     <ClCompile Include="ShapeFactory.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="UnitFactory.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
