@@ -202,22 +202,10 @@ void EditActionSettings::WriteOutUnit(const char *filename)const{
 
 //ステージの読み込み
 void EditActionSettings::ReadStage(const char *filename){
-	//ファイルを開きすべての文字列を書き出す
-	std::ifstream ifs(filename);
-	std::string str;//書き出し先
-	while(true){
-		char ch;
-		ch=ifs.get();
-		//ファイルの終端でwhileから脱出
-		if(ch==EOF){
-			break;
-		}
-		str.push_back(ch);
-	}
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-	StringBuilder sb(str,'\n','{','}');
+	StringBuilder sb(FileStrRead(filename),'\n','{','}');
 	for(StringBuilder &ssb:sb.m_vec){
-		std::shared_ptr<BattleObject> pb=BattleObject::CreateObject(ssb);//sb,ssbは変更される
+		const std::shared_ptr<BattleObject> pb=BattleObject::CreateObject(ssb);//sb,ssbは変更される
 		if(pb.get()!=nullptr){
 			m_objects.push_back(pb);
 		}
