@@ -100,11 +100,13 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 						throw(std::runtime_error("SetDrawScreen(DX_SCREEN_BACK) failed."));
 					}
 					//グラフィック系の読み込み直し
+					GeneralPurposeResource::ReleaseResource();//共有リソースの解放
 					GraphicControler_End();//グラフィック管理クラスの解放
 					FontControler_End();//フォント管理クラスの解放
 					DeleteInputControler();//入力機構の解放
 					GraphicControler_Init();
 					FontControler_Init();
+					GeneralPurposeResource::LoadResource();//共有リソースの取得
 					InitInputControler();
 					pGameScene=CreateStartScene();
 					mousePic=LoadGraphEX(FilePath::graphicDir+"mouseCursor.png");//マウスの読み込みし直し
