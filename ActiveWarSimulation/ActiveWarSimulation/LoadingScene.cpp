@@ -20,8 +20,9 @@ int LoadingScene::Calculate(){
 	//タイマー更新
 	m_timer.Update();
 	//ロード作業が終了したかの判定
-	if(m_loadingEnd.load(std::memory_order_acquire)){
+	if(m_loadingEnd.load(std::memory_order_acquire) && GetASyncLoadNum()==0){
 		//終了してれば次の場面へ
+		SetUseASyncLoadFlag(FALSE);//画像等の非同期読み込み設定を解除
 		m_loadingThread.join();	//スレッドの管理を手放してデストラクタを呼べるようにする
 		return 1;
 	}
@@ -43,6 +44,8 @@ LoadingScene::LoadingScene(const std::shared_ptr<GameScene::SceneFactory> &nextF
 {
 	//コンストラクタが作成されてからの時間を測る
 	m_timer.RecordTime();
+	//画像等を非同期読み込みするように設定する
+	SetUseASyncLoadFlag(TRUE);
 	//並列処理をするまでの初期化をする
 	m_nextScene=nextFactory->CreateIncompleteScene();
 	//スレッドを作成し、読み込みをさせる
