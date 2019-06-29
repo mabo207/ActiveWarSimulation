@@ -62,7 +62,7 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 		unitdata.Split(',','(',')');
 		//まずモブ用の設定をするか固定ユニット用の設定をするかを判定する
 		bool uniqueFlag=false;
-		for(const StringBuilder &sb:unitlist.m_vec){
+		for(const StringBuilder &sb:unitdata.m_vec){
 			if(sb.m_vec.size()>=2 && sb.m_vec[0].GetString()=="definition"){
 				//設定方法はdefinitionに記載されている
 				uniqueFlag=(sb.m_vec[1].GetString()=="unique");
