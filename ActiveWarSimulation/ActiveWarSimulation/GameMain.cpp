@@ -14,6 +14,12 @@
 #include"FadeInScene.h"
 #include"LoadingScene.h"
 
+std::shared_ptr<GameScene> CreateStartScene(){
+	const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
+	const auto fadeInFactory=std::make_shared<FadeInScene::FadeInSceneFactory>(titleFactory,15);
+	return LoadingScene::LoadingSceneFactory(fadeInFactory).CreateCompleteScene();
+}
+
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
 		//dxライブラリの初期化
@@ -55,7 +61,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		{
 			//場面変数
-			std::shared_ptr<GameScene> pGameScene=LoadingScene::LoadingSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>()).CreateCompleteScene();
+			std::shared_ptr<GameScene> pGameScene=CreateStartScene();
 
 			//画面縮小することによる撮影をする際はSetMouseDispFlagをFALSEにしてコンパイル
 			SetMouseDispFlag(TRUE);
@@ -100,7 +106,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					GraphicControler_Init();
 					FontControler_Init();
 					InitInputControler();
-					pGameScene=FadeInScene::FadeInSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>(),15).CreateCompleteScene();
+					pGameScene=CreateStartScene();
 					mousePic=LoadGraphEX(FilePath::graphicDir+"mouseCursor.png");//マウスの読み込みし直し
 					SetMouseDispFlag(mouseDispFlag);
 				} else if(keyboard_get(KEY_INPUT_F2)==60){
