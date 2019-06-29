@@ -318,7 +318,7 @@ void Unit::DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDra
 }
 
 void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const{
-	Vector2D pos=point-adjust;
+	Vector2D pos=point+adjust;//•`‰æˆÊ’u
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
 	if(infoDrawFlag){
@@ -333,20 +333,20 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 		}
 		//ƒ†ƒjƒbƒg‚Ì“–‚½‚è”»’è}Œ`‚ğ•`‰æ
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
-		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//–Ê
+		GetHitJudgeShape()->Draw(point,adjust,Team::GetColor(m_battleStatus.team),TRUE);//–Ê
 		SetDrawBlendMode(mode,pal);
-		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//˜g
+		GetHitJudgeShape()->Draw(point,adjust,Team::GetColor(m_battleStatus.team),FALSE);//˜g
 		//ƒ†ƒjƒbƒg©g‚Ì“–‚½‚è”»’è‚Ì•`‰æ
 //		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,255);
-		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//–Ê
-		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//˜g(•‚ğ25%¬‚º‚é)
+		m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//–Ê
+		m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//˜g(•‚ğ25%¬‚º‚é)
 		//‘I‘ğƒ†ƒjƒbƒg‚Ì“–‚½‚è”»’è•”•ª‚Ì‹P“x‰ÁZ
 		if(animationFlag){
 			const int addMax=120;
 			SetDrawBlendMode(DX_BLENDMODE_ADD,(frame%60)*(60-frame%60)*addMax/900);
-			m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//–Ê
-			m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//˜g(•‚ğ25%¬‚º‚é)
+			m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//–Ê
+			m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//˜g(•‚ğ25%¬‚º‚é)
 		}
 		SetDrawBlendMode(mode,pal);
 	}
