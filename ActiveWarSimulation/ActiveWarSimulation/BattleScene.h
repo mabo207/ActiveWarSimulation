@@ -48,7 +48,8 @@ protected:
 
 public:
 	virtual ~BattleScene();
-	void InitCompletely();
+	virtual void InitCompletely();
+	virtual void Activate();
 	virtual int Calculate();
 	virtual void Draw()const;
 };

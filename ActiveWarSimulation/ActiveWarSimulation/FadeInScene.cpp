@@ -16,6 +16,11 @@ void FadeInScene::InitCompletely(){
 	m_nextScene->InitCompletely();
 }
 
+void FadeInScene::Activate(){
+	//m_nextSceneの実体ができているのでActivate()する
+	m_nextScene->Activate();
+}
+
 int FadeInScene::Calculate(){
 	// フェードイン処理
 	m_drawAlpha.Update();

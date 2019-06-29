@@ -16,6 +16,10 @@ void LoadingScene::InitCompletely(){
 	//並列的な処理を行わない
 }
 
+void LoadingScene::Activate(){
+	//特に何もしない
+}
+
 int LoadingScene::Calculate(){
 	//タイマー更新
 	m_timer.Update();
@@ -24,7 +28,8 @@ int LoadingScene::Calculate(){
 		//終了してれば次の場面へ
 		SetUseASyncLoadFlag(FALSE);//画像等の非同期読み込み設定を解除
 		m_loadingThread.join();	//スレッドの管理を手放してデストラクタを呼べるようにする
-		return 1;
+		m_nextScene->Activate();//次のクラスを起動
+		return 1;//遷移
 	}
 	return 0;
 }

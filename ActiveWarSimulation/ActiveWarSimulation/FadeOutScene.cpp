@@ -16,6 +16,10 @@ void FadeOutScene::InitCompletely(){
 	//nextSceneの初期化タイミングはここではないので何もすることはない
 }
 
+void FadeOutScene::Activate(){
+	//特に何もしない
+}
+
 int FadeOutScene::Calculate(){
 	// フェードアウト処理
 	m_drawAlpha.Update();

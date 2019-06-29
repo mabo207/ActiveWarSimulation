@@ -27,12 +27,7 @@ BattleScene::BattleScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_resetFlag(false)
 	,m_resetFrame(0)
 	,m_battleSceneData(battleSceneData)
-{
-	//bgm再生
-	PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);
-	//m_sceneDataの初期化、最初はユニット切り替え
-	m_sceneData=VGetSwitchUnitScene();
-}
+{}
 
 BattleScene::BattleScene(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel)
 	:BattleScene(std::shared_ptr<BattleSceneData>(new BattleSceneData(stageDirName,titleName,stageLevel))){}
@@ -44,6 +39,13 @@ BattleScene::~BattleScene(){
 
 void BattleScene::InitCompletely(){
 	//m_battleSceneDataはグラフィックとともに初期化するべきデータが多いので、ここで初期化処理は行わずにコンストラクタで全て初期化する
+}
+
+void BattleScene::Activate(){
+	//bgm再生
+	PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);
+	//m_sceneDataの初期化、最初はユニット切り替え(m_battleSceneDataの初期化が終わった状態でこの処理はしたいのでActivate内で行う)
+	m_sceneData=VGetSwitchUnitScene();
 }
 
 std::shared_ptr<BattleSceneElement> BattleScene::VGetSwitchUnitScene()const{

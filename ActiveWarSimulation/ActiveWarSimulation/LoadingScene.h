@@ -22,6 +22,7 @@ public:
 
 	virtual ~LoadingScene();
 	void InitCompletely();
+	void Activate();
 	int Calculate();
 	void Draw()const;
 

@@ -27,6 +27,7 @@ public:
 
 	virtual ~FadeOutScene();
 	void InitCompletely();
+	void Activate();
 	int Calculate();
 	void Draw()const;
 

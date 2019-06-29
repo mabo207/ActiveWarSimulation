@@ -50,6 +50,7 @@ protected:
 public:
 	~StageSelectScene();
 	void InitCompletely();
+	void Activate();
 	int Calculate();
 	void Draw()const;
 };

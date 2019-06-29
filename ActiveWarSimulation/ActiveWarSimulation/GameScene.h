@@ -17,9 +17,10 @@ public:
 	public:
 		virtual std::shared_ptr<GameScene> CreateIncompleteScene()const=0;//こいつをオーバーライド必須にして、各継承先クラスにFactoryを作らせる
 		std::shared_ptr<GameScene> CreateCompleteScene()const{
-			//InitCompletely()をした状態のものを返す
+			//InitCompletely(),Activate()をした状態のものを返す
 			const std::shared_ptr<GameScene> scene=CreateIncompleteScene();
 			scene->InitCompletely();
+			scene->Activate();
 			return scene;
 		}
 	};
@@ -36,6 +37,7 @@ protected:
 
 public:
 	virtual void InitCompletely()=0;//メインスレッド以外で行うことができる初期化処理群
+	virtual void Activate()=0;//初期化が終了し、このSceneの動作が始まる時に行う処理。BGMの再生処理など。
 	virtual int Calculate()=0;
 	virtual void Draw()const=0;
 	//以下は、VGetNextScene()の呼び方を一定にするために用いる

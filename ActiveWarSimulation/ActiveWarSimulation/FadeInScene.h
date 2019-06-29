@@ -26,6 +26,7 @@ public:
 
 	virtual ~FadeInScene();
 	void InitCompletely();
+	void Activate();
 	int Calculate();
 	void Draw()const;
 

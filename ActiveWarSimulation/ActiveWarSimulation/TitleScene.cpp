@@ -81,8 +81,6 @@ TitleScene::TitleScene()
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
 		m_hitJudgeShapeVec[i]=MakeHexagon(strPos[i],80.0f);
 	}
-	//bgmÄ¶
-	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
 }
 
 TitleScene::~TitleScene(){
@@ -97,6 +95,11 @@ TitleScene::~TitleScene(){
 
 void TitleScene::InitCompletely(){
 	//“Á‚É‚·‚éŽ–‚Í‚È‚¢
+}
+
+void TitleScene::Activate(){
+	//bgmÄ¶
+	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
 }
 
 int TitleScene::thisCalculate(){

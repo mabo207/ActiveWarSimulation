@@ -93,6 +93,10 @@ void StageSelectScene::InitCompletely(){
 	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec,m_stageNameFont,m_explainFont));
 }
 
+void StageSelectScene::Activate(){
+	//bgm再生
+}
+
 int StageSelectScene::Calculate(){
 	//選択ステージの更新
 	const auto updateResult=m_ui->Update();
