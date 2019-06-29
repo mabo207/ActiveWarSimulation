@@ -12,6 +12,14 @@ FadeOutScene::FadeOutScene(const std::shared_ptr<GameScene> &previousScene,const
 
 FadeOutScene::~FadeOutScene(){}
 
+void FadeOutScene::InitCompletely(){
+	//nextSceneの初期化タイミングはここではないので何もすることはない
+}
+
+void FadeOutScene::Activate(){
+	//特に何もしない
+}
+
 int FadeOutScene::Calculate(){
 	// フェードアウト処理
 	m_drawAlpha.Update();
@@ -51,7 +59,7 @@ std::shared_ptr<GameScene> FadeOutScene::VGetNextScene(const std::shared_ptr<Gam
 	//m_nextFactoryを用いて作成
 	if(m_nextFactory){
 		//m_nextFactoryが実体を持つかどうか
-		return m_nextFactory->CreateScene();
+		return m_nextFactory->CreateCompleteScene();
 	}
 	return std::shared_ptr<GameScene>();
 }

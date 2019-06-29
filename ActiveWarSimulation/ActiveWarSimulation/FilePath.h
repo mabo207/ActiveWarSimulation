@@ -10,6 +10,7 @@ struct FilePath{
 	static const std::string graphicDir;
 	static const std::string bgmDir;
 	static const std::string effectSoundDir;
+	static const std::string savedataDir;
 };
 
 #endif // !DEF_FILEPATH_H

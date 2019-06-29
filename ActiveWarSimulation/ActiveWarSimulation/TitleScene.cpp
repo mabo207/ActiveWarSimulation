@@ -5,7 +5,7 @@
 #include"MyPolygon.h"
 #include"input.h"
 #include<cmath>
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
 #include"FilePath.h"
 
@@ -40,7 +40,7 @@ TitleScene::TitleSceneFactory::TitleSceneFactory()
 
 TitleScene::TitleSceneFactory::~TitleSceneFactory(){}
 
-std::shared_ptr<GameScene> TitleScene::TitleSceneFactory::CreateScene()const{
+std::shared_ptr<GameScene> TitleScene::TitleSceneFactory::CreateIncompleteScene()const{
 	return std::shared_ptr<GameScene>(new TitleScene());
 }
 
@@ -81,8 +81,6 @@ TitleScene::TitleScene()
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
 		m_hitJudgeShapeVec[i]=MakeHexagon(strPos[i],80.0f);
 	}
-	//bgm再生
-	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
 }
 
 TitleScene::~TitleScene(){
@@ -93,6 +91,15 @@ TitleScene::~TitleScene(){
 	StopSoundMem(m_bgm);
 	DeleteSoundMem(m_bgm);
 	DeleteSoundMem(m_aimchangeSound);
+}
+
+void TitleScene::InitCompletely(){
+	//特にする事はない
+}
+
+void TitleScene::Activate(){
+	//bgm再生
+	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
 }
 
 int TitleScene::thisCalculate(){
@@ -159,7 +166,7 @@ int TitleScene::thisCalculate(){
 		)
 	{
 		//決定キー入力か、ボタンの上で左クリック
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
+		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
 		return m_selectItem;
 	}
 
@@ -233,16 +240,16 @@ void TitleScene::Draw()const{
 std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	if(m_selectItem==SelectItem::e_stageSelect){
 		const auto stageselect=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
-		return CreateFadeOutInScene(thisSharedPtr,stageselect,15,15);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,stageselect,15,15);
 	} else if(m_selectItem==SelectItem::e_demo){
 		const auto demo=std::make_shared<DemoScene::DemoSceneFactory>();
-		return CreateFadeOutInScene(thisSharedPtr,demo,15,15);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,demo,15,15);
 	} else if(m_selectItem==SelectItem::e_tutorial){
 		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial");
-		return CreateFadeOutInScene(thisSharedPtr,tutorial,15,15);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,tutorial,15,15);
 	} else if(m_selectItem==SelectItem::e_tutorial_2){
 		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial_2");
-		return CreateFadeOutInScene(thisSharedPtr,tutorial,15,15);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,tutorial,15,15);
 	}
 	return std::shared_ptr<GameScene>();
 }

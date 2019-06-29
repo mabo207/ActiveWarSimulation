@@ -3,13 +3,12 @@
 #include"GraphicControl.h"
 #include"input.h"
 #include"CommonConstParameter.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"ScoreRankingData.h"
 #include"FilePath.h"
 
 //--------------------StageClearScene------------------
 const int StageClearScene::bonusFontSize=25;
-const int StageClearScene::scoreFontSize=60;
 
 StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneData,bool winFlag)
 	:BattleSceneElement(SceneKind::e_clear)
@@ -23,7 +22,6 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_resultBarPic(LoadGraphEX((winFlag?FilePath::graphicDir+"result/stageClear.png":FilePath::graphicDir+"result/missionFailed.png")))
 	,m_scoreBarPic(LoadGraphEX(FilePath::graphicDir+"result/scoreBar.png"))
 	,m_bonusFont(CreateFontToHandleEX("りいポップ角 R",bonusFontSize,4,DX_FONTTYPE_ANTIALIASING_4X4))
-	,m_scoreFont(CreateFontToHandleEX("りいポップ角 R",scoreFontSize,7,DX_FONTTYPE_ANTIALIASING_4X4))
 	,m_frame(0)
 	,m_inputCharControler("\\\"\'",11)
 	,m_nowProcess(ProcessKind::e_watchScore)
@@ -39,7 +37,23 @@ StageClearScene::~StageClearScene(){
 	DeleteGraphEX(m_scoreBarPic);
 	//フォント解放
 	DeleteFontToHandleEX(m_bonusFont);
-	DeleteFontToHandleEX(m_scoreFont);
+}
+
+void StageClearScene::ResisterScoreSave(){
+	//必要なデータを抽出（std::shared_ptrを渡すと循環参照になりそうで怖い）
+	const int totalPoint=m_scoreExpression->m_totalScorePoint;
+	const std::string playerName=m_inputCharControler.GetString();
+	const __time64_t now=_time64(nullptr);
+	const std::string dirName=m_battleSceneData->m_stageDirName;
+	const StageLevel level=m_battleSceneData->m_stageLevel;
+	//関数オブジェクト作成
+	const std::function<void(void)> saveFunc=[totalPoint,playerName,now,dirName,level](){
+		ScoreRankingData rankingData;
+		rankingData.InputData(ScoreRankingData::PlayerData(totalPoint,playerName,now),dirName,level);
+		rankingData.Save();
+	};
+	//登録
+	m_battleSceneData->ResisterSceneEndProcess(saveFunc);
 }
 
 int StageClearScene::thisCalculate(){
@@ -51,18 +65,16 @@ int StageClearScene::thisCalculate(){
 			(keyboard_get(KEY_INPUT_Z)==1 || mouse_get(MOUSE_INPUT_LEFT)==1)
 			)
 		{
-			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
 			m_nowProcess=ProcessKind::e_inputName;
 		}
 	} else if(m_nowProcess==ProcessKind::e_inputName){
 		m_inputCharControler.Update();
 		if(!m_inputCharControler.GetInputFlag()){
 			//入力終了したら
-			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
-			//記録
-			ScoreRankingData rankingData;
-			rankingData.InputData(ScoreRankingData::PlayerData(m_scoreExpression->m_totalScorePoint,m_inputCharControler.GetString(),"201905201900"),m_battleSceneData->m_stageDirName,m_battleSceneData->m_stageLevel);
-			rankingData.Save();
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
+			//記録処理を登録
+			ResisterScoreSave();
 			//バトルパート終了
 			return SceneKind::END;
 		}
@@ -102,7 +114,7 @@ void StageClearScene::thisDraw()const{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_turnBar.second/100);
 		DrawGraph(backX+x,backY+y,m_turnBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
-		DrawStringRightJustifiedToHandle(backX+x+550,backY+y+40,std::to_string(m_scoreExpression->m_turnCount),GetColor(255,255,255),m_scoreFont);
+		DrawStringRightJustifiedToHandle(backX+x+550,backY+y+40,std::to_string(m_scoreExpression->m_turnCount),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
 	}
 	//生存数描画
 	{
@@ -111,8 +123,8 @@ void StageClearScene::thisDraw()const{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_survivalBar.second/100);
 		DrawGraph(backX+x,backY+y,m_survivalBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
-		DrawStringRightJustifiedToHandle(backX+x+550,stringY,std::to_string(m_scoreExpression->m_surviveCount).c_str(),GetColor(255,255,255),m_scoreFont);
-		DrawStringToHandle(backX+x+555,stringY,("/"+std::to_string(m_scoreExpression->m_unitCount)).c_str(),GetColor(255,255,255),m_scoreFont);
+		DrawStringRightJustifiedToHandle(backX+x+550,stringY,std::to_string(m_scoreExpression->m_surviveCount).c_str(),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
+		DrawStringToHandle(backX+x+555,stringY,("/"+std::to_string(m_scoreExpression->m_unitCount)).c_str(),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
 	}
 	//ボーナス画面描画
 	{
@@ -132,7 +144,7 @@ void StageClearScene::thisDraw()const{
 	{
 		const int x=840,y=670;
 		DrawGraph(backX+x,backY+y,m_scoreBarPic,TRUE);
-		DrawStringToHandle(backX+x+650,backY+y+30,(std::to_string(m_scoreExpression->m_totalScorePoint)).c_str(),GetColor(255,255,255),m_scoreFont);
+		DrawStringToHandle(backX+x+650,backY+y+30,(std::to_string(m_scoreExpression->m_totalScorePoint)).c_str(),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
 	}
 
 	//名前入力中の描画処理
@@ -147,9 +159,9 @@ void StageClearScene::thisDraw()const{
 		}
 		//文字列の描画
 		{
-			DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/4,"名前を入力しよう！",GetColor(255,255,255),m_scoreFont,true);
-			DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/2,m_inputCharControler.GetStringCStr(),GetColor(255,255,255),m_scoreFont,true);
-			const int lineY=CommonConstParameter::gameResolutionY/2+scoreFontSize/2+5;
+			DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/4,"名前を入力しよう！",GetColor(255,255,255),GeneralPurposeResource::popLargeFont,true);
+			DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/2,m_inputCharControler.GetStringCStr(),GetColor(255,255,255),GeneralPurposeResource::popLargeFont,true);
+			const int lineY=CommonConstParameter::gameResolutionY/2+GetFontSizeToHandle(GeneralPurposeResource::popLargeFont)/2+5;
 			DrawLine(CommonConstParameter::gameResolutionX*2/7,lineY,CommonConstParameter::gameResolutionX*5/7,lineY,GetColor(255,255,255),6);
 		}
 	}

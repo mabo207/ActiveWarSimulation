@@ -9,6 +9,7 @@
 #include<fstream>
 #include"StringBuilder.h"
 #include"StageLevel.h"
+#include<iomanip>//時間計測のため
 
 //クリアスコアのランキングを管理するクラス
 //ローカルでは10KB~100KBくらいのテキストデータを想定している。
@@ -27,7 +28,7 @@ public:
 	public:
 		const int score;//スコア値
 		const std::string name;//ユーザー名
-		const std::string date;//日時(これは数値で持つ必要がない。同一スコア同一ユーザーのデータを区別しやすくするためなため。)
+		const __time64_t date;//日時(同一スコア同一ユーザーのデータを区別しやすくするためなため。)
 
 		~PlayerData(){}
 		bool operator<(const PlayerData &otherobj)const;
@@ -35,7 +36,7 @@ public:
 		static PlayerData Create(const StringBuilder &infoBuilder);//文字列から作る
 		//メンバ変数をconstにしているので、読み込み文字列の処理をコンストラクタ内でやりたくない。そのためCreate()関数にそれを移譲する。
 		//ただし、PlayerDataを作って挿入、ということを行うので、publicにする。
-		PlayerData(const int i_score,const std::string &i_name,const std::string &i_date)
+		PlayerData(const int i_score,const std::string &i_name,const __time64_t &i_date)
 			:score(i_score),name(i_name),date(i_date){}
 	};
 	struct LevelData{

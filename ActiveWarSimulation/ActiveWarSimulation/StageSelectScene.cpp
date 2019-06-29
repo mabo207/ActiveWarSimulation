@@ -4,7 +4,7 @@
 #include"FileRead.h"
 #include<Windows.h>
 #include"CommonConstParameter.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"FilePath.h"
 
 #include"BattleScene.h"
@@ -14,7 +14,7 @@
 #include"LevelSelectUIInStageSelect.h"
 
 //----------------------StageSelectScene------------------
-std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateScene()const{
+std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateIncompleteScene()const{
 	return std::shared_ptr<GameScene>(new StageSelectScene());
 }
 
@@ -24,7 +24,22 @@ StageSelectScene::StageSelectScene()
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 	,m_uiControledData(new BaseUIInStageSelect::ControledData(0,StageLevel::e_easy))
-{
+{}
+
+StageSelectScene::~StageSelectScene(){
+	//グラフィックの解放
+	DeleteGraphEX(m_backPic);
+	for(const StageInfoInStageSelect &info:m_stageInfoVec){
+		DeleteGraphEX(info.m_mapPic);
+	}
+	//フォントの解放
+	DeleteFontToHandleEX(m_stageNameFont);
+	DeleteFontToHandleEX(m_explainFont);
+	//音の解放
+
+}
+
+void StageSelectScene::InitCompletely(){
 	//スコアデータの読み込み
 	const ScoreRankingData rankingData;
 	//フォルダを検索
@@ -78,17 +93,8 @@ StageSelectScene::StageSelectScene()
 	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec,m_stageNameFont,m_explainFont));
 }
 
-StageSelectScene::~StageSelectScene(){
-	//グラフィックの解放
-	DeleteGraphEX(m_backPic);
-	for(const StageInfoInStageSelect &info:m_stageInfoVec){
-		DeleteGraphEX(info.m_mapPic);
-	}
-	//フォントの解放
-	DeleteFontToHandleEX(m_stageNameFont);
-	DeleteFontToHandleEX(m_explainFont);
-	//音の解放
-
+void StageSelectScene::Activate(){
+	//bgm再生
 }
 
 int StageSelectScene::Calculate(){
@@ -145,13 +151,13 @@ void StageSelectScene::Draw()const{
 std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	if(m_nextSceneName==NextSceneName::e_title){
 		const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
-		return CreateFadeOutInScene(thisSharedPtr,titleFactory,15,15);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,titleFactory,15,15);
 	} else if(m_nextSceneName==NextSceneName::e_battle){
 		const std::shared_ptr<GameScene::SceneFactory> battleFactory=std::make_shared<BattleScene::BattleSceneFactory>(
 			m_stageInfoVec[m_uiControledData->stageIndex].m_dirName
 			,m_stageInfoVec[m_uiControledData->stageIndex].m_titleName
 			,m_uiControledData->selectLevel);
-		return CreateFadeOutInScene(thisSharedPtr,battleFactory,15,15);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,battleFactory,15,15);
 	}
 	return std::shared_ptr<GameScene>();
 }

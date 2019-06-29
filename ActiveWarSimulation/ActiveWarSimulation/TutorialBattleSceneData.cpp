@@ -46,33 +46,40 @@ std::shared_ptr<TutorialBattleSceneData::TutorialBase> TutorialBattleSceneData::
 	//データを分割
 	info.Split(',','(',')');
 	//チュートリアルデータを作成
-	if(info.m_vec.size()>=2){
-		if(info.m_vec[0].GetString()=="move"){
-			//MoveTutorialは、到達地点を表す図形が格納されている
-			const std::shared_ptr<Shape> pShape=Shape::CreateShape(info.m_vec[1]);
-			if(pShape.get()!=nullptr){
-				return std::shared_ptr<TutorialBase>(new MoveTutorial(pShape));
-			}
-		} else if(info.m_vec[0].GetString()=="attack"){
-			//AttackTutorialは、初期化された時のユニットの配列番号が格納されている
-			const size_t index=std::atoi(info.m_vec[1].GetString().c_str());
-			if(index<gameData.m_unitList.size()){
-				return std::shared_ptr<TutorialBase>(new AttackTutorial(gameData.m_unitList[index]));
-			}
-		} else if(info.m_vec[0].GetString()=="wait"){
-			//WaitTutorialには特に設定する項目はない
-			return std::shared_ptr<TutorialBase>(new WaitTutorial());
-		} else if(info.m_vec[0].GetString()=="explain"){
-			//ExplainTutorialには画像ファイル名が入っている
-			return std::shared_ptr<TutorialBase>(new ExplainTutorial((FilePath::stageDir+gameData.m_stageDirName+info.m_vec[1].GetString()).c_str()));
-		} else if(info.m_vec[0].GetString()=="blank"){
-			//BlankTutorialには何もしない行動の回数が入っている
-			const int count=std::atoi(info.m_vec[1].GetString().c_str());
-			if(count>0){
-				return std::shared_ptr<TutorialBase>(new BlankTutorial(count));
+	try{
+		if(info.m_vec.size()>=2){
+			if(info.m_vec[0].GetString()=="move"){
+				//MoveTutorialは、到達地点を表す図形が格納されている
+				const std::shared_ptr<Shape> pShape=Shape::CreateShape(info.m_vec[1]);
+				if(pShape.get()!=nullptr){
+					return std::shared_ptr<TutorialBase>(new MoveTutorial(pShape));
+				}
+			} else if(info.m_vec[0].GetString()=="attack"){
+				//AttackTutorialは、初期化された時のユニットの配列番号が格納されている
+				const size_t index=std::stoi(info.m_vec[1].GetString().c_str());
+				if(index<gameData.m_unitList.size()){
+					return std::shared_ptr<TutorialBase>(new AttackTutorial(gameData.m_unitList[index]));
+				}
+			} else if(info.m_vec[0].GetString()=="wait"){
+				//WaitTutorialには特に設定する項目はない
+				return std::shared_ptr<TutorialBase>(new WaitTutorial());
+			} else if(info.m_vec[0].GetString()=="explain"){
+				//ExplainTutorialには画像ファイル名が入っている
+				return std::shared_ptr<TutorialBase>(new ExplainTutorial((FilePath::stageDir+gameData.m_stageDirName+info.m_vec[1].GetString()).c_str()));
+			} else if(info.m_vec[0].GetString()=="blank"){
+				//BlankTutorialには何もしない行動の回数が入っている
+				const int count=std::stoi(info.m_vec[1].GetString().c_str());
+				if(count>0){
+					return std::shared_ptr<TutorialBase>(new BlankTutorial(count));
+				}
 			}
 		}
+	} catch(const std::invalid_argument &){
+		//数値じゃない値が検出された場合
+	} catch(const std::out_of_range &){
+		//範囲外の値が検出された場合
 	}
+	//作成失敗時
 	return std::shared_ptr<TutorialBase>(nullptr);
 }
 

@@ -11,7 +11,7 @@ public:
 		TutorialSceneFactory(const std::string &stageDirName);//ディレクトリ情報しか取得できていない場合
 		TutorialSceneFactory(const std::string &stageDirName,const std::string &titleName);
 		~TutorialSceneFactory();
-		std::shared_ptr<GameScene> CreateScene()const;
+		std::shared_ptr<GameScene> CreateIncompleteScene()const;
 	private:
 		const std::string m_stageDirName;
 		std::string m_titleName;

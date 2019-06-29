@@ -207,9 +207,6 @@
     <ClCompile Include="CommonConstParameter.cpp">
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
-    <ClCompile Include="GeneralPurposeResourceManager.cpp">
-      <Filter>ソース ファイル\Tools</Filter>
-    </ClCompile>
     <ClCompile Include="DemoScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
@@ -287,6 +284,12 @@
     </ClCompile>
     <ClCompile Include="BaseUIInStageSelect.cpp">
       <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneralPurposeResource.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScene.cpp">
+      <Filter>ソース ファイル\GameScene\PerformanceScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -371,9 +374,6 @@
     <ClInclude Include="CommonConstParameter.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="GeneralPurposeResourceManager.h">
-      <Filter>ヘッダー ファイル\Tools</Filter>
-    </ClInclude>
     <ClInclude Include="DemoScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
@@ -451,6 +451,12 @@
     </ClInclude>
     <ClInclude Include="BaseUIInStageSelect.h">
       <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralPurposeResource.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScene.h">
+      <Filter>ヘッダー ファイル\GameScene\PerformanceScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
