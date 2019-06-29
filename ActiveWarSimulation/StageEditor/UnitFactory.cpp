@@ -18,11 +18,11 @@ void UnitFactory::UnitFactoryButton::ButtonDraw(int font,int fillFlag)const{
 	//枠線の描画
 	DrawBox((int)m_point.x,(int)m_point.y,(int)(m_point+m_vec).x,(int)(m_point+m_vec).y,GetColor(192,192,64),FALSE);//外枠
 	//兵種の描画
-	DrawStringCenterBaseToHandle((int)(m_point+m_vec/2).x,(int)(m_point+m_vec/2).y,Unit::Profession::GetName(m_profession).c_str(),GetColor(0,0,0),font,true);
+	DrawStringCenterBaseToHandle((int)(m_point+m_vec/2).x,(int)(m_point+m_vec/2).y,Unit::Profession::GetName(m_profession).c_str(),GetColor(255,255,255),font,true);
 }
 
 void UnitFactory::UnitFactoryButton::PushedProcess(EditActionSettings &settings)const{
-	settings.m_pShapeFactory=std::shared_ptr<ShapeFactory>(new UnitFactory(m_point,m_vec,GetColor(0,255,255),m_profession));
+	settings.m_pShapeFactory=std::shared_ptr<ShapeFactory>(new UnitFactory(m_point,m_vec,GetColor(0,255,128),m_profession));
 	//オブジェクトを選択している場合は更新する
 	if(settings.m_pBattleObject.get()!=nullptr){
 		settings.m_pBattleObject=settings.m_pShapeFactory->CreateObject(settings.m_pBattleObject->getPos());
