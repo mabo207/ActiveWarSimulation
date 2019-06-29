@@ -13,7 +13,7 @@
 #include<optional>
 
 //----------------------BattleSceneData----------------------
-const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);
+const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::mapSizeX,(float)CommonConstParameter::mapSizeY);
 const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonConstParameter::gameResolutionX-BattleSceneData::mapDrawSize.y);
 
 BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel level)

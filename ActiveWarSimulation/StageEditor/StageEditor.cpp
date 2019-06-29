@@ -27,8 +27,8 @@
 #include"ScrollBar.h"
 
 //’è”‚Ì’è‹`
-const int StageEditor::mapSizeX = 1920;
-const int StageEditor::mapSizeY = 900;
+const int StageEditor::mapSizeX = CommonConstParameter::mapSizeX;
+const int StageEditor::mapSizeY = CommonConstParameter::mapSizeY;
 const int StageEditor::leftUpPosX = 25;
 const int StageEditor::leftUpPosY = 25;
 const int StageEditor::buttonWidth = 400;

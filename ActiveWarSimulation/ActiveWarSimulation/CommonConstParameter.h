@@ -10,6 +10,8 @@ struct CommonConstParameter{
 	static const int unitCircleSize;
 	static const int gameResolutionX;
 	static const int gameResolutionY;
+	static const int mapSizeX;
+	static const int mapSizeY;
 };
 
 #endif // !DEFINE_COMMONCONSTPARAMETER_H

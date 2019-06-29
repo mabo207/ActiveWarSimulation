@@ -5,7 +5,6 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
-#include"BattleSceneData.h"
 #include<math.h>
 #include"FilePath.h"
 
@@ -211,7 +210,7 @@ void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
 void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned int inColor,unsigned int outColor)const{
 	RECT rect;
 	GetDrawArea(&rect);
-	SetDrawArea(0,0,(int)BattleSceneData::mapDrawSize.x,(int)BattleSceneData::mapDrawSize.y);
+	SetDrawArea(0,0,CommonConstParameter::mapSizeX,CommonConstParameter::mapSizeY);
 	Vector2D pos=point-adjust;
 	//ƒ†ƒjƒbƒg‚ÌˆÚ“®ŒÀŠE‹——£‚ğ…F‚É•`‰æ
 	DrawCircleAA(pos.x,pos.y,distance,100,outColor,FALSE,3.0f);//˜g
