@@ -17,7 +17,7 @@ public:
 
 	UnitFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned int lightColor,const Unit::Profession::Kind profession);
 	~UnitFactory();
-	std::shared_ptr<Shape> CreateShape(Vector2D point)const;
+	std::shared_ptr<BattleObject> CreateObject(Vector2D point)const;
 
 private:
 	const Unit::Profession::Kind m_profession;

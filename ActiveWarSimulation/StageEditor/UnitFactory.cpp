@@ -23,6 +23,10 @@ void UnitFactory::UnitFactoryButton::ButtonDraw(int font,int fillFlag)const{
 
 void UnitFactory::UnitFactoryButton::PushedProcess(EditActionSettings &settings)const{
 	settings.m_pShapeFactory=std::shared_ptr<ShapeFactory>(new UnitFactory(m_point,m_vec,GetColor(0,255,255),m_profession));
+	//オブジェクトを選択している場合は更新する
+	if(settings.m_pBattleObject.get()!=nullptr){
+		settings.m_pBattleObject=settings.m_pShapeFactory->CreateObject(settings.m_pBattleObject->getPos());
+	}
 }
 
 //----------------UnitFactory-----------------
@@ -33,6 +37,7 @@ UnitFactory::UnitFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned int lig
 
 UnitFactory::~UnitFactory(){}
 
-std::shared_ptr<Shape> UnitFactory::CreateShape(Vector2D point)const{
-	return std::shared_ptr<Shape>(new Circle(point,Unit::unitCircleSize,Shape::Fix::e_dynamic));
+std::shared_ptr<BattleObject> UnitFactory::CreateObject(Vector2D point)const{
+	//ひとまずプレイヤー側・Lv1・突撃AI・基本装備のユニットを作成する
+	return std::shared_ptr<BattleObject>(Unit::CreateMobUnit("mob",m_profession,1,point,Unit::Team::e_player,Unit::AIType::e_assult,0,{}));
 }

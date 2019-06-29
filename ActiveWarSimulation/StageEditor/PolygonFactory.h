@@ -27,7 +27,7 @@ public:
 	PolygonFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned int lightcolor);
 	~PolygonFactory();
 
-	std::shared_ptr<Shape> CreateShape(Vector2D point)const;
+	std::shared_ptr<BattleObject> CreateObject(Vector2D point)const;
 	EditPut::PosSetKind VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings);
 	void VPutNotPressAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings)const;//EditPutの非クリックの際に行う処理(デフォルトはResize()をしていくだけ)
 	void FactoryDraw(const Vector2D adjust,const EditActionSettings &settings)const;//図形配置がしやすいような描画をする。

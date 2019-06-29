@@ -148,6 +148,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\ActiveWarSimulation\CommonConstParameter.h" />
+    <ClInclude Include="..\ActiveWarSimulation\DamageCalculators.h" />
+    <ClInclude Include="..\ActiveWarSimulation\FilePath.h" />
     <ClInclude Include="..\ActiveWarSimulation\FileRead.h" />
     <ClInclude Include="..\ActiveWarSimulation\GraphicControl.h" />
     <ClInclude Include="..\ActiveWarSimulation\GraphicProgramming.h" />
@@ -156,6 +158,7 @@
     <ClInclude Include="..\ActiveWarSimulation\StringBuilder.h" />
     <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h" />
     <ClInclude Include="..\ActiveWarSimulation\Unit.h" />
+    <ClInclude Include="..\ActiveWarSimulation\Weapon.h" />
     <ClInclude Include="..\FieldBase\Circle.h" />
     <ClInclude Include="..\FieldBase\Edge.h" />
     <ClInclude Include="..\FieldBase\Shape.h" />
@@ -181,6 +184,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\ActiveWarSimulation\CommonConstParameter.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\DamageCalculators.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\FilePath.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\FileRead.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\GraphicControl.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\GraphicProgramming.cpp" />
@@ -189,6 +194,7 @@
     <ClCompile Include="..\ActiveWarSimulation\StringBuilder.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\Unit.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\Weapon.cpp" />
     <ClCompile Include="..\FieldBase\Circle.cpp" />
     <ClCompile Include="..\FieldBase\Edge.cpp" />
     <ClCompile Include="..\FieldBase\Shape.cpp" />
