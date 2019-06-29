@@ -24,6 +24,7 @@ protected:
 	Vector2D m_pointerVec;//調べている場所
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 	const MouseButtonUI m_moveButton;//移動シーンに戻るボタン
+	Easing m_paramBoxX;//パラメータ表示UIの描画基準位置
 
 	const int m_palFont;//パラメータ表示のためのフォント
 	const int m_nameFont;//名前表示のためのフォント
