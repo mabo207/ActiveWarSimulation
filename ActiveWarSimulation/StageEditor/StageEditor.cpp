@@ -226,7 +226,9 @@ StageEditor::StageEditor()
 	m_mapPic=LoadGraph("Savedata/stage.png");
 
 	//図形の読み込み
+	m_actionSettings.InitObjects();
 	m_actionSettings.ReadStage("Savedata/stage.txt");
+	m_actionSettings.ReadUnit("Savedata/unitlist.txt");
 }
 
 StageEditor::~StageEditor() {
@@ -285,6 +287,7 @@ int StageEditor::Calculate() {
 	if(keyboard_get(KEY_INPUT_S)==10){
 		//Sキー長押しで保存
 		m_actionSettings.WriteOutStage("SaveData/stage.txt");
+		m_actionSettings.WriteOutUnit("SaveData/unitlist.txt");
 	} else if(keyboard_get(KEY_INPUT_R)==10){
 		//Rキー長押しで読み込み
 		m_actionSettings.ReadStage("SaveData/stage.txt");

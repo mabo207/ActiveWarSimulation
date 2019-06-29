@@ -7,8 +7,10 @@
 #include"ShapeFactory.h"
 #include"PosSetting.h"
 #include"StringBuilder.h"
+#include"FileRead.h"
 
 #include"Terrain.h"
+#include"Unit.h"
 #include"Circle.h"
 
 EditActionSettings::EditActionSettings(std::shared_ptr<EditAction> pEditAction, std::shared_ptr<BattleObject> pBattleObject,std::shared_ptr<ShapeFactory> pShapeFactory,std::shared_ptr<PosSetting> pPosSetting)
@@ -149,6 +151,11 @@ void EditActionSettings::UpdateMouseObjectDepth(const int keyinputright){
 	}
 }
 
+//m_objectsの初期化
+void EditActionSettings::InitObjects(){
+	m_objects.clear();
+}
+
 //制作データの書き出し
 void EditActionSettings::WriteOutStage(const char *filename)const{
 	/*
@@ -161,15 +168,40 @@ void EditActionSettings::WriteOutStage(const char *filename)const{
 	if(!ofs){
 		return;
 	}
-	//全てのオブジェクト情報を書き出し
+	//全ての非Unitオブジェクト情報を書き出し
 	for(const std::shared_ptr<BattleObject> &pObj:m_objects){
-		pObj->WriteOutObjectWholeInfo(ofs);
+		if(pObj->GetType()!=BattleObject::Type::e_unit){
+			pObj->WriteOutObjectWholeInfo(ofs);
+		}
+	}
+}
+
+//ユニットの書き出し
+void EditActionSettings::WriteOutUnit(const char *filename)const{
+	/*
+	後で手編集してもいいので、最低限の体裁を整える
+	形式例
+	{(定義方法),(名前),(職業),(レベル),(位置),(チーム分け),(AI系統),(その他(無視内容)：初期化HPなど)}
+	{(definition,mob),(name,敵兵),(profession,0),(lv,1),(pos,470,600),(team,1),(ai,1,-1),(initHP,5)}
+	*/
+	//ファイルを開く
+	std::ofstream ofs(filename,std::ios_base::trunc);
+	if(!ofs){
+		return;
+	}
+	//全てのユニット情報を書き出し
+	for(const std::shared_ptr<BattleObject> &pObj:m_objects){
+		if(pObj->GetType()==BattleObject::Type::e_unit){
+			const std::shared_ptr<Unit> pUnit=std::dynamic_pointer_cast<Unit>(pObj);
+			if(pUnit){
+				pUnit->WriteOutObjectWholeInfo(ofs);
+			}
+		}
 	}
 }
 
 //ステージの読み込み
 void EditActionSettings::ReadStage(const char *filename){
-	m_objects.clear();
 	//ファイルを開きすべての文字列を書き出す
 	std::ifstream ifs(filename);
 	std::string str;//書き出し先
@@ -192,3 +224,13 @@ void EditActionSettings::ReadStage(const char *filename){
 	}
 }
 
+//ステージの読み込み
+void EditActionSettings::ReadUnit(const char *filename){
+	StringBuilder unitlist(FileStrRead(filename),'\n','{','}');
+	for(StringBuilder &unitdata:unitlist.m_vec){
+		const std::shared_ptr<BattleObject> punit(Unit::CreateUnitFromBuilder(unitdata));
+		if(punit){
+			m_objects.push_back(punit);
+		}
+	}
+}
