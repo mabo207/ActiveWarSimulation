@@ -115,5 +115,6 @@ void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right){
 		}
 		//•ÒW“à—e‚ğ”½‰f
 		m_editResult=std::shared_ptr<Unit>(Unit::CreateMobUnit(name,profession,lv,punit->getPos(),team,aiType,aiGroup,punit->GetBattleStatus().aiLinkage));
+		m_editResult->AddHP(hp-m_editResult->GetBattleStatus().HP);//HP‚Ì‰Šú‰»
 	}
 }
