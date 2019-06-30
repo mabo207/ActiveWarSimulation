@@ -85,6 +85,12 @@
     <Filter Include="ヘッダー ファイル\AnySceneCallable">
       <UniqueIdentifier>{7ea90720-7224-496a-9aeb-ff413325f3c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\StageEditor\ButtonHaving\SelectLevel">
+      <UniqueIdentifier>{1bc05103-6b96-41e6-b7e1-3505bf120cdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\StageEditor\ButtonHaving\SelectLevel">
+      <UniqueIdentifier>{202537c9-ad69-4ae7-9245-c80f0869b741}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ActiveWarSimulation\input.h">
@@ -192,6 +198,12 @@
     <ClInclude Include="EditUnitParameter.h">
       <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\EditAction</Filter>
     </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\StageLevel.h">
+      <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectLevel.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\SelectLevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -298,6 +310,12 @@
     </ClCompile>
     <ClCompile Include="EditUnitParameter.cpp">
       <Filter>ソース ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\StageLevel.cpp">
+      <Filter>ソース ファイル\AnySceneCallable</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectLevel.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\SelectLevel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
