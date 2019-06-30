@@ -314,9 +314,9 @@ void StageEditor::DrawUnitInfo(const std::shared_ptr<const Unit> &punit,const Ve
 		std::string drawStr;
 		drawStr.reserve(300);
 		drawStr+="Lv: "+std::to_string(punit->GetBaseStatus().lv)+'\n';
-		drawStr+="Team: "+std::to_string(punit->GetBattleStatus().team)+'\n';
-		drawStr+="Profession: "+std::to_string(punit->GetBaseStatus().profession)+'\n';
-		drawStr+="AItype: "+std::to_string(punit->GetBattleStatus().aitype)+'\n';
+		drawStr+="Team: "+Unit::Team::GetName(punit->GetBattleStatus().team)+'\n';
+		drawStr+="Profession: "+Unit::Profession::GetName(punit->GetBaseStatus().profession)+'\n';
+		drawStr+="AItype: "+Unit::AIType::GetName(punit->GetBattleStatus().aitype)+'\n';
 		drawStr+="AIgroup: "+std::to_string(punit->GetBattleStatus().aiGroup)+'\n';
 		drawStr+="HP: "+std::to_string(punit->GetBattleStatus().HP)+" / "+std::to_string(punit->GetBaseStatus().maxHP)+'\n';
 		//以下、編集できないもの
@@ -339,7 +339,6 @@ void StageEditor::DrawUnitInfo(const std::shared_ptr<const Unit> &punit,const Ve
 		}
 	}
 }
-
 
 //毎ループ動作部分の関数
 int StageEditor::Calculate() {
