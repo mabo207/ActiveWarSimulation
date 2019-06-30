@@ -78,11 +78,11 @@ public:
 	//制作データの書き出し
 	void WriteOutStage(const char *filename)const;
 	//ユニットデータの書き出し
-	void WriteOutUnit(const char *filename)const;
+	void WriteOutUnit()const;
 	//ステージの読み込み
 	void ReadStage(const char *filename);
 	//ユニットの読み込み
-	void ReadUnit(const char *filename);
+	void ReadUnit();
 };
 
 #endif // !DEF_EDITACTIONSETTINGS_H

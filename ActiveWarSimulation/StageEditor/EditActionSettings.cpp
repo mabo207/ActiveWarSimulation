@@ -5,6 +5,7 @@
 #include"EditAction.h"
 #include"ShapeFactory.h"
 #include"PosSetting.h"
+#include"SelectLevel.h"
 #include"StringBuilder.h"
 #include"FileRead.h"
 #include"CommonConstParameter.h"
@@ -189,7 +190,7 @@ void EditActionSettings::WriteOutStage(const char *filename)const{
 }
 
 //ユニットの書き出し
-void EditActionSettings::WriteOutUnit(const char *filename)const{
+void EditActionSettings::WriteOutUnit()const{
 	/*
 	後で手編集してもいいので、最低限の体裁を整える
 	形式例
@@ -197,7 +198,7 @@ void EditActionSettings::WriteOutUnit(const char *filename)const{
 	{(definition,mob),(name,敵兵),(profession,0),(lv,1),(pos,470,600),(team,1),(ai,1,-1),(initHP,5)}
 	*/
 	//ファイルを開く
-	std::ofstream ofs(filename,std::ios_base::trunc);
+	std::ofstream ofs(m_pSelectLevel->GetUnitListFileName().c_str(),std::ios_base::trunc);
 	if(!ofs){
 		return;
 	}
@@ -242,8 +243,8 @@ void EditActionSettings::ReadStage(const char *filename){
 }
 
 //ステージの読み込み
-void EditActionSettings::ReadUnit(const char *filename){
-	StringBuilder unitlist(FileStrRead(filename),'\n','{','}');
+void EditActionSettings::ReadUnit(){
+	StringBuilder unitlist(FileStrRead(m_pSelectLevel->GetUnitListFileName().c_str()),'\n','{','}');
 	for(StringBuilder &unitdata:unitlist.m_vec){
 		const std::shared_ptr<BattleObject> punit(Unit::CreateUnitFromBuilder(unitdata));
 		if(punit){
