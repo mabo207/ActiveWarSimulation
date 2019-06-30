@@ -2,6 +2,7 @@
 #define DEF_EDITUNITPARAMETER_H
 
 #include"EditAction.h"
+#include"Unit.h"
 
 //ユニットを選択して、パラメータを編集できるようにする編集操作
 class EditUnitParameter:public EditAction{
@@ -18,6 +19,7 @@ public:
 	//変数
 protected:
 	size_t m_editIndex;//編集項目
+	std::shared_ptr<Unit> m_editResult;//編集結果
 
 	//関数
 public:
@@ -30,8 +32,10 @@ public:
 	size_t GetEditIndex()const{
 		return m_editIndex;
 	}
-	void EditParameter(bool up,bool down,bool left,bool right,EditActionSettings &settings);
-
+	std::shared_ptr<Unit> GetEditResult()const{
+		return m_editResult;
+	}
+	void EditParameter(bool up,bool down,bool left,bool right);
 };
 
 #endif // !DEF_EDITUNITPARAMETER_H

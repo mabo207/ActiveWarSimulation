@@ -1,7 +1,6 @@
 #include"EditUnitParameter.h"
 #include"DxLib.h"
 #include"EditActionSettings.h"
-#include"Unit.h"
 
 //----------------------EditUnitParameter::EditUnitParameterButton-----------------------
 EditUnitParameter::EditUnitParameterButton::EditUnitParameterButton(Vector2D point,Vector2D vec)
@@ -39,16 +38,19 @@ void EditUnitParameter::VProcessAction(Vector2D point,EditActionSettings &settin
 		settings.SetEditObject(point);
 		if(settings.m_pBattleObject.get()!=nullptr && settings.m_pBattleObject->GetType()!=BattleObject::Type::e_unit){
 			//非ユニットは編集対象にしない
-			settings.m_pBattleObject=std::shared_ptr<BattleObject>(nullptr);
+			settings.InitEditObject();
+		} else{
+			//m_editResultの設定
+			m_editResult=std::dynamic_pointer_cast<Unit>(settings.m_pBattleObject);
+			//indexを初期化
+			m_editIndex=0;
 		}
-		//indexを初期化
-		m_editIndex=0;
 	} else{
 		//編集対象が決まっている場合、編集が終わったものとする
 		//ユニットを置き換える
-		settings.RemoveOriginObject();
-		settings.PutObject(settings.m_pBattleObject->getPos());
-		settings.m_pBattleObject=std::shared_ptr<BattleObject>(nullptr);
+		settings.ReplaceBattleObject(m_editResult);
+		settings.InitEditObject();
+		m_editResult=std::shared_ptr<Unit>(nullptr);
 	}
 }
 
@@ -62,8 +64,8 @@ EditAction::PosSetKind EditUnitParameter::VGetPosSetKind(const EditActionSetting
 	}
 }
 
-void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right,EditActionSettings &settings){
-	std::shared_ptr<Unit> punit=std::dynamic_pointer_cast<Unit>(settings.m_pBattleObject);
+void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right){
+	std::shared_ptr<Unit> punit=m_editResult;
 	if(!punit){
 		//編集できない場合はreturn
 		return;
@@ -112,6 +114,6 @@ void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right,Edi
 			}
 		}
 		//編集内容を反映
-		settings.m_pBattleObject=std::shared_ptr<BattleObject>(Unit::CreateMobUnit(name,profession,lv,punit->getPos(),team,aiType,aiGroup,punit->GetBattleStatus().aiLinkage));
+		m_editResult=std::shared_ptr<Unit>(Unit::CreateMobUnit(name,profession,lv,punit->getPos(),team,aiType,aiGroup,punit->GetBattleStatus().aiLinkage));
 	}
 }

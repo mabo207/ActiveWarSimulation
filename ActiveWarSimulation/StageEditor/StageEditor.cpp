@@ -299,7 +299,7 @@ int StageEditor::Calculate() {
 		const std::shared_ptr<EditUnitParameter> editUnit=std::dynamic_pointer_cast<EditUnitParameter>(m_actionSettings.m_pEditAction);
 		if(editUnit){
 			//現在EditUnitParameterをしているなら、キーボードの入力を反映させる
-			editUnit->EditParameter(up,down,left,right,m_actionSettings);
+			editUnit->EditParameter(up,down,left,right);
 		}
 	}
 	return 0;
@@ -407,51 +407,49 @@ void StageEditor::Draw() {
 		const std::shared_ptr<EditUnitParameter> editUnitAction=std::dynamic_pointer_cast<EditUnitParameter>(m_actionSettings.m_pEditAction);
 		if(editUnitAction){
 			//編集対象がUnitでないと描画しない
-			if(m_actionSettings.m_pBattleObject && m_actionSettings.m_pBattleObject->GetType()==BattleObject::Type::e_unit){
-				const std::shared_ptr<const Unit> punit=std::dynamic_pointer_cast<const Unit>(m_actionSettings.m_pBattleObject);
-				if(punit){
-					const Vector2D unitDrawPos=punit->getPos()+adjust;
-					const int unitX=(int)unitDrawPos.x,unitY=(int)unitDrawPos.y;
-					const int left=unitX+baseSize+20;
-					int top=unitY-leftUpPosY;
-					const int boxWidth=300;
-					const int boxHeight=350;
-					if(top<0){
-						top=0;
-					} else if(top+boxHeight>GetEditorSizeY()){
-						top=GetEditorSizeY()-boxHeight;
-					}
-					const int mergin=5;
-					const int strSpace=2;
-					const unsigned int backColor=GetColor(0,128,64);
-					const unsigned int strColor=GetColor(255,255,255);
-					//能力値についての文字列作成
-					//能力値の描画
-					std::string drawStr;
-					drawStr.reserve(300);
-					drawStr+="Lv: "+std::to_string(punit->GetBaseStatus().lv)+'\n';
-					drawStr+="Team: "+std::to_string(punit->GetBattleStatus().team)+'\n';
-					drawStr+="Profession: "+std::to_string(punit->GetBaseStatus().profession)+'\n';
-					drawStr+="AItype: "+std::to_string(punit->GetBattleStatus().aitype)+'\n';
-					drawStr+="AIgroup: "+std::to_string(punit->GetBattleStatus().aiGroup)+'\n';
-					drawStr+="HP: "+std::to_string(punit->GetBattleStatus().HP)+" / "+std::to_string(punit->GetBaseStatus().maxHP)+'\n';
-					//以下、編集できないもの
-					drawStr+="\nPOW: "+std::to_string(punit->GetBaseStatus().power)+'\n';
-					drawStr+="DEF: "+std::to_string(punit->GetBaseStatus().def)+'\n';
-					drawStr+="MPOW: "+std::to_string(punit->GetBaseStatus().mpower)+'\n';
-					drawStr+="MDEF: "+std::to_string(punit->GetBaseStatus().mdef)+'\n';
-					drawStr+="Weapon: "+punit->GetBattleStatus().weapon->GetName()+'\n';
-					drawStr+=punit->GetBattleStatus().weapon->GetEffectivenessString(punit.get());
-					//下地の描画
-					DrawTriangle(unitX+baseSize,unitY,left,unitY-10,left,unitY+10,backColor,TRUE);
-					DrawBox(left,top,left+boxWidth,top+boxHeight,backColor,TRUE);
-					//能力値の描画
-					DrawStringNewLineToHandle(left+mergin,top+mergin,boxWidth-mergin*2,boxHeight-mergin*2,drawStr.c_str(),strColor,m_font,strSpace);
-					//編集項目の描画
-					const int strLineHeight=GetFontSizeToHandle(m_font)+strSpace;
-					const int selectBoxY=top+mergin+strLineHeight*editUnitAction->GetEditIndex();
-					DrawBox(left+mergin,selectBoxY,left+boxWidth-mergin,selectBoxY+strLineHeight,GetColor(255,255,0),FALSE);
+			const std::shared_ptr<const Unit> punit=editUnitAction->GetEditResult();
+			if(punit){
+				const Vector2D unitDrawPos=punit->getPos()+adjust;
+				const int unitX=(int)unitDrawPos.x,unitY=(int)unitDrawPos.y;
+				const int left=unitX+baseSize+20;
+				int top=unitY-leftUpPosY;
+				const int boxWidth=300;
+				const int boxHeight=350;
+				if(top<0){
+					top=0;
+				} else if(top+boxHeight>GetEditorSizeY()){
+					top=GetEditorSizeY()-boxHeight;
 				}
+				const int mergin=5;
+				const int strSpace=2;
+				const unsigned int backColor=GetColor(0,128,64);
+				const unsigned int strColor=GetColor(255,255,255);
+				//能力値についての文字列作成
+				//能力値の描画
+				std::string drawStr;
+				drawStr.reserve(300);
+				drawStr+="Lv: "+std::to_string(punit->GetBaseStatus().lv)+'\n';
+				drawStr+="Team: "+std::to_string(punit->GetBattleStatus().team)+'\n';
+				drawStr+="Profession: "+std::to_string(punit->GetBaseStatus().profession)+'\n';
+				drawStr+="AItype: "+std::to_string(punit->GetBattleStatus().aitype)+'\n';
+				drawStr+="AIgroup: "+std::to_string(punit->GetBattleStatus().aiGroup)+'\n';
+				drawStr+="HP: "+std::to_string(punit->GetBattleStatus().HP)+" / "+std::to_string(punit->GetBaseStatus().maxHP)+'\n';
+				//以下、編集できないもの
+				drawStr+="\nPOW: "+std::to_string(punit->GetBaseStatus().power)+'\n';
+				drawStr+="DEF: "+std::to_string(punit->GetBaseStatus().def)+'\n';
+				drawStr+="MPOW: "+std::to_string(punit->GetBaseStatus().mpower)+'\n';
+				drawStr+="MDEF: "+std::to_string(punit->GetBaseStatus().mdef)+'\n';
+				drawStr+="Weapon: "+punit->GetBattleStatus().weapon->GetName()+'\n';
+				drawStr+=punit->GetBattleStatus().weapon->GetEffectivenessString(punit.get());
+				//下地の描画
+				DrawTriangle(unitX+baseSize,unitY,left,unitY-10,left,unitY+10,backColor,TRUE);
+				DrawBox(left,top,left+boxWidth,top+boxHeight,backColor,TRUE);
+				//能力値の描画
+				DrawStringNewLineToHandle(left+mergin,top+mergin,boxWidth-mergin*2,boxHeight-mergin*2,drawStr.c_str(),strColor,m_font,strSpace);
+				//編集項目の描画
+				const int strLineHeight=GetFontSizeToHandle(m_font)+strSpace;
+				const int selectBoxY=top+mergin+strLineHeight*editUnitAction->GetEditIndex();
+				DrawBox(left+mergin,selectBoxY,left+boxWidth-mergin,selectBoxY+strLineHeight,GetColor(255,255,0),FALSE);
 			}
 		}
 	}
