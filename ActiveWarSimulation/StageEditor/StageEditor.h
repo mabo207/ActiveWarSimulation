@@ -7,6 +7,7 @@
 #include"EditActionSettings.h"
 #include"ToolsLib.h"
 #include"ButtonHaving.h"
+#include"Unit.h"
 
 //ステージエディタ自身
 class StageEditor {
@@ -34,6 +35,9 @@ protected:
 	void ProcessMapPush(int mouseX,int mouseY);//マップ画面を押した時の動作
 	//常に行う編集行為
 	void NonPressEdit(int mouseX,int mouseY);
+	//ユニット情報の表示
+	void DrawUnitInfo(const std::shared_ptr<const Unit> &punit,const Vector2D unitDrawPos)const;
+	void DrawUnitInfo(const std::shared_ptr<const Unit> &punit,const Vector2D unitDrawPos,bool drawEditItem,size_t index)const;
 	
 public:
 	//コンストラクタとデストラクタ

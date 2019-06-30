@@ -93,13 +93,13 @@ void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right){
 			}
 		} else if(m_editIndex==1){
 			//team
-			team=Unit::Team::link((team+gap)%Unit::Team::END);
+			team=Unit::Team::link((team+Unit::Team::END+gap)%Unit::Team::END);
 		} else if(m_editIndex==2){
 			//profession
-			profession=Unit::Profession::link((profession+gap)%Unit::Profession::END);
+			profession=Unit::Profession::link((profession+Unit::Profession::END+gap)%Unit::Profession::END);
 		} else if(m_editIndex==3){
 			//AItype
-			aiType=Unit::AIType::link((aiType+gap)%Unit::AIType::END);
+			aiType=Unit::AIType::link((aiType+Unit::AIType::END+gap)%Unit::AIType::END);
 		} else if(m_editIndex==4){
 			//AIgroup
 			const int tmp=aiGroup+gap;
