@@ -29,24 +29,44 @@
 #include"ScrollBar.h"
 
 //定数の定義
-const int StageEditor::mapSizeX = CommonConstParameter::mapSizeX;
-const int StageEditor::mapSizeY = CommonConstParameter::mapSizeY;
-const int StageEditor::leftUpPosX = 25;
-const int StageEditor::leftUpPosY = 25;
-const int StageEditor::buttonWidth = 400;
-const int StageEditor::buttonHeight=(leftUpPosY*2+mapSizeY)/4;
-const int StageEditor::shapeButtonHeightNum=3;
-const int StageEditor::shapeButtonWidthNum=3;
-const int StageEditor::shapeButtonHeight=StageEditor::buttonHeight;
-const int StageEditor::shapeButtonWidth=StageEditor::buttonWidth;
-const int StageEditor::posButtonWidth=StageEditor::buttonWidth;
-const int StageEditor::posButtonHeight=StageEditor::buttonHeight/2;
-const int StageEditor::posButtonWidthNum=3;
-const int StageEditor::posButtonHeightNum=1;
-const std::string StageEditor::actButtonStr[actButtonHeightNum*actButtonWidthNum]={"put","remove","move","expand"};
-const int StageEditor::baseSize=CommonConstParameter::unitCircleSize;
+namespace {
+	//マップの表示部分の大きさ
+	const int mapSizeX = CommonConstParameter::mapSizeX;
+	const int mapSizeY = CommonConstParameter::mapSizeY;
+	//マップの左上の座標
+	const int leftUpPosX = 25;
+	const int leftUpPosY = 25;
+	//「動作」ボタンの縦横の個数
+	const size_t actButtonHeightNum=2,actButtonWidthNum=2;
+	//「動作」ボタン部分全体での横幅,縦幅
+	const int buttonWidth = 400;
+	const int buttonHeight=(leftUpPosY*2+mapSizeY)/4;
+	//「図形設定」ボタンの縦横の個数
+	const size_t shapeButtonHeightNum=3;
+	const size_t shapeButtonWidthNum=3;
+	//「図形設定」ボタン部分全体での横幅,縦幅
+	const int shapeButtonHeight=buttonHeight;
+	const int shapeButtonWidth=buttonWidth;
+	//「位置設定」ボタンの縦横の個数
+	const int posButtonWidthNum=3;
+	const int posButtonHeightNum=1;
+	//「位置設定」ボタン部分全体での横幅,縦幅
+	const int posButtonWidth=buttonWidth;
+	const int posButtonHeight=buttonHeight/2;
+	//エディタで作られる物のサイズの基準の大きさ・基本単位
+	const int baseSize=CommonConstParameter::unitCircleSize;
+}
 
 //関数定義
+//静的関数
+int StageEditor::GetEditorSizeX(){
+	return leftUpPosX*2+mapSizeX+buttonWidth;
+}
+
+int StageEditor::GetEditorSizeY(){
+	return leftUpPosY*2+mapSizeY;
+}
+
 //動的関数
 StageEditor::StageEditor()
 	:m_actionSettings(

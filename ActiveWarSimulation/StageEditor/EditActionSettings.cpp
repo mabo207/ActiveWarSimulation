@@ -2,12 +2,12 @@
 #include"EditActionSettings.h"
 
 #include"DxLib.h"
-#include"StageEditor.h"
 #include"EditAction.h"
 #include"ShapeFactory.h"
 #include"PosSetting.h"
 #include"StringBuilder.h"
 #include"FileRead.h"
+#include"CommonConstParameter.h"
 
 #include"Terrain.h"
 #include"Unit.h"
@@ -76,7 +76,7 @@ void EditActionSettings::PushScrollBar(float scrollpx,float maxX,float maxY,int 
 void EditActionSettings::PushScrollBar(Vector2D move){
 	//Å‘å’lÅ¬’l‚ðl—¶‚·‚é
 	Vector2D a=m_adjust+move;
-	float maxX=2000-(float)StageEditor::mapSizeX,maxY=2000-(float)StageEditor::mapSizeY;
+	float maxX=2000-(float)CommonConstParameter::mapSizeX,maxY=2000-(float)CommonConstParameter::mapSizeY;
 	m_adjust=Vector2D(
 		a.x>=0 ? (a.x<maxX ? a.x : maxX) : 0
 		,a.y>=0 ? (a.y<maxY ? a.y : maxY) : 0

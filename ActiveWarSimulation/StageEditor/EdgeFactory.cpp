@@ -2,8 +2,8 @@
 #include"EdgeFactory.h"
 #include"Edge.h"
 #include"EditActionSettings.h"
-#include"StageEditor.h"
 #include"Terrain.h"
+#include"CommonConstParameter.h"
 
 //-----------------------EdgeFactory::EdgeFactoryButton-----------------------
 EdgeFactory::EdgeFactoryButton::EdgeFactoryButton(Vector2D point,Vector2D vec)
@@ -31,7 +31,7 @@ void EdgeFactory::EdgeFactoryButton::PushedProcess(EditActionSettings &settings)
 }
 
 //-----------------------EdgeFactory-----------------------
-const Vector2D EdgeFactory::baseVec=Vector2D(((float)StageEditor::baseSize)*0.6f,((float)StageEditor::baseSize)*0.8f);
+const Vector2D EdgeFactory::baseVec=Vector2D(((float)CommonConstParameter::unitCircleSize)*0.6f,((float)CommonConstParameter::unitCircleSize)*0.8f);
 
 EdgeFactory::EdgeFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned int lightcolor)
 	:ShapeFactory(buttonPos,buttonSize,lightcolor){}

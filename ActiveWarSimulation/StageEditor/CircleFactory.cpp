@@ -2,8 +2,8 @@
 #include"CircleFactory.h"
 #include"Circle.h"
 #include"EditActionSettings.h"
-#include"StageEditor.h"
 #include"Terrain.h"
+#include"CommonConstParameter.h"
 
 //-----------------------CircleFactory::CircleFactoryButton-----------------------
 CircleFactory::CircleFactoryButton::CircleFactoryButton(Vector2D point,Vector2D vec)
@@ -37,7 +37,7 @@ CircleFactory::~CircleFactory(){}
 
 std::shared_ptr<BattleObject> CircleFactory::CreateObject(Vector2D point)const{
 	//return std::shared_ptr<Shape>(new MyCircle((float)StageEditor::baseSize));
-	const std::shared_ptr<Shape> pShape(new Circle(point,(float)StageEditor::baseSize,Shape::Fix::e_static));
+	const std::shared_ptr<Shape> pShape(new Circle(point,(float)CommonConstParameter::unitCircleSize,Shape::Fix::e_static));
 	return std::shared_ptr<BattleObject>(new Terrain(pShape,-1,GetColor(128,128,128),false));
 }
 
