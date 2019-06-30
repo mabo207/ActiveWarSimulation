@@ -114,111 +114,84 @@ StageEditor::StageEditor()
 	)));
 
 	//putボタン
+	const float buttonsLeftEdge=(float)(leftUpPosX*2+mapSizeX);
+	float buttonY=0.0f;
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EditPut::EditPutButton(
-		Vector2D((float)(leftUpPosX*2+mapSizeX+buttonWidth/actButtonWidthNum*0),0)
+		Vector2D(buttonsLeftEdge+(float)(buttonWidth/actButtonWidthNum*0),buttonY)
 		,Vector2D((float)(buttonWidth/actButtonWidthNum),(float)(buttonHeight/actButtonHeightNum))
 	)));
 	pPutButton=m_buttons.back();//最初から押されているようにするボタン
 	//removeボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EditRemove::EditRemoveButton(
-		Vector2D((float)(leftUpPosX*2+mapSizeX+buttonWidth/actButtonWidthNum*1),0)
+		Vector2D(buttonsLeftEdge+(float)(buttonWidth/actButtonWidthNum*1),buttonY)
 		,Vector2D((float)(buttonWidth/actButtonWidthNum),(float)(buttonHeight/actButtonHeightNum))
 	)));
+	buttonY+=(float)(buttonHeight/actButtonHeightNum*1);
 	//moveボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EditMove::EditMoveButton(
-		Vector2D((float)(leftUpPosX*2+mapSizeX+buttonWidth/actButtonWidthNum*0),(float)(buttonHeight/actButtonHeightNum*1))
+		Vector2D(buttonsLeftEdge+(float)(buttonWidth/actButtonWidthNum*0),buttonY)
 		,Vector2D((float)(buttonWidth/actButtonWidthNum),(float)(buttonHeight/actButtonHeightNum))
 	)));
 	//resizeボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EditResize::EditResizeButton(
-		Vector2D((float)(leftUpPosX*2+mapSizeX+buttonWidth/actButtonWidthNum*1),(float)(buttonHeight/actButtonHeightNum*1))
+		Vector2D(buttonsLeftEdge+(float)(buttonWidth/actButtonWidthNum*1),buttonY)
 		,Vector2D((float)(buttonWidth/actButtonWidthNum),(float)(buttonHeight/actButtonHeightNum))
 	)));
+	buttonY+=(float)(buttonHeight/actButtonHeightNum*1);
 
 	//CircleFactoryボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new CircleFactory::CircleFactoryButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*0)
-			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*0)
-		)
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*0),buttonY)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 	)));
 	pRectangleFactoryButton=m_buttons.back();//最初から押されているようにする
-
 	//EdgeFactoryボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EdgeFactory::EdgeFactoryButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*1)
-			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*0)
-		)
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*1),buttonY)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 	)));
-	
 	//PolygonFactoryボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new PolygonFactory::PolygonFactoryButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*2)
-			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*0)
-		)
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*2),buttonY)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 	)));
-
+	buttonY+=+(float)(shapeButtonHeight/shapeButtonHeightNum*1);
 	//戦士作成ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*0)
-			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*1)
-		)
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*0),buttonY)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 		,Unit::Profession::e_soldier
 	)));
-
 	//重装兵作成ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*1)
-			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*1)
-		)
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*1),buttonY)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 		,Unit::Profession::e_armer
 	)));
-
 	//射手作成ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*2)
-			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*1)
-		)
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*2),buttonY)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 		,Unit::Profession::e_archer
 	)));
-
+	buttonY+=+(float)(shapeButtonHeight/shapeButtonHeightNum*1);
 	//魔道士作成ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*0)
-			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*2)
-		)
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*0),buttonY)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 		,Unit::Profession::e_mage
 	)));
-
 	//衛生兵作成ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*1)
-			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*2)
-		)
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*1),buttonY)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 		,Unit::Profession::e_healer
 	)));
+	buttonY+=+(float)(shapeButtonHeight/shapeButtonHeightNum*1);
 
 	//1px位置調整ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new ConstPosSet::ConstPosSetButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+posButtonWidth/posButtonWidthNum*0)
-			,(float)(buttonHeight+shapeButtonHeight+posButtonHeight/posButtonHeightNum*0)
-		)
+		Vector2D(buttonsLeftEdge+(float)(posButtonWidth/posButtonWidthNum*0),buttonY)
 		,Vector2D((float)(posButtonWidth/posButtonWidthNum),(float)(posButtonHeight/posButtonHeightNum))
 		,1
 	)));
@@ -226,14 +199,10 @@ StageEditor::StageEditor()
 
 	//45px位置調整ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new ConstPosSet::ConstPosSetButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+posButtonWidth/posButtonWidthNum*1)
-			,(float)(buttonHeight+shapeButtonHeight+posButtonHeight/posButtonHeightNum*0)
-		)
+		Vector2D(buttonsLeftEdge+(float)(posButtonWidth/posButtonWidthNum*1),buttonY)
 		,Vector2D((float)(posButtonWidth/posButtonWidthNum),(float)(posButtonHeight/posButtonHeightNum))
 		,baseSize
 	)));
-
 
 	//最初から押されているようにするボタンを押す(順番に注意！)
 	pRectangleFactoryButton->PushedProcess(m_actionSettings);
