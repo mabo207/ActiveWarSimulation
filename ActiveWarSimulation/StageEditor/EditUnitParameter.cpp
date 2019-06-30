@@ -20,13 +20,15 @@ void EditUnitParameter::EditUnitParameterButton::PushedProcess(EditActionSetting
 }
 
 //----------------------EditUnitParameter-----------------------
+const size_t EditUnitParameter::editItemNum=6;
+
 EditUnitParameter::EditUnitParameter(int buttonX,int buttonY,int buttonDX,int buttonDY,unsigned int pushedColor)
 	:EditAction(buttonX,buttonY,buttonDX,buttonDY,pushedColor)
 {}
 
 EditUnitParameter::~EditUnitParameter(){}
 
-void EditUnitParameter::VNonPressEditing(Vector2D,EditActionSettings &settings)const{
+void EditUnitParameter::VNonPressEditing(Vector2D,EditActionSettings &)const{
 	//特に何もしない
 }
 
@@ -51,5 +53,61 @@ EditAction::PosSetKind EditUnitParameter::VGetPosSetKind(const EditActionSetting
 	} else{
 		//編集対象が決まっていない場合
 		return NONEDIT;
+	}
+}
+
+void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right,EditActionSettings &settings){
+	std::shared_ptr<Unit> punit=std::dynamic_pointer_cast<Unit>(settings.m_pBattleObject);
+	if(!punit){
+		//編集できない場合はreturn
+		return;
+	}
+	//キーボード入力で、編集項目をいじる
+	if(up){
+		m_editIndex=(m_editIndex+editItemNum-1)%editItemNum;
+	} else if(down){
+		m_editIndex=(m_editIndex+1)%editItemNum;
+	} else if(left || right){
+		const int gap=(left?-1:1);
+		const std::string name=punit->GetBaseStatus().name;
+		int lv=punit->GetBaseStatus().lv;
+		Unit::Profession::Kind profession=punit->GetBaseStatus().profession;
+		Unit::AIType::Kind aiType=punit->GetBattleStatus().aitype;
+		int aiGroup=punit->GetBattleStatus().aiGroup;
+		int hp=punit->GetBattleStatus().HP;
+		Unit::Team::Kind team=punit->GetBattleStatus().team;
+		//項目の編集の仕方は項目によって変化する
+		if(m_editIndex==0){
+			//LV
+			const int tmp=lv+gap;
+			if(tmp>0){
+				lv=tmp;
+			}
+		} else if(m_editIndex==1){
+			//team
+			team=Unit::Team::link((team+gap)%Unit::Team::END);
+		} else if(m_editIndex==2){
+			//profession
+			profession=Unit::Profession::link((profession+gap)%Unit::Profession::END);
+		} else if(m_editIndex==3){
+			//AItype
+			aiType=Unit::AIType::link((aiType+gap)%Unit::AIType::END);
+		} else if(m_editIndex==4){
+			//AIgroup
+			const int tmp=aiGroup+gap;
+			if(tmp>=0){
+				aiGroup=tmp;
+			}
+		} else if(m_editIndex==5){
+			//initHP
+			const int tmp=hp+gap;
+			if(tmp>0 && tmp<=punit->GetBaseStatus().maxHP){
+				hp=tmp;
+			}
+		}
+		//編集内容を反映
+		const Unit *u=Unit::CreateMobUnit(name,profession,lv,punit->getPos(),team,aiType,aiGroup,punit->GetBattleStatus().aiLinkage);
+		*(settings.m_pBattleObject)=*u;
+		delete u;
 	}
 }

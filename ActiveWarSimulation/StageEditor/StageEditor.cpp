@@ -419,15 +419,15 @@ void StageEditor::Draw() {
 			drawStr+="Lv: "+std::to_string(punit->GetBaseStatus().lv)+'\n';
 			drawStr+="Team: "+std::to_string(punit->GetBattleStatus().team)+'\n';
 			drawStr+="Profession: "+std::to_string(punit->GetBaseStatus().profession)+'\n';
-			drawStr+="Team: "+std::to_string(punit->GetBattleStatus().team)+'\n';
 			drawStr+="AItype: "+std::to_string(punit->GetBattleStatus().aitype)+'\n';
 			drawStr+="AIgroup: "+std::to_string(punit->GetBattleStatus().aiGroup)+'\n';
-			drawStr+="Weapon: "+punit->GetBattleStatus().weapon->GetName()+'\n';
 			drawStr+="HP: "+std::to_string(punit->GetBattleStatus().HP)+" / "+std::to_string(punit->GetBaseStatus().maxHP)+'\n';
+			//ˆÈ‰ºA•ÒW‚Å‚«‚È‚¢‚à‚Ì
 			drawStr+="\nPOW: "+std::to_string(punit->GetBaseStatus().power)+'\n';
 			drawStr+="DEF: "+std::to_string(punit->GetBaseStatus().def)+'\n';
 			drawStr+="MPOW: "+std::to_string(punit->GetBaseStatus().mpower)+'\n';
 			drawStr+="MDEF: "+std::to_string(punit->GetBaseStatus().mdef)+'\n';
+			drawStr+="Weapon: "+punit->GetBattleStatus().weapon->GetName()+'\n';
 			drawStr+=punit->GetBattleStatus().weapon->GetEffectivenessString(punit.get());
 			DrawStringNewLineToHandle(left+mergin,top+mergin,boxWidth-mergin*2,boxHeight-mergin*2,drawStr.c_str(),strColor,m_font,2);
 		}

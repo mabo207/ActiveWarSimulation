@@ -13,9 +13,11 @@ public:
 	};
 
 	//定数
+	const static size_t editItemNum;//編集項目数(増やしたらStageEditorの描画も変えてあげる)
 
 	//変数
 protected:
+	size_t m_editIndex;//編集項目
 
 	//関数
 public:
@@ -25,6 +27,11 @@ public:
 	void VNonPressEditing(Vector2D point,EditActionSettings &settings)const;//マウスを押していない時も編集を行う編集行為について、そのような編集行為を行う
 	void VProcessAction(Vector2D point,EditActionSettings &settings);//編集行為を実行する
 	PosSetKind VGetPosSetKind(const EditActionSettings &settings)const;//編集状況に依って返す値が異なるため
+	size_t GetEditIndex()const{
+		return m_editIndex;
+	}
+	void EditParameter(bool up,bool down,bool left,bool right,EditActionSettings &settings);
+
 };
 
 #endif // !DEF_EDITUNITPARAMETER_H
