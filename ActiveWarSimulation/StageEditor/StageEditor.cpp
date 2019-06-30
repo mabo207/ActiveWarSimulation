@@ -6,6 +6,7 @@
 #include"DxLib.h"
 #include"StageEditor.h"
 #include"input.h"
+#include"CommonConstParameter.h"
 
 #include"Terrain.h"
 #include"Circle.h"
@@ -24,7 +25,7 @@
 
 #include"ConstPosSet.h"
 
-#include"CommonConstParameter.h"
+#include"SelectLevel.h"
 
 #include"ScrollBar.h"
 
@@ -49,11 +50,17 @@ namespace {
 	const int shapeButtonWidth=buttonWidth;
 	const int shapeButtonHeight=240;
 	//「位置設定」ボタンの縦横の個数
-	const int posButtonWidthNum=3;
-	const int posButtonHeightNum=1;
+	const size_t posButtonWidthNum=3;
+	const size_t posButtonHeightNum=1;
 	//「位置設定」ボタン部分全体での横幅,縦幅
 	const int posButtonWidth=buttonWidth;
 	const int posButtonHeight=100;
+	//「レベル設定」ボタンの縦横の個数
+	const size_t levelButtonWidthNum=StageLevel::levelCount;
+	const size_t levelButtonHeightNum=1;
+	//「レベル設定」ボタン部分全体での横幅,縦幅
+	const int levelButtonWidth=buttonWidth;
+	const int levelButtonHeight=120;
 	//エディタで作られる物のサイズの基準の大きさ・基本単位
 	const int baseSize=CommonConstParameter::unitCircleSize;
 }
@@ -79,7 +86,7 @@ StageEditor::StageEditor()
 	//ボタン一覧
 	
 	//最初から押されているようにするボタンをリストアップしながら行う
-	std::shared_ptr<ButtonHaving::Button> pPutButton,pRectangleFactoryButton,pPosSettingButton;
+	std::shared_ptr<ButtonHaving::Button> pPutButton,pRectangleFactoryButton,pPosSettingButton,pSelectLevelButton;
 	
 	//上スクロールボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new ScrollBar::ScrollButton(
@@ -203,18 +210,46 @@ StageEditor::StageEditor()
 		,1
 	)));
 	pPosSettingButton=m_buttons.back();
-
 	//45px位置調整ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new ConstPosSet::ConstPosSetButton(
 		Vector2D(buttonsLeftEdge+(float)(posButtonWidth/posButtonWidthNum*1),buttonY)
 		,Vector2D((float)(posButtonWidth/posButtonWidthNum),(float)(posButtonHeight/posButtonHeightNum))
 		,baseSize
 	)));
+	buttonY+=+(float)(posButtonHeight/posButtonHeightNum);
+
+	//easyボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SelectLevel::SelectLevelButton(
+		Vector2D(buttonsLeftEdge+(float)(levelButtonWidth/levelButtonWidthNum*0),buttonY)
+		,Vector2D((float)(levelButtonWidth/levelButtonWidthNum),(float)(levelButtonHeight/levelButtonHeightNum))
+		,StageLevel::e_easy
+	)));
+	pSelectLevelButton=m_buttons.back();
+	//normalボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SelectLevel::SelectLevelButton(
+		Vector2D(buttonsLeftEdge+(float)(levelButtonWidth/levelButtonWidthNum*1),buttonY)
+		,Vector2D((float)(levelButtonWidth/levelButtonWidthNum),(float)(levelButtonHeight/levelButtonHeightNum))
+		,StageLevel::e_normal
+	)));
+	//hardボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SelectLevel::SelectLevelButton(
+		Vector2D(buttonsLeftEdge+(float)(levelButtonWidth/levelButtonWidthNum*2),buttonY)
+		,Vector2D((float)(levelButtonWidth/levelButtonWidthNum),(float)(levelButtonHeight/levelButtonHeightNum))
+		,StageLevel::e_hard
+	)));
+	//lunaticボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SelectLevel::SelectLevelButton(
+		Vector2D(buttonsLeftEdge+(float)(levelButtonWidth/levelButtonWidthNum*3),buttonY)
+		,Vector2D((float)(levelButtonWidth/levelButtonWidthNum),(float)(levelButtonHeight/levelButtonHeightNum))
+		,StageLevel::e_lunatic
+	)));
+	buttonY+=(float)(levelButtonHeight/levelButtonHeightNum);
 
 	//最初から押されているようにするボタンを押す(順番に注意！)
 	pRectangleFactoryButton->PushedProcess(m_actionSettings);
 	pPutButton->PushedProcess(m_actionSettings);
 	pPosSettingButton->PushedProcess(m_actionSettings);
+	pSelectLevelButton->PushedProcess(m_actionSettings);
 	
 	//フォント
 	m_font=CreateFontToHandle("メイリオ",16,1);
@@ -225,7 +260,7 @@ StageEditor::StageEditor()
 	//図形の読み込み
 	m_actionSettings.InitObjects();
 	m_actionSettings.ReadStage("Savedata/stage.txt");
-	m_actionSettings.ReadUnit("Savedata/unitlist.txt");
+	m_actionSettings.ReadUnit();
 }
 
 StageEditor::~StageEditor() {
@@ -279,9 +314,9 @@ void StageEditor::DrawUnitInfo(const std::shared_ptr<const Unit> &punit,const Ve
 		std::string drawStr;
 		drawStr.reserve(300);
 		drawStr+="Lv: "+std::to_string(punit->GetBaseStatus().lv)+'\n';
-		drawStr+="Team: "+std::to_string(punit->GetBattleStatus().team)+'\n';
-		drawStr+="Profession: "+std::to_string(punit->GetBaseStatus().profession)+'\n';
-		drawStr+="AItype: "+std::to_string(punit->GetBattleStatus().aitype)+'\n';
+		drawStr+="Team: "+Unit::Team::GetName(punit->GetBattleStatus().team)+'\n';
+		drawStr+="Profession: "+Unit::Profession::GetName(punit->GetBaseStatus().profession)+'\n';
+		drawStr+="AItype: "+Unit::AIType::GetName(punit->GetBattleStatus().aitype)+'\n';
 		drawStr+="AIgroup: "+std::to_string(punit->GetBattleStatus().aiGroup)+'\n';
 		drawStr+="HP: "+std::to_string(punit->GetBattleStatus().HP)+" / "+std::to_string(punit->GetBaseStatus().maxHP)+'\n';
 		//以下、編集できないもの
@@ -304,7 +339,6 @@ void StageEditor::DrawUnitInfo(const std::shared_ptr<const Unit> &punit,const Ve
 		}
 	}
 }
-
 
 //毎ループ動作部分の関数
 int StageEditor::Calculate() {
@@ -335,12 +369,16 @@ int StageEditor::Calculate() {
 
 	//キーボード入力受付
 	if(keyboard_get(KEY_INPUT_S)==10){
-		//Sキー長押しで保存
+		//Sキー長押しで地形を保存
 		m_actionSettings.WriteOutStage("SaveData/stage.txt");
-		m_actionSettings.WriteOutUnit("SaveData/unitlist.txt");
+	} else if(keyboard_get(KEY_INPUT_U)==10){
+		//Uキー長押しでユニットを保存
+		m_actionSettings.WriteOutUnit();
 	} else if(keyboard_get(KEY_INPUT_R)==10){
 		//Rキー長押しで読み込み
+		m_actionSettings.InitObjects();
 		m_actionSettings.ReadStage("SaveData/stage.txt");
+		m_actionSettings.ReadUnit();
 	} else if(keyboard_get(KEY_INPUT_NUMPADENTER) == 1){
 		//Enterキー入力でエディタを終了
 		return -1;
@@ -453,6 +491,9 @@ void StageEditor::Draw() {
 	//入力されている位置設定ボタンの描画
 	m_actionSettings.DrawPosSettingButtonPushed();
 	
+	//入力されているレベル設定ボタンの描画
+	m_actionSettings.m_pSelectLevel->LightUpButton();
+
 	//ボタン群の描画
 	for(std::shared_ptr<ButtonHaving::Button> &pb:m_buttons){
 		pb.get()->ButtonDraw(m_font,TRUE);

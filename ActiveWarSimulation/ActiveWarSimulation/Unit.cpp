@@ -90,12 +90,34 @@ bool Unit::Team::JudgeFriend(Kind team1,Kind team2){
 	return false;
 }
 
+std::string Unit::Team::GetName(Kind team){
+	switch(team){
+	case(e_player):
+		return "player";
+	case(e_enemy):
+		return "enemy";
+	}
+	return "";
+}
+
 //------------Unit::AIType--------------
 Unit::AIType::Kind Unit::AIType::link(int num){
 	if(num>=0 && num<END){
 		return static_cast<Kind>(num);
 	}
 	return END;
+}
+
+std::string Unit::AIType::GetName(Kind type){
+	switch(type){
+	case(e_assult):
+		return "assult";
+	case(e_intercept):
+		return "intercept";
+	case(e_linkageIntercept):
+		return "linkintercept";
+	}
+	return "";
 }
 
 //------------Unit::BattleStatus---------------
