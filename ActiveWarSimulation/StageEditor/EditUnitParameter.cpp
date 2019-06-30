@@ -77,6 +77,7 @@ void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right){
 		m_editIndex=(m_editIndex+1)%editItemNum;
 	} else if(left || right){
 		const int gap=(left?-1:1);
+		bool reduceHP=false;//HPを減らす作業をするかどうか
 		const std::string name=punit->GetBaseStatus().name;
 		int lv=punit->GetBaseStatus().lv;
 		Unit::Profession::Kind profession=punit->GetBaseStatus().profession;
@@ -94,27 +95,34 @@ void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right){
 		} else if(m_editIndex==1){
 			//team
 			team=Unit::Team::link((team+Unit::Team::END+gap)%Unit::Team::END);
+			reduceHP=true;
 		} else if(m_editIndex==2){
 			//profession
 			profession=Unit::Profession::link((profession+Unit::Profession::END+gap)%Unit::Profession::END);
 		} else if(m_editIndex==3){
 			//AItype
 			aiType=Unit::AIType::link((aiType+Unit::AIType::END+gap)%Unit::AIType::END);
+			reduceHP=true;
 		} else if(m_editIndex==4){
 			//AIgroup
 			const int tmp=aiGroup+gap;
 			if(tmp>=0){
 				aiGroup=tmp;
 			}
+			reduceHP=true;
 		} else if(m_editIndex==5){
 			//initHP
 			const int tmp=hp+gap;
 			if(tmp>0 && tmp<=punit->GetBaseStatus().maxHP){
 				hp=tmp;
 			}
+			reduceHP=true;
 		}
 		//編集内容を反映
 		m_editResult=std::shared_ptr<Unit>(Unit::CreateMobUnit(name,profession,lv,punit->getPos(),team,aiType,aiGroup,punit->GetBattleStatus().aiLinkage));
-		m_editResult->AddHP(hp-m_editResult->GetBattleStatus().HP);//HPの初期化
+		if(reduceHP){
+			//AI,チーム,HPを編集した際は、HPを減らす処理をする
+			m_editResult->AddHP(hp-m_editResult->GetBattleStatus().HP);//HPの初期化
+		}
 	}
 }
