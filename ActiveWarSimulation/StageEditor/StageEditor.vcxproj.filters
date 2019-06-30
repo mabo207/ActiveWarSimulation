@@ -189,6 +189,9 @@
     <ClInclude Include="..\ActiveWarSimulation\FilePath.h">
       <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
     </ClInclude>
+    <ClInclude Include="EditUnitParameter.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -292,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="..\ActiveWarSimulation\FilePath.cpp">
       <Filter>ソース ファイル\AnySceneCallable</Filter>
+    </ClCompile>
+    <ClCompile Include="EditUnitParameter.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\EditAction</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

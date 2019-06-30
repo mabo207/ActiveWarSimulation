@@ -15,6 +15,7 @@
 #include"EditRemove.h"
 #include"EditMove.h"
 #include"EditResize.h"
+#include"EditUnitParameter.h"
 
 #include"CircleFactory.h"
 #include"EdgeFactory.h"
