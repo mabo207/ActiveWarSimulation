@@ -375,6 +375,7 @@ int StageEditor::Calculate() {
 		m_actionSettings.WriteOutUnit();
 	} else if(keyboard_get(KEY_INPUT_R)==10){
 		//RÉLÅ[í∑âüÇµÇ≈ì«Ç›çûÇ›
+		m_actionSettings.InitObjects();
 		m_actionSettings.ReadStage("SaveData/stage.txt");
 		m_actionSettings.ReadUnit();
 	} else if(keyboard_get(KEY_INPUT_NUMPADENTER) == 1){
