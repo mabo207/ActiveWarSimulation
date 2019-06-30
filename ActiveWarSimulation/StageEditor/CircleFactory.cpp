@@ -2,8 +2,8 @@
 #include"CircleFactory.h"
 #include"Circle.h"
 #include"EditActionSettings.h"
-#include"BattleObject.h"
-#include"StageEditor.h"
+#include"Terrain.h"
+#include"CommonConstParameter.h"
 
 //-----------------------CircleFactory::CircleFactoryButton-----------------------
 CircleFactory::CircleFactoryButton::CircleFactoryButton(Vector2D point,Vector2D vec)
@@ -23,9 +23,9 @@ void CircleFactory::CircleFactoryButton::ButtonDraw(int font,int fillFlag)const{
 
 void CircleFactory::CircleFactoryButton::PushedProcess(EditActionSettings &settings)const{
 	settings.m_pShapeFactory=std::shared_ptr<ShapeFactory>(new CircleFactory(m_point,m_vec,GetColor(255,255,0)));
-	//現在選択しているオブジェクトも、当たり判定図形を変更する
+	//オブジェクトを選択している場合は更新する
 	if(settings.m_pBattleObject.get()!=nullptr){
-		settings.m_pBattleObject->ChangeShape(settings.m_pShapeFactory->CreateShape(settings.m_pBattleObject->getPos()));
+		settings.m_pBattleObject=settings.m_pShapeFactory->CreateObject(settings.m_pBattleObject->getPos());
 	}
 }
 
@@ -35,8 +35,9 @@ CircleFactory::CircleFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned int
 
 CircleFactory::~CircleFactory(){}
 
-std::shared_ptr<Shape> CircleFactory::CreateShape(Vector2D point)const{
+std::shared_ptr<BattleObject> CircleFactory::CreateObject(Vector2D point)const{
 	//return std::shared_ptr<Shape>(new MyCircle((float)StageEditor::baseSize));
-	return std::shared_ptr<Shape>(new Circle(point,(float)StageEditor::baseSize,Shape::Fix::e_static));
+	const std::shared_ptr<Shape> pShape(new Circle(point,(float)CommonConstParameter::unitCircleSize,Shape::Fix::e_static));
+	return std::shared_ptr<BattleObject>(new Terrain(pShape,-1,GetColor(128,128,128),false));
 }
 

@@ -2,8 +2,8 @@
 #include"EdgeFactory.h"
 #include"Edge.h"
 #include"EditActionSettings.h"
-#include"BattleObject.h"
-#include"StageEditor.h"
+#include"Terrain.h"
+#include"CommonConstParameter.h"
 
 //-----------------------EdgeFactory::EdgeFactoryButton-----------------------
 EdgeFactory::EdgeFactoryButton::EdgeFactoryButton(Vector2D point,Vector2D vec)
@@ -24,20 +24,21 @@ void EdgeFactory::EdgeFactoryButton::ButtonDraw(int font,int fillFlag)const{
 
 void EdgeFactory::EdgeFactoryButton::PushedProcess(EditActionSettings &settings)const{
 	settings.m_pShapeFactory=std::shared_ptr<ShapeFactory>(new EdgeFactory(m_point,m_vec,GetColor(255,255,0)));
-	//現在選択しているオブジェクトも、当たり判定図形を変更する
+	//オブジェクトを選択している場合は更新する
 	if(settings.m_pBattleObject.get()!=nullptr){
-		settings.m_pBattleObject->ChangeShape(settings.m_pShapeFactory->CreateShape(settings.m_pBattleObject->getPos()));
+		settings.m_pBattleObject=settings.m_pShapeFactory->CreateObject(settings.m_pBattleObject->getPos());
 	}
 }
 
 //-----------------------EdgeFactory-----------------------
-const Vector2D EdgeFactory::baseVec=Vector2D(((float)StageEditor::baseSize)*0.6f,((float)StageEditor::baseSize)*0.8f);
+const Vector2D EdgeFactory::baseVec=Vector2D(((float)CommonConstParameter::unitCircleSize)*0.6f,((float)CommonConstParameter::unitCircleSize)*0.8f);
 
 EdgeFactory::EdgeFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned int lightcolor)
 	:ShapeFactory(buttonPos,buttonSize,lightcolor){}
 
 EdgeFactory::~EdgeFactory(){}
 
-std::shared_ptr<Shape> EdgeFactory::CreateShape(Vector2D point)const{
-	return std::shared_ptr<Shape>(new Edge(point,baseVec,Shape::Fix::e_static));
+std::shared_ptr<BattleObject> EdgeFactory::CreateObject(Vector2D point)const{
+	std::shared_ptr<Shape> pShape(new Edge(point,baseVec,Shape::Fix::e_static));
+	return std::shared_ptr<BattleObject>(new Terrain(pShape,-1,GetColor(128,128,128),false));
 }

@@ -5,9 +5,9 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
-#include"BattleSceneData.h"
 #include<math.h>
 #include"FilePath.h"
+#include<optional>
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
@@ -211,7 +211,7 @@ void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
 void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned int inColor,unsigned int outColor)const{
 	RECT rect;
 	GetDrawArea(&rect);
-	SetDrawArea(0,0,(int)BattleSceneData::mapDrawSize.x,(int)BattleSceneData::mapDrawSize.y);
+	SetDrawArea(0,0,CommonConstParameter::mapSizeX,CommonConstParameter::mapSizeY);
 	Vector2D pos=point-adjust;
 	//ユニットの移動限界距離を水色に描画
 	DrawCircleAA(pos.x,pos.y,distance,100,outColor,FALSE,3.0f);//枠
@@ -319,7 +319,7 @@ void Unit::DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDra
 }
 
 void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const{
-	Vector2D pos=point-adjust;
+	Vector2D pos=point+adjust;//描画位置
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
 	if(infoDrawFlag){
@@ -334,20 +334,20 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 		}
 		//ユニットの当たり判定図形を描画
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
-		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+		GetHitJudgeShape()->Draw(point,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
 		SetDrawBlendMode(mode,pal);
-		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
+		GetHitJudgeShape()->Draw(point,adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
 		//ユニット自身の当たり判定の描画
 //		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,255);
-		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//面
-		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
+		m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//面
+		m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
 		//選択ユニットの当たり判定部分の輝度加算
 		if(animationFlag){
 			const int addMax=120;
 			SetDrawBlendMode(DX_BLENDMODE_ADD,(frame%60)*(60-frame%60)*addMax/900);
-			m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//面
-			m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
+			m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//面
+			m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
 		}
 		SetDrawBlendMode(mode,pal);
 	}
@@ -448,4 +448,88 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 		break;
 	}
 	return new Unit(baseStatus,weapon,position,gHandle,team,aitype,aiGroup,aiLinkage);
+}
+
+Unit *Unit::CreateUnitFromBuilder(StringBuilder &unitdata){
+	unitdata.Split(',','(',')');
+	//まずモブ用の設定をするか固定ユニット用の設定をするかを判定する
+	bool uniqueFlag=false;
+	for(const StringBuilder &sb:unitdata.m_vec){
+		if(sb.m_vec.size()>=2 && sb.m_vec[0].GetString()=="definition"){
+			//設定方法はdefinitionに記載されている
+			uniqueFlag=(sb.m_vec[1].GetString()=="unique");
+			break;
+		}
+	}
+	//モブか固定かで分岐
+	if(uniqueFlag){
+		//固定ユニット(未実装)
+
+	} else{
+		//モブ
+		//各値を宣言。設定したかどうかをpairのsecondに格納
+		//こちらは設定必須のもの
+		std::optional<std::string> name;
+		std::optional<Vector2D> pos;
+		std::optional<int> lv;
+		std::optional<Unit::Profession::Kind> prof;
+		std::optional<Unit::Team::Kind> team;
+		std::optional<Unit::AIType::Kind> aitype;
+		std::optional<int> aiGroup;
+		std::set<int> aiLinkage;
+		//こっちは設定任意のもの
+		std::optional<int> initHP;
+		std::optional<float> initOP;
+		//各値の読み取り
+		for(const StringBuilder &sb:unitdata.m_vec){
+			try{
+				if(!sb.m_vec.empty()){
+					//先頭文字列があることを保障
+					if(sb.m_vec[0].GetString()=="name" && sb.m_vec.size()>=2){
+						name=sb.m_vec[1].GetString();
+					} else if(sb.m_vec[0].GetString()=="profession" && sb.m_vec.size()>=2){
+						prof=Unit::Profession::link(std::stoi(sb.m_vec[1].GetString().c_str()));
+					} else if(sb.m_vec[0].GetString()=="lv" && sb.m_vec.size()>=2){
+						lv=std::stoi(sb.m_vec[1].GetString().c_str());
+					} else if(sb.m_vec[0].GetString()=="pos" && sb.m_vec.size()>=3){
+						pos=Vector2D((float)std::stoi(sb.m_vec[1].GetString().c_str()),(float)std::stoi(sb.m_vec[2].GetString().c_str()));
+					} else if(sb.m_vec[0].GetString()=="team" && sb.m_vec.size()>=2){
+						team=Unit::Team::link(std::stoi(sb.m_vec[1].GetString().c_str()));
+					} else if(sb.m_vec[0].GetString()=="ai" && sb.m_vec.size()>=3){
+						//aiのコンマ列に2つ以上の値が存在しても良いので、複数変数を受け取れるようにできている
+						//1つ目はAIの種類、2つ目は連動型AI用のグループ値、3つ目以降は自由(現状すべての値をaiLinkageに突っ込むようにしている)
+						aitype=Unit::AIType::link(std::stoi(sb.m_vec[1].GetString().c_str()));
+						aiGroup=std::stoi(sb.m_vec[2].GetString().c_str());
+						for(size_t i=3,size=sb.m_vec.size();i<size;i++){
+							aiLinkage.insert(std::stoi(sb.m_vec[i].GetString().c_str()));
+						}
+					} else if(sb.m_vec[0].GetString()=="initHP" && sb.m_vec.size()>=2){
+						initHP=std::stoi(sb.m_vec[1].GetString().c_str());
+					} else if(sb.m_vec[0].GetString()=="initOP" && sb.m_vec.size()>=2){
+						initOP=(float)(std::stoi(sb.m_vec[1].GetString().c_str()));
+					}
+				}
+			} catch(const std::invalid_argument &){
+				//数値じゃないものを検出した場合
+			} catch(const std::out_of_range &){
+				//表現の範囲外の数値を検出した場合
+			}
+		}
+		//各値からユニットを格納
+		if(name && prof && lv && pos && team && aiGroup && aitype){
+			//設定必須である項目が設定されているか
+			Unit * const pu=Unit::CreateMobUnit(name.value(),prof.value(),lv.value(),pos.value(),team.value(),aitype.value(),aiGroup.value(),aiLinkage);
+			//設定任意である項目の設定
+			if(initHP && initHP.value()>0 && initHP.value()<pu->GetBattleStatus().HP){
+				//HPが0以下だったり最大HPより大きくなったりしないようにする
+				pu->AddHP(initHP.value()-pu->GetBattleStatus().HP);
+			}
+			if(initOP && initOP.value()<Unit::BattleStatus::maxOP){
+				//OPはmaxOPを上回らないようにする。0以下になるのは問題ない
+				pu->SetOP(initOP.value());
+			}
+			return pu;
+		}
+	}
+	return nullptr;
 }

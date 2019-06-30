@@ -4,7 +4,6 @@
 #include"ShapeFactory.h"
 #include"EditActionSettings.h"
 
-#include"BattleObject.h"
 #include"Terrain.h"
 
 //---------------------EditPut::EditPutButton---------------------
@@ -19,7 +18,7 @@ void EditPut::EditPutButton::PushedProcess(EditActionSettings &settings)const{
 		,(int)m_vec.x
 		,(int)m_vec.y
 		,GetColor(255,255,0)));
-	settings.m_pBattleObject=std::shared_ptr<BattleObject>(new Terrain(settings.m_pShapeFactory.get()->CreateShape(Vector2D(0.0f,0.0f)),-1,GetColor(128,128,128),false));
+	settings.m_pBattleObject=settings.m_pShapeFactory->CreateObject(Vector2D(0.0f,0.0f));
 }
 
 //---------------------EditPut---------------------

@@ -70,11 +70,17 @@ public:
 	void InitEditObject();//編集行為を行う際の初期化。m_pBattleObjectとm_pOriginObjectをnullptrに。
 	const BattleObject *GetMousePointedObjectPointer(Vector2D point)const;//イテレータを返すGetMousePointedObject()をクラス外部から使えるようにした
 	void UpdateMouseObjectDepth(const int keyinputright);//m_mouseObjectDepthを更新する
+	void ReplaceBattleObject(const std::shared_ptr<BattleObject> &obj);//m_pBattleObjectをm_objectsから削除し、同じ位置にobjを挿入する
+	//m_objectsの初期化
+	void InitObjects();
 	//制作データの書き出し
 	void WriteOutStage(const char *filename)const;
+	//ユニットデータの書き出し
+	void WriteOutUnit(const char *filename)const;
 	//ステージの読み込み
 	void ReadStage(const char *filename);
-
+	//ユニットの読み込み
+	void ReadUnit(const char *filename);
 };
 
 #endif // !DEF_EDITACTIONSETTINGS_H
