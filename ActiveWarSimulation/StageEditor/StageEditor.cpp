@@ -37,22 +37,23 @@ namespace {
 	const int leftUpPosX = 25;
 	const int leftUpPosY = 25;
 	//「動作」ボタンの縦横の個数
-	const size_t actButtonHeightNum=2,actButtonWidthNum=2;
+	const size_t actButtonWidthNum=2;
+	const size_t actButtonHeightNum=3;
 	//「動作」ボタン部分全体での横幅,縦幅
 	const int buttonWidth = 400;
-	const int buttonHeight=(leftUpPosY*2+mapSizeY)/4;
+	const int buttonHeight=300;
 	//「図形設定」ボタンの縦横の個数
-	const size_t shapeButtonHeightNum=3;
 	const size_t shapeButtonWidthNum=3;
+	const size_t shapeButtonHeightNum=3;
 	//「図形設定」ボタン部分全体での横幅,縦幅
-	const int shapeButtonHeight=buttonHeight;
 	const int shapeButtonWidth=buttonWidth;
+	const int shapeButtonHeight=240;
 	//「位置設定」ボタンの縦横の個数
 	const int posButtonWidthNum=3;
 	const int posButtonHeightNum=1;
 	//「位置設定」ボタン部分全体での横幅,縦幅
 	const int posButtonWidth=buttonWidth;
-	const int posButtonHeight=buttonHeight/2;
+	const int posButtonHeight=100;
 	//エディタで作られる物のサイズの基準の大きさ・基本単位
 	const int baseSize=CommonConstParameter::unitCircleSize;
 }
@@ -135,6 +136,12 @@ StageEditor::StageEditor()
 	//resizeボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EditResize::EditResizeButton(
 		Vector2D(buttonsLeftEdge+(float)(buttonWidth/actButtonWidthNum*1),buttonY)
+		,Vector2D((float)(buttonWidth/actButtonWidthNum),(float)(buttonHeight/actButtonHeightNum))
+	)));
+	buttonY+=(float)(buttonHeight/actButtonHeightNum*1);
+	//UnitEditボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EditUnitParameter::EditUnitParameterButton(
+		Vector2D(buttonsLeftEdge+(float)(buttonWidth/actButtonWidthNum*0),buttonY)
 		,Vector2D((float)(buttonWidth/actButtonWidthNum),(float)(buttonHeight/actButtonHeightNum))
 	)));
 	buttonY+=(float)(buttonHeight/actButtonHeightNum*1);
