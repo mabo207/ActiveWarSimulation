@@ -345,10 +345,13 @@ int StageEditor::Calculate() {
 		//Enterキー入力でエディタを終了
 		return -1;
 	} else{
-		const bool up=(keyboard_get(KEY_INPUT_UP)==1);
-		const bool down=(keyboard_get(KEY_INPUT_DOWN)==1);
-		const bool left=(keyboard_get(KEY_INPUT_LEFT)==1);
-		const bool right=(keyboard_get(KEY_INPUT_RIGHT)==1);
+		auto func=[](int pal){
+			return (pal==1 || (pal>=30 && pal%6==0));
+		};
+		const bool up=func(keyboard_get(KEY_INPUT_UP));
+		const bool down=func(keyboard_get(KEY_INPUT_DOWN));
+		const bool left=func(keyboard_get(KEY_INPUT_LEFT));
+		const bool right=func(keyboard_get(KEY_INPUT_RIGHT));
 		const std::shared_ptr<EditUnitParameter> editUnit=std::dynamic_pointer_cast<EditUnitParameter>(m_actionSettings.m_pEditAction);
 		if(editUnit){
 			//現在EditUnitParameterをしているなら、キーボードの入力を反映させる
