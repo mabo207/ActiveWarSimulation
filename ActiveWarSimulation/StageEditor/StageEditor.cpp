@@ -370,8 +370,10 @@ int StageEditor::Calculate() {
 
 	//キーボード入力受付
 	if(keyboard_get(KEY_INPUT_S)==10){
-		//Sキー長押しで保存
+		//Sキー長押しで地形を保存
 		m_actionSettings.WriteOutStage("SaveData/stage.txt");
+	} else if(keyboard_get(KEY_INPUT_U)==10){
+		//Uキー長押しでユニットを保存
 		m_actionSettings.WriteOutUnit();
 	} else if(keyboard_get(KEY_INPUT_R)==10){
 		//Rキー長押しで読み込み
