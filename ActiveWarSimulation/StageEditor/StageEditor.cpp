@@ -392,5 +392,44 @@ void StageEditor::Draw() {
 		pb.get()->ButtonDraw(m_font,TRUE);
 	}
 
-
+	//編集対象がUnitであれば、その能力値も描画
+	if(m_actionSettings.m_pBattleObject && m_actionSettings.m_pBattleObject->GetType()==BattleObject::Type::e_unit){
+		const std::shared_ptr<const Unit> punit=std::dynamic_pointer_cast<const Unit>(m_actionSettings.m_pBattleObject);
+		if(punit){
+			const Vector2D unitDrawPos=punit->getPos()+adjust;
+			const int unitX=(int)unitDrawPos.x,unitY=(int)unitDrawPos.y;
+			const int left=unitX+baseSize+20;
+			int top=unitY-leftUpPosY;
+			const int boxWidth=300;
+			const int boxHeight=350;
+			if(top<0){
+				top=0;
+			} else if(top+boxHeight>GetEditorSizeY()){
+				top=GetEditorSizeY()-boxHeight;
+			}
+			const int mergin=5;
+			const unsigned int backColor=GetColor(0,128,64);
+			const unsigned int strColor=GetColor(255,255,255);
+			//下地の描画
+			DrawTriangle(unitX+baseSize,unitY,left,unitY-10,left,unitY+10,backColor,TRUE);
+			DrawBox(left,top,left+boxWidth,top+boxHeight,backColor,TRUE);
+			//能力値の描画
+			std::string drawStr;
+			drawStr.reserve(300);
+			drawStr+="Lv: "+std::to_string(punit->GetBaseStatus().lv)+'\n';
+			drawStr+="Team: "+std::to_string(punit->GetBattleStatus().team)+'\n';
+			drawStr+="Profession: "+std::to_string(punit->GetBaseStatus().profession)+'\n';
+			drawStr+="Team: "+std::to_string(punit->GetBattleStatus().team)+'\n';
+			drawStr+="AItype: "+std::to_string(punit->GetBattleStatus().aitype)+'\n';
+			drawStr+="AIgroup: "+std::to_string(punit->GetBattleStatus().aiGroup)+'\n';
+			drawStr+="Weapon: "+punit->GetBattleStatus().weapon->GetName()+'\n';
+			drawStr+="HP: "+std::to_string(punit->GetBattleStatus().HP)+" / "+std::to_string(punit->GetBaseStatus().maxHP)+'\n';
+			drawStr+="\nPOW: "+std::to_string(punit->GetBaseStatus().power)+'\n';
+			drawStr+="DEF: "+std::to_string(punit->GetBaseStatus().def)+'\n';
+			drawStr+="MPOW: "+std::to_string(punit->GetBaseStatus().mpower)+'\n';
+			drawStr+="MDEF: "+std::to_string(punit->GetBaseStatus().mdef)+'\n';
+			drawStr+=punit->GetBattleStatus().weapon->GetEffectivenessString(punit.get());
+			DrawStringNewLineToHandle(left+mergin,top+mergin,boxWidth-mergin*2,boxHeight-mergin*2,drawStr.c_str(),strColor,m_font,2);
+		}
+	}
 }
