@@ -117,6 +117,16 @@ void EditActionSettings::RemoveObject(Vector2D point){
 	}
 }
 
+void EditActionSettings::RemoveOriginObject(){
+	//取り除くオブジェクトを探す
+	for(std::vector<std::shared_ptr<BattleObject>>::iterator it=m_objects.begin(),ite=m_objects.end();it!=ite;it++){
+		if(*it==m_pOriginObject){
+			m_objects.erase(it);
+			break;
+		}
+	}
+}
+
 void EditActionSettings::SetEditObject(Vector2D point){
 	std::vector<std::shared_ptr<BattleObject>>::const_iterator it=GetMousePointedObject(point);
 	if(it!=m_objects.end()){

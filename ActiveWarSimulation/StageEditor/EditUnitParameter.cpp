@@ -24,6 +24,7 @@ const size_t EditUnitParameter::editItemNum=6;
 
 EditUnitParameter::EditUnitParameter(int buttonX,int buttonY,int buttonDX,int buttonDY,unsigned int pushedColor)
 	:EditAction(buttonX,buttonY,buttonDX,buttonDY,pushedColor)
+	,m_editIndex(0)
 {}
 
 EditUnitParameter::~EditUnitParameter(){}
@@ -40,8 +41,13 @@ void EditUnitParameter::VProcessAction(Vector2D point,EditActionSettings &settin
 			//非ユニットは編集対象にしない
 			settings.m_pBattleObject=std::shared_ptr<BattleObject>(nullptr);
 		}
+		//indexを初期化
+		m_editIndex=0;
 	} else{
 		//編集対象が決まっている場合、編集が終わったものとする
+		//ユニットを置き換える
+		settings.RemoveOriginObject();
+		settings.PutObject(settings.m_pBattleObject->getPos());
 		settings.m_pBattleObject=std::shared_ptr<BattleObject>(nullptr);
 	}
 }
@@ -106,8 +112,6 @@ void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right,Edi
 			}
 		}
 		//編集内容を反映
-		const Unit *u=Unit::CreateMobUnit(name,profession,lv,punit->getPos(),team,aiType,aiGroup,punit->GetBattleStatus().aiLinkage);
-		*(settings.m_pBattleObject)=*u;
-		delete u;
+		settings.m_pBattleObject=std::shared_ptr<BattleObject>(Unit::CreateMobUnit(name,profession,lv,punit->getPos(),team,aiType,aiGroup,punit->GetBattleStatus().aiLinkage));
 	}
 }

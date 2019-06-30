@@ -70,6 +70,7 @@ public:
 	void InitEditObject();//編集行為を行う際の初期化。m_pBattleObjectとm_pOriginObjectをnullptrに。
 	const BattleObject *GetMousePointedObjectPointer(Vector2D point)const;//イテレータを返すGetMousePointedObject()をクラス外部から使えるようにした
 	void UpdateMouseObjectDepth(const int keyinputright);//m_mouseObjectDepthを更新する
+	void RemoveOriginObject();//m_pOriginObjectをm_objectsから削除する
 	//m_objectsの初期化
 	void InitObjects();
 	//制作データの書き出し
