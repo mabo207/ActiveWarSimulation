@@ -336,23 +336,26 @@ void Unit::DrawFacePic(Vector2D point)const{
 	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//背景の枠の描画(黒を25%混ぜる)
 }
 
-void Unit::DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const{
-	DrawUnit(getPos(),adjust,frame,animationFlag,infoDrawFlag);
+void Unit::DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const{
+	DrawUnit(getPos(),adjust,frame,animationFlag,infoDrawFlag,actionRangeDraw);
 }
 
-void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const{
+void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const{
 	Vector2D pos=point+adjust;//描画位置
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
 	if(infoDrawFlag){
 		//アクションの効果範囲を半透明(弱)で描画
 		//ひとまず短射程で描画本来は武器クラスのDraw関数を使うのが望ましい。
-		if(GetFix()==Shape::Fix::e_dynamic){
-			//dynamicなキャラのみアクション範囲を表示。恐らく移動しているキャラのみ
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
-			DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),TRUE);//面
+		if(actionRangeDraw){
+			const unsigned int color=Team::GetColor(m_battleStatus.team);
+			//const unsigned int color=GetColor(64,128,64);
+			//const int alpha=(int)((std::sin(frame*0.05)+1.0)*0.5*64);
+			const int alpha=32;
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA,alpha);
+			DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,color,TRUE);//面
 			SetDrawBlendMode(mode,pal);
-			DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),FALSE);//枠
+			DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,color,FALSE);//枠
 		}
 		//ユニットの当たり判定図形を描画
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
@@ -427,7 +430,7 @@ Shape::Fix::Kind Unit::SetFix(Shape::Fix::Kind fix)const{
 }
 
 void Unit::VDraw(Vector2D point,Vector2D adjust)const{
-	DrawUnit(point,adjust,0,false,true);
+	DrawUnit(point,adjust,0,false,true,false);
 }
 
 void Unit::VHitProcess(const BattleObject *potherobj){
