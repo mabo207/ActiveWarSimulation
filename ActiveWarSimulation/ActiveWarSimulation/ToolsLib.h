@@ -160,9 +160,6 @@ std::pair<int,int> GetWindowResolution();
 //マウスがウインドウ内に入っているかの判定
 bool JudgeMouseInWindow();
 
-//bgmを読み込む関数
-int LoadBGMMem(const std::string &dirname,int BufferNum=3,int UnionHandle=-1);
-
 //グラデーション有りの四角形描画(x1<x2,y1<y2でないと正しく動作しない)
 void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsigned int rightDownColor,bool horizontal);
 

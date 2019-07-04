@@ -4,7 +4,6 @@
 #include"Edge.h"
 #include<algorithm>
 #include"GraphicControl.h"
-#include"ToolsLib.h"
 #include"FileRead.h"
 #include"GameScene.h"
 #include"CommonConstParameter.h"
@@ -32,7 +31,7 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_orderFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
 	,m_playMode(playMode)
 	,m_mapPic(LoadGraphEX((FilePath::stageDir+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
-	,m_mapBGM(LoadBGMMem(FilePath::bgmDir+"/nonfree/wild-road_loop/"))
+	,m_mapBGM(Resource::BGM::Load(FilePath::bgmDir+"/nonfree/wild-road_loop/"))
 	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
 	,m_attackSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/damage.ogg").c_str()))
 	,m_healSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/recover.ogg").c_str()))
@@ -87,8 +86,8 @@ BattleSceneData::~BattleSceneData(){
 		DeleteGraphEX(m_drawOrderHelp[i]);
 	}
 	//サウンド開放
-	StopSoundMem(m_mapBGM);
-	DeleteSoundMem(m_mapBGM);
+	m_mapBGM.Stop();
+	m_mapBGM.Delete();
 	DeleteSoundMem(m_aimchangeSound);
 	DeleteSoundMem(m_attackSound);
 	DeleteSoundMem(m_healSound);
