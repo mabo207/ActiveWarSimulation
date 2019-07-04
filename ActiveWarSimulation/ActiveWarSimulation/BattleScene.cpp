@@ -29,7 +29,7 @@ BattleScene::BattleScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_battleSceneData(battleSceneData)
 {
 	//bgm再生
-	PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);
+	m_battleSceneData->m_mapBGM.SetAndPlay(DX_PLAYTYPE_LOOP,TRUE);
 	//m_sceneDataの初期化、最初はユニット切り替え
 	m_sceneData=VGetSwitchUnitScene();
 }
@@ -49,7 +49,7 @@ std::shared_ptr<BattleSceneElement> BattleScene::VGetSwitchUnitScene()const{
 void BattleScene::ResetGame(){
 	m_battleSceneData=std::shared_ptr<BattleSceneData>(new BattleSceneData(m_battleSceneData->m_stageDirName,m_battleSceneData->m_stageTitleName,m_battleSceneData->m_stageLevel));//バトルデータを変える
 	m_sceneData=VGetSwitchUnitScene();//クラスを変える
-	PlaySoundMem(m_battleSceneData->m_mapBGM,DX_PLAYTYPE_LOOP,TRUE);//bgm再生
+	m_battleSceneData->m_mapBGM.SetAndPlay(DX_PLAYTYPE_LOOP,TRUE);//bgm再生
 }
 
 int BattleScene::Calculate(){

@@ -71,7 +71,7 @@ TitleScene::TitleScene()
 	:GameScene()
 	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
 	,m_itemFont(CreateFontToHandleEX("メイリオ",16,1,-1))
-	,m_bgm(LoadBGMMem(FilePath::bgmDir+"nonfree/title/"))
+	,m_bgm(Resource::BGM::Load(FilePath::bgmDir+"nonfree/title/"))
 	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_selectItem(SelectItem::e_stageSelect)
@@ -82,7 +82,7 @@ TitleScene::TitleScene()
 		m_hitJudgeShapeVec[i]=MakeHexagon(strPos[i],80.0f);
 	}
 	//bgm再生
-	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
+	m_bgm.SetAndPlay(DX_PLAYTYPE_LOOP,TRUE);
 }
 
 TitleScene::~TitleScene(){
@@ -90,8 +90,8 @@ TitleScene::~TitleScene(){
 	DeleteGraphEX(m_backPic);
 	DeleteFontToHandleEX(m_itemFont);
 	//サウンド解放
-	StopSoundMem(m_bgm);
-	DeleteSoundMem(m_bgm);
+	m_bgm.Stop();
+	m_bgm.Delete();
 	DeleteSoundMem(m_aimchangeSound);
 }
 

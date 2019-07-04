@@ -18,13 +18,13 @@ Resource::BGM Resource::BGM::LoadInfo::Load()const{
 	for(StringBuilder &sb:builder.m_vec){
 		try{
 			//std::stoiÇópÇ¢ÇÈÇÃÇ≈ó·äOèàóùÇópà”
-			if(sb.m_vec.size()>2 && sb.m_vec[0].GetString()=="top"){
+			if(sb.m_vec.size()>=2 && sb.m_vec[0].GetString()=="top"){
 				loopTop=std::stoi(sb.m_vec[1].GetString());
-			} else if(sb.m_vec.size()>2 && sb.m_vec[0].GetString()=="bottom"){
+			} else if(sb.m_vec.size()>=2 && sb.m_vec[0].GetString()=="bottom"){
 				loopBottom=std::stoi(sb.m_vec[1].GetString());
-			} else if(sb.m_vec.size()>2 && sb.m_vec[0].GetString()=="volume"){
+			} else if(sb.m_vec.size()>=2 && sb.m_vec[0].GetString()=="volume"){
 				volume=std::stoi(sb.m_vec[1].GetString());
-			} else if(sb.m_vec.size()>2 && sb.m_vec[0].GetString()=="fileName"){
+			} else if(sb.m_vec.size()>=2 && sb.m_vec[0].GetString()=="fileName"){
 				fileName=dirName+sb.m_vec[1].GetString();
 			}
 		} catch(const std::invalid_argument &){
@@ -93,6 +93,10 @@ void Resource::BGM::SetAndPlay(int playType,int topPositionFlag)const{
 	SetOption();
 	//çƒê∂
 	PlaySoundMem(handle,playType,topPositionFlag);
+}
+
+void Resource::BGM::Stop()const{
+	StopSoundMem(handle);
 }
 
 bool Resource::BGM::IsError()const{

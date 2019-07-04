@@ -43,6 +43,7 @@ namespace Resource{
 		int GetHandle()const;//再生以外の処理がしたくなりハンドルが必要になった時に用いる
 		void SetOption()const;//volume,loopTop,loopButtomをハンドルに設定する
 		void SetAndPlay(int playType,int topPositionFlag)const;//SetOption()した後に再生
+		void Stop()const;
 		bool IsError()const;
 		BGM Copy()const;
 		void Delete()const;
