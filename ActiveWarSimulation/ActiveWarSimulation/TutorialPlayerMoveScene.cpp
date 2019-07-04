@@ -2,9 +2,10 @@
 #include"DxLib.h"
 #include"TutorialPlayerMoveScene.h"
 #include"Circle.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include<cmath>
 #include"CommonConstParameter.h"
+#include"FilePath.h"
 
 //-------------------TutorialPlayerMoveScene---------------
 TutorialPlayerMoveScene::TutorialPlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
@@ -75,7 +76,7 @@ bool TutorialPlayerMoveScene::TutorialMoveProcess(int retIntPal){
 				//ポップアップを閉じた時にすぐにポップアップが出ないようにする
 				data->m_displayPopFlag=false;
 				//到達していないのに動けなくなった場合は、ポップアップを出す
-				const std::shared_ptr<TutorialBattleSceneData::TutorialBase> insertData(new TutorialBattleSceneData::ExplainTutorial("Graphic/tutorial/nonfree/moveCancel.png"));
+				const std::shared_ptr<TutorialBattleSceneData::TutorialBase> insertData(new TutorialBattleSceneData::ExplainTutorial((FilePath::graphicDir+"tutorial/nonfree/moveCancel.png").c_str()));
 				m_tutorialBattleSceneData->m_tutorialData.insert(m_tutorialBattleSceneData->m_tutorialData.begin(),insertData);
 				//フラグの更新
 				UpdateFlagOnlyInherit();
@@ -99,7 +100,7 @@ bool TutorialPlayerMoveScene::TutorialAttackProcess(int retIntPal){
 				return true;//指定ユニットへの攻撃を指示した時のみ遷移処理を行う
 			} else{
 				//指定と違うユニットを狙っている場合は、攻撃ができないようにする。returnに到達させてはいけない。
-				PlaySoundMem(GeneralPurposeResourceManager::cancelSound,DX_PLAYTYPE_BACK,TRUE);//失敗音を鳴らす
+				PlaySoundMem(GeneralPurposeResource::cancelSound,DX_PLAYTYPE_BACK,TRUE);//失敗音を鳴らす
 			}
 		}
 		return false;//攻撃ができない時は、遷移処理を行わない

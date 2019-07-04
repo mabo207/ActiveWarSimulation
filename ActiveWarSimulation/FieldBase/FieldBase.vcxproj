@@ -25,6 +25,7 @@
     <ClCompile Include="..\ActiveWarSimulation\GraphicProgramming.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\input.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\MyPolygon.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\StringBuilder.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp" />
     <ClCompile Include="..\StageEditor\BattleObject.cpp" />
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="..\ActiveWarSimulation\GraphicProgramming.h" />
     <ClInclude Include="..\ActiveWarSimulation\input.h" />
     <ClInclude Include="..\ActiveWarSimulation\MyPolygon.h" />
+    <ClInclude Include="..\ActiveWarSimulation\StringBuilder.h" />
     <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h" />
     <ClInclude Include="..\StageEditor\BattleObject.h" />
     <ClInclude Include="..\StageEditor\Terrain.h" />
@@ -122,6 +124,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\ActiveWarSimulation;..\FieldBase;..\StageEditor;C:\DxLib\3.17-e\addfiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -151,6 +154,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\ActiveWarSimulation;..\FieldBase;..\StageEditor;C:\DxLib\3.17-e\addfiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

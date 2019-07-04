@@ -5,6 +5,8 @@
 #include"GraphicControl.h"
 #include"BattleSceneData.h"
 #include"FileRead.h"
+#include"StringBuilder.h"
+#include"FilePath.h"
 
 //----------------TutorialBattleSceneData::MoveTutorial----------------------
 const float TutorialBattleSceneData::MoveTutorial::minDisplayPopOP=60.0f;
@@ -40,37 +42,44 @@ void TutorialBattleSceneData::MoveTutorial::DrawSupplement(int font)const{
 		,GetColor(255,255,255),font,2);
 }
 
-std::shared_ptr<TutorialBattleSceneData::TutorialBase> TutorialBattleSceneData::TutorialBase::Create(const std::string &str,const BattleSceneData &gameData){
+std::shared_ptr<TutorialBattleSceneData::TutorialBase> TutorialBattleSceneData::TutorialBase::Create(StringBuilder &info,const BattleSceneData &gameData){
 	//データを分割
-	const StringBuilder sb(str,',','(',')',true,true);
+	info.Split(',','(',')');
 	//チュートリアルデータを作成
-	if(sb.m_vec.size()>=2){
-		if(sb.m_vec[0].GetString()=="move"){
-			//MoveTutorialは、到達地点を表す図形が格納されている
-			const std::shared_ptr<Shape> pShape=Shape::CreateShape(sb.m_vec[1].GetString());
-			if(pShape.get()!=nullptr){
-				return std::shared_ptr<TutorialBase>(new MoveTutorial(pShape));
-			}
-		} else if(sb.m_vec[0].GetString()=="attack"){
-			//AttackTutorialは、初期化された時のユニットの配列番号が格納されている
-			const size_t index=std::atoi(sb.m_vec[1].GetString().c_str());
-			if(index<gameData.m_unitList.size()){
-				return std::shared_ptr<TutorialBase>(new AttackTutorial(gameData.m_unitList[index]));
-			}
-		} else if(sb.m_vec[0].GetString()=="wait"){
-			//WaitTutorialには特に設定する項目はない
-			return std::shared_ptr<TutorialBase>(new WaitTutorial());
-		} else if(sb.m_vec[0].GetString()=="explain"){
-			//ExplainTutorialには画像ファイル名が入っている
-			return std::shared_ptr<TutorialBase>(new ExplainTutorial(("Stage/"+gameData.m_stageName+sb.m_vec[1].GetString()).c_str()));
-		} else if(sb.m_vec[0].GetString()=="blank"){
-			//BlankTutorialには何もしない行動の回数が入っている
-			const int count=std::atoi(sb.m_vec[1].GetString().c_str());
-			if(count>0){
-				return std::shared_ptr<TutorialBase>(new BlankTutorial(count));
+	try{
+		if(info.m_vec.size()>=2){
+			if(info.m_vec[0].GetString()=="move"){
+				//MoveTutorialは、到達地点を表す図形が格納されている
+				const std::shared_ptr<Shape> pShape=Shape::CreateShape(info.m_vec[1]);
+				if(pShape.get()!=nullptr){
+					return std::shared_ptr<TutorialBase>(new MoveTutorial(pShape));
+				}
+			} else if(info.m_vec[0].GetString()=="attack"){
+				//AttackTutorialは、初期化された時のユニットの配列番号が格納されている
+				const size_t index=std::stoi(info.m_vec[1].GetString().c_str());
+				if(index<gameData.m_unitList.size()){
+					return std::shared_ptr<TutorialBase>(new AttackTutorial(gameData.m_unitList[index]));
+				}
+			} else if(info.m_vec[0].GetString()=="wait"){
+				//WaitTutorialには特に設定する項目はない
+				return std::shared_ptr<TutorialBase>(new WaitTutorial());
+			} else if(info.m_vec[0].GetString()=="explain"){
+				//ExplainTutorialには画像ファイル名が入っている
+				return std::shared_ptr<TutorialBase>(new ExplainTutorial((FilePath::stageDir+gameData.m_stageDirName+info.m_vec[1].GetString()).c_str()));
+			} else if(info.m_vec[0].GetString()=="blank"){
+				//BlankTutorialには何もしない行動の回数が入っている
+				const int count=std::stoi(info.m_vec[1].GetString().c_str());
+				if(count>0){
+					return std::shared_ptr<TutorialBase>(new BlankTutorial(count));
+				}
 			}
 		}
+	} catch(const std::invalid_argument &){
+		//数値じゃない値が検出された場合
+	} catch(const std::out_of_range &){
+		//範囲外の値が検出された場合
 	}
+	//作成失敗時
 	return std::shared_ptr<TutorialBase>(nullptr);
 }
 
@@ -113,7 +122,7 @@ TutorialBattleSceneData::WaitTutorial::WaitTutorial()
 TutorialBattleSceneData::WaitTutorial::~WaitTutorial(){}
 
 void TutorialBattleSceneData::WaitTutorial::DrawSupplement(int font)const{
-	const int width=650,height=160;
+	const int width=650,height=195;
 	const int x=CommonConstParameter::gameResolutionX-width,y=((int)BattleSceneData::mapDrawSize.y)-height;
 	//黒バックを半透明で描画
 	int mode,pal;
@@ -125,7 +134,8 @@ void TutorialBattleSceneData::WaitTutorial::DrawSupplement(int font)const{
 	DrawStringNewLineToHandle(x+5,y+5,width-10,height-10
 		,"その場で待機してみよう。\n\n"
 		"待機\n"
-		"　マウス　　　：右下のNEXTボタンを左クリック\n"
+		"　マウス　　　：マウスホイールを押す\n"
+		"　　　　または　右下のNEXTボタンを左クリック\n"
 		"　ゲームパッド：ボタン２\n"
 		"　キーボード　：Vキー"
 		,GetColor(255,255,255),font,2);
@@ -169,15 +179,15 @@ TutorialBattleSceneData::BlankTutorial::BlankTutorial(int count)
 void TutorialBattleSceneData::BlankTutorial::DrawSupplement(int font)const{}
 
 //----------------TutorialBattleSceneData-----------------------
-TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageName)
-	:BattleSceneData(stageName,PlayMode::e_tutorial)
+TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel)
+	:BattleSceneData(stageDirName,titleName,stageLevel,PlayMode::e_tutorial)
 	,m_tutorialFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 {
 	//チュートリアルデータの読み込み
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-	StringBuilder sb(FileStrRead(("Stage/"+m_stageName+"/tutorialList.txt").c_str()),'\n','{','}',false,true);
-	for(const StringBuilder &ssb:sb.m_vec){
-		std::shared_ptr<TutorialBase> pt=TutorialBase::Create(ssb.GetString(),*this);
+	StringBuilder sb(FileStrRead((FilePath::stageDir+m_stageDirName+"/tutorialList.txt").c_str()),'\n','{','}');
+	for(StringBuilder &ssb:sb.m_vec){
+		std::shared_ptr<TutorialBase> pt=TutorialBase::Create(ssb,*this);//sb,ssbは変更される
 		if(pt.get()!=nullptr){
 			m_tutorialData.push_back(pt);
 		}
@@ -186,4 +196,5 @@ TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageName)
 
 TutorialBattleSceneData::~TutorialBattleSceneData()
 {
+	DeleteFontToHandleEX(m_tutorialFont);
 }

@@ -43,6 +43,9 @@ public:
 	//読み込み・書き出し用仮想関数
 	void WriteOutShape(std::ofstream &ofs)const;//書き出し用関数
 
+	//static要素
+public:
+	static MyPolygon CreateRectangle(Vector2D begin,Vector2D offset,Fix::Kind fix);//長方形を簡単に作成する
 };
 
 

@@ -2,8 +2,9 @@
 #include"SystemMenu.h"
 #include"input.h"
 #include"GraphicControl.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
+#include"FilePath.h"
 
 //-------------------SystemMenu-----------------
 const int SystemMenu::contentX[SystemMenu::indexCount]={720,1200};
@@ -18,12 +19,13 @@ SystemMenu::SystemMenu(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_systemMenu)
 	,m_battleSceneData(battleSceneData)
 	,m_index(0)
-	,m_systemBoard(LoadGraphEX("Graphic/systemBoard.png"))
+	,m_systemBoard(LoadGraphEX(FilePath::graphicDir+"systemBoard.png"))
 	,m_contentFont(CreateFontToHandleEX("メイリオ",48,7,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,3))
 {}
 
 SystemMenu::~SystemMenu(){
 	DeleteGraphEX(m_systemBoard);
+	DeleteFontToHandleEX(m_contentFont);
 }
 
 int SystemMenu::thisCalculate(){
@@ -57,7 +59,7 @@ int SystemMenu::thisCalculate(){
 	}
 	if(m_index!=beforeIndex){
 		//項目が変わっていたら音を鳴らす
-		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);
+		PlaySoundMem(GeneralPurposeResource::selectSound,DX_PLAYTYPE_BACK,TRUE);
 	}
 
 	//場面遷移
@@ -71,7 +73,7 @@ int SystemMenu::thisCalculate(){
 			break;
 		case(1):
 			//ギブアップする
-			PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 			return SceneKind::END;
 			break;
 		}
@@ -83,7 +85,7 @@ int SystemMenu::thisCalculate(){
 		)
 	{
 		//項目決定によって前に戻るか、戻るボタンを押したら
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 		return 0;
 	}
 

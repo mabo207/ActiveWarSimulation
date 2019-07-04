@@ -2,6 +2,15 @@
 #include"DxLib.h"
 #include"GraphicControl.h"
 #include"CommonConstParameter.h"
+#include"FilePath.h"
+
+namespace {
+	const int paramBoxInitLeftX=-600;
+	const int paramBoxInitRightX=CommonConstParameter::gameResolutionX+10;
+	const int paramBoxAimedLeftX=120;
+	const int paramBoxAimedRightX=1200;
+	const int paramBoxY=140;
+}
 
 //-------------------ResearchScene---------------------
 const int ResearchScene::explainFontSize=16;
@@ -11,15 +20,16 @@ ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_palFont(CreateFontToHandleEX("メイリオ",28,1,-1))
 	,m_nameFont(CreateFontToHandleEX("メイリオ",32,1,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",explainFontSize,1,-1))
-	,m_palBackPic(LoadGraphEX("Graphic/researchInfoBack.png"))
+	,m_palBackPic(LoadGraphEX(FilePath::graphicDir+"researchInfoBack.png"))
 	,m_battleSceneData(battleSceneData)
-	,m_researchPic(LoadGraphEX("Graphic/operatedCursor.png"))
+	,m_researchPic(LoadGraphEX(FilePath::graphicDir+"operatedCursor.png"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_pointerVec(battleSceneData->m_operateUnit->getPos())
-	,m_moveButton(1620,980,80,80,LoadGraphEX("Graphic/backButton.png"))
+	,m_moveButton(1620,980,80,80,LoadGraphEX(FilePath::graphicDir+"backButton.png"))
+	,m_paramBoxX(paramBoxInitLeftX,10,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0)
+	,m_researchUnit(nullptr)
 {
-	//操作ユニット等の初期化
-	UpdatePointer();
+	m_paramBoxX.EnforceEnd();//動かしていない状態にする
 }
 
 ResearchScene::~ResearchScene(){
@@ -116,8 +126,46 @@ void ResearchScene::UpdatePointer(){
 }
 
 int ResearchScene::thisCalculate(){
+	const Unit *beforeFrameResearchUnit=m_researchUnit;//比較に用いる
+
 	//ポインターの更新
 	UpdatePointer();
+
+	//パラメータ表示UIの描画位置の更新
+	m_paramBoxX.Update();
+	if(m_researchUnit!=beforeFrameResearchUnit){
+		//情報表示ユニットが変更されたら、目標位置を変える
+		//左合わせにするかどうか
+		bool existLeft;//UIの位置の基準が左かどうか
+		bool enterFlag;//画面に入るor出る
+		if(m_researchUnit!=nullptr){
+			existLeft=((int)(m_researchUnit->getPos().x)>CommonConstParameter::gameResolutionX/2);
+			enterFlag=true;
+			if(m_paramBoxX.GetEndFlag() && beforeFrameResearchUnit==nullptr){
+				//外部で移動終了している時は、m_paramBoxの初期位置も更新
+				m_paramBoxX=Easing(existLeft?paramBoxInitLeftX:paramBoxInitRightX,m_paramBoxX.GetMaxFrame(),m_paramBoxX.GetType(),m_paramBoxX.GetFunction(),m_paramBoxX.GetDegree());
+			}
+		} else{
+			//beforeFrameResearchUnitはnullptrでない
+			enterFlag=false;
+			existLeft=((int)(beforeFrameResearchUnit->getPos().x)>CommonConstParameter::gameResolutionX/2);
+		}
+		//目標位置の更新
+		if(enterFlag){
+			if(existLeft){
+				//画面左に入る
+				m_paramBoxX.SetTarget(paramBoxAimedLeftX,true);
+			} else{
+				m_paramBoxX.SetTarget(paramBoxAimedRightX,true);
+			}
+		} else{
+			if(existLeft){
+				m_paramBoxX.SetTarget(paramBoxInitLeftX,true);
+			} else{
+				m_paramBoxX.SetTarget(paramBoxInitRightX,true);
+			}
+		}
+	}
 
 	//遷移処理
 	if(keyboard_get(KEY_INPUT_F)==1 || keyboard_get(KEY_INPUT_X)==1 || m_moveButton.JudgePressMoment()){
@@ -168,37 +216,32 @@ void ResearchScene::thisDraw()const{
 	}
 
 	//パラメータの描画
-	if(m_researchUnit!=nullptr){
-		//パラメータの表示
-		int gx=1200,gy=140;//パラメータ画面全体の描画位置
-		if(m_researchUnit->getPos().x<CommonConstParameter::gameResolutionX/2){
-			//ユニットの位置が画面左半分にいるなら
-			gx=1200;
-		} else{
-			//右半分なら
-			gx=120;
+	{
+		//下地の描画
+		const int paramBoxX=m_paramBoxX.GetX();
+		DrawGraph(paramBoxX,paramBoxY,m_palBackPic,TRUE);
+		if(m_researchUnit!=nullptr){
+			const Unit::BaseStatus base=m_researchUnit->GetBaseStatus();
+			const Unit::BattleStatus battle=m_researchUnit->GetBattleStatus();
+			//ネームプレート部分
+			m_researchUnit->DrawFacePic(Vector2D((float)(paramBoxX+70),(float)(paramBoxY+60)));
+			DrawStringToHandle(paramBoxX+150,paramBoxY+12,base.name.c_str(),GetColor(255,255,255),m_nameFont);
+			DrawFormatStringToHandle(paramBoxX+180,paramBoxY+65,GetColor(255,255,255),m_palFont,"%s Lv%d",Unit::Profession::GetName(base.profession).c_str(),base.lv);
+			//パラメータ部分
+			DrawFormatStringToHandle(paramBoxX+68,paramBoxY+159,GetColor(255,255,255),m_palFont,"%d/%d",battle.HP,base.maxHP);
+			DrawFormatStringToHandle(paramBoxX+68,paramBoxY+203,GetColor(255,255,255),m_palFont,"%.0f/%.0f",battle.OP,battle.maxOP);
+			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+247,GetColor(255,255,255),m_palFont,"%d",base.power);
+			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+291,GetColor(255,255,255),m_palFont,"%d",base.def);
+			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+335,GetColor(255,255,255),m_palFont,"%d",base.mpower);
+			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+379,GetColor(255,255,255),m_palFont,"%d",base.mdef);
+			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+423,GetColor(255,255,255),m_palFont,"%d",base.speed);
+			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+467,GetColor(255,255,255),m_palFont,"%d",base.move);
+			//装備説明部分
+			//通常装備
+			DrawStringToHandle(paramBoxX+261,paramBoxY+159,m_researchUnit->GetBattleStatus().weapon->GetName().c_str(),GetColor(255,255,255),m_palFont);
+			DrawStringNewLineToHandle(paramBoxX+272,paramBoxY+192,310,36,m_researchUnit->GetBattleStatus().weapon->GetExplain().c_str(),GetColor(255,255,255),m_explainFont,2);
+			DrawStringNewLineToHandle(paramBoxX+272,paramBoxY+240,310,36,m_researchUnit->GetBattleStatus().weapon->GetEffectivenessString(m_researchUnit).c_str(),GetColor(255,255,255),m_explainFont,2);
 		}
-		DrawGraph(gx,gy,m_palBackPic,TRUE);
-		const Unit::BaseStatus base=m_researchUnit->GetBaseStatus();
-		const Unit::BattleStatus battle=m_researchUnit->GetBattleStatus();
-		//ネームプレート部分
-		m_researchUnit->DrawFacePic(Vector2D((float)(gx+70),(float)(gy+60)));
-		DrawStringToHandle(gx+150,gy+12,base.name.c_str(),GetColor(255,255,255),m_nameFont);
-		DrawFormatStringToHandle(gx+180,gy+65,GetColor(255,255,255),m_palFont,"%s Lv%d",Unit::Profession::GetName(base.profession).c_str(),base.lv);
-		//パラメータ部分
-		DrawFormatStringToHandle(gx+68,gy+159,GetColor(255,255,255),m_palFont,"%d/%d",battle.HP,base.maxHP);
-		DrawFormatStringToHandle(gx+68,gy+203,GetColor(255,255,255),m_palFont,"%.0f/%.0f",battle.OP,battle.maxOP);
-		DrawFormatStringToHandle(gx+94,gy+247,GetColor(255,255,255),m_palFont,"%d",base.power);
-		DrawFormatStringToHandle(gx+94,gy+291,GetColor(255,255,255),m_palFont,"%d",base.def);
-		DrawFormatStringToHandle(gx+94,gy+335,GetColor(255,255,255),m_palFont,"%d",base.mpower);
-		DrawFormatStringToHandle(gx+94,gy+379,GetColor(255,255,255),m_palFont,"%d",base.mdef);
-		DrawFormatStringToHandle(gx+94,gy+423,GetColor(255,255,255),m_palFont,"%d",base.speed);
-		DrawFormatStringToHandle(gx+94,gy+467,GetColor(255,255,255),m_palFont,"%d",base.move);
-		//装備説明部分
-		//通常装備
-		DrawStringToHandle(gx+261,gy+159,m_researchUnit->GetBattleStatus().weapon->GetName().c_str(),GetColor(255,255,255),m_palFont);
-		DrawStringNewLineToHandle(gx+272,gy+192,310,36,m_researchUnit->GetBattleStatus().weapon->GetExplain().c_str(),GetColor(255,255,255),m_explainFont,2);
-		DrawStringNewLineToHandle(gx+272,gy+240,310,36,m_researchUnit->GetBattleStatus().weapon->GetEffectivenessString(m_researchUnit).c_str(),GetColor(255,255,255),m_explainFont,2);
 	}
 }
 

@@ -2,7 +2,7 @@
 #include"SwitchUnitScene.h"
 #include"PlayerMoveScene.h"
 #include"ComputerMoveScene.h"
-#include"StageClearSceme.h"
+#include"StageClearScene.h"
 #include"GraphicControl.h"
 
 #include"TutorialPlayerMoveScene.h"
@@ -27,7 +27,7 @@ SwitchUnitScene::~SwitchUnitScene(){
 }
 
 int SwitchUnitScene::CalculateTurn()const{
-	return (int)(m_battleSceneData->m_totalOP/Unit::BattleStatus::maxOP)+1;
+	return m_battleSceneData->CalculateTurn();
 }
 
 std::shared_ptr<BattleSceneElement> SwitchUnitScene::GetPlayerMoveScene()const{
@@ -101,60 +101,13 @@ int SwitchUnitScene::UpdateNextScene(int index){
 		}
 		return index;
 	case(SceneKind::e_clear):
+		m_battleSceneData->m_scoreObserver->FinishUpdate(m_battleSceneData.get());
 		if(m_judgeEnd==JudgeEnd::e_playerWin){
 			//プレイヤーの勝利
-			//撤退数の記録
-			int deathUnitNum=0;
-			for(size_t i=0,size=m_battleSceneData->m_field.size();i<size;i++){
-				if(m_battleSceneData->m_field[i]->GetType()==BattleObject::Type::e_unit){
-					const Unit *punit=dynamic_cast<const Unit *>(m_battleSceneData->m_field[i]);
-					if(!(punit->GetFix()==Shape::Fix::e_static
-						|| punit->GetFix()==Shape::Fix::e_dynamic
-						)
-						)
-					{
-						//マップ上に存在しているユニットは数に入れない
-						switch(punit->GetBattleStatus().team){
-						case(Unit::Team::e_player):
-							deathUnitNum++;
-							break;
-						default:
-							break;
-						}
-					}
-				}
-			}
-			//クリアターン数の記録
-			int clearTurn=(int)(m_battleSceneData->m_totalOP/Unit::BattleStatus::maxOP)+1;//0~150.0fが1ターンなので+1する
-			//nextSceneの作成
-			const std::string str=
-				"撤退数："+std::to_string(deathUnitNum)+"人\n"
-				+"クリアターン数："+std::to_string(clearTurn);
-			m_nextScene=std::shared_ptr<BattleSceneElement>(new StageClearScene(m_battleSceneData,true,str));
+			m_nextScene=std::shared_ptr<BattleSceneElement>(new StageClearScene(m_battleSceneData,true));
 		} else if(m_judgeEnd==JudgeEnd::e_playerLose){
 			//プレイヤーの敗北
-			int killUnitNum=0,totalUnitNum=0;
-			for(size_t i=0,size=m_battleSceneData->m_field.size();i<size;i++){
-				if(m_battleSceneData->m_field[i]->GetType()==BattleObject::Type::e_unit){
-					const Unit *punit=dynamic_cast<const Unit *>(m_battleSceneData->m_field[i]);
-					switch(punit->GetBattleStatus().team){
-					case(Unit::Team::e_enemy):
-						totalUnitNum++;
-						if(!(punit->GetFix()==Shape::Fix::e_static
-							|| punit->GetFix()==Shape::Fix::e_dynamic
-							)
-							)
-						{
-							//マップ上に存在しているユニットは数に入れない
-							killUnitNum++;
-						}
-						break;
-					default:
-						break;
-					}
-				}
-			}
-			m_nextScene=std::shared_ptr<BattleSceneElement>(new StageClearScene(m_battleSceneData,false,"撃破数："+std::to_string(killUnitNum)+"人 / "+std::to_string(totalUnitNum)+"人"));
+			m_nextScene=std::shared_ptr<BattleSceneElement>(new StageClearScene(m_battleSceneData,false));
 		}
 		return index;
 	default:

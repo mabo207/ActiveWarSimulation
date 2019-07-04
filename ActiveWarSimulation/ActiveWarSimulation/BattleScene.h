@@ -2,18 +2,22 @@
 #define DEF_BATTLESCENE_H
 
 #include"BattleSceneData.h"
+#include"GameScene.h"
 #include"BattleSceneElement.h"
 
 //バトルのゲームプレイ場面全般の管理を行うクラス
-class BattleScene:public MainControledGameScene{
+class BattleScene:public GameScene{
 	//型・列挙体
 public:
-	struct RequiredInfoToMakeBattleScene:public RequiredInfoToMakeClass{
-		std::string m_stagename;
-		RequiredInfoToMakeBattleScene(const std::string &stagename):m_stagename(stagename){}
-		Kind GetKind()const{
-			return e_battleScene;
-		}
+	class BattleSceneFactory:public SceneFactory{
+	public:
+		BattleSceneFactory(const std::string &stageDirName,const std::string &title,const StageLevel level);
+		~BattleSceneFactory();
+		std::shared_ptr<GameScene> CreateIncompleteScene()const;
+	private:
+		const std::string m_stageDirName;
+		const std::string m_title;
+		const StageLevel m_level;
 	};
 
 	//定数
@@ -37,15 +41,17 @@ protected:
 	//関数
 protected:
 	BattleScene(std::shared_ptr<BattleSceneData> battleSceneData);//継承クラス用コンストラクタ
+	BattleScene(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel);
 	virtual std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
 	void ResetGame();
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
 
 public:
-	BattleScene(const char *stagename);
 	virtual ~BattleScene();
+	virtual void InitCompletely();
+	virtual void Activate();
 	virtual int Calculate();
 	virtual void Draw()const;
-	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;
 };
 
 

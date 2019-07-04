@@ -6,6 +6,10 @@
 #include"Unit.h"
 #include"Terrain.h"
 #include"ToolsLib.h"
+#include"ScoreObserver.h"
+#include"LatticeBattleField.h"
+#include"StageLevel.h"
+#include<functional>
 
 //バトル場面で、各クラスに渡すゲーム全体で扱うデータを一括管理するクラス
 struct BattleSceneData{
@@ -25,6 +29,10 @@ public:
 	static const Vector2D uiDrawSize;//UI描画部分の大きさ
 
 	//変数
+protected:
+	//破棄直前（＝画面暗転して重い処理を誤魔化せるタイミング）で行う処理群
+	std::vector<std::function<void(void)>> m_resisteredSceneEndProcess;
+
 public:
 	//ゲームに使用する変数
 	std::vector<BattleObject *> m_field;//フィールドに存在するオブジェクト一覧(動的ポインタの配列)
@@ -33,13 +41,16 @@ public:
 
 	//評価に使用する変数
 	float m_totalOP;//今までに消費されたOPの合計値。ターン数を計測するのに使う。
+	std::shared_ptr<ScoreObserver> m_scoreObserver;
 
 	//描画に必要な変数
 	std::shared_ptr<Terrain> m_mapRange;//マップ全体を表す線分(対角線)
 	Vector2D m_stageSize;//ステージの大きさ(なお、ステージで一番左上にある点は(0,0)とする)
 
 	//読み込みの情報
-	const std::string m_stageName;
+	const std::string m_stageDirName;
+	const std::string m_stageTitleName;
+	const StageLevel m_stageLevel;
 
 	//グラフィックデータ
 	const int m_mapPic;//マップ全体のグラフィック
@@ -68,12 +79,12 @@ public:
 
 	//関数
 protected:
-	BattleSceneData(const std::string &stagename,const PlayMode playMode);//継承クラス用コンストラクタ
+	BattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel level,const PlayMode playMode);//継承クラス用コンストラクタ
 	float CalculateOperateUnitFinishOP()const;//m_operateUnitが行動終了した際、opはいくらになるかを計算する関数(行動終了しても先頭ユニットであれば2番目になるまでOPを消費させる必要があるため)
 	float CalculateOperateUnitFinishOP(float op)const;//OPの消費を踏まえた計算をできるようにするために、引数から計算する関数を用意した
 
 public:
-	BattleSceneData(const std::string &stagename);
+	BattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel level);//ステージセレクトから作成した場合
 	virtual ~BattleSceneData();
 	void UpdateFix();//m_fieldのFix::Kindを更新する関数
 	bool PositionUpdate(const Vector2D inputVec);//ユニットの位置を更新、m_operateUnitに移動操作がされればtrueを返す。
@@ -81,6 +92,10 @@ public:
 	void FinishUnitOperation();//次のユニットへの遷移処理
 	Unit *GetUnitPointer(Vector2D pos)const;//pos(マップ上の座標)にいるユニットを返す。このユニットに攻撃する可能性がある事を考慮してconstはつけない。
 	bool CanOperateUnitMove()const;//m_operateUnitが移動することが可能か（周りに何があるかは考えない）
+	int CalculateTurn()const;
+	std::shared_ptr<LatticeBattleField> CalculateLatticeBattleField()const;//現在のステージの状態の格子点認識情報を計算して返す。
+	void ResisterSceneEndProcess(const std::function<void(void)> &func);//画面暗転時に行う処理を登録する
+	void RunSceneEndProcess();//バトル場面終了時に行う処理を実行する
 
 	//情報描画関数
 	void DrawField(const std::set<const BattleObject *> &notDraw={})const;//フィールドの描画、ユニットの描画は別。こいつより前に描画したものはマップ絵で全て消えるはず。

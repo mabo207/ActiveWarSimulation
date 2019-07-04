@@ -8,155 +8,60 @@
 #include"FileRead.h"
 #include"GameScene.h"
 #include"CommonConstParameter.h"
+#include"StringBuilder.h"
+#include"FilePath.h"
+#include<optional>
 
 //----------------------BattleSceneData----------------------
-const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::gameResolutionX,900.0f);
+const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::mapSizeX,(float)CommonConstParameter::mapSizeY);
 const Vector2D BattleSceneData::uiDrawSize=Vector2D(mapDrawSize.x,(float)CommonConstParameter::gameResolutionX-BattleSceneData::mapDrawSize.y);
 
-BattleSceneData::BattleSceneData(const std::string &stagename)
-	:BattleSceneData(stagename,BattleSceneData::PlayMode::e_normal){}
+BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel level)
+	:BattleSceneData(stageDirName,titleName,level,BattleSceneData::PlayMode::e_normal)
+{}
 
-BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneData::PlayMode playMode)
+BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel level,const BattleSceneData::PlayMode playMode)
 	:m_mapRange(new Terrain(std::shared_ptr<Shape>(new Edge(Vector2D(0.0f,0.0f),mapDrawSize,Shape::Fix::e_ignore)),-1,0,true))
 	,m_fpsMesuring(),m_operateUnit(nullptr)
 	,m_totalOP(0.0f)
-	,m_stageName(stagename)
-//	,m_orderFont(CreateFontToHandle("04かんじゅくゴシック",24,4,DX_FONTTYPE_EDGE,-1,2))
-	,m_turnTimerPic(LoadGraphEX("Graphic/turnTimer.png"))
-	,m_orderFont(LoadFontDataToHandleEX("Font/OrderPalFont.dft",2))
+	,m_scoreObserver(new ScoreObserver())
+	,m_stageDirName(stageDirName)
+	,m_stageTitleName(titleName)
+	,m_stageLevel(level)
+	,m_turnTimerPic(LoadGraphEX(FilePath::graphicDir+"turnTimer.png"))
+	,m_orderFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
 	,m_playMode(playMode)
-	,m_mapPic(LoadGraphEX(("Stage/"+std::string(stagename)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
-//	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/kabalhill/"))
-	,m_mapBGM(LoadBGMMem("Sound/bgm/nonfree/wild-road_loop/"))
-	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
-	,m_attackSound(LoadSoundMem("Sound/effect/nonfree/damage.ogg"))
-	,m_healSound(LoadSoundMem("Sound/effect/nonfree/recover.ogg"))
-	,m_footSound(LoadSoundMem("Sound/effect/nonfree/foot.ogg"))
+	,m_mapPic(LoadGraphEX((FilePath::stageDir+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
+	,m_mapBGM(LoadBGMMem(FilePath::bgmDir+"/nonfree/wild-road_loop/"))
+	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
+	,m_attackSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/damage.ogg").c_str()))
+	,m_healSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/recover.ogg").c_str()))
+	,m_footSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/foot.ogg").c_str()))
 {
 	//グラフィックデータの読み込み
-	LoadDivGraphEX("Graphic/drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
+	LoadDivGraphEX(FilePath::graphicDir+"drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
 
 	//ファイルからステージを読み込み
-	const std::string stagedir("Stage/"+std::string(stagename)+"/");
+	const std::string stagedir(FilePath::stageDir+std::string(stageDirName)+"/");
 	//ファイルを開きすべての文字列を書き出す
-	std::ifstream ifs((stagedir+"stage.txt").c_str());
-	if(!ifs){
-
-	} else{
-		std::string str;//書き出し先
-		while(true){
-			char ch;
-			ch=ifs.get();
-			//ファイルの終端でwhileから脱出
-			if(ch==EOF){
-				break;
-			}
-			str.push_back(ch);
-		}
-		//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-		StringBuilder sb(str,'\n','{','}',false,true);
-		for(const StringBuilder &ssb:sb.m_vec){
-			BattleObject *pb=BattleObject::CreateRawObject(ssb.GetString());
-			if(pb!=nullptr){
-				m_field.push_back(pb);
-			}
+	std::string str=FileStrRead((stagedir+"stage.txt").c_str());
+	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
+	StringBuilder objectList(str,'\n','{','}');
+	for(StringBuilder &sb:objectList.m_vec){
+		BattleObject *pb=BattleObject::CreateRawObject(sb);//sbは変更される
+		if(pb!=nullptr){
+			m_field.push_back(pb);
 		}
 	}
 	//ファイルからステージのグラフィックデータの読み込み
 	m_stageSize=mapDrawSize;//本来はステージの大きさはグラフィックデータの縦横の大きさで決める
-
 	//ファイルからユニットを読み込み
-	StringBuilder unitlist(FileStrRead((stagedir+"unitlist.txt").c_str()),'\n','{','}',false,true);
-	for(const StringBuilder &unitdata:unitlist.m_vec){
-		const StringBuilder sb(unitdata.GetString(),',','(',')',true,true);
-		//まずモブ用の設定をするか固定ユニット用の設定をするかを判定する
-		bool uniqueFlag=false;
-		for(const StringBuilder &ssb:sb.m_vec){
-			if(ssb.m_vec.size()>=2 && ssb.m_vec[0].GetString()=="definition"){
-				//設定方法はdefinitionに記載されている
-				uniqueFlag=(ssb.m_vec[1].GetString()=="unique");
-				break;
-			}
-		}
-		//モブか固定かで分岐
-		if(uniqueFlag){
-			//固定ユニット(未実装)
-
-		} else{
-			//モブ
-			//各値を宣言。設定したかどうかをpairのsecondに格納
-			//こちらは設定必須のもの
-			std::pair<std::string,bool> name;
-			name.second=false;
-			std::pair<Vector2D,bool> pos;
-			pos.second=false;
-			std::pair<int,bool> lv;
-			lv.second=false;
-			std::pair<Unit::Profession::Kind,bool> prof;
-			prof.second=false;
-			std::pair<Unit::Team::Kind,bool> team;
-			team.second=false;
-			Unit::AIType::Kind aitype;
-			int aiGroup;
-			std::set<int> aiLinkage;
-			bool aiFlag=false;
-			//こっちは設定任意のもの
-			std::pair<int,bool> initHP;
-			initHP.second=false;
-			std::pair<float,bool> initOP;
-			initOP.second=false;
-			//各値の読み取り
-			for(const StringBuilder &ssb:sb.m_vec){
-				if(!ssb.m_vec.empty()){
-					//先頭文字列があることを保障
-					if(ssb.m_vec[0].GetString()=="name" && ssb.m_vec.size()>=2){
-						name.first=ssb.m_vec[1].GetString();
-						name.second=true;
-					} else if(ssb.m_vec[0].GetString()=="profession" && ssb.m_vec.size()>=2){
-						prof.first=Unit::Profession::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
-						prof.second=true;
-					} else if(ssb.m_vec[0].GetString()=="lv" && ssb.m_vec.size()>=2){
-						lv.first=std::atoi(ssb.m_vec[1].GetString().c_str());
-						lv.second=true;
-					} else if(ssb.m_vec[0].GetString()=="pos" && ssb.m_vec.size()>=3){
-						pos.first=Vector2D((float)std::atoi(ssb.m_vec[1].GetString().c_str()),(float)std::atoi(ssb.m_vec[2].GetString().c_str()));
-						pos.second=true;
-					} else if(ssb.m_vec[0].GetString()=="team" && ssb.m_vec.size()>=2){
-						team.first=Unit::Team::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
-						team.second=true;
-					} else if(ssb.m_vec[0].GetString()=="ai" && ssb.m_vec.size()>=3){
-						//aiのコンマ列に2つ以上の値が存在しても良いので、複数変数を受け取れるようにできている
-						//1つ目はAIの種類、2つ目は連動型AI用のグループ値、3つ目以降は自由(現状すべての値をaiLinkageに突っ込むようにしている)
-						aitype=Unit::AIType::link(std::atoi(ssb.m_vec[1].GetString().c_str()));
-						aiGroup=std::atoi(ssb.m_vec[2].GetString().c_str());
-						for(size_t i=3,size=ssb.m_vec.size();i<size;i++){
-							aiLinkage.insert(std::atoi(ssb.m_vec[i].GetString().c_str()));
-						}
-						aiFlag=true;
-					} else if(ssb.m_vec[0].GetString()=="initHP" && ssb.m_vec.size()>=2){
-						initHP.first=std::atoi(ssb.m_vec[1].GetString().c_str());
-						initHP.second=true;
-					} else if(ssb.m_vec[0].GetString()=="initOP" && ssb.m_vec.size()>=2){
-						initOP.first=(float)(std::atoi(ssb.m_vec[1].GetString().c_str()));
-						initOP.second=true;
-					}
-				}
-			}
-			//各値からユニットを格納
-			if(name.second && prof.second && lv.second && pos.second && team.second && aiFlag){
-				//設定必須である項目が設定されているか
-				Unit *pu=Unit::CreateMobUnit(name.first,prof.first,lv.first,pos.first,team.first,aitype,aiGroup,aiLinkage);
-				//設定任意である項目の設定
-				if(initHP.second && initHP.first>0 && initHP.first<pu->GetBattleStatus().HP){
-					//HPが0以下だったり最大HPより大きくなったりしないようにする
-					pu->AddHP(initHP.first-pu->GetBattleStatus().HP);
-				}
-				if(initOP.second && initOP.first<Unit::BattleStatus::maxOP){
-					//OPはmaxOPを上回らないようにする。0以下になるのは問題ない
-					pu->SetOP(initOP.first);
-				}
-				m_field.push_back(pu);
-			}
+	const std::string unitListFileName="unitlist_"+m_stageLevel.GetString()+".txt";
+	StringBuilder unitlist(FileStrRead((stagedir+unitListFileName).c_str()),'\n','{','}');
+	for(StringBuilder &unitdata:unitlist.m_vec){
+		Unit * const punit=Unit::CreateUnitFromBuilder(unitdata);
+		if(punit!=nullptr){
+			m_field.push_back(punit);
 		}
 	}
 	//m_unitListやm_operateUnitの初期化
@@ -167,9 +72,11 @@ BattleSceneData::BattleSceneData(const std::string &stagename,const BattleSceneD
 	}
 	//m_unitListソートをし直す
 	SortUnitList();
+
+	//スコアシステムの初期化
+	m_scoreObserver->InitUpdate(this);
 	//タイマーセット
 	m_fpsMesuring.RecordTime();
-
 }
 
 BattleSceneData::~BattleSceneData(){
@@ -333,6 +240,27 @@ Unit *BattleSceneData::GetUnitPointer(Vector2D pos)const{
 
 bool BattleSceneData::CanOperateUnitMove()const{
 	return m_operateUnit->GetBattleStatus().OP>0.0f;
+}
+
+int BattleSceneData::CalculateTurn()const{
+	return (int)(m_totalOP/Unit::BattleStatus::maxOP)+1;
+}
+
+std::shared_ptr<LatticeBattleField> BattleSceneData::CalculateLatticeBattleField()const{
+	return LatticeBattleField::Create(*this,this->m_operateUnit);
+}
+
+void BattleSceneData::ResisterSceneEndProcess(const std::function<void(void)> &func){
+	m_resisteredSceneEndProcess.push_back(func);
+}
+
+void BattleSceneData::RunSceneEndProcess(){
+	//登録した処理群を全て実行
+	for(const auto &func:m_resisteredSceneEndProcess){
+		func();
+	}
+	//処理群を空っぽに
+	m_resisteredSceneEndProcess.clear();
 }
 
 void BattleSceneData::DrawField(const std::set<const BattleObject *> &notDraw)const{

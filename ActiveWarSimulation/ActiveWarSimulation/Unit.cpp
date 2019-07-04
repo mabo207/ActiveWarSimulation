@@ -5,12 +5,13 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
-#include"BattleSceneData.h"
 #include<math.h>
+#include"FilePath.h"
+#include<optional>
 
 //------------Unit::Profession---------------
 const std::map<std::string,Unit::Profession::Kind> Unit::Profession::professionMap={
-	std::pair<std::string,Unit::Profession::Kind>("兵士",Unit::Profession::e_lancer)
+	std::pair<std::string,Unit::Profession::Kind>("兵士",Unit::Profession::e_soldier)
 	,std::pair<std::string,Unit::Profession::Kind>("射手",Unit::Profession::e_archer)
 	,std::pair<std::string,Unit::Profession::Kind>("重装兵",Unit::Profession::e_armer)
 	,std::pair<std::string,Unit::Profession::Kind>("魔道士",Unit::Profession::e_mage)
@@ -89,12 +90,34 @@ bool Unit::Team::JudgeFriend(Kind team1,Kind team2){
 	return false;
 }
 
+std::string Unit::Team::GetName(Kind team){
+	switch(team){
+	case(e_player):
+		return "player";
+	case(e_enemy):
+		return "enemy";
+	}
+	return "";
+}
+
 //------------Unit::AIType--------------
 Unit::AIType::Kind Unit::AIType::link(int num){
 	if(num>=0 && num<END){
 		return static_cast<Kind>(num);
 	}
 	return END;
+}
+
+std::string Unit::AIType::GetName(Kind type){
+	switch(type){
+	case(e_assult):
+		return "assult";
+	case(e_intercept):
+		return "intercept";
+	case(e_linkageIntercept):
+		return "linkintercept";
+	}
+	return "";
 }
 
 //------------Unit::BattleStatus---------------
@@ -114,7 +137,7 @@ Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D positio
 	,m_battleStatus(100,Unit::BattleStatus::maxOP,team,aitype,aiGroup,aiLinkage,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
 //	,m_hpFont(CreateFontToHandleEX("04かんじゅくゴシック",hpFontSize,2,DX_FONTTYPE_EDGE,-1,2))
-	,m_hpFont(LoadFontDataToHandleEX("Font/UnitHPFont.dft",2))
+	,m_hpFont(LoadFontDataToHandleEX(FilePath::fontDir+"UnitHPFont.dft",2))
 {
 	//テスト用のコンストラクタ
 	m_battleStatus.HP=m_baseStatus.maxHP;
@@ -210,7 +233,7 @@ void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
 void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned int inColor,unsigned int outColor)const{
 	RECT rect;
 	GetDrawArea(&rect);
-	SetDrawArea(0,0,(int)BattleSceneData::mapDrawSize.x,(int)BattleSceneData::mapDrawSize.y);
+	SetDrawArea(0,0,CommonConstParameter::mapSizeX,CommonConstParameter::mapSizeY);
 	Vector2D pos=point-adjust;
 	//ユニットの移動限界距離を水色に描画
 	DrawCircleAA(pos.x,pos.y,distance,100,outColor,FALSE,3.0f);//枠
@@ -318,7 +341,7 @@ void Unit::DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDra
 }
 
 void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const{
-	Vector2D pos=point-adjust;
+	Vector2D pos=point+adjust;//描画位置
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
 	if(infoDrawFlag){
@@ -333,15 +356,22 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 		}
 		//ユニットの当たり判定図形を描画
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
-		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
+		GetHitJudgeShape()->Draw(point,adjust,Team::GetColor(m_battleStatus.team),TRUE);//面
 		SetDrawBlendMode(mode,pal);
-		GetHitJudgeShape()->Draw(pos,adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
+		GetHitJudgeShape()->Draw(point,adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
 		//ユニット自身の当たり判定の描画
 //		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,255);
-		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//面
+		m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//面
+		m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
+		//選択ユニットの当たり判定部分の輝度加算
+		if(animationFlag){
+			const int addMax=120;
+			SetDrawBlendMode(DX_BLENDMODE_ADD,(frame%60)*(60-frame%60)*addMax/900);
+			m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//面
+			m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
+		}
 		SetDrawBlendMode(mode,pal);
-		m_hitJudgeShape->Draw(pos,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
 	}
 	//アニメーションパラメータの設定
 	int ux=(int)(pos.x),uy=(int)(pos.y);
@@ -359,6 +389,7 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 	}
 	//ユニットグラフィックを描画
 	DrawRotaGraph3(ux,uy,cx,cy,exRateX,exRateY,angle,m_gHandle,TRUE,FALSE);
+
 	//描画モードを元に戻す
 	SetDrawBlendMode(mode,pal);
 }
@@ -412,31 +443,115 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 	std::shared_ptr<Weapon> weapon;
 	int gHandle=-1;
 	switch(profession){
-	case(Profession::e_lancer):
+	case(Profession::e_soldier):
 		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),6+(int)(lv*0.5),5+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),5+(int)(lv*0.5),6);
 		weapon=Weapon::GetWeapon("鉄の剣");
-		gHandle=LoadGraphEX("Graphic/nonfree/soldier.png");
+		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/soldier.png");
 		break;
 	case(Profession::e_archer):
 		baseStatus=BaseStatus(name,profession,lv,18+(int)(lv*0.75),5+(int)(lv*0.45),4+(int)(lv*0.4),2+(int)(lv*0.1),4+(int)(lv*0.4),3+(int)(lv*0.3),6);
 		weapon=Weapon::GetWeapon("鉄の弓");
-		gHandle=LoadGraphEX("Graphic/nonfree/archer.png");
+		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/archer.png");
 		break;
 	case(Profession::e_armer):
 		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),7+(int)(lv*0.6),7+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),1+(int)(lv*0.2),3);
 		weapon=Weapon::GetWeapon("鉄の槍");
-		gHandle=LoadGraphEX("Graphic/nonfree/armerknight.png");
+		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/armerknight.png");
 		break;
 	case(Profession::e_mage):
 		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),6+(int)(lv*0.45),5+(int)(lv*0.5),4);
 		weapon=Weapon::GetWeapon("ファイアーの書");
-		gHandle=LoadGraphEX("Graphic/nonfree/mage.png");
+		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/mage.png");
 		break;
 	case(Profession::e_healer):
 		baseStatus=BaseStatus(name,profession,lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
 		weapon=Weapon::GetWeapon("ヒールの杖");
-		gHandle=LoadGraphEX("Graphic/nonfree/healer.png");
+		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/healer.png");
 		break;
 	}
 	return new Unit(baseStatus,weapon,position,gHandle,team,aitype,aiGroup,aiLinkage);
+}
+
+Unit *Unit::CreateUnitFromBuilder(StringBuilder &unitdata){
+	unitdata.Split(',','(',')');
+	//まずモブ用の設定をするか固定ユニット用の設定をするかを判定する
+	bool uniqueFlag=false;
+	for(const StringBuilder &sb:unitdata.m_vec){
+		if(sb.m_vec.size()>=2 && sb.m_vec[0].GetString()=="definition"){
+			//設定方法はdefinitionに記載されている
+			uniqueFlag=(sb.m_vec[1].GetString()=="unique");
+			break;
+		}
+	}
+	//モブか固定かで分岐
+	if(uniqueFlag){
+		//固定ユニット(未実装)
+
+	} else{
+		//モブ
+		//各値を宣言。設定したかどうかをpairのsecondに格納
+		//こちらは設定必須のもの
+		std::optional<std::string> name;
+		std::optional<Vector2D> pos;
+		std::optional<int> lv;
+		std::optional<Unit::Profession::Kind> prof;
+		std::optional<Unit::Team::Kind> team;
+		std::optional<Unit::AIType::Kind> aitype;
+		std::optional<int> aiGroup;
+		std::set<int> aiLinkage;
+		//こっちは設定任意のもの
+		std::optional<int> initHP;
+		std::optional<float> initOP;
+		//各値の読み取り
+		for(const StringBuilder &sb:unitdata.m_vec){
+			try{
+				if(!sb.m_vec.empty()){
+					//先頭文字列があることを保障
+					if(sb.m_vec[0].GetString()=="name" && sb.m_vec.size()>=2){
+						name=sb.m_vec[1].GetString();
+					} else if(sb.m_vec[0].GetString()=="profession" && sb.m_vec.size()>=2){
+						prof=Unit::Profession::link(std::stoi(sb.m_vec[1].GetString().c_str()));
+					} else if(sb.m_vec[0].GetString()=="lv" && sb.m_vec.size()>=2){
+						lv=std::stoi(sb.m_vec[1].GetString().c_str());
+					} else if(sb.m_vec[0].GetString()=="pos" && sb.m_vec.size()>=3){
+						pos=Vector2D((float)std::stoi(sb.m_vec[1].GetString().c_str()),(float)std::stoi(sb.m_vec[2].GetString().c_str()));
+					} else if(sb.m_vec[0].GetString()=="team" && sb.m_vec.size()>=2){
+						team=Unit::Team::link(std::stoi(sb.m_vec[1].GetString().c_str()));
+					} else if(sb.m_vec[0].GetString()=="ai" && sb.m_vec.size()>=3){
+						//aiのコンマ列に2つ以上の値が存在しても良いので、複数変数を受け取れるようにできている
+						//1つ目はAIの種類、2つ目は連動型AI用のグループ値、3つ目以降は自由(現状すべての値をaiLinkageに突っ込むようにしている)
+						aitype=Unit::AIType::link(std::stoi(sb.m_vec[1].GetString().c_str()));
+						aiGroup=std::stoi(sb.m_vec[2].GetString().c_str());
+						for(size_t i=3,size=sb.m_vec.size();i<size;i++){
+							aiLinkage.insert(std::stoi(sb.m_vec[i].GetString().c_str()));
+						}
+					} else if(sb.m_vec[0].GetString()=="initHP" && sb.m_vec.size()>=2){
+						initHP=std::stoi(sb.m_vec[1].GetString().c_str());
+					} else if(sb.m_vec[0].GetString()=="initOP" && sb.m_vec.size()>=2){
+						initOP=(float)(std::stoi(sb.m_vec[1].GetString().c_str()));
+					}
+				}
+			} catch(const std::invalid_argument &){
+				//数値じゃないものを検出した場合
+			} catch(const std::out_of_range &){
+				//表現の範囲外の数値を検出した場合
+			}
+		}
+		//各値からユニットを格納
+		if(name && prof && lv && pos && team && aiGroup && aitype){
+			//設定必須である項目が設定されているか
+			Unit * const pu=Unit::CreateMobUnit(name.value(),prof.value(),lv.value(),pos.value(),team.value(),aitype.value(),aiGroup.value(),aiLinkage);
+			//設定任意である項目の設定
+			if(initHP && initHP.value()>0 && initHP.value()<pu->GetBattleStatus().HP){
+				//HPが0以下だったり最大HPより大きくなったりしないようにする
+				pu->AddHP(initHP.value()-pu->GetBattleStatus().HP);
+			}
+			if(initOP && initOP.value()<Unit::BattleStatus::maxOP){
+				//OPはmaxOPを上回らないようにする。0以下になるのは問題ない
+				pu->SetOP(initOP.value());
+			}
+			return pu;
+		}
+	}
+	return nullptr;
 }

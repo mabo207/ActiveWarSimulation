@@ -7,7 +7,7 @@
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//画面モードの設定
-	SetGraphMode(StageEditor::leftUpPosX*2+StageEditor::mapSizeX+StageEditor::buttonWidth, StageEditor::leftUpPosY * 2 + StageEditor::mapSizeY,16);
+	SetGraphMode(StageEditor::GetEditorSizeX(),StageEditor::GetEditorSizeY(),16);
 	//タイトルメニュー文字
 	SetMainWindowText("StageEditor");
 	//ウインドウサイズの変更

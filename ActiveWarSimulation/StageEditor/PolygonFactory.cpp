@@ -3,8 +3,8 @@
 #include"MyPolygon.h"
 #include"Edge.h"
 #include"EditActionSettings.h"
-#include"BattleObject.h"
 #include"StageEditor.h"
+#include"Terrain.h"
 
 //-----------------------PolygonFactory::PolygonFactoryButton-----------------------
 PolygonFactory::PolygonFactoryButton::PolygonFactoryButton(Vector2D point,Vector2D vec)
@@ -25,9 +25,9 @@ void PolygonFactory::PolygonFactoryButton::ButtonDraw(int font,int fillFlag)cons
 
 void PolygonFactory::PolygonFactoryButton::PushedProcess(EditActionSettings &settings)const{
 	settings.m_pShapeFactory=std::shared_ptr<ShapeFactory>(new PolygonFactory(m_point,m_vec,GetColor(255,255,0)));
-	//現在選択しているオブジェクトも、当たり判定図形を変更する
+	//オブジェクトを選択している場合は更新する
 	if(settings.m_pBattleObject.get()!=nullptr){
-		settings.m_pBattleObject->ChangeShape(settings.m_pShapeFactory->CreateShape(settings.m_pBattleObject->getPos()));
+		settings.m_pBattleObject=settings.m_pShapeFactory->CreateObject(settings.m_pBattleObject->getPos());
 	}
 }
 
@@ -39,9 +39,10 @@ PolygonFactory::PolygonFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned i
 
 PolygonFactory::~PolygonFactory(){}
 
-std::shared_ptr<Shape> PolygonFactory::CreateShape(Vector2D point)const{
+std::shared_ptr<BattleObject> PolygonFactory::CreateObject(Vector2D point)const{
 	//ひとまず最初は線分を作る
-	return std::shared_ptr<Shape>(new Edge(point,Vector2D(3.0f,3.0f),Shape::Fix::e_static));
+	std::shared_ptr<Shape> pShape(new Edge(point,Vector2D(3.0f,3.0f),Shape::Fix::e_static));
+	return std::shared_ptr<BattleObject>(new Terrain(pShape,-1,GetColor(128,128,128),false));
 }
 
 EditPut::PosSetKind PolygonFactory::VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings){
@@ -84,7 +85,7 @@ EditPut::PosSetKind PolygonFactory::VPutAction(EditPut::PosSetKind pskind,Vector
 		} else{
 			//マウスが開始点の近くにある時に図形を確定する			
 			settings.PutObject(settings.m_pBattleObject->getPos());
-			settings.m_pBattleObject->ChangeShape(CreateShape(point));//多角形そのままにすると見づらいので線分に戻しておく
+			settings.m_pBattleObject=settings.m_pShapeFactory->CreateObject(point);//多角形そのままにすると見づらいので線分の障害物に戻しておく
 			m_pointVec.clear();//描画に影響が出るのでクリアしておく
 			return EditPut::PosSetKind::BASENONEXIST;//図形の位置の決定へ
 		}

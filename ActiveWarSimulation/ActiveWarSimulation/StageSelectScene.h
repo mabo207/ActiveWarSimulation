@@ -5,34 +5,36 @@
 #include<vector>
 #include<string>
 #include"input.h"
+#include"BaseUIInStageSelect.h"
+#include"StageInfoInStageSelect.h"
 
 class StageSelectScene:public GameScene{
 	//型・列挙体
 private:
-	struct StageInfo{
-		int m_mapPic;//マップグラフィック(縮小表示)(push_back()の際にデストラクタが呼ばれグラフィックが消されるので、削除はデストラクタでは行わない。どうしてもデストラクタでしたくなったら、コピーコンストラクタを作って再度CopyGraph()をしよう。)
-		std::string m_dirName;//ディレクトリ名
-		std::string m_stageName;//ステージ名
-		std::string m_explain;//ステージ説明文
-		StageInfo(const int mapPic,const std::string &dirName,const std::string &stageName,const std::string &explain)
-			:m_mapPic(mapPic),m_dirName(dirName),m_stageName(stageName),m_explain(explain){}
-		~StageInfo();
+	//次の場面を何にするか
+	enum class NextSceneName{
+		e_title
+		,e_battle
+	};
+
+public:
+	class StageSelectSceneFactory:public SceneFactory{
+		//クラスを作るのに特に必要なデータはない
+	public:
+		StageSelectSceneFactory():SceneFactory(){}
+		~StageSelectSceneFactory(){}
+		std::shared_ptr<GameScene> CreateIncompleteScene()const;
 	};
 
 	//定数
 
 	//変数
 protected:
-	size_t m_selectStageIndex;//選択中のステージ
-	std::vector<StageInfo> m_stageInfoVec;//ステージ一覧情報
-	std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass> *const m_pReqInfo;
+	std::vector<StageInfoInStageSelect> m_stageInfoVec;//ステージ一覧情報
+	NextSceneName m_nextSceneName;//次の場面は何か、VGetNextScene()で使用
+	std::shared_ptr<BaseUIInStageSelect> m_ui;//現在のUI
+	std::shared_ptr<BaseUIInStageSelect::ControledData> m_uiControledData;//UIが管理するデータ
 	
-	//マウスでクリックできるボタン群
-	const MouseButtonUI m_beforeStageButton;
-	const MouseButtonUI m_afterStageButton;
-	const MouseButtonUI m_backButton;
-	const MouseButtonUI m_playButton;
-
 	//グラフィック等
 	const int m_backPic;
 	const int m_stageNameFont;
@@ -42,10 +44,13 @@ protected:
 
 	//関数
 protected:
+	StageSelectScene();
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
 
 public:
-	StageSelectScene(std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass> *const pReqInfo);
 	~StageSelectScene();
+	void InitCompletely();
+	void Activate();
 	int Calculate();
 	void Draw()const;
 };

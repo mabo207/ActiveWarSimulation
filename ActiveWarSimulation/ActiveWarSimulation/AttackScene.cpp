@@ -1,6 +1,7 @@
 #include"DxLib.h"
 #include"AttackScene.h"
 #include"GraphicControl.h"
+#include"FilePath.h"
 
 //-------------------AttackScene-------------------
 const int AttackScene::motionFrame=20;
@@ -24,7 +25,7 @@ AttackScene::AttackScene(std::shared_ptr<BattleSceneData> data,Unit *aimedUnit)
 	m_attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,m_aimedUnit);
 	m_damageFont=CreateFontToHandleEX("メイリオ",30,4,DX_FONTTYPE_ANTIALIASING_EDGE);
 
-	LoadDivGraph("Graphic/effect/zangeki.png",30,30,1,100,100,m_effect);
+	LoadDivGraph((FilePath::graphicDir+"effect/zangeki.png").c_str(),30,30,1,100,100,m_effect);
 }
 
 AttackScene::~AttackScene(){
@@ -37,6 +38,7 @@ AttackScene::~AttackScene(){
 
 void AttackScene::ProcessAttack(){
 	//コストの消費
+	//攻撃実行時に攻撃分のOPを消費する仕様を変える場合は、波及箇所を考慮せよ（スコアの計算などはこの仕様を前提とした実装をしている）
 	//m_battleSceneData->m_operateUnit->AddOP(m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack());
 	m_battleSceneData->m_operateUnit->ConsumeOPByCost(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetCost());
 	//操作ユニット→対象ユニットへの攻撃情報の計算

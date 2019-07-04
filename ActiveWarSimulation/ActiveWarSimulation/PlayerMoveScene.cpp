@@ -1,8 +1,10 @@
 #include"DxLib.h"
 #include"PlayerMoveScene.h"
 #include"GraphicControl.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
 #include<iostream>
+#include"FilePath.h"
+
 //----------------------PlayerMoveScene------------------------
 const std::array<std::function<std::pair<bool,int>(PlayerMoveScene&)>,11> PlayerMoveScene::inCalculateProcessFunction={
 	&PlayerMoveScene::AttackProcess
@@ -56,7 +58,7 @@ std::pair<bool,int> PlayerMoveScene::CounterclockwiseProcess(){
 	{
 		//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(反時計回り)
 		SetAimedUnit(-1);
-		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
+		PlaySoundMem(GeneralPurposeResource::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
 		return std::pair<bool,int>(true,SceneKind::e_move);
 	}
 	return std::pair<bool,int>(false,SceneKind::e_move);
@@ -70,7 +72,7 @@ std::pair<bool,int> PlayerMoveScene::ClockwiseProcess(){
 	{
 		//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(時計回り)
 		SetAimedUnit(1);
-		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
+		PlaySoundMem(GeneralPurposeResource::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
 		return std::pair<bool,int>(true,SceneKind::e_move);
 	}
 	return std::pair<bool,int>(false,SceneKind::e_move);
@@ -108,6 +110,7 @@ std::pair<bool,int> PlayerMoveScene::WaitProcess(){
 	if(
 		(
 			keyboard_get(KEY_INPUT_V)==1
+			|| mouse_get(MOUSE_INPUT_MIDDLE)==1
 			|| m_waitButton.JudgePressMoment()
 			)
 		&& m_waitableOnlyChangeInherit
@@ -115,7 +118,7 @@ std::pair<bool,int> PlayerMoveScene::WaitProcess(){
 	{
 		//待機
 		FinishUnitOperation();
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//待機決定は決定音
+		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//待機決定は決定音
 		return std::pair<bool,int>(true,0);
 	}
 	return std::pair<bool,int>(false,SceneKind::e_move);
@@ -148,6 +151,9 @@ std::pair<bool,int> PlayerMoveScene::CancelProcess(){
 			//位置更新を行う
 			PositionUpdate(Vector2D());
 		}
+		//スコアシステム処理
+		m_battleSceneData->m_scoreObserver->CancelUpdate();
+		//キャンセル処理をしたので、trueを返す
 		return std::pair<bool,int>(true,SceneKind::e_move);
 	}
 	return std::pair<bool,int>(false,SceneKind::e_move);
@@ -156,7 +162,7 @@ std::pair<bool,int> PlayerMoveScene::CancelProcess(){
 std::pair<bool,int> PlayerMoveScene::ResearchProcess(){
 	if(keyboard_get(KEY_INPUT_F)==1 || m_researchButton.JudgePressMoment()){
 		//マップ調べモードへ
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 		return std::pair<bool,int>(true,SceneKind::e_research);
 	}
 	return std::pair<bool,int>(false,SceneKind::e_move);
@@ -165,7 +171,7 @@ std::pair<bool,int> PlayerMoveScene::ResearchProcess(){
 std::pair<bool,int> PlayerMoveScene::SystemMenuProcess(){
 	if(keyboard_get(KEY_INPUT_SPACE)==1 || m_menuButton.JudgePressMoment()){
 		//システムメニュー画面へ
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 		return std::pair<bool,int>(true,SceneKind::e_systemMenu);
 	}
 	return std::pair<bool,int>(false,SceneKind::e_move);
@@ -199,9 +205,9 @@ void PlayerMoveScene::EnableAllChangeInherit(){
 
 PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:MoveScene(battleSceneData)
-	,m_waitButton(1520,980,80,80,LoadGraphEX("Graphic/nextButton.png"))
-	,m_researchButton(1620,980,80,80,LoadGraphEX("Graphic/researchButton.png"))
-	,m_menuButton(1820,980,80,80,LoadGraphEX("Graphic/menuButton.png"))
+	,m_waitButton(1520,980,80,80,LoadGraphEX(FilePath::graphicDir+"nextButton.png"))
+	,m_researchButton(1620,980,80,80,LoadGraphEX(FilePath::graphicDir+"researchButton.png"))
+	,m_menuButton(1820,980,80,80,LoadGraphEX(FilePath::graphicDir+"menuButton.png"))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_mouseLeftFlag(false)
 	,m_attackableOnlyChangeInherit(true)
@@ -262,8 +268,7 @@ int PlayerMoveScene::thisCalculate(){
 	if(keyboard_get(KEY_INPUT_LSHIFT)==60){
 		m_battleSceneData->m_drawObjectShapeFlag=!m_battleSceneData->m_drawObjectShapeFlag;
 	}
-	
-	
+
 	//キー入力受付
 	const Vector2D mousePos=GetMousePointVector2D();
 
@@ -295,11 +300,11 @@ int PlayerMoveScene::thisCalculate(){
 	} else if(keyboard_get(KEY_INPUT_A)==1 && JudgeAttackCommandUsable()){
 		//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(反時計回り)
 		SetAimedUnit(-1);
-		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
+		PlaySoundMem(GeneralPurposeResource::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
 	} else if(keyboard_get(KEY_INPUT_S)==1 && JudgeAttackCommandUsable()){
 		//攻撃コマンド使用可能の時のみ、狙いのキャラの変更(時計回り)
 		SetAimedUnit(1);
-		PlaySoundMem(GeneralPurposeResourceManager::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
+		PlaySoundMem(GeneralPurposeResource::selectSound,DX_PLAYTYPE_BACK,TRUE);//選択の効果音再生
 	} else if((m_mousePosJustBefore-mousePos).sqSize()>=1.0f
 		&& JudgeAttackCommandUsable()
 		&& JudgeBecomeAimedUnit(m_battleSceneData->GetUnitPointer(mousePos))
@@ -318,7 +323,7 @@ int PlayerMoveScene::thisCalculate(){
 	} else if(keyboard_get(KEY_INPUT_V)==1 || m_waitButton.JudgePressMoment()){
 		//待機
 		FinishUnitOperation();
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//待機決定は決定音
+		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//待機決定は決定音
 		return 0;
 	} else if(keyboard_get(KEY_INPUT_X)==1
 		|| keyboard_get(KEY_INPUT_X)>30
@@ -344,11 +349,11 @@ int PlayerMoveScene::thisCalculate(){
 		}
 	} else if(keyboard_get(KEY_INPUT_F)==1 || m_researchButton.JudgePressMoment()){
 		//マップ調べモードへ
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 		return SceneKind::e_research;
 	} else if(keyboard_get(KEY_INPUT_SPACE)==1 || m_menuButton.JudgePressMoment()){
 		//システムメニュー画面へ
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);
+		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 		return SceneKind::e_systemMenu;
 	} else{
 		//移動し始めの判定更新(左クリックを押した瞬間であるかを判定・記録する)

@@ -242,6 +242,7 @@ Vector2D MyPolygon::GetRightBottom()const{
 
 void MyPolygon::RecordLatticePointInShape(std::vector<int> &latticeInShape,const size_t xNum,const size_t yNum,const size_t squareWidth,const size_t squareHeight,int index)const{
 	//三角形分割を行い、分割できた全ての三角形について格子点検出を行う
+	//これだと凸多角形にしか適用できなくない？→MyPolygon初期化時に多角形を三角形分割していて、その結果(m_triangleSet)を用いているので大丈夫。
 	std::vector<Vector2D> vertexVec;
 	CalculateAllPointPosition(&vertexVec);
 	for(const std::array<size_t,3> &indexVec:m_triangleSet){
@@ -395,4 +396,9 @@ void MyPolygon::WriteOutShape(std::ofstream &ofs)const{
 		}
 	}
 	ofs<<ender<<ender;//ofs<<"))";	
+}
+
+MyPolygon MyPolygon::CreateRectangle(Vector2D begin,Vector2D offset,Fix::Kind fix){
+	std::vector<Vector2D> points={begin+Vector2D(offset.x,0.0f),begin+offset,begin+Vector2D(0.0f,offset.y)};
+	return MyPolygon(begin,points,fix);
 }

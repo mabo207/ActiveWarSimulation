@@ -7,9 +7,18 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
-#include"GeneralPurposeResourceManager.h"
+#include"GeneralPurposeResource.h"
+#include"FilePath.h"
 
 #include"TitleScene.h"
+#include"FadeInScene.h"
+#include"LoadingScene.h"
+
+std::shared_ptr<GameScene> CreateStartScene(){
+	const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
+	const auto fadeInFactory=std::make_shared<FadeInScene::FadeInSceneFactory>(titleFactory,15);
+	return LoadingScene::LoadingSceneFactory(fadeInFactory).CreateCompleteScene();
+}
 
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
@@ -48,21 +57,20 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		InitInputControler();
 
 		//共通素材のロード
-		GeneralPurposeResourceManager::LoadResource();
+		GeneralPurposeResource::LoadResource();
 
 		{
 			//場面変数
-			//std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(new TitleScene());
-			std::shared_ptr<MainControledGameScene> pGameScene(new MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene>(new TitleScene()),0x03,15));
+			std::shared_ptr<GameScene> pGameScene=CreateStartScene();
 
 			//画面縮小することによる撮影をする際はSetMouseDispFlagをFALSEにしてコンパイル
 			SetMouseDispFlag(TRUE);
-			int mousePic=LoadGraphEX("Graphic/mouseCursor.png");
+			int mousePic=LoadGraphEX(FilePath::graphicDir+"mouseCursor.png");
 			
 
 			//デバッグ用、処理時間の計測と表示
 			FpsMeasuring fpsMeasuring;
-			bool fpsdisp=false;
+			bool debugDisp=false;
 
 			//実行
 			while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
@@ -72,7 +80,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				fpsMeasuring.Update();
 				if(keyboard_get(KEY_INPUT_K)==60){
-					fpsdisp=!fpsdisp;
+					debugDisp=!debugDisp;
 				}
 
 				if(keyboard_get(KEY_INPUT_F1)==60){
@@ -92,14 +100,16 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 						throw(std::runtime_error("SetDrawScreen(DX_SCREEN_BACK) failed."));
 					}
 					//グラフィック系の読み込み直し
+					GeneralPurposeResource::ReleaseResource();//共有リソースの解放
 					GraphicControler_End();//グラフィック管理クラスの解放
 					FontControler_End();//フォント管理クラスの解放
 					DeleteInputControler();//入力機構の解放
 					GraphicControler_Init();
 					FontControler_Init();
+					GeneralPurposeResource::LoadResource();//共有リソースの取得
 					InitInputControler();
-					pGameScene=std::shared_ptr<MainControledGameScene>(new MainControledFadeInOutGameScene(std::shared_ptr<MainControledGameScene>(new TitleScene()),0x03,15));
-					mousePic=LoadGraphEX("Graphic/mouseCursor.png");//マウスの読み込みし直し
+					pGameScene=CreateStartScene();
+					mousePic=LoadGraphEX(FilePath::graphicDir+"mouseCursor.png");//マウスの読み込みし直し
 					SetMouseDispFlag(mouseDispFlag);
 				} else if(keyboard_get(KEY_INPUT_F2)==60){
 					//F2長押しで、ウインドウサイズを1.0倍に
@@ -115,7 +125,11 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				//描画
 				clsDx();
-				if(fpsdisp){ printfDx("FPS : %.1f/60\n",fpsMeasuring.GetFps()); }
+				if(debugDisp){
+					const Vector2D mousePos=GetMousePointVector2D();
+					printfDx("mouse : ( %.0f , %.0f )\n",mousePos.x,mousePos.y);
+					printfDx("FPS : %.1f/60\n",fpsMeasuring.GetFps());
+				}
 				fpsMeasuring.RecordTime();
 
 				pGameScene->Draw();
@@ -127,7 +141,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					DrawGraph(x,y,mousePic,TRUE);
 				}
 				
-				if(fpsdisp){ printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }//fps表示
+				if(debugDisp){ printfDx("Draw : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }//fps表示
 				
 				//情報更新
 				fpsMeasuring.RecordTime();
@@ -136,19 +150,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 				//遷移処理
 				if(index!=0){
-					//std::shared_ptr<MainControledGameScene> pNextScene=pGameScene->VGetNextMainControledScene();
-					std::shared_ptr<MainControledGameScene> pNextActivateScene=pGameScene->VGetNextMainControledScene();
-					if(pNextActivateScene.get()!=nullptr){
-						//次の場面があれば、その場面へ遷移
-						std::shared_ptr<MainControledGameScene> pNextScene(new MainControledFadeInOutGameScene(pNextActivateScene,0x03,15));
-						if(pNextScene.get()!=nullptr){
-							//次の場面の生成に成功すれば
-							pGameScene=pNextScene;
-						} else{
-							//失敗したら強制終了
-							break;
-						}
-					} else{
+					pGameScene=GameScene::GetNextScene(pGameScene);
+					if(!pGameScene){
 						//次の場面がなければ強制終了
 						break;
 					}
@@ -159,7 +162,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					//break;//Alt+F4でやってもらう
 				}
 
-				if(fpsdisp){ printfDx("Update : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }
+				if(debugDisp){ printfDx("Update : %.1f[ms](/16.6)\n",fpsMeasuring.GetProcessedTime()*1000); }
 			}
 			DeleteGraphEX(mousePic);
 		}
@@ -167,7 +170,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		//ここに来るまでにゲーム中で用いられていた変数は解放される
 
 		//終了処理
-		GeneralPurposeResourceManager::ReleaseResource();//共通リソースの解放
+		GeneralPurposeResource::ReleaseResource();//共通リソースの解放
 		DeleteInputControler();//入力機構の解放
 		GraphicControler_End();//グラフィック管理クラスの解放
 		FontControler_End();//フォント管理クラスの解放

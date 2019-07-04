@@ -61,6 +61,36 @@
     <Filter Include="ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory">
       <UniqueIdentifier>{c426e704-96b6-4cae-9909-38d3e56e68b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\UnitHaving">
+      <UniqueIdentifier>{66e3f46f-1877-49e5-a585-3bc06cc0433f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\UnitHaving\Object">
+      <UniqueIdentifier>{603727ea-9508-4502-84e5-db51f6050569}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\UnitHaving\Explain">
+      <UniqueIdentifier>{74888d8c-2376-445e-aace-2d5e5bcbdba3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UnitHaving">
+      <UniqueIdentifier>{d603f9c9-3c5e-4bcb-bf51-edcec564c99e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UnitHaving\Object">
+      <UniqueIdentifier>{811dfc95-90a5-4fdf-bb10-6d556a7b054d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\UnitHaving\Explain">
+      <UniqueIdentifier>{700f7066-d44a-435a-b207-81298916f5aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\AnySceneCallable">
+      <UniqueIdentifier>{66bcdfbc-a764-4f1e-b428-e15e4592d72a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\AnySceneCallable">
+      <UniqueIdentifier>{7ea90720-7224-496a-9aeb-ff413325f3c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\StageEditor\ButtonHaving\SelectLevel">
+      <UniqueIdentifier>{1bc05103-6b96-41e6-b7e1-3505bf120cdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\StageEditor\ButtonHaving\SelectLevel">
+      <UniqueIdentifier>{202537c9-ad69-4ae7-9245-c80f0869b741}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ActiveWarSimulation\input.h">
@@ -147,6 +177,33 @@
     <ClInclude Include="..\ActiveWarSimulation\FileRead.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\StringBuilder.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitFactory.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\Unit.h">
+      <Filter>ヘッダー ファイル\FieldObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\DamageCalculators.h">
+      <Filter>ヘッダー ファイル\UnitHaving\Explain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\Weapon.h">
+      <Filter>ヘッダー ファイル\UnitHaving\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\FilePath.h">
+      <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
+    </ClInclude>
+    <ClInclude Include="EditUnitParameter.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ActiveWarSimulation\StageLevel.h">
+      <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectLevel.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\SelectLevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -232,6 +289,33 @@
     </ClCompile>
     <ClCompile Include="..\ActiveWarSimulation\FileRead.cpp">
       <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\StringBuilder.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitFactory.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\ShapeFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\Unit.cpp">
+      <Filter>ソース ファイル\FieldObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\DamageCalculators.cpp">
+      <Filter>ソース ファイル\UnitHaving\Explain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\Weapon.cpp">
+      <Filter>ソース ファイル\UnitHaving\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\FilePath.cpp">
+      <Filter>ソース ファイル\AnySceneCallable</Filter>
+    </ClCompile>
+    <ClCompile Include="EditUnitParameter.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\EditAction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveWarSimulation\StageLevel.cpp">
+      <Filter>ソース ファイル\AnySceneCallable</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectLevel.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\SelectLevel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

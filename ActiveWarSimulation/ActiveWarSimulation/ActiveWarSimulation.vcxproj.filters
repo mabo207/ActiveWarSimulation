@@ -73,6 +73,54 @@
     <Filter Include="ソース ファイル\GameScene\BattleScene\TutorialScene">
       <UniqueIdentifier>{df3aaa33-faef-445b-b28e-b4f09ff90d1d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\BattleScene\BattleSceneData">
+      <UniqueIdentifier>{f27f045b-617a-4789-ab6f-654febbe0c82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver">
+      <UniqueIdentifier>{a9bd6455-f249-4147-b93b-0f794b2fc7ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger">
+      <UniqueIdentifier>{b746e540-4173-4d8b-a160-255388f0f04c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameScene\BattleScene\BattleSceneData">
+      <UniqueIdentifier>{f2b63819-64e6-464e-b008-4a87ef9605f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver">
+      <UniqueIdentifier>{9aa0b34f-5c2e-411b-a49e-8504099326f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger">
+      <UniqueIdentifier>{9c30a52a-5598-4cff-9ef0-95f8260f7efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\SaveData">
+      <UniqueIdentifier>{aa562877-7413-41a2-8a94-f23edce8d523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\SaveData">
+      <UniqueIdentifier>{0c9213e4-6c6c-4379-9c1b-1bc5b60b45d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameScene\PerformanceScene">
+      <UniqueIdentifier>{0d4a4183-d3df-4d74-b7f8-e826b374e674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\PerformanceScene">
+      <UniqueIdentifier>{96e3e5cd-cad3-48d4-829b-cc1d0e6fa81d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameScene\StageSelectScene">
+      <UniqueIdentifier>{2694beef-b48f-40c7-825c-cd76e5be54c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\StageSelectScene">
+      <UniqueIdentifier>{2fec23c1-1db0-4ed1-aa95-675f3c79aacb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\AnySceneCallable">
+      <UniqueIdentifier>{3dbbd473-06bb-4e5f-a188-830533a285a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\AnySceneCallable">
+      <UniqueIdentifier>{d62062f2-d13a-426b-b789-0bacda04d975}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameScene\StageSelectScene\ImplementedUI">
+      <UniqueIdentifier>{95d9f037-986e-4c37-af75-754ac42bb8f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\StageSelectScene\ImplementedUI">
+      <UniqueIdentifier>{e898bf11-ade6-4999-b78b-b1c6f191aeb5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -123,9 +171,6 @@
     <ClCompile Include="DamageCalculators.cpp">
       <Filter>ソース ファイル\UnitHaving\Explain</Filter>
     </ClCompile>
-    <ClCompile Include="BattleSceneData.cpp">
-      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
-    </ClCompile>
     <ClCompile Include="AttackScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
@@ -156,16 +201,10 @@
     <ClCompile Include="TitleScene.cpp">
       <Filter>ソース ファイル\GameScene\TitleScene</Filter>
     </ClCompile>
-    <ClCompile Include="StageSelectScene.cpp">
-      <Filter>ソース ファイル\GameScene\TitleScene</Filter>
-    </ClCompile>
     <ClCompile Include="StageClearScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
     <ClCompile Include="CommonConstParameter.cpp">
-      <Filter>ソース ファイル\Tools</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneralPurposeResourceManager.cpp">
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
     <ClCompile Include="DemoScene.cpp">
@@ -185,6 +224,72 @@
     </ClCompile>
     <ClCompile Include="TutorialScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\TutorialScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoreObserver.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver</Filter>
+    </ClCompile>
+    <ClCompile Include="LogElement.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="WaitLog.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="AttackLog.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="InitLog.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="FinishLog.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="BattleSceneData.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData</Filter>
+    </ClCompile>
+    <ClCompile Include="LatticeBattleField.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoreRankingData.cpp">
+      <Filter>ソース ファイル\SaveData</Filter>
+    </ClCompile>
+    <ClCompile Include="StringBuilder.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="FadeInScene.cpp">
+      <Filter>ソース ファイル\GameScene\PerformanceScene</Filter>
+    </ClCompile>
+    <ClCompile Include="FadeOutScene.cpp">
+      <Filter>ソース ファイル\GameScene\PerformanceScene</Filter>
+    </ClCompile>
+    <ClCompile Include="StageSelectScene.cpp">
+      <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
+    </ClCompile>
+    <ClCompile Include="StageInfoReader.cpp">
+      <Filter>ソース ファイル\AnySceneCallable</Filter>
+    </ClCompile>
+    <ClCompile Include="StageLevel.cpp">
+      <Filter>ソース ファイル\AnySceneCallable</Filter>
+    </ClCompile>
+    <ClCompile Include="FilePath.cpp">
+      <Filter>ソース ファイル\AnySceneCallable</Filter>
+    </ClCompile>
+    <ClCompile Include="StageInfoInStageSelect.cpp">
+      <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelSelectUIInStageSelect.cpp">
+      <Filter>ソース ファイル\GameScene\StageSelectScene\ImplementedUI</Filter>
+    </ClCompile>
+    <ClCompile Include="StageSelectUIInStageSelect.cpp">
+      <Filter>ソース ファイル\GameScene\StageSelectScene\ImplementedUI</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseUIInStageSelect.cpp">
+      <Filter>ソース ファイル\GameScene\StageSelectScene</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneralPurposeResource.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScene.cpp">
+      <Filter>ソース ファイル\GameScene\PerformanceScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -233,9 +338,6 @@
     <ClInclude Include="DamageCalculators.h">
       <Filter>ヘッダー ファイル\UnitHaving\Explain</Filter>
     </ClInclude>
-    <ClInclude Include="BattleSceneData.h">
-      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
-    </ClInclude>
     <ClInclude Include="AttackScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
@@ -266,16 +368,10 @@
     <ClInclude Include="TitleScene.h">
       <Filter>ヘッダー ファイル\GameScene\TitleScene</Filter>
     </ClInclude>
-    <ClInclude Include="StageSelectScene.h">
-      <Filter>ヘッダー ファイル\GameScene\TitleScene</Filter>
-    </ClInclude>
-    <ClInclude Include="StageClearSceme.h">
+    <ClInclude Include="StageClearScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
     <ClInclude Include="CommonConstParameter.h">
-      <Filter>ヘッダー ファイル\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneralPurposeResourceManager.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
     <ClInclude Include="DemoScene.h">
@@ -295,6 +391,72 @@
     </ClInclude>
     <ClInclude Include="TutorialScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\TutorialScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreObserver.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver</Filter>
+    </ClInclude>
+    <ClInclude Include="LogElement.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="WaitLog.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackLog.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="InitLog.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="FinishLog.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleSceneData.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData</Filter>
+    </ClInclude>
+    <ClInclude Include="LatticeBattleField.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreRankingData.h">
+      <Filter>ヘッダー ファイル\SaveData</Filter>
+    </ClInclude>
+    <ClInclude Include="StringBuilder.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="FadeInScene.h">
+      <Filter>ヘッダー ファイル\GameScene\PerformanceScene</Filter>
+    </ClInclude>
+    <ClInclude Include="FadeOutScene.h">
+      <Filter>ヘッダー ファイル\GameScene\PerformanceScene</Filter>
+    </ClInclude>
+    <ClInclude Include="StageSelectScene.h">
+      <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
+    </ClInclude>
+    <ClInclude Include="StageInfoReader.h">
+      <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
+    </ClInclude>
+    <ClInclude Include="StageLevel.h">
+      <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
+    </ClInclude>
+    <ClInclude Include="FilePath.h">
+      <Filter>ヘッダー ファイル\AnySceneCallable</Filter>
+    </ClInclude>
+    <ClInclude Include="StageInfoInStageSelect.h">
+      <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelSelectUIInStageSelect.h">
+      <Filter>ヘッダー ファイル\GameScene\StageSelectScene\ImplementedUI</Filter>
+    </ClInclude>
+    <ClInclude Include="StageSelectUIInStageSelect.h">
+      <Filter>ヘッダー ファイル\GameScene\StageSelectScene\ImplementedUI</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseUIInStageSelect.h">
+      <Filter>ヘッダー ファイル\GameScene\StageSelectScene</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralPurposeResource.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScene.h">
+      <Filter>ヘッダー ファイル\GameScene\PerformanceScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

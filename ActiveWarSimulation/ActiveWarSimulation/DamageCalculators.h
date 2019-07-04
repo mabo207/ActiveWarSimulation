@@ -1,17 +1,33 @@
 #ifndef DEF_DAMAGECALCULATORS_H
 #define DEF_DAMAGECALCULATORS_H
 
-#include"Unit.h"
+#include<string>
+
 class Unit;//循環参照を防ぐために宣言のみする
 
 //ダメージの計算式回り
 //基底クラス
 class DamageCalculator{
+	//列挙体
+public:
+	enum class Kind{
+		e_physicalAttack
+		,e_magicAttack
+		,e_recover
+	};
+
+	//変数
+private:
+	Kind m_kind;
+	
 	//関数
 protected:
-	DamageCalculator(){}
+	DamageCalculator(Kind kind):m_kind(kind){}
 	virtual ~DamageCalculator(){}
 public:
+	Kind GetKind()const{
+		return m_kind;
+	}
 	virtual int VCalculateDamage(const Unit *attacker,const Unit *defender)const=0;//ダメージを計算する関数
 	virtual bool VJudgeWeild(const Unit *attacker,const Unit *defender)const=0;//attacker→defenderへの通常攻撃を実行可能であるか
 	virtual std::string VGetPowerString(const Unit *attacker)const=0;//attackerがこの行動をした時の効果の説明文を出力する

@@ -93,6 +93,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\ActiveWarSimulation;..\FieldBase;..\StageEditor;C:\DxLib\3.17-e\addfiles</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -122,6 +123,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\ActiveWarSimulation;..\FieldBase;..\StageEditor;C:\DxLib\3.17-e\addfiles</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,6 +155,16 @@
     <ClCompile Include="..\FieldBase\ShapeHaving.cpp" />
     <ClCompile Include="..\StageEditor\BattleObject.cpp" />
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
+    <ClCompile Include="AttackLog.cpp" />
+    <ClCompile Include="FadeInScene.cpp" />
+    <ClCompile Include="FadeOutScene.cpp" />
+    <ClCompile Include="FilePath.cpp" />
+    <ClCompile Include="FinishLog.cpp" />
+    <ClCompile Include="InitLog.cpp" />
+    <ClCompile Include="LatticeBattleField.cpp" />
+    <ClCompile Include="LevelSelectUIInStageSelect.cpp" />
+    <ClCompile Include="LoadingScene.cpp" />
+    <ClCompile Include="LogElement.cpp" />
     <ClCompile Include="BattleScene.cpp" />
     <ClCompile Include="BattleSceneData.cpp" />
     <ClCompile Include="BattleSceneElement.cpp" />
@@ -163,7 +175,7 @@
     <ClCompile Include="DemoSwitchUnitScene.cpp" />
     <ClCompile Include="FileRead.cpp" />
     <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="GeneralPurposeResourceManager.cpp" />
+    <ClCompile Include="GeneralPurposeResource.cpp" />
     <ClCompile Include="GraphicControl.cpp" />
     <ClCompile Include="GraphicProgramming.cpp" />
     <ClCompile Include="input.cpp" />
@@ -172,8 +184,16 @@
     <ClCompile Include="PlayerMoveScene.cpp" />
     <ClCompile Include="MyPolygon.cpp" />
     <ClCompile Include="ResearchScene.cpp" />
+    <ClCompile Include="ScoreObserver.cpp" />
+    <ClCompile Include="ScoreRankingData.cpp" />
     <ClCompile Include="StageClearScene.cpp" />
+    <ClCompile Include="StageInfoInStageSelect.cpp" />
+    <ClCompile Include="StageInfoReader.cpp" />
+    <ClCompile Include="StageLevel.cpp" />
+    <ClCompile Include="BaseUIInStageSelect.cpp" />
     <ClCompile Include="StageSelectScene.cpp" />
+    <ClCompile Include="StageSelectUIInStageSelect.cpp" />
+    <ClCompile Include="StringBuilder.cpp" />
     <ClCompile Include="SwitchUnitScene.cpp" />
     <ClCompile Include="SystemMenu.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -183,6 +203,7 @@
     <ClCompile Include="TutorialScene.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="AttackScene.cpp" />
+    <ClCompile Include="WaitLog.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +213,15 @@
     <ClInclude Include="..\FieldBase\ShapeHaving.h" />
     <ClInclude Include="..\StageEditor\BattleObject.h" />
     <ClInclude Include="..\StageEditor\Terrain.h" />
+    <ClInclude Include="AttackLog.h" />
+    <ClInclude Include="FadeInScene.h" />
+    <ClInclude Include="FadeOutScene.h" />
+    <ClInclude Include="FilePath.h" />
+    <ClInclude Include="FinishLog.h" />
+    <ClInclude Include="LatticeBattleField.h" />
+    <ClInclude Include="LevelSelectUIInStageSelect.h" />
+    <ClInclude Include="LoadingScene.h" />
+    <ClInclude Include="LogElement.h" />
     <ClInclude Include="BattleScene.h" />
     <ClInclude Include="BattleSceneData.h" />
     <ClInclude Include="BattleSceneElement.h" />
@@ -202,11 +232,20 @@
     <ClInclude Include="DemoSwitchUnitScene.h" />
     <ClInclude Include="FileRead.h" />
     <ClInclude Include="GameScene.h" />
-    <ClInclude Include="GeneralPurposeResourceManager.h" />
+    <ClInclude Include="GeneralPurposeResource.h" />
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
-    <ClInclude Include="StageClearSceme.h" />
+    <ClInclude Include="ScoreObserver.h" />
+    <ClInclude Include="ScoreRankingData.h" />
+    <ClInclude Include="StageClearScene.h" />
+    <ClInclude Include="StageInfoInStageSelect.h" />
+    <ClInclude Include="StageInfoReader.h" />
+    <ClInclude Include="StageLevel.h" />
+    <ClInclude Include="BaseUIInStageSelect.h" />
     <ClInclude Include="StageSelectScene.h" />
+    <ClInclude Include="InitLog.h" />
+    <ClInclude Include="StageSelectUIInStageSelect.h" />
+    <ClInclude Include="StringBuilder.h" />
     <ClInclude Include="SystemMenu.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="input.h" />
@@ -221,6 +260,7 @@
     <ClInclude Include="TutorialScene.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="AttackScene.h" />
+    <ClInclude Include="WaitLog.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

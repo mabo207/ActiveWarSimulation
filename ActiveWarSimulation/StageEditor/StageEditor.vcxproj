@@ -91,6 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>..\ActiveWarSimulation;..\FieldBase;..\StageEditor;C:\DxLib\3.17-e\addfiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,6 +121,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>..\ActiveWarSimulation;..\FieldBase;..\StageEditor;C:\DxLib\3.17-e\addfiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -146,12 +148,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\ActiveWarSimulation\CommonConstParameter.h" />
+    <ClInclude Include="..\ActiveWarSimulation\DamageCalculators.h" />
+    <ClInclude Include="..\ActiveWarSimulation\FilePath.h" />
     <ClInclude Include="..\ActiveWarSimulation\FileRead.h" />
     <ClInclude Include="..\ActiveWarSimulation\GraphicControl.h" />
     <ClInclude Include="..\ActiveWarSimulation\GraphicProgramming.h" />
     <ClInclude Include="..\ActiveWarSimulation\input.h" />
     <ClInclude Include="..\ActiveWarSimulation\MyPolygon.h" />
+    <ClInclude Include="..\ActiveWarSimulation\StageLevel.h" />
+    <ClInclude Include="..\ActiveWarSimulation\StringBuilder.h" />
     <ClInclude Include="..\ActiveWarSimulation\ToolsLib.h" />
+    <ClInclude Include="..\ActiveWarSimulation\Unit.h" />
+    <ClInclude Include="..\ActiveWarSimulation\Weapon.h" />
     <ClInclude Include="..\FieldBase\Circle.h" />
     <ClInclude Include="..\FieldBase\Edge.h" />
     <ClInclude Include="..\FieldBase\Shape.h" />
@@ -167,21 +175,30 @@
     <ClInclude Include="EditPut.h" />
     <ClInclude Include="EditRemove.h" />
     <ClInclude Include="EditResize.h" />
+    <ClInclude Include="EditUnitParameter.h" />
     <ClInclude Include="PolygonFactory.h" />
+    <ClInclude Include="SelectLevel.h" />
     <ClInclude Include="StageEditor.h" />
     <ClInclude Include="PosSetting.h" />
     <ClInclude Include="ScrollBar.h" />
     <ClInclude Include="ShapeFactory.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="UnitFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\ActiveWarSimulation\CommonConstParameter.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\DamageCalculators.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\FilePath.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\FileRead.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\GraphicControl.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\GraphicProgramming.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\input.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\MyPolygon.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\StageLevel.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\StringBuilder.cpp" />
     <ClCompile Include="..\ActiveWarSimulation\ToolsLib.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\Unit.cpp" />
+    <ClCompile Include="..\ActiveWarSimulation\Weapon.cpp" />
     <ClCompile Include="..\FieldBase\Circle.cpp" />
     <ClCompile Include="..\FieldBase\Edge.cpp" />
     <ClCompile Include="..\FieldBase\Shape.cpp" />
@@ -196,13 +213,16 @@
     <ClCompile Include="EditPut.cpp" />
     <ClCompile Include="EditRemove.cpp" />
     <ClCompile Include="EditResize.cpp" />
+    <ClCompile Include="EditUnitParameter.cpp" />
     <ClCompile Include="PolygonFactory.cpp" />
+    <ClCompile Include="SelectLevel.cpp" />
     <ClCompile Include="StageEditor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PosSetting.cpp" />
     <ClCompile Include="ScrollBar.cpp" />
     <ClCompile Include="ShapeFactory.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="UnitFactory.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

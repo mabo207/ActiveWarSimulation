@@ -371,33 +371,32 @@ void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsig
 
 void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsigned int leftDownColor,unsigned int rightUpColor,unsigned int rightDownColor){
 	//頂点色の取得
+	const int vertexPos[4][2]={{x1,y1},{x1,y2},{x2,y1},{x2,y2}};
 	int vertexColor[4][3];//0:(x1,y1) 1:(x1,y2) 2:(x2,y1) 3:(x2,y2)
 	GetColor2(leftUpColor,&vertexColor[0][0],&vertexColor[0][1],&vertexColor[0][2]);
 	GetColor2(leftDownColor,&vertexColor[1][0],&vertexColor[1][1],&vertexColor[1][2]);
 	GetColor2(rightUpColor,&vertexColor[2][0],&vertexColor[2][1],&vertexColor[2][2]);
 	GetColor2(rightDownColor,&vertexColor[3][0],&vertexColor[3][1],&vertexColor[3][2]);
-	//四角形の描画
-	if(x1<x2 && y1<y2){
-		for(int y=y1;y<y2;y++){
-			for(int x=x1;x<x2;x++){
-				//(x,y)に描画する色は
-				/*color=
-					vertexColor[0]*(x2-x)/(x2-x1)*(y2-y)/(y2-y1)
-					+vertexColor[1]*(x2-x)/(x2-x1)*(y-y1)/(y2-y1)
-					+vertexColor[2]*(x-x1)/(x2-x1)*(y2-y)/(y2-y1)
-					+vertexColor[3]*(x-x1)/(x2-x1)*(y-y1)/(y2-y1)
-				//*/
-				int colorValue[3];
-				for(size_t i=0;i<3;i++){
-					colorValue[i]=((vertexColor[0][i]*(x2-x)*(y2-y))+(vertexColor[1][i]*(x2-x)*(y-y1))+(vertexColor[2][i]*(x-x1)*(y2-y))+(vertexColor[3][i]*(x-x1)*(y-y1)))/(y2-y1)/(x2-x1);
-				}
-				DrawPixel(x,y,GetColor(colorValue[0],colorValue[1],colorValue[2]));
-			}
-		}
-	} else{
-		//0除算や方向でミスっている場合は普通のDrawBoxをする
-		DrawBox(x1,y1,x2,y2,leftUpColor,TRUE);
+	const size_t polygonNum=2;//四角形なので
+	VERTEX2D vertexArray[polygonNum*3];
+	//左上,左下,右上,右下の頂点情報を入力
+	for(size_t i = 0; i < 4; i++){
+		vertexArray[i].pos.x=(float)vertexPos[i][0];
+		vertexArray[i].pos.y=(float)vertexPos[i][1];
+		vertexArray[i].pos.z=0.0f;
+		vertexArray[i].rhw=1.0f;
+		vertexArray[i].dif.r=vertexColor[i][0];
+		vertexArray[i].dif.g=vertexColor[i][1];
+		vertexArray[i].dif.b=vertexColor[i][2];
+		vertexArray[i].dif.a=255;
+		vertexArray[i].u=0.0f;//テクスチャ座標、画像は使用しないので0でok
+		vertexArray[i].v=0.0f;//テクスチャ座標、画像は使用しないので0でok
 	}
+	//右下のポリゴン描画のために、(x1,y2)(x2,y1)の頂点情報をコピー
+	vertexArray[4]=vertexArray[1];
+	vertexArray[5]=vertexArray[2];
+	//ポリゴン２つを描画
+	DrawPolygon2D(vertexArray,polygonNum,DX_NONE_GRAPH,FALSE);//テクスチャは描画しない
 }
 
 //数値変化を様々な式で管理するクラス
@@ -812,120 +811,4 @@ void Timer::Update(){
 
 void Timer::EnforceEnd(){
 	counter=endTimer;
-}
-
-//文字列の分割・結合を行うクラス
-StringBuilder::StringBuilder(const std::string &str,char spliter,char beginer,char ender,bool deepen,bool setSplit)
-	:m_spliter(spliter),m_beginer(beginer),m_ender(ender)
-{
-	//文字列として初期化すると決まっているのならそのようにして終了する
-	if(!setSplit){
-		m_str=str;
-		m_splitFlag=false;
-	} else{
-		//分割読み込み処理を行う場合
-		m_splitFlag=true;//この処理で読み込まれる場合は必ず区切られた複数文字列として読み込む
-		//下準備
-		std::string splitStr;//分割された文字列
-		int tokenCount=0;//m_beginerを読み込んだ個数-m_enderを読み込んだ個数。負になる減少は無視する。
-		bool setExist=false;//既に集合を読んだかどうか。区切り文字を読み取るたびにfalseにする。「aa(cc,(dd,ee))bb(ff)」のaa,bb,ffのようなバグデータを無視するために用いる。
-		//新たなStringSpliterを生成する際の処理
-		const auto pushFunc=[&]()->void{
-			//deepenがfalseであるか、splitStrに集合が含まれていないならこれ以上深くならない
-			//最終引数がtrueである限りこの処理は再帰的に呼び出されるが、いずれ(next!=ite)がfalseになる。（処理のたびに集合外のm_spliterと最外のm_beginer,m_enderがstrから消滅するため）
-			m_vec.push_back(StringBuilder(splitStr,m_spliter,m_beginer,m_ender,true,deepen && setExist));
-			splitStr.clear();
-			setExist=false;
-		};
-		//strの先頭から末尾まで読み込み
-		for(std::string::const_iterator it=str.begin(),ite=str.end();it!=ite;it++){
-			if(*it==m_spliter && tokenCount<=0 && !splitStr.empty()){
-				//区切り文字にたどり着いたらsplitStrを用いて新たなStringSpliterを作成する
-				pushFunc();
-			} else if(*it==m_beginer){
-				//集合の先頭文字を見つけた場合は、tokenCountを1増やす
-				if(!setExist){
-					//splitStrを弄るのはまだ集合を読み込んでいない時のみ。
-					if(tokenCount>0){
-						//既に集合内である場合は、splitStrに文字を追加
-						splitStr.push_back(m_beginer);
-					} else{
-						//集合外であるならここから集合が始まるので、splitStrに文字を追加しない。また、「aa(cc,(dd,ee))bb(ff)」のaa,bb,ffのようなバグデータを無視するためにaa部分は削除する。
-						splitStr.clear();
-					}
-				}
-				tokenCount++;
-			} else if(*it==m_ender){
-				//集合の終端文字を見つけた場合は、tokenCountを1減らす。
-				tokenCount--;
-				if(tokenCount>0){
-					//集合の読み込みが終了しておらず、既存の完了した集合読み込みも存在しない場合は終端文字もsplitStrに追加する
-					splitStr.push_back(m_ender);
-				}else if(tokenCount==0){
-					//集合の読み込みが終了した場合は、集合の読み込みフラグを操作する。
-					setExist=true;
-				} else{
-					//tokenCountが負になるような終端文字の読み込みは無視する。
-					tokenCount=0;
-				}
-			} else{
-				//それ以外の文字は、splitStrに格納する
-				splitStr.push_back(*it);
-			}
-		}
-		//末尾まで読んだ後に、splitStrに文字列が残っている場合はそれを用いてStringSpliterに追加する
-		pushFunc();
-	}
-}
-
-StringBuilder::~StringBuilder(){}
-
-std::string StringBuilder::GetString()const{
-	if(m_splitFlag){
-		//区切りがあるのであれば、区切り文字を追加しながらstringを作っていく。
-		if(!m_vec.empty()){
-			std::string str="";
-			for(const StringBuilder &sb:m_vec){
-				if(sb.GetSplitFlag()){
-					//sbが分割されたものなら集合文字を入れる
-					str+=m_beginer+sb.GetString()+m_ender+m_spliter;
-				} else{
-					//sbが分割されたものでないなら集合文字は入れない
-					str+=sb.GetString()+m_spliter;
-				}
-			}
-			//最後の区切り文字は抜く。strがemptyである事はないので例外処理は書かなくて良い。
-			str.pop_back();
-			return str;
-		} else{
-			return "";
-		}
-	} else{
-		//区切りが無いのであればm_strをそのまま返す。
-		return m_str;
-	}
-}
-
-std::vector<StringBuilder> StringBuilder::GetVector()const{
-	if(m_splitFlag){
-		//区切りがあるのであれば、m_vecをそのまま返す
-		return m_vec;
-	} else{
-		//区切りが無いのであればthisのみの配列として返す。
-		return std::vector<StringBuilder>{*this};
-	}
-}
-
-std::vector<std::string> StringBuilder::GetStringVector()const{
-	if(m_splitFlag){
-		//区切りがあるのであれば、m_vecの各要素のGetString()の配列を返す
-		std::vector<std::string> v;
-		for(const StringBuilder &sb:m_vec){
-			v.push_back(sb.GetString());
-		}
-		return v;
-	} else{
-		//区切りが無いのであればthisのみのstringの配列として返す。
-		return std::vector<std::string>{m_str};
-	}
 }

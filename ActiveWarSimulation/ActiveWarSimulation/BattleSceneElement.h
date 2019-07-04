@@ -1,12 +1,11 @@
 #ifndef DEF_BATTLESCENEELEMENT_H
 #define DEF_BATTLESCENEELEMENT_H
 
-#include"GameScene.h"
 #include<memory>
 
 //バトルパートの各場面に用いる仮想基底クラス
 //場面情報と普遍的な遷移アルゴリズムが内包されている
-class BattleSceneElement:public GameScene{
+class BattleSceneElement{
 	//型・列挙体
 public:
 	struct SceneKind{

@@ -5,13 +5,18 @@
 #include"MyPolygon.h"
 #include"input.h"
 #include<cmath>
+#include"GeneralPurposeResource.h"
+#include"CommonConstParameter.h"
+#include"FilePath.h"
+
 #include"StageSelectScene.h"
 #include"BattleScene.h"
 #include"DemoScene.h"
 #include"TutorialScene.h"
-#include"GeneralPurposeResourceManager.h"
+#include"FadeInScene.h"
+#include"FadeOutScene.h"
 
-//-------------------TitleScene-------------------
+//-------------------TitleScene::SelectItem-------------------
 std::string TitleScene::SelectItem::GetString(const Kind kind){
 	switch(kind){
 	case(e_stageSelect):
@@ -28,6 +33,18 @@ std::string TitleScene::SelectItem::GetString(const Kind kind){
 	return "";
 }
 
+//-------------------TitleScene::TitleSceneFactory-------------------
+TitleScene::TitleSceneFactory::TitleSceneFactory()
+	:SceneFactory()
+{}
+
+TitleScene::TitleSceneFactory::~TitleSceneFactory(){}
+
+std::shared_ptr<GameScene> TitleScene::TitleSceneFactory::CreateIncompleteScene()const{
+	return std::shared_ptr<GameScene>(new TitleScene());
+}
+
+//-------------------TitleScene-------------------
 std::shared_ptr<Shape> TitleScene::MakeHexagon(const Vector2D center,const float size)const{
 	const size_t vecNum=6;
 	Vector2D vec[vecNum];
@@ -43,43 +60,46 @@ std::shared_ptr<Shape> TitleScene::MakeHexagon(const Vector2D center,const float
 }
 
 const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={
-	Vector2D(1330.0f,630.0f)
-	,Vector2D(1440.0f,820.0f)
-	,Vector2D(1550.0f,630.0f)
-	,Vector2D(1660.0f,820.0f)
-	,Vector2D(1770.0f,630.0f)
+	Vector2D(1450.0f,790.0f)
+	,Vector2D(1530.0f,920.0f)
+	,Vector2D(1610.0f,790.0f)
+	,Vector2D(1690.0f,920.0f)
+	,Vector2D(1770.0f,790.0f)
 };
 
 TitleScene::TitleScene()
-	:MainControledGameScene()
-	,m_backPic(LoadGraphEX("Graphic/nonfree/titleScene.png"))
-	,m_titleLogo(LoadGraphEX("Graphic/titleLogo.png"))
-	,m_itemFont(CreateFontToHandleEX("メイリオ",24,1,-1))
-	,m_bgm(LoadBGMMem("Sound/bgm/nonfree/title/"))
-	,m_aimchangeSound(LoadSoundMem("Sound/effect/nonfree/aimchange.ogg"))
+	:GameScene()
+	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
+	,m_itemFont(CreateFontToHandleEX("メイリオ",16,1,-1))
+	,m_bgm(LoadBGMMem(FilePath::bgmDir+"nonfree/title/"))
+	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_selectItem(SelectItem::e_stageSelect)
 	,m_frame(0)
-	,m_nextScene(nullptr)
-	,m_reqInfo(nullptr)
 {
 	//当たり判定図形の用意
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
-		m_hitJudgeShapeVec[i]=MakeHexagon(strPos[i],120.0f);
+		m_hitJudgeShapeVec[i]=MakeHexagon(strPos[i],80.0f);
 	}
-	//bgm再生
-	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
 }
 
 TitleScene::~TitleScene(){
 	//グラフィック解放
 	DeleteGraphEX(m_backPic);
-	DeleteGraphEX(m_titleLogo);
 	DeleteFontToHandleEX(m_itemFont);
 	//サウンド解放
 	StopSoundMem(m_bgm);
 	DeleteSoundMem(m_bgm);
 	DeleteSoundMem(m_aimchangeSound);
+}
+
+void TitleScene::InitCompletely(){
+	//特にする事はない
+}
+
+void TitleScene::Activate(){
+	//bgm再生
+	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
 }
 
 int TitleScene::thisCalculate(){
@@ -146,7 +166,7 @@ int TitleScene::thisCalculate(){
 		)
 	{
 		//決定キー入力か、ボタンの上で左クリック
-		PlaySoundMem(GeneralPurposeResourceManager::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
+		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
 		return m_selectItem;
 	}
 
@@ -156,25 +176,58 @@ int TitleScene::thisCalculate(){
 	return SelectItem::COUNTER;//SelectItem::COUNTERは現状維持
 }
 
-void TitleScene::thisDraw()const{
+int TitleScene::Calculate(){
+	int index=thisCalculate();//更新処理
+	//遷移処理
+	switch(index){
+	case(SelectItem::e_gameFinish):
+		//前のクラスにもどる。
+		return 1;
+	case(SelectItem::e_stageSelect):
+		//ステージセレクト画面へ
+		//m_nextScene=std::shared_ptr<GameScene>(new StageSelectScene(m_sharedData));
+		//break;
+		return 1;
+	case(SelectItem::e_demo):
+		//デモ画面へ
+		return 1;
+		break;
+	case(SelectItem::e_tutorial):
+		//チュートリアル画面へ
+		return 1;
+		break;
+	case(SelectItem::e_tutorial_2):
+		//チュートリアル画面2へ
+		return 1;
+		break;
+	case(SelectItem::COUNTER):
+		//現状維持
+		break;
+	default:
+		break;
+	}
+	return 0;
+}
+
+void TitleScene::Draw()const{
 	//背景の描画
 	DrawGraph(0,0,m_backPic,TRUE);
-	//タイトルロゴの描画
-	DrawGraph(0,0,m_titleLogo,TRUE);
-	int verX,verY;
-	GetGraphSize(m_titleLogo,&verX,&verY);
-	DrawStringToHandle(verX,verY,"- DigigameExpo 6th Trial Edition -",GetColor(255,255,255),m_itemFont);
+	//バージョン情報
+	const std::string VERSION_STRING="- GAME^3 9th Trial Edition -";
+	const int verX=CommonConstParameter::gameResolutionX-GetDrawStringWidthToHandle(VERSION_STRING.c_str(),VERSION_STRING.size(),m_itemFont);
+	const int verY=CommonConstParameter::gameResolutionY-GetFontSizeToHandle(m_itemFont);
+	DrawStringToHandle(verX,verY,VERSION_STRING.c_str(),GetColor(0,0,0),m_itemFont);
 	//項目の描画
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
 		unsigned int inColor,frameColor,fontColor;
 		int strDy=0;
 		if(i!=m_selectItem){
-			inColor=GetColor(0,128,200);
-			frameColor=GetColor(0,64,128);
+			inColor=GetColor(224,224,224);
+			frameColor=GetColor(32,32,32);
 			fontColor=GetColor(0,0,0);
 		} else{
-			inColor=GetColor(0,64,128);
-			frameColor=GetColor(0,128,200);
+			inColor=GetColor(32,32,32);
+			frameColor=GetColor(224,224,224);
 			fontColor=GetColor(255,255,255);
 			strDy=std::abs((int)(std::cos(M_PI*2*m_frame/120)*5.0));
 		}
@@ -184,90 +237,19 @@ void TitleScene::thisDraw()const{
 	}
 }
 
-int TitleScene::Calculate(){
-	int index;
-	if(m_nextScene.get()==nullptr){
-		//今指している状態がタイトル画面である時
-		index=thisCalculate();//更新処理
-		//遷移処理
-		switch(index){
-		case(SelectItem::e_gameFinish):
-			//前のクラスにもどる。
-			return 1;
-		case(SelectItem::e_stageSelect):
-			//ステージセレクト画面へ
-			m_nextScene=std::shared_ptr<GameScene>(new StageSelectScene(&m_reqInfo));
-			break;
-		case(SelectItem::e_demo):
-			//デモ画面へ
-			return 1;
-			break;
-		case(SelectItem::e_tutorial):
-			//チュートリアル画面へ
-			return 1;
-			break;
-		case(SelectItem::e_tutorial_2):
-			//チュートリアル画面2へ
-			return 1;
-			break;
-		case(SelectItem::COUNTER):
-			//現状維持
-			break;
-		default:
-			break;
-		}
-	} else{
-		//それ以外の画面の状態である時
-		index=m_nextScene->Calculate();//更新処理
-		//遷移処理
-		switch(index){
-		case(-1):
-			//前のクラスから強制終了しろと伝わってきた
-			return -1;
-		case(-2):
-			//前のクラスからこのクラスに戻ると伝わってきた
-			m_nextScene=std::shared_ptr<GameScene>(nullptr);
-			m_reqInfo=std::shared_ptr<MainControledGameScene::RequiredInfoToMakeClass>(nullptr);//次のクラスをどうするかという情報も消しておく
-			break;
-		}
+std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
+	if(m_selectItem==SelectItem::e_stageSelect){
+		const auto stageselect=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,stageselect,15,15);
+	} else if(m_selectItem==SelectItem::e_demo){
+		const auto demo=std::make_shared<DemoScene::DemoSceneFactory>();
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,demo,15,15);
+	} else if(m_selectItem==SelectItem::e_tutorial){
+		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial");
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,tutorial,15,15);
+	} else if(m_selectItem==SelectItem::e_tutorial_2){
+		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial_2");
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,tutorial,15,15);
 	}
-	return 0;
-}
-
-void TitleScene::Draw()const{
-	if(m_nextScene.get()==nullptr){
-		//このクラスの処理
-		thisDraw();
-	} else{
-		//他クラスの処理
-		m_nextScene->Draw();
-	}
-}
-
-std::shared_ptr<MainControledGameScene> TitleScene::VGetNextMainControledScene()const{
-	switch(m_selectItem){
-	case(SelectItem::e_stageSelect):
-		if(m_reqInfo.get()==nullptr){
-			//次のクラスが作れない場合はnullptrを返す
-		} else{
-			//情報があれば、物は作れる
-			if(m_reqInfo->GetKind()==RequiredInfoToMakeClass::e_battleScene){
-				const BattleScene::RequiredInfoToMakeBattleScene *info=dynamic_cast<const BattleScene::RequiredInfoToMakeBattleScene *>(m_reqInfo.get());
-				if(info!=nullptr){
-					return std::shared_ptr<MainControledGameScene>(new BattleScene(info->m_stagename.c_str()));
-				}
-			}
-		}
-		break;
-	case(SelectItem::e_demo):
-		return std::shared_ptr<MainControledGameScene>(new DemoScene());
-		break;
-	case(SelectItem::e_tutorial):
-		return std::shared_ptr<MainControledGameScene>(new TutorialScene("tutorial"));
-		break;
-	case(SelectItem::e_tutorial_2):
-		return std::shared_ptr<MainControledGameScene>(new TutorialScene("tutorial_2"));
-		break;
-	}
-	return std::shared_ptr<MainControledGameScene>(nullptr);
+	return std::shared_ptr<GameScene>();
 }

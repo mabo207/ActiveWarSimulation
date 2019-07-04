@@ -9,7 +9,7 @@
 #include<string>
 
 //タイトル画面のクラス
-class TitleScene:public MainControledGameScene{
+class TitleScene:public GameScene{
 	//型・列挙体
 private:
 	struct SelectItem{
@@ -25,14 +25,14 @@ private:
 		static std::string GetString(const Kind kind);
 	};
 public:
-	struct RequiredInfoToMakeTitleScene:public RequiredInfoToMakeClass{
+	//GameSceneを継承しているためクラスをfactoryクラスを作る必要がある
+	class TitleSceneFactory:public SceneFactory{
+	public:
 		//クラスを作るのに必要なデータはない
-		RequiredInfoToMakeTitleScene(){}
-		Kind GetKind()const{
-			return e_titleScene;
-		}
+		TitleSceneFactory();
+		virtual ~TitleSceneFactory();
+		std::shared_ptr<GameScene> CreateIncompleteScene()const;
 	};
-
 	
 	//定数
 private:
@@ -44,14 +44,9 @@ protected:
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 	SelectItem::Kind m_selectItem;//現在選択している項目
 	std::array<std::shared_ptr<Shape>,SelectItem::COUNTER> m_hitJudgeShapeVec;
-	std::shared_ptr<GameScene> m_nextScene;//次のシーン。これがnullptrなら、タイトルの処理を行う。
-
-	//他のクラスを作るのに必要なデータ
-	std::shared_ptr<RequiredInfoToMakeClass> m_reqInfo;//こいつへのポインタを渡すことで、他のクラスでもこの値を弄れる。それを用いて、このクラスから戻る時に、次どのクラスに行けばいいかなどが計算できる。
 
 	//グラフィック
 	const int m_backPic;//背景
-	const int m_titleLogo;//タイトルロゴ
 	const int m_itemFont;//選択項目のフォント
 
 	//bgm
@@ -64,14 +59,17 @@ protected:
 private:
 	std::shared_ptr<Shape> MakeHexagon(const Vector2D center,const float size)const;
 	int thisCalculate();//SelectItem::COUNTER:現状維持 0~SelectItem::COUNTER-1:遷移
-	void thisDraw()const;
+
+protected:
+	TitleScene();
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
 
 public:
-	TitleScene();
-	~TitleScene();
+	virtual ~TitleScene();
+	void InitCompletely();
+	void Activate();
 	int Calculate();
 	void Draw()const;
-	std::shared_ptr<MainControledGameScene> VGetNextMainControledScene()const;
 };
 
 #endif // !DEF_TITLESCENE_H

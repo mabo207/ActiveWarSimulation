@@ -42,6 +42,10 @@ void EditResize::VProcessAction(Vector2D point,EditActionSettings &settings){
 	} else{
 		//編集対象が決まっていない場合、pointの地点にあるBattleObjectを探す
 		settings.SetEditObject(point);
+		if(settings.m_pBattleObject.get()!=nullptr && settings.m_pBattleObject->GetType()==BattleObject::Type::e_unit){
+			//ユニットは編集対象にしない
+			settings.m_pBattleObject=std::shared_ptr<BattleObject>(nullptr);
+		}
 	}
 }
 
