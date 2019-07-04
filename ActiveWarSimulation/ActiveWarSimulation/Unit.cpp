@@ -344,6 +344,11 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 	Vector2D pos=point+adjust;//描画位置
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
+	//UIの表示領域の設定
+	RECT rect;
+	GetDrawArea(&rect);
+	SetDrawArea(0,0,CommonConstParameter::mapSizeX,CommonConstParameter::mapSizeY);
+	//UIの表示
 	if(infoDrawFlag){
 		//アクションの効果範囲を半透明(弱)で描画
 		//ひとまず短射程で描画本来は武器クラスのDraw関数を使うのが望ましい。
@@ -376,6 +381,8 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 		}
 		SetDrawBlendMode(mode,pal);
 	}
+	//描画範囲を元に戻す
+	SetDrawArea(rect.left,rect.top,rect.right,rect.bottom);
 	//アニメーションパラメータの設定
 	int ux=(int)(pos.x),uy=(int)(pos.y);
 	int cx,cy;
