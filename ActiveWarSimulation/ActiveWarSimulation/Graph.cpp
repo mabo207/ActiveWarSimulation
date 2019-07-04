@@ -1,7 +1,7 @@
 #include"DxLib.h"
 #include"Graph.h"
 
-//--------------Graph--------------
+//--------------Resource::Graph--------------
 std::map<Resource::Graph::LoadInfo,std::pair<Resource::Graph,size_t>> Resource::Graph::s_graphMap;
 
 Resource::Graph Resource::Graph::LoadInfo::Load()const{
@@ -47,7 +47,7 @@ void Resource::Graph::Delete(int handle){
 	for(auto it=s_graphMap.begin(),ite=s_graphMap.end();it!=ite;it++){
 		if(it->second.first==info){
 			if(it->second.second<=1){
-				//参照箇所が1箇所だけだった場合は、DeleteGraph()をしてs_graphMapからも削除
+				//参照箇所が1箇所だけだった場合は、DeleteGraph()をしてs_bgmMapからも削除
 				DeleteGraph(info.GetHandle());
 				s_graphMap.erase(it);
 			} else{
@@ -66,7 +66,7 @@ void Resource::Graph::Delete(int handle){
 
 void Resource::Graph::Clear(){
 	//mainスレッド以外からこの処理が呼ばれたら何もせずに返す
-	//s_graphMap全てに対して削除処理
+	//s_bgmMap全てに対して削除処理
 	for(const auto &data:s_graphMap){
 		DeleteGraph(data.second.first.GetHandle());
 	}

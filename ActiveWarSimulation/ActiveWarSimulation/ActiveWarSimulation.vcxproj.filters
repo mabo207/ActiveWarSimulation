@@ -297,6 +297,9 @@
     <ClCompile Include="Graph.cpp">
       <Filter>ソース ファイル\Tools\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="BGM.cpp">
+      <Filter>ソース ファイル\Tools\Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -462,6 +465,9 @@
       <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
     <ClInclude Include="Graph.h">
+      <Filter>ヘッダー ファイル\Tools\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="BGM.h">
       <Filter>ヘッダー ファイル\Tools\Resource</Filter>
     </ClInclude>
   </ItemGroup>

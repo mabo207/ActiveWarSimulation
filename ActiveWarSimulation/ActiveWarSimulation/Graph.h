@@ -1,11 +1,9 @@
-#ifndef DEF_GRAPH_H
-#define DEF_GRAPH_H
+#ifndef DEF_RESOURCE_GRAPH_H
+#define DEF_RESOURCE_GRAPH_H
 
 #include<string>
 #include<map>
 #include<vector>
-#include<mutex>
-#include<thread>
 
 namespace Resource{
 	//画像データを管理するクラス
@@ -53,4 +51,4 @@ namespace Resource{
 	};
 }
 
-#endif // !DEF_GRAPH_H
+#endif // !DEF_RESOURCE_GRAPH_H
