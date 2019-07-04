@@ -10,6 +10,7 @@
 #include"LatticeBattleField.h"
 #include"StageLevel.h"
 #include<functional>
+#include"BGM.h"
 
 //バトル場面で、各クラスに渡すゲーム全体で扱うデータを一括管理するクラス
 struct BattleSceneData{
@@ -60,7 +61,7 @@ public:
 
 	//サウンドデータ
 	//bgm
-	const int m_mapBGM;//マップBGM
+	const Resource::BGM m_mapBGM;//マップBGM
 	//effect
 	const int m_aimchangeSound;//狙いが変わった時の音
 	const int m_attackSound;//ダメージの音
