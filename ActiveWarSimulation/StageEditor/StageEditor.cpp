@@ -6,6 +6,7 @@
 #include"DxLib.h"
 #include"StageEditor.h"
 #include"input.h"
+#include"CommonConstParameter.h"
 
 #include"Terrain.h"
 #include"Circle.h"
@@ -15,36 +16,65 @@
 #include"EditRemove.h"
 #include"EditMove.h"
 #include"EditResize.h"
+#include"EditUnitParameter.h"
 
 #include"CircleFactory.h"
 #include"EdgeFactory.h"
 #include"PolygonFactory.h"
+#include"UnitFactory.h"
 
 #include"ConstPosSet.h"
 
-#include"CommonConstParameter.h"
+#include"SelectLevel.h"
 
 #include"ScrollBar.h"
 
 //定数の定義
-const int StageEditor::mapSizeX = 1920;
-const int StageEditor::mapSizeY = 900;
-const int StageEditor::leftUpPosX = 25;
-const int StageEditor::leftUpPosY = 25;
-const int StageEditor::buttonWidth = 400;
-const int StageEditor::buttonHeight=(leftUpPosY*2+mapSizeY)/4;
-const int StageEditor::shapeButtonHeightNum=1;
-const int StageEditor::shapeButtonWidthNum=3;
-const int StageEditor::shapeButtonHeight=StageEditor::buttonHeight/3;
-const int StageEditor::shapeButtonWidth=StageEditor::buttonWidth;
-const int StageEditor::posButtonWidth=StageEditor::buttonWidth;
-const int StageEditor::posButtonHeight=StageEditor::buttonHeight/2;
-const int StageEditor::posButtonWidthNum=3;
-const int StageEditor::posButtonHeightNum=1;
-const std::string StageEditor::actButtonStr[actButtonHeightNum*actButtonWidthNum]={"put","remove","move","expand"};
-const int StageEditor::baseSize=CommonConstParameter::unitCircleSize;
+namespace {
+	//マップの表示部分の大きさ
+	const int mapSizeX = CommonConstParameter::mapSizeX;
+	const int mapSizeY = CommonConstParameter::mapSizeY;
+	//マップの左上の座標
+	const int leftUpPosX = 25;
+	const int leftUpPosY = 25;
+	//「動作」ボタンの縦横の個数
+	const size_t actButtonWidthNum=2;
+	const size_t actButtonHeightNum=3;
+	//「動作」ボタン部分全体での横幅,縦幅
+	const int buttonWidth = 400;
+	const int buttonHeight=300;
+	//「図形設定」ボタンの縦横の個数
+	const size_t shapeButtonWidthNum=3;
+	const size_t shapeButtonHeightNum=3;
+	//「図形設定」ボタン部分全体での横幅,縦幅
+	const int shapeButtonWidth=buttonWidth;
+	const int shapeButtonHeight=240;
+	//「位置設定」ボタンの縦横の個数
+	const size_t posButtonWidthNum=3;
+	const size_t posButtonHeightNum=1;
+	//「位置設定」ボタン部分全体での横幅,縦幅
+	const int posButtonWidth=buttonWidth;
+	const int posButtonHeight=100;
+	//「レベル設定」ボタンの縦横の個数
+	const size_t levelButtonWidthNum=StageLevel::levelCount;
+	const size_t levelButtonHeightNum=1;
+	//「レベル設定」ボタン部分全体での横幅,縦幅
+	const int levelButtonWidth=buttonWidth;
+	const int levelButtonHeight=120;
+	//エディタで作られる物のサイズの基準の大きさ・基本単位
+	const int baseSize=CommonConstParameter::unitCircleSize;
+}
 
 //関数定義
+//静的関数
+int StageEditor::GetEditorSizeX(){
+	return leftUpPosX*2+mapSizeX+buttonWidth;
+}
+
+int StageEditor::GetEditorSizeY(){
+	return leftUpPosY*2+mapSizeY;
+}
+
 //動的関数
 StageEditor::StageEditor()
 	:m_actionSettings(
@@ -56,7 +86,7 @@ StageEditor::StageEditor()
 	//ボタン一覧
 	
 	//最初から押されているようにするボタンをリストアップしながら行う
-	std::shared_ptr<ButtonHaving::Button> pPutButton,pRectangleFactoryButton,pPosSettingButton;
+	std::shared_ptr<ButtonHaving::Button> pPutButton,pRectangleFactoryButton,pPosSettingButton,pSelectLevelButton;
 	
 	//上スクロールボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new ScrollBar::ScrollButton(
@@ -92,81 +122,134 @@ StageEditor::StageEditor()
 	)));
 
 	//putボタン
+	const float buttonsLeftEdge=(float)(leftUpPosX*2+mapSizeX);
+	float buttonY=0.0f;
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EditPut::EditPutButton(
-		Vector2D((float)(leftUpPosX*2+mapSizeX+buttonWidth/actButtonWidthNum*0),0)
+		Vector2D(buttonsLeftEdge+(float)(buttonWidth/actButtonWidthNum*0),buttonY)
 		,Vector2D((float)(buttonWidth/actButtonWidthNum),(float)(buttonHeight/actButtonHeightNum))
 	)));
 	pPutButton=m_buttons.back();//最初から押されているようにするボタン
 	//removeボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EditRemove::EditRemoveButton(
-		Vector2D((float)(leftUpPosX*2+mapSizeX+buttonWidth/actButtonWidthNum*1),0)
+		Vector2D(buttonsLeftEdge+(float)(buttonWidth/actButtonWidthNum*1),buttonY)
 		,Vector2D((float)(buttonWidth/actButtonWidthNum),(float)(buttonHeight/actButtonHeightNum))
 	)));
+	buttonY+=(float)(buttonHeight/actButtonHeightNum*1);
 	//moveボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EditMove::EditMoveButton(
-		Vector2D((float)(leftUpPosX*2+mapSizeX+buttonWidth/actButtonWidthNum*0),(float)(buttonHeight/actButtonHeightNum*1))
+		Vector2D(buttonsLeftEdge+(float)(buttonWidth/actButtonWidthNum*0),buttonY)
 		,Vector2D((float)(buttonWidth/actButtonWidthNum),(float)(buttonHeight/actButtonHeightNum))
 	)));
 	//resizeボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EditResize::EditResizeButton(
-		Vector2D((float)(leftUpPosX*2+mapSizeX+buttonWidth/actButtonWidthNum*1),(float)(buttonHeight/actButtonHeightNum*1))
+		Vector2D(buttonsLeftEdge+(float)(buttonWidth/actButtonWidthNum*1),buttonY)
 		,Vector2D((float)(buttonWidth/actButtonWidthNum),(float)(buttonHeight/actButtonHeightNum))
 	)));
+	buttonY+=(float)(buttonHeight/actButtonHeightNum*1);
+	//UnitEditボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EditUnitParameter::EditUnitParameterButton(
+		Vector2D(buttonsLeftEdge+(float)(buttonWidth/actButtonWidthNum*0),buttonY)
+		,Vector2D((float)(buttonWidth/actButtonWidthNum),(float)(buttonHeight/actButtonHeightNum))
+	)));
+	buttonY+=(float)(buttonHeight/actButtonHeightNum*1);
 
 	//CircleFactoryボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new CircleFactory::CircleFactoryButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*0)
-			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*0)
-		)
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*0),buttonY)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 	)));
 	pRectangleFactoryButton=m_buttons.back();//最初から押されているようにする
-
 	//EdgeFactoryボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new EdgeFactory::EdgeFactoryButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*1)
-			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*0)
-		)
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*1),buttonY)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 	)));
-	
 	//PolygonFactoryボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new PolygonFactory::PolygonFactoryButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+shapeButtonWidth/shapeButtonWidthNum*2)
-			,(float)(buttonHeight+shapeButtonHeight/shapeButtonHeightNum*0)
-		)
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*2),buttonY)
 		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
 	)));
+	buttonY+=+(float)(shapeButtonHeight/shapeButtonHeightNum*1);
+	//戦士作成ボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*0),buttonY)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+		,Unit::Profession::e_soldier
+	)));
+	//重装兵作成ボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*1),buttonY)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+		,Unit::Profession::e_armer
+	)));
+	//射手作成ボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*2),buttonY)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+		,Unit::Profession::e_archer
+	)));
+	buttonY+=+(float)(shapeButtonHeight/shapeButtonHeightNum*1);
+	//魔道士作成ボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*0),buttonY)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+		,Unit::Profession::e_mage
+	)));
+	//衛生兵作成ボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new UnitFactory::UnitFactoryButton(
+		Vector2D(buttonsLeftEdge+(float)(shapeButtonWidth/shapeButtonWidthNum*1),buttonY)
+		,Vector2D((float)(shapeButtonWidth/shapeButtonWidthNum),(float)(shapeButtonHeight/shapeButtonHeightNum))
+		,Unit::Profession::e_healer
+	)));
+	buttonY+=+(float)(shapeButtonHeight/shapeButtonHeightNum*1);
 
 	//1px位置調整ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new ConstPosSet::ConstPosSetButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+posButtonWidth/posButtonWidthNum*0)
-			,(float)(buttonHeight+shapeButtonHeight+posButtonHeight/posButtonHeightNum*0)
-		)
+		Vector2D(buttonsLeftEdge+(float)(posButtonWidth/posButtonWidthNum*0),buttonY)
 		,Vector2D((float)(posButtonWidth/posButtonWidthNum),(float)(posButtonHeight/posButtonHeightNum))
 		,1
 	)));
 	pPosSettingButton=m_buttons.back();
-
 	//45px位置調整ボタン
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new ConstPosSet::ConstPosSetButton(
-		Vector2D(
-		(float)(leftUpPosX*2+mapSizeX+posButtonWidth/posButtonWidthNum*1)
-			,(float)(buttonHeight+shapeButtonHeight+posButtonHeight/posButtonHeightNum*0)
-		)
+		Vector2D(buttonsLeftEdge+(float)(posButtonWidth/posButtonWidthNum*1),buttonY)
 		,Vector2D((float)(posButtonWidth/posButtonWidthNum),(float)(posButtonHeight/posButtonHeightNum))
 		,baseSize
 	)));
+	buttonY+=+(float)(posButtonHeight/posButtonHeightNum);
 
+	//easyボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SelectLevel::SelectLevelButton(
+		Vector2D(buttonsLeftEdge+(float)(levelButtonWidth/levelButtonWidthNum*0),buttonY)
+		,Vector2D((float)(levelButtonWidth/levelButtonWidthNum),(float)(levelButtonHeight/levelButtonHeightNum))
+		,StageLevel::e_easy
+	)));
+	pSelectLevelButton=m_buttons.back();
+	//normalボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SelectLevel::SelectLevelButton(
+		Vector2D(buttonsLeftEdge+(float)(levelButtonWidth/levelButtonWidthNum*1),buttonY)
+		,Vector2D((float)(levelButtonWidth/levelButtonWidthNum),(float)(levelButtonHeight/levelButtonHeightNum))
+		,StageLevel::e_normal
+	)));
+	//hardボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SelectLevel::SelectLevelButton(
+		Vector2D(buttonsLeftEdge+(float)(levelButtonWidth/levelButtonWidthNum*2),buttonY)
+		,Vector2D((float)(levelButtonWidth/levelButtonWidthNum),(float)(levelButtonHeight/levelButtonHeightNum))
+		,StageLevel::e_hard
+	)));
+	//lunaticボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SelectLevel::SelectLevelButton(
+		Vector2D(buttonsLeftEdge+(float)(levelButtonWidth/levelButtonWidthNum*3),buttonY)
+		,Vector2D((float)(levelButtonWidth/levelButtonWidthNum),(float)(levelButtonHeight/levelButtonHeightNum))
+		,StageLevel::e_lunatic
+	)));
+	buttonY+=(float)(levelButtonHeight/levelButtonHeightNum);
 
 	//最初から押されているようにするボタンを押す(順番に注意！)
 	pRectangleFactoryButton->PushedProcess(m_actionSettings);
 	pPutButton->PushedProcess(m_actionSettings);
 	pPosSettingButton->PushedProcess(m_actionSettings);
+	pSelectLevelButton->PushedProcess(m_actionSettings);
 	
 	//フォント
 	m_font=CreateFontToHandle("メイリオ",16,1);
@@ -175,7 +258,9 @@ StageEditor::StageEditor()
 	m_mapPic=LoadGraph("Savedata/stage.png");
 
 	//図形の読み込み
+	m_actionSettings.InitObjects();
 	m_actionSettings.ReadStage("Savedata/stage.txt");
+	m_actionSettings.ReadUnit();
 }
 
 StageEditor::~StageEditor() {
@@ -201,6 +286,58 @@ void StageEditor::NonPressEdit(int mouseX,int mouseY){
 	mouseY-=leftUpPosY;
 	//動作
 	m_actionSettings.PracticeNonPressEdit(Vector2D((float)mouseX,(float)mouseY));
+}
+
+//ユニット情報の描画
+void StageEditor::DrawUnitInfo(const std::shared_ptr<const Unit> &punit,const Vector2D unitDrawPos)const{
+	DrawUnitInfo(punit,unitDrawPos,false,0);
+}
+
+void StageEditor::DrawUnitInfo(const std::shared_ptr<const Unit> &punit,const Vector2D unitDrawPos,bool drawEditItem,size_t index)const{
+	if(punit){
+		const int unitX=(int)unitDrawPos.x,unitY=(int)unitDrawPos.y;
+		const int left=unitX+baseSize+20;
+		int top=unitY-leftUpPosY;
+		const int boxWidth=300;
+		const int boxHeight=350;
+		if(top<0){
+			top=0;
+		} else if(top+boxHeight>GetEditorSizeY()){
+			top=GetEditorSizeY()-boxHeight;
+		}
+		const int mergin=5;
+		const int strSpace=2;
+		const unsigned int backColor=GetColor(0,128,64);
+		const unsigned int strColor=GetColor(255,255,255);
+		//能力値についての文字列作成
+		//能力値の描画
+		std::string drawStr;
+		drawStr.reserve(300);
+		drawStr+="Lv: "+std::to_string(punit->GetBaseStatus().lv)+'\n';
+		drawStr+="Team: "+Unit::Team::GetName(punit->GetBattleStatus().team)+'\n';
+		drawStr+="Profession: "+Unit::Profession::GetName(punit->GetBaseStatus().profession)+'\n';
+		drawStr+="AItype: "+Unit::AIType::GetName(punit->GetBattleStatus().aitype)+'\n';
+		drawStr+="AIgroup: "+std::to_string(punit->GetBattleStatus().aiGroup)+'\n';
+		drawStr+="HP: "+std::to_string(punit->GetBattleStatus().HP)+" / "+std::to_string(punit->GetBaseStatus().maxHP)+'\n';
+		//以下、編集できないもの
+		drawStr+="\nPOW: "+std::to_string(punit->GetBaseStatus().power)+'\n';
+		drawStr+="DEF: "+std::to_string(punit->GetBaseStatus().def)+'\n';
+		drawStr+="MPOW: "+std::to_string(punit->GetBaseStatus().mpower)+'\n';
+		drawStr+="MDEF: "+std::to_string(punit->GetBaseStatus().mdef)+'\n';
+		drawStr+="Weapon: "+punit->GetBattleStatus().weapon->GetName()+'\n';
+		drawStr+=punit->GetBattleStatus().weapon->GetEffectivenessString(punit.get());
+		//下地の描画
+		DrawTriangle(unitX+baseSize,unitY,left,unitY-10,left,unitY+10,backColor,TRUE);
+		DrawBox(left,top,left+boxWidth,top+boxHeight,backColor,TRUE);
+		//能力値の描画
+		DrawStringNewLineToHandle(left+mergin,top+mergin,boxWidth-mergin*2,boxHeight-mergin*2,drawStr.c_str(),strColor,m_font,strSpace);
+		if(drawEditItem){
+			//編集項目の描画
+			const int strLineHeight=GetFontSizeToHandle(m_font)+strSpace;
+			const int selectBoxY=top+mergin+strLineHeight*index;
+			DrawBox(left+mergin,selectBoxY,left+boxWidth-mergin,selectBoxY+strLineHeight,GetColor(255,255,0),FALSE);
+		}
+	}
 }
 
 //毎ループ動作部分の関数
@@ -232,14 +369,32 @@ int StageEditor::Calculate() {
 
 	//キーボード入力受付
 	if(keyboard_get(KEY_INPUT_S)==10){
-		//Sキー長押しで保存
+		//Sキー長押しで地形を保存
 		m_actionSettings.WriteOutStage("SaveData/stage.txt");
+	} else if(keyboard_get(KEY_INPUT_U)==10){
+		//Uキー長押しでユニットを保存
+		m_actionSettings.WriteOutUnit();
 	} else if(keyboard_get(KEY_INPUT_R)==10){
 		//Rキー長押しで読み込み
+		m_actionSettings.InitObjects();
 		m_actionSettings.ReadStage("SaveData/stage.txt");
+		m_actionSettings.ReadUnit();
 	} else if(keyboard_get(KEY_INPUT_NUMPADENTER) == 1){
 		//Enterキー入力でエディタを終了
 		return -1;
+	} else{
+		auto func=[](int pal){
+			return (pal==1 || (pal>=30 && pal%6==0));
+		};
+		const bool up=func(keyboard_get(KEY_INPUT_UP));
+		const bool down=func(keyboard_get(KEY_INPUT_DOWN));
+		const bool left=func(keyboard_get(KEY_INPUT_LEFT));
+		const bool right=func(keyboard_get(KEY_INPUT_RIGHT));
+		const std::shared_ptr<EditUnitParameter> editUnit=std::dynamic_pointer_cast<EditUnitParameter>(m_actionSettings.m_pEditAction);
+		if(editUnit){
+			//現在EditUnitParameterをしているなら、キーボードの入力を反映させる
+			editUnit->EditParameter(up,down,left,right);
+		}
 	}
 	return 0;
 }
@@ -336,10 +491,25 @@ void StageEditor::Draw() {
 	//入力されている位置設定ボタンの描画
 	m_actionSettings.DrawPosSettingButtonPushed();
 	
+	//入力されているレベル設定ボタンの描画
+	m_actionSettings.m_pSelectLevel->LightUpButton();
+
 	//ボタン群の描画
 	for(std::shared_ptr<ButtonHaving::Button> &pb:m_buttons){
 		pb.get()->ButtonDraw(m_font,TRUE);
 	}
 
-
+	//現在EditUnitParameterをしているなら、ユニットの能力値を表示させる
+	{
+		const std::shared_ptr<EditUnitParameter> editUnitAction=std::dynamic_pointer_cast<EditUnitParameter>(m_actionSettings.m_pEditAction);
+		if(editUnitAction){
+			//編集対象がUnitでないと描画しない
+			const std::shared_ptr<const Unit> punit=editUnitAction->GetEditResult();
+			if(punit){
+				punit->BattleObject::VDraw(adjust);//編集後のユニットの様子も表示
+				const Vector2D unitDrawPos=punit->getPos()+adjust;
+				DrawUnitInfo(punit,unitDrawPos,true,editUnitAction->GetEditIndex());
+			}
+		}
+	}
 }

@@ -34,6 +34,7 @@ public:
 		static unsigned int GetColor(Kind kind);
 		static unsigned int GetColor(Kind kind,int degree,int red=0,int green=0,int blue=0);//チーム色に別の色を混ぜたカラーコードを取得する
 		static bool JudgeFriend(Kind team1,Kind team2);//2つのチームが味方関係かどうかを判定する
+		static std::string GetName(Kind kind);
 	};
 	struct AIType{
 		enum Kind{
@@ -43,6 +44,7 @@ public:
 			,END
 		};
 		static Kind link(int num);
+		static std::string GetName(Kind kind);
 	};
 	struct BaseStatus{
 		std::string name;
@@ -159,7 +161,7 @@ public:
 	//静的関数
 public:
 	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage);//モブユニットを動的生成する。
-
+	static Unit *CreateUnitFromBuilder(StringBuilder &unitdata);
 };
 
 #endif // !DEF_UNIT_H

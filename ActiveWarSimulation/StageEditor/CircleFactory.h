@@ -24,7 +24,7 @@ public:
 	CircleFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned int lightcolor);
 	~CircleFactory();
 
-	std::shared_ptr<Shape> CreateShape(Vector2D point)const;
+	std::shared_ptr<BattleObject> CreateObject(Vector2D point)const;
 };
 
 

@@ -4,12 +4,22 @@
 
 //----------------FadeInScene-------------------
 FadeInScene::FadeInScene(const std::shared_ptr<GameScene::SceneFactory> &nextFactory,int maxFrame)
-	:m_nextScene(nextFactory?nextFactory->CreateScene():std::shared_ptr<GameScene>())
+	:m_nextScene(nextFactory?nextFactory->CreateIncompleteScene():std::shared_ptr<GameScene>())
 	,m_drawAlpha(255,0,maxFrame,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0)
 	,m_afterAlphaEndFrame(0)
 {}
 
 FadeInScene::~FadeInScene(){}
+
+void FadeInScene::InitCompletely(){
+	//コンストラクタ時点ではm_nextSceneは不完全な段階
+	m_nextScene->InitCompletely();
+}
+
+void FadeInScene::Activate(){
+	//m_nextSceneの実体ができているのでActivate()する
+	m_nextScene->Activate();
+}
 
 int FadeInScene::Calculate(){
 	// フェードイン処理

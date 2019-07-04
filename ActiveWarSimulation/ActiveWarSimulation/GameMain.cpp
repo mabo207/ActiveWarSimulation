@@ -12,6 +12,13 @@
 
 #include"TitleScene.h"
 #include"FadeInScene.h"
+#include"LoadingScene.h"
+
+std::shared_ptr<GameScene> CreateStartScene(){
+	const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
+	const auto fadeInFactory=std::make_shared<FadeInScene::FadeInSceneFactory>(titleFactory,15);
+	return LoadingScene::LoadingSceneFactory(fadeInFactory).CreateCompleteScene();
+}
 
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
@@ -54,7 +61,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		{
 			//場面変数
-			std::shared_ptr<GameScene> pGameScene=FadeInScene::FadeInSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>(),15).CreateScene();
+			std::shared_ptr<GameScene> pGameScene=CreateStartScene();
 
 			//画面縮小することによる撮影をする際はSetMouseDispFlagをFALSEにしてコンパイル
 			SetMouseDispFlag(TRUE);
@@ -93,13 +100,15 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 						throw(std::runtime_error("SetDrawScreen(DX_SCREEN_BACK) failed."));
 					}
 					//グラフィック系の読み込み直し
+					GeneralPurposeResource::ReleaseResource();//共有リソースの解放
 					GraphicControler_End();//グラフィック管理クラスの解放
 					FontControler_End();//フォント管理クラスの解放
 					DeleteInputControler();//入力機構の解放
 					GraphicControler_Init();
 					FontControler_Init();
+					GeneralPurposeResource::LoadResource();//共有リソースの取得
 					InitInputControler();
-					pGameScene=FadeInScene::FadeInSceneFactory(std::make_shared<TitleScene::TitleSceneFactory>(),15).CreateScene();
+					pGameScene=CreateStartScene();
 					mousePic=LoadGraphEX(FilePath::graphicDir+"mouseCursor.png");//マウスの読み込みし直し
 					SetMouseDispFlag(mouseDispFlag);
 				} else if(keyboard_get(KEY_INPUT_F2)==60){
