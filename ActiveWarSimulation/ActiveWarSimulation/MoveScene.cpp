@@ -283,21 +283,22 @@ void MoveScene::thisDraw()const{
 		}
 
 		//ユニットの描画
+		const Unit *pMouseUnit=m_battleSceneData->GetUnitPointer(GetMousePointVector2D());
 		m_battleSceneData->DrawUnit(true,std::set<const Unit *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
 
 		//狙っているユニットの描画
-		if(m_aimedUnit!=nullptr){
-			m_aimedUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,true);//アイコンの描画
+		if(m_aimedUnit!=nullptr && m_aimedUnit!=pMouseUnit){
+			m_aimedUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,true,false);//アイコンの描画
 		}
 
 		//マウスを指しているユニットの移動範囲の描画
-		const Unit *pMouseUnit=m_battleSceneData->GetUnitPointer(GetMousePointVector2D());
-		if(pMouseUnit!=nullptr){
+		if(pMouseUnit!=nullptr && pMouseUnit!=m_battleSceneData->m_operateUnit){
+			pMouseUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,true,true);//アイコンの描画
 			pMouseUnit->DrawMaxMoveInfo();//次のターンにおける移動情報なので、DrawMoveInfo()でなくDrawMaxMoveInfo()を用いる。
 		}
 
 		//操作中ユニットの描画
-		m_battleSceneData->m_operateUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),true,true);
+		m_battleSceneData->m_operateUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),true,true,true);
 		m_battleSceneData->m_operateUnit->DrawMoveInfo();//移動情報の描画
 
 		//全ユニットのHPゲージの描画

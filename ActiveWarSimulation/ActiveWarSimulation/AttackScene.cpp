@@ -99,11 +99,11 @@ void AttackScene::thisDraw()const{
 
 	//UŒ‚‘ÎÛƒ†ƒjƒbƒg‚Ì•`‰æ
 	if(m_aimedUnit!=nullptr){
-		m_aimedUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,false);
+		m_aimedUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,false,false);
 	}
 	
 	//UŒ‚‚ðŽÀs‚·‚éƒ†ƒjƒbƒg‚Ì•`‰æ
-	m_battleSceneData->m_operateUnit->DrawUnit(Vector2D((float)m_attackMotion.GetX(),(float)m_attackMotion.GetY()),Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,false);
+	m_battleSceneData->m_operateUnit->DrawUnit(Vector2D((float)m_attackMotion.GetX(),(float)m_attackMotion.GetY()),Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,false,false);
 	
 	//‘Sƒ†ƒjƒbƒg‚ÌHPƒQ[ƒW‚Ì•`‰æ
 	m_battleSceneData->DrawHPGage();
