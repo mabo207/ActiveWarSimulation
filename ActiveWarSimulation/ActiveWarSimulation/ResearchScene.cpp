@@ -184,8 +184,7 @@ void ResearchScene::thisDraw()const{
 
 	//調べているユニットについての描画
 	if(m_researchUnit!=nullptr){
-		m_researchUnit->BattleObject::VDraw();
-		m_researchUnit->GetHitJudgeShape()->Draw(Vector2D(),GetColor(255,255,255),FALSE);//調べてるよってことを強調
+		m_researchUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,true,true);
 		m_researchUnit->DrawMaxMoveInfo();//最大移動距離を表示
 	}
 
@@ -193,7 +192,6 @@ void ResearchScene::thisDraw()const{
 	if(m_battleSceneData->m_operateUnit!=m_researchUnit){
 		m_battleSceneData->m_operateUnit->BattleObject::VDraw();
 		Vector2D pos=m_battleSceneData->m_operateUnit->getPos();
-		//DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
 	}
 
 

@@ -7,6 +7,7 @@
 #include<memory>
 #include<array>
 #include<string>
+#include"BGM.h"
 
 //タイトル画面のクラス
 class TitleScene:public GameScene{
@@ -50,7 +51,7 @@ protected:
 	const int m_itemFont;//選択項目のフォント
 
 	//bgm
-	const int m_bgm;
+	const Resource::BGM m_bgm;
 
 	//効果音
 	const int m_aimchangeSound;

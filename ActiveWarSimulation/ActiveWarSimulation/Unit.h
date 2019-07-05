@@ -34,6 +34,7 @@ public:
 		static unsigned int GetColor(Kind kind);
 		static unsigned int GetColor(Kind kind,int degree,int red=0,int green=0,int blue=0);//チーム色に別の色を混ぜたカラーコードを取得する
 		static bool JudgeFriend(Kind team1,Kind team2);//2つのチームが味方関係かどうかを判定する
+		static std::string GetName(Kind kind);
 	};
 	struct AIType{
 		enum Kind{
@@ -43,6 +44,7 @@ public:
 			,END
 		};
 		static Kind link(int num);
+		static std::string GetName(Kind kind);
 	};
 	struct BaseStatus{
 		std::string name;
@@ -144,8 +146,8 @@ public:
 	void DrawHPGage(Vector2D adjust=Vector2D())const;//HPゲージの描画
 	void DrawHPGage(Vector2D point,Vector2D adjust)const;//HPゲージの描画
 	void DrawFacePic(Vector2D point)const;//ユニットの顔グラフィックを用いたアイコンの描画を行う
-	void DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const;//マップ上のユニットを描画
-	void DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const;//マップ上のユニットを描画
+	void DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const;//マップ上のユニットを描画
+	void DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const;//マップ上のユニットを描画
 	float GetMoveDistance()const;//移動可能な直線距離を返す。定式化しておくとラクになるため
 	
 	//仮想関数・純粋仮想関数のオーバーライド
@@ -159,7 +161,7 @@ public:
 	//静的関数
 public:
 	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage);//モブユニットを動的生成する。
-
+	static Unit *CreateUnitFromBuilder(StringBuilder &unitdata);
 };
 
 #endif // !DEF_UNIT_H

@@ -25,7 +25,7 @@ public:
 	EdgeFactory(Vector2D buttonPos,Vector2D buttonSize,unsigned int lightcolor);
 	~EdgeFactory();
 
-	std::shared_ptr<Shape> CreateShape(Vector2D point)const;
+	std::shared_ptr<BattleObject> CreateObject(Vector2D point)const;
 };
 
 #endif // !DEF_EDGEFACTORY_H

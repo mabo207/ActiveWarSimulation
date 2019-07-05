@@ -2,13 +2,16 @@
 #include"EditActionSettings.h"
 
 #include"DxLib.h"
-#include"StageEditor.h"
 #include"EditAction.h"
 #include"ShapeFactory.h"
 #include"PosSetting.h"
+#include"SelectLevel.h"
 #include"StringBuilder.h"
+#include"FileRead.h"
+#include"CommonConstParameter.h"
 
 #include"Terrain.h"
+#include"Unit.h"
 #include"Circle.h"
 
 EditActionSettings::EditActionSettings(std::shared_ptr<EditAction> pEditAction, std::shared_ptr<BattleObject> pBattleObject,std::shared_ptr<ShapeFactory> pShapeFactory,std::shared_ptr<PosSetting> pPosSetting)
@@ -74,7 +77,7 @@ void EditActionSettings::PushScrollBar(float scrollpx,float maxX,float maxY,int 
 void EditActionSettings::PushScrollBar(Vector2D move){
 	//最大値最小値を考慮する
 	Vector2D a=m_adjust+move;
-	float maxX=2000-(float)StageEditor::mapSizeX,maxY=2000-(float)StageEditor::mapSizeY;
+	float maxX=2000-(float)CommonConstParameter::mapSizeX,maxY=2000-(float)CommonConstParameter::mapSizeY;
 	m_adjust=Vector2D(
 		a.x>=0 ? (a.x<maxX ? a.x : maxX) : 0
 		,a.y>=0 ? (a.y<maxY ? a.y : maxY) : 0
@@ -115,6 +118,16 @@ void EditActionSettings::RemoveObject(Vector2D point){
 	}
 }
 
+void EditActionSettings::ReplaceBattleObject(const std::shared_ptr<BattleObject> &obj){
+	//取り除くオブジェクトを探す
+	for(std::vector<std::shared_ptr<BattleObject>>::iterator it=m_objects.begin(),ite=m_objects.end();it!=ite;it++){
+		if(*it==m_pBattleObject){
+			*it=obj;//置き換える
+			break;
+		}
+	}
+}
+
 void EditActionSettings::SetEditObject(Vector2D point){
 	std::vector<std::shared_ptr<BattleObject>>::const_iterator it=GetMousePointedObject(point);
 	if(it!=m_objects.end()){
@@ -149,6 +162,11 @@ void EditActionSettings::UpdateMouseObjectDepth(const int keyinputright){
 	}
 }
 
+//m_objectsの初期化
+void EditActionSettings::InitObjects(){
+	m_objects.clear();
+}
+
 //制作データの書き出し
 void EditActionSettings::WriteOutStage(const char *filename)const{
 	/*
@@ -161,34 +179,76 @@ void EditActionSettings::WriteOutStage(const char *filename)const{
 	if(!ofs){
 		return;
 	}
-	//全てのオブジェクト情報を書き出し
+	//全ての非Unitオブジェクト情報を書き出し
 	for(const std::shared_ptr<BattleObject> &pObj:m_objects){
-		pObj->WriteOutObjectWholeInfo(ofs);
+		if(pObj->GetType()!=BattleObject::Type::e_unit){
+			pObj->WriteOutObjectWholeInfo(ofs);
+		}
 	}
+	//終了処理
+	ofs.close();
+}
+
+//ユニットの書き出し
+void EditActionSettings::WriteOutUnit()const{
+	/*
+	後で手編集してもいいので、最低限の体裁を整える
+	形式例
+	{(定義方法),(名前),(職業),(レベル),(位置),(チーム分け),(AI系統),(その他(無視内容)：初期化HPなど)}
+	{(definition,mob),(name,敵兵),(profession,0),(lv,1),(pos,470,600),(team,1),(ai,1,-1),(initHP,5)}
+	*/
+	//ファイルを開く
+	std::ofstream ofs(m_pSelectLevel->GetUnitListFileName().c_str(),std::ios_base::trunc);
+	if(!ofs){
+		return;
+	}
+	//全てのユニット情報を書き出し
+	for(const std::shared_ptr<BattleObject> &pObj:m_objects){
+		if(pObj->GetType()==BattleObject::Type::e_unit){
+			//definitionがmob一択なので、Unitクラス内でなくここに処理を書く。
+			const std::shared_ptr<Unit> pUnit=std::dynamic_pointer_cast<Unit>(pObj);
+			if(pUnit){
+				const Unit::BattleStatus battleStatus=pUnit->GetBattleStatus();
+				const Unit::BaseStatus baseStatus=pUnit->GetBaseStatus();
+				const Vector2D pos=pUnit->getPos();
+				ofs<<"{(definition,mob),";
+				ofs<<"(name,"<<baseStatus.name<<"),";
+				ofs<<"(profession,"<<baseStatus.profession<<"),";
+				ofs<<"(lv,"<<baseStatus.lv<<"),";
+				ofs<<"(pos,"<<(int)(pos.x)<<','<<(int)(pos.y)<<"),";
+				ofs<<"(team,"<<battleStatus.team<<"),";
+				ofs<<"(ai,"<<battleStatus.aitype<<','<<battleStatus.aiGroup<<')';
+				if(battleStatus.HP<baseStatus.maxHP){
+					//HPが減っている処理をしたなら、initHPの項目を追加
+					ofs<<",(initHP,"<<battleStatus.HP<<')';
+				}
+				ofs<<'}'<<std::endl;
+			}
+		}
+	}
+	//終了処理
+	ofs.close();
 }
 
 //ステージの読み込み
 void EditActionSettings::ReadStage(const char *filename){
-	m_objects.clear();
-	//ファイルを開きすべての文字列を書き出す
-	std::ifstream ifs(filename);
-	std::string str;//書き出し先
-	while(true){
-		char ch;
-		ch=ifs.get();
-		//ファイルの終端でwhileから脱出
-		if(ch==EOF){
-			break;
-		}
-		str.push_back(ch);
-	}
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-	StringBuilder sb(str,'\n','{','}');
+	StringBuilder sb(FileStrRead(filename),'\n','{','}');
 	for(StringBuilder &ssb:sb.m_vec){
-		std::shared_ptr<BattleObject> pb=BattleObject::CreateObject(ssb);//sb,ssbは変更される
+		const std::shared_ptr<BattleObject> pb=BattleObject::CreateObject(ssb);//sb,ssbは変更される
 		if(pb.get()!=nullptr){
 			m_objects.push_back(pb);
 		}
 	}
 }
 
+//ステージの読み込み
+void EditActionSettings::ReadUnit(){
+	StringBuilder unitlist(FileStrRead(m_pSelectLevel->GetUnitListFileName().c_str()),'\n','{','}');
+	for(StringBuilder &unitdata:unitlist.m_vec){
+		const std::shared_ptr<BattleObject> punit(Unit::CreateUnitFromBuilder(unitdata));
+		if(punit){
+			m_objects.push_back(punit);
+		}
+	}
+}

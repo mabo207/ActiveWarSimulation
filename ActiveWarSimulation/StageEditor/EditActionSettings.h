@@ -10,6 +10,7 @@ class EditAction;
 class BattleObject;
 class PosSetting;
 class ShapeFactory;
+class SelectLevel;
 
 //ステージ編集をおこなう際の「何を行うか」の設定を集約したクラス
 class EditActionSettings {
@@ -33,6 +34,7 @@ public:
 	std::shared_ptr<BattleObject> m_pBattleObject;//編集対象
 	std::shared_ptr<ShapeFactory> m_pShapeFactory;//EditPut時に置く図形
 	std::shared_ptr<PosSetting> m_pPosSetting;//位置合わせの手法
+	std::shared_ptr<SelectLevel> m_pSelectLevel;//unitlistファイルの出入力先
 
 	//関数
 protected:
@@ -70,11 +72,17 @@ public:
 	void InitEditObject();//編集行為を行う際の初期化。m_pBattleObjectとm_pOriginObjectをnullptrに。
 	const BattleObject *GetMousePointedObjectPointer(Vector2D point)const;//イテレータを返すGetMousePointedObject()をクラス外部から使えるようにした
 	void UpdateMouseObjectDepth(const int keyinputright);//m_mouseObjectDepthを更新する
+	void ReplaceBattleObject(const std::shared_ptr<BattleObject> &obj);//m_pBattleObjectをm_objectsから削除し、同じ位置にobjを挿入する
+	//m_objectsの初期化
+	void InitObjects();
 	//制作データの書き出し
 	void WriteOutStage(const char *filename)const;
+	//ユニットデータの書き出し
+	void WriteOutUnit()const;
 	//ステージの読み込み
 	void ReadStage(const char *filename);
-
+	//ユニットの読み込み
+	void ReadUnit();
 };
 
 #endif // !DEF_EDITACTIONSETTINGS_H
