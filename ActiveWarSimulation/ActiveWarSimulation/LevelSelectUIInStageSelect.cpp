@@ -1,10 +1,20 @@
 #include"LevelSelectUIInStageSelect.h"
 #include"DxLib.h"
-#include"input.h"
 #include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
 
 namespace {
+	const int levelBoxWidth=CommonConstParameter::gameResolutionX/4;
+	const int levelBoxHeight=CommonConstParameter::gameResolutionY/4-80;
+	int GetStageInfoTargetX(){
+		return StageInfoInStageSelect::boxWidth/2+10;
+	}
+	int GetStageInfoTargetY(){
+		return StageInfoInStageSelect::boxHeight/2+10;
+	}
+	const int slideInOutLevelBoxTargetX=CommonConstParameter::gameResolutionX*6/5;
+	const int slideInOutFrame=15;
+
 	const Vector2D levelBoxSize=Vector2D(400.0f,180.0f);
 	const std::array<MyPolygon,StageLevel::levelCount> levelBox={
 		MyPolygon::CreateRectangle(Vector2D(1280.0f,100.0f),levelBoxSize,Shape::Fix::e_ignore)
@@ -23,6 +33,12 @@ LevelSelectUIInStageSelect::LevelSelectUIInStageSelect(const std::weak_ptr<Contr
 )
 	:BaseUIInStageSelect(controledData)
 	,m_stageInfo(stageInfo)
+	,m_levelButtonX(slideInOutLevelBoxTargetX,CommonConstParameter::gameResolutionX-infoDrawAreaWidth/2-levelBoxWidth/2,slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
+	,m_stageInfoCenterPos(-StageInfoInStageSelect::boxWidth,GetStageInfoTargetX(),GetStageInfoTargetY(),GetStageInfoTargetY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
+	,m_levelButton{MouseButtonUI(m_levelButtonX.GetX(),90,levelBoxWidth,levelBoxHeight,-1)
+		,MouseButtonUI(m_levelButtonX.GetX(),110+levelBoxHeight,levelBoxWidth,levelBoxHeight,-1)
+		,MouseButtonUI(m_levelButtonX.GetX(),130+levelBoxHeight*2,levelBoxWidth,levelBoxHeight,-1)
+		,MouseButtonUI(m_levelButtonX.GetX(),150+levelBoxHeight*3,levelBoxWidth,levelBoxHeight,-1)}
 	,m_stageNameFont(stageNameFont)
 	,m_explainFont(explainFont)
 {}
@@ -30,6 +46,16 @@ LevelSelectUIInStageSelect::LevelSelectUIInStageSelect(const std::weak_ptr<Contr
 LevelSelectUIInStageSelect::~LevelSelectUIInStageSelect(){}
 
 BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
+	//UIの位置更新
+	m_stageInfoCenterPos.Update();
+	if(!m_levelButtonX.GetEndFlag()){
+		m_levelButtonX.Update();
+		for(MouseButtonUI &ui:m_levelButton){
+			int y;
+			ui.GetButtonInfo(nullptr,&y,nullptr,nullptr);
+			ui.WarpTo(m_levelButtonX.GetX(),y);
+		}
+	}
 	//レベル選択更新処理
 	bool levelUpdate=false;
 	bool mouseInLevelBox=false;
@@ -90,13 +116,14 @@ void LevelSelectUIInStageSelect::Draw()const{
 		SetDrawBlendMode(mode,pal);
 	}
 	//左側にステージを表示
-	m_stageInfo.DrawInfo(stageInfoCenterX,stageInfoCenterY,m_stageNameFont,m_explainFont);
+	m_stageInfo.DrawInfo(m_stageInfoCenterPos.GetX(),m_stageInfoCenterPos.GetY(),m_stageNameFont,m_explainFont);
 	//右側にレベル選択を表示
 	for(size_t i=0;i<StageLevel::levelCount;i++){
-		const int x=(int)levelBox[i].GetPosition().x,y=(int)levelBox[i].GetPosition().y;
+		int x,y;
+		m_levelButton[i].GetButtonInfo(&x,&y,nullptr,nullptr);
 		const StageLevel level=StageLevel::levelArray[i];
 		//背景の描画
-		levelBox[i].Draw(levelBox[i].GetPosition(),Vector2D(),GetColor(64,32,32),TRUE);
+		m_levelButton[i].DrawButtonRect(GetColor(64,32,32),TRUE);
 		//レベル名の描画
 		DrawStringToHandle(x+5,y+5,level.GetString().c_str(),GetColor(255,255,255),m_explainFont);
 		//ランキングデータ一覧
@@ -137,7 +164,7 @@ void LevelSelectUIInStageSelect::Draw()const{
 		const std::shared_ptr<ControledData> lock=m_controledData.lock();
 		const size_t index=lock->selectLevel.GetIndex();
 		if(index<StageLevel::levelCount){
-			levelBox[index].Draw(levelBox[index].GetPosition(),Vector2D(),GetColor(196,255,64),FALSE,5.0f);
+			m_levelButton[index].DrawButtonRect(GetColor(196,255,64),FALSE,5);
 		}
 	}
 }

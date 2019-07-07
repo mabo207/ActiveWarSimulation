@@ -4,6 +4,7 @@
 #include"BaseUIInStageSelect.h"
 #include"StageInfoInStageSelect.h"
 #include"MyPolygon.h"
+#include"input.h"
 
 //レベル選択をするUI
 class LevelSelectUIInStageSelect:public BaseUIInStageSelect{
@@ -20,6 +21,9 @@ public:
 private:
 	const StageInfoInStageSelect m_stageInfo;
 	Vector2D m_beforeFrameMousePos;//1フレーム前のマウスの位置
+	Easing m_levelButtonX;
+	PositionControl m_stageInfoCenterPos;
+	std::array<MouseButtonUI,StageLevel::levelCount> m_levelButton;
 
 	//参照しているフォント（ここで削除はしない）
 	const int m_stageNameFont;
