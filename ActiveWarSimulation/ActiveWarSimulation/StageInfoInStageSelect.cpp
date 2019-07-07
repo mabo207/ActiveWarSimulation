@@ -3,7 +3,15 @@
 #include"DxLib.h"
 #include"CommonConstParameter.h"
 
+namespace {
+	//m_mapPic‚Í‰ÁH‚³‚ê‚Ä‰æ–Ê‘S‘Ì‚Ìc‰¡‹¤‚É1/4‚Ì‘å‚«‚³‚É‚È‚Á‚Ä‚¢‚é‚±‚Æ‚ğ—p‚¢‚é
+	const int offsetLeft=10,offsetTop=10;
+}
+
 //----------------StageInfoInStageSelect--------------------
+const int StageInfoInStageSelect::boxWidth=CommonConstParameter::gameResolutionX/4;
+const int StageInfoInStageSelect::boxHeight=CommonConstParameter::gameResolutionY/4;
+
 StageInfoInStageSelect::StageInfoInStageSelect(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData)
 	:m_mapPic(mapPic)
 	,m_dirName(dirName)
@@ -21,14 +29,11 @@ StageInfoInStageSelect::~StageInfoInStageSelect(){
 }
 
 void StageInfoInStageSelect::DrawInfo(const int x,const int y,const int nameFont,const int explainFont)const{
-	//m_mapPic‚Í‰ÁH‚³‚ê‚Ä‰æ–Ê‘S‘Ì‚Ìc‰¡‹¤‚É1/4‚Ì‘å‚«‚³‚É‚È‚Á‚Ä‚¢‚é‚±‚Æ‚ğ—p‚¢‚é
-	const int offsetLeft=10,offsetTop=10;
-	const int picDX=CommonConstParameter::gameResolutionX/4,picDY=CommonConstParameter::gameResolutionY/4;
-	const int stageNameY=y+offsetTop+picDY+20;
+	const int stageNameY=y+offsetTop+boxHeight+20;
 	const int explainY=stageNameY+GetFontSizeToHandle(nameFont)+20;
 	//•`‰æ
-	DrawBox(x,y,x+offsetLeft*2+picDX,explainY+GetFontSizeToHandle(explainFont)*4+offsetTop,GetColor(32,64,32),TRUE);
+	DrawBox(x,y,x+offsetLeft*2+boxWidth,explainY+GetFontSizeToHandle(explainFont)*4+offsetTop,GetColor(32,64,32),TRUE);
 	DrawGraph(x+offsetLeft,y+offsetTop,m_mapPic,TRUE);
-	DrawStringCenterBaseToHandle(x+offsetLeft+picDX/2,stageNameY,m_titleName.c_str(),GetColor(255,255,255),nameFont,false);
-	DrawStringNewLineToHandle(x+offsetLeft,explainY,picDX,300,m_explain.c_str(),GetColor(255,255,255),explainFont,2);
+	DrawStringCenterBaseToHandle(x+offsetLeft+boxWidth/2,stageNameY,m_titleName.c_str(),GetColor(255,255,255),nameFont,false);
+	DrawStringNewLineToHandle(x+offsetLeft,explainY,boxWidth,300,m_explain.c_str(),GetColor(255,255,255),explainFont,2);
 }

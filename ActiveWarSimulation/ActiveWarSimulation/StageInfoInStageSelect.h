@@ -15,6 +15,10 @@ struct StageInfoInStageSelect{
 	ScoreRankingData::StageScoreData m_rankingVec;//ランキングデータ
 	Vector2D m_pos;//ボタンの位置
 
+	//静的変数
+	static const int boxWidth;
+	static const int boxHeight;
+
 	//関数
 	StageInfoInStageSelect(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData);
 	~StageInfoInStageSelect();
