@@ -606,21 +606,35 @@ MouseButtonUI::~MouseButtonUI(){
 	DeleteGraphEX(m_graphic);
 }
 
+bool MouseButtonUI::JudgeIn()const{
+	int mouseX,mouseY;
+	GetMousePoint(&mouseX,&mouseY);
+	return (mouseX>=m_x && mouseX<m_x+m_dx && mouseY>=m_y && mouseY<m_y+m_dy);
+}
+
 bool MouseButtonUI::JudgePressMoment()const{
-	return (mouse_get(MOUSE_INPUT_LEFT)==1 && JudgePushed());
+	return (mouse_get(MOUSE_INPUT_LEFT)==1 && JudgeIn());
 }
 
 bool MouseButtonUI::JudgePushed()const{
-	int mouseX,mouseY;
-	GetMousePoint(&mouseX,&mouseY);
-	const bool inButton=(mouseX>=m_x && mouseX<m_x+m_dx && mouseY>=m_y && mouseY<m_y+m_dy);
 	const bool push=(mouse_get(MOUSE_INPUT_LEFT)>0);
-	return (push && inButton);
+	return (push && JudgeIn());
 }
 
 void MouseButtonUI::DrawButton()const{
 	//DrawBox(m_x,m_y,m_x+m_dx,m_y+m_dy,GetColor(255,255,0),TRUE);//ƒfƒoƒbƒO—p
 	DrawGraph(m_x,m_y,m_graphic,TRUE);
+}
+
+void MouseButtonUI::DrawButtonRect(unsigned int color,int fillFlag,int lineThickness)const{
+	DrawBox(m_x,m_y,m_x+m_dx,m_y+m_dy,color,fillFlag);
+	//˜gü‚Ì•`‰æ(DrawBox()‚Í˜gü‚Ì‘¾‚³‚ÌŽw’è‚ª‚Å‚«‚È‚¢)
+	if(lineThickness>1){
+		DrawLine(m_x,m_y,m_x+m_dx,m_y,color,lineThickness);
+		DrawLine(m_x+m_dx,m_y,m_x+m_dx,m_y+m_dy,color,lineThickness);
+		DrawLine(m_x+m_dx,m_y+m_dy,m_x,m_y+m_dy,color,lineThickness);
+		DrawLine(m_x,m_y+m_dy,m_x,m_y,color,lineThickness);
+	}
 }
 
 void MouseButtonUI::GetButtonInfo(int *x,int *y,int *dx,int *dy)const{
@@ -636,4 +650,13 @@ void MouseButtonUI::GetButtonInfo(int *x,int *y,int *dx,int *dy)const{
 	if(dy!=nullptr){
 		*dy=m_dy;
 	}
+}
+
+void MouseButtonUI::WarpTo(int x,int y){
+	m_x=x;
+	m_y=y;
+}
+
+MouseButtonUI MouseButtonUI::CreateWithCenter(int x,int y,int dx,int dy,int graphic){
+	return MouseButtonUI(x-dx/2,y-dy/2,dx,dy,graphic);
 }

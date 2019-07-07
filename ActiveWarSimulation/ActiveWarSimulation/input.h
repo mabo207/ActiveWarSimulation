@@ -123,10 +123,16 @@ public:
 	MouseButtonUI(int x,int y,int dx,int dy,int graphic);
 	MouseButtonUI(int x,int y,int graphic);
 	~MouseButtonUI();
+	bool JudgeIn()const;//ボタンにマウスが乗っているかを調べる
 	bool JudgePressMoment()const;//ボタンを押した瞬間を調べる
 	bool JudgePushed()const;//ボタンを押しているかを調べる
 	void DrawButton()const;
+	void DrawButtonRect(unsigned int color,int fillFlag,int lineThickness=1)const;//m_graphicを使わずに長方形描画
 	void GetButtonInfo(int *x,int *y,int *dx,int *dy)const;
+	void WarpTo(int x,int y);
+	//静的関数
+public:
+	static MouseButtonUI CreateWithCenter(int x,int y,int dx,int dy,int graphic);//中央座標を用いてボタン作成
 };
 
 
