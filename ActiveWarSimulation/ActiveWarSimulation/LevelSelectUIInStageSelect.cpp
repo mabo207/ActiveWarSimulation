@@ -12,7 +12,7 @@ namespace {
 		,MyPolygon::CreateRectangle(Vector2D(1280.0f,500.0f),levelBoxSize,Shape::Fix::e_ignore)
 		,MyPolygon::CreateRectangle(Vector2D(1280.0f,700.0f),levelBoxSize,Shape::Fix::e_ignore)
 	};
-	const int stageInfoX=400,stageInfoY=300;
+	const int stageInfoCenterX=CommonConstParameter::gameResolutionX/4,stageInfoCenterY=CommonConstParameter::gameResolutionY/2;
 }
 
 //-------------------LevelSelectUIInStageSelect----------------------
@@ -90,7 +90,7 @@ void LevelSelectUIInStageSelect::Draw()const{
 		SetDrawBlendMode(mode,pal);
 	}
 	//左側にステージを表示
-	m_stageInfo.DrawInfo(stageInfoX,stageInfoY,m_stageNameFont,m_explainFont);
+	m_stageInfo.DrawInfo(stageInfoCenterX,stageInfoCenterY,m_stageNameFont,m_explainFont);
 	//右側にレベル選択を表示
 	for(size_t i=0;i<StageLevel::levelCount;i++){
 		const int x=(int)levelBox[i].GetPosition().x,y=(int)levelBox[i].GetPosition().y;

@@ -4,6 +4,7 @@
 #include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
 
+//----------------------StageSelectUIInStageSelect-----------------------
 StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData
 	,const std::vector<StageInfoInStageSelect> &stageInfoVec
 	,int stageNameFont
@@ -87,11 +88,15 @@ void StageSelectUIInStageSelect::Draw()const{
 		//選択しているステージの表示と場所の強調
 		const std::shared_ptr<ControledData> lock=m_controledData.lock();
 		if(lock->stageIndex<m_stageInfoVec.size()){
+			const size_t selectIndex=lock->stageIndex;
 			//場所の協調
-			const Vector2D pos=m_stageInfoVec[lock->stageIndex].m_pos;
+			const Vector2D pos=m_stageInfoVec[selectIndex].m_pos;
 			DrawCircleAA(pos.x,pos.y,30,10,GetColor(255,255,255),TRUE);
-			//ステージ情報の描画
-			m_stageInfoVec[lock->stageIndex].DrawInfo(CommonConstParameter::gameResolutionX*3/4-20,300,m_stageNameFont,m_explainFont);
+			//ステージ情報の描画(選択ステージの前後各2つくらいは描画する)
+			const size_t displayOneSideInfoCount=2;//片方に余分にいくつ表示するか
+			const size_t startIndex=(selectIndex<displayOneSideInfoCount)?0:selectIndex-displayOneSideInfoCount;
+			const size_t endIndex=(selectIndex+displayOneSideInfoCount<m_stageInfoVec.size())?selectIndex:m_stageInfoVec.size()-1;
+			m_stageInfoVec[selectIndex].DrawInfo(CommonConstParameter::gameResolutionX-infoDrawAreaWidth/2,CommonConstParameter::gameResolutionY/2,m_stageNameFont,m_explainFont);
 		}
 	}
 }

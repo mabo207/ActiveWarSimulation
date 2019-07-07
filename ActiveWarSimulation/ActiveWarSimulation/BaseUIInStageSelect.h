@@ -31,6 +31,8 @@ public:
 	virtual UpdateResult Update()=0;
 	virtual void Draw()const=0;//UI‚Ì•\¦
 
+	static const int infoDrawAreaWidth;//î•ñ•`‰æ‚Å‚«‚é‰E‘¤‚Ì—Ìˆæ‚Ì‰¡•(‘fŞ‚É‚æ‚Á‚ÄŒˆ‚Ü‚é‚Ì‚ÅA‘fŞ‚ğŒ©‚Ä“ü—Í)
+
 protected:
 	BaseUIInStageSelect(const std::weak_ptr<ControledData> &controledData);
 

@@ -22,7 +22,7 @@ struct StageInfoInStageSelect{
 	//関数
 	StageInfoInStageSelect(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData);
 	~StageInfoInStageSelect();
-	void DrawInfo(const int x,const int y,const int nameFont,const int explainFont)const;//ステージ名とマップ絵、説明文を描画する
+	void DrawInfo(const int centerX,const int centerY,const int nameFont,const int explainFont)const;//ステージ名とマップ絵、説明文を描画する
 };
 
 
