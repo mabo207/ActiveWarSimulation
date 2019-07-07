@@ -44,6 +44,7 @@ StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<Contr
 	,m_downButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,CommonConstParameter::gameResolutionY-buttonHeight,infoDrawAreaWidth,buttonHeight,LoadGraphEX((FilePath::graphicDir+"countDown.png").c_str()))
 	,m_selectStageButton(GetTargetX()-StageInfoInStageSelect::boxWidth/2,GetTargetY()-StageInfoInStageSelect::boxHeight/2,StageInfoInStageSelect::boxWidth,StageInfoInStageSelect::boxHeight,-1)
 	,m_selectStagePos(GetSlideInOutX(),GetTargetX(),GetTargetY(),GetTargetY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,9.0)//最初は右から入ってくるような演出
+	,m_afterDicide(false)
 {}
 
 StageSelectUIInStageSelect::~StageSelectUIInStageSelect(){}
@@ -57,52 +58,59 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 		//描画位置更新
 		m_selectStagePos.Update();
 		if(m_selectStagePos.GetEndFlag()){
-			//描画位置の移動が終わったら、m_beforeSelectStageIndexを今のステージに合わせておく
-			m_beforeSelectStageIndex=m_controledData.lock()->stageIndex;
-		}
-		//選択ステージの更新
-		const size_t stageNum=m_stageInfoVec.size();
-		const std::shared_ptr<ControledData> lock=m_controledData.lock();
-		const size_t beforeIndex=lock->stageIndex;//効果音再生の可否判定に用いる
-		//更新処理
-		if(stageNum>0){
-			//十字キーでの切り替え
-			if(keyboard_get(KEY_INPUT_UP)==1 || m_upButton.JudgePressMoment()){
-				lock->stageIndex=(lock->stageIndex+stageNum-1)%stageNum;
-			} else if(keyboard_get(KEY_INPUT_DOWN)==1 || m_downButton.JudgePressMoment()){
-				lock->stageIndex=(lock->stageIndex+1)%stageNum;
+			if(!m_afterDicide){
+				//描画位置の移動が終わったら、m_beforeSelectStageIndexを今のステージに合わせておく
+				m_beforeSelectStageIndex=m_controledData.lock()->stageIndex;
 			} else{
-				//マウスでの切り替え
-				const float circleSize=30.0f;//当たり判定の円の大きさ
-				for(size_t i=0;i<stageNum;i++){
-					if((m_stageInfoVec[i].m_pos-mousePos).sqSize()<=circleSize*circleSize){
-						if(mouseMoveFlag){
-							//マウスを一定距離以上動かした場合のみ更新
-							lock->stageIndex=i;
+				//項目のスライドアウトが終わった場合、レベルセレクトに進ませる
+				return UpdateResult::e_gotoLevelSelect;
+			}
+		}
+		if(!m_afterDicide){
+			//選択ステージの更新
+			const size_t stageNum=m_stageInfoVec.size();
+			const std::shared_ptr<ControledData> lock=m_controledData.lock();
+			const size_t beforeIndex=lock->stageIndex;//効果音再生の可否判定に用いる
+			//更新処理
+			if(stageNum>0){
+				//十字キーでの切り替え
+				if(keyboard_get(KEY_INPUT_UP)==1 || m_upButton.JudgePressMoment()){
+					lock->stageIndex=(lock->stageIndex+stageNum-1)%stageNum;
+				} else if(keyboard_get(KEY_INPUT_DOWN)==1 || m_downButton.JudgePressMoment()){
+					lock->stageIndex=(lock->stageIndex+1)%stageNum;
+				} else{
+					//マウスでの切り替え
+					const float circleSize=30.0f;//当たり判定の円の大きさ
+					for(size_t i=0;i<stageNum;i++){
+						if((m_stageInfoVec[i].m_pos-mousePos).sqSize()<=circleSize*circleSize){
+							if(mouseMoveFlag){
+								//マウスを一定距離以上動かした場合のみ更新
+								lock->stageIndex=i;
+							}
+							mouseInStage=(lock->stageIndex==i);//マウスが指しているステージと現在選択しているステージが一致しているか
+							break;
 						}
-						mouseInStage=(lock->stageIndex==i);//マウスが指しているステージと現在選択しているステージが一致しているか
-						break;
 					}
 				}
 			}
-		}
-		//更新結果について記録
-		indexUpdate=(lock->stageIndex!=beforeIndex);//indexが更新されているならtrueに
-		if(indexUpdate){
-			//変更があれば効果音再生
-			PlaySoundMem(GeneralPurposeResource::selectSound,DX_PLAYTYPE_BACK,TRUE);
-			//m_beforeSelectStageIndexの更新
-			m_beforeSelectStageIndex=beforeIndex;
-			//m_selectStagePosの再設定
-			const int gapIndex=lock->stageIndex-beforeIndex;
-			const int gapDY=gapIndex*GetInfoDY();
-			const int selectStageNowY=m_selectStagePos.GetY()+gapDY;
-			m_selectStagePos=PositionControl(m_selectStagePos.GetX(),GetTargetX(),selectStageNowY,GetTargetY(),selectAnimationFrame,Easing::TYPE_OUT,Easing::FUNCTION_EXPO,9.0);
+			//更新結果について記録
+			indexUpdate=(lock->stageIndex!=beforeIndex);//indexが更新されているならtrueに
+			if(indexUpdate){
+				//変更があれば効果音再生
+				PlaySoundMem(GeneralPurposeResource::selectSound,DX_PLAYTYPE_BACK,TRUE);
+				//m_beforeSelectStageIndexの更新
+				m_beforeSelectStageIndex=beforeIndex;
+				//m_selectStagePosの再設定
+				const int gapIndex=lock->stageIndex-beforeIndex;
+				const int gapDY=gapIndex*GetInfoDY();
+				const int selectStageNowY=m_selectStagePos.GetY()+gapDY;
+				m_selectStagePos=PositionControl(m_selectStagePos.GetX(),GetTargetX(),selectStageNowY,GetTargetY(),selectAnimationFrame,Easing::TYPE_OUT,Easing::FUNCTION_EXPO,9.0);
+			}
 		}
 	}
 	//その他の入力処理
-	if(!indexUpdate){
-		//以下の遷移は選択ステージの変更が行われていない時のみできる
+	if(!indexUpdate && !m_afterDicide){
+		//以下の遷移は選択ステージの変更が行われていない時かつステージ決定前のみで可能
 		//ステージの決定
 		if(keyboard_get(KEY_INPUT_Z)==1
 			|| (mouse_get(MOUSE_INPUT_LEFT)==1 && mouseInStage)
@@ -110,8 +118,9 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 		{
 			//決定音を出す
 			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
-			//遷移
-			return UpdateResult::e_gotoLevelSelect;
+			//項目をスライドアウトさせる
+			m_afterDicide=true;
+			m_selectStagePos=PositionControl(m_selectStagePos.GetX(),GetSlideInOutX(),m_selectStagePos.GetY(),m_selectStagePos.GetendY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,9.0);
 		}
 		//戻る
 		if(keyboard_get(KEY_INPUT_X)==1 || mouse_get(MOUSE_INPUT_RIGHT)==1){
