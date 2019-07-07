@@ -32,11 +32,11 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 		//更新処理
 		if(stageNum>0){
 			//十字キーでの切り替え
-			if(keyboard_get(KEY_INPUT_LEFT)==1){
+			if(keyboard_get(KEY_INPUT_UP)==1){
 				lock->stageIndex=(lock->stageIndex+stageNum-1)%stageNum;
 				//m_drawStageInfoの更新
 				m_drawStageInfo=true;
-			} else if(keyboard_get(KEY_INPUT_RIGHT)==1){
+			} else if(keyboard_get(KEY_INPUT_DOWN)==1){
 				lock->stageIndex=(lock->stageIndex+1)%stageNum;
 				//m_drawStageInfoの更新
 				m_drawStageInfo=true;
@@ -105,18 +105,7 @@ void StageSelectUIInStageSelect::Draw()const{
 			DrawCircleAA(pos.x,pos.y,30,10,GetColor(255,255,255),TRUE);
 			//ステージ情報の描画
 			if(m_drawStageInfo){
-				int picX,picY;
-				if((int)pos.x<CommonConstParameter::gameResolutionX/2){
-					picX=CommonConstParameter::gameResolutionX*5/8;
-				} else{
-					picX=CommonConstParameter::gameResolutionX/8;
-				}
-				if((int)pos.y<CommonConstParameter::gameResolutionY/2){
-					picY=CommonConstParameter::gameResolutionY/2;
-				} else{
-					picY=20;
-				}
-				m_stageInfoVec[lock->stageIndex].DrawInfo(picX,picY,m_stageNameFont,m_explainFont);
+				m_stageInfoVec[lock->stageIndex].DrawInfo(CommonConstParameter::gameResolutionX*3/4-20,300,m_stageNameFont,m_explainFont);
 			}
 		}
 	}
