@@ -623,6 +623,10 @@ void MouseButtonUI::DrawButton()const{
 	DrawGraph(m_x,m_y,m_graphic,TRUE);
 }
 
+void MouseButtonUI::DrawButtonRect(unsigned int color,int fillFlag)const{
+	DrawBox(m_x,m_y,m_x+m_dx,m_y+m_dy,color,fillFlag);
+}
+
 void MouseButtonUI::GetButtonInfo(int *x,int *y,int *dx,int *dy)const{
 	if(x!=nullptr){
 		*x=m_x;
@@ -636,4 +640,13 @@ void MouseButtonUI::GetButtonInfo(int *x,int *y,int *dx,int *dy)const{
 	if(dy!=nullptr){
 		*dy=m_dy;
 	}
+}
+
+void MouseButtonUI::WarpTo(int x,int y){
+	m_x=x;
+	m_y=y;
+}
+
+MouseButtonUI MouseButtonUI::CreateButtonWithCenter(int x,int y,int dx,int dy,int graphic){
+	return MouseButtonUI(x-dx/2,y-dy/2,dx,dy,graphic);
 }
