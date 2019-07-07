@@ -9,6 +9,8 @@ namespace {
 	const size_t displayOneSideInfoCount=2;//片方に余分にいくつ表示するか
 	const int offsetY=20;//ステージ情報描画UI間の隙間
 	const int buttonHeight=80;//ボタンの高さ(非同期読み込みを想定すると、画像から高さを求めるのが困難)
+	const int cutInFrame=10;//項目が右側に入ってくるまでのアニメーションの時間
+	const int selectAnimationFrame=30;//ステージを変更した時のアニメーションの時間
 	//初期化順によってはうまく処理されない可能性のあるパラメータを全て関数化する
 	//1つのステージ情報描画で用いるy方向の幅
 	int GetInfoDY(){
@@ -37,7 +39,7 @@ StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<Contr
 	,m_upButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,0,infoDrawAreaWidth,buttonHeight,LoadGraphEX((FilePath::graphicDir+"countUp.png").c_str()))
 	,m_downButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,CommonConstParameter::gameResolutionY-buttonHeight,infoDrawAreaWidth,buttonHeight,LoadGraphEX((FilePath::graphicDir+"countDown.png").c_str()))
 	,m_selectStageButton(GetTargetX()-StageInfoInStageSelect::boxWidth/2,GetTargetY()-StageInfoInStageSelect::boxHeight/2,StageInfoInStageSelect::boxWidth,StageInfoInStageSelect::boxHeight,-1)
-	,m_selectStagePos(GetTargetX(),GetTargetY(),30,Easing::TYPE_OUT,Easing::FUNCTION_EXPO,9.0)
+	,m_selectStagePos(GetTargetX()+infoDrawAreaWidth,GetTargetX(),GetTargetY(),GetTargetY(),cutInFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,9.0)//最初は右から入ってくるような演出
 {}
 
 StageSelectUIInStageSelect::~StageSelectUIInStageSelect(){}
@@ -91,7 +93,7 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 			const int gapIndex=lock->stageIndex-beforeIndex;
 			const int gapDY=gapIndex*GetInfoDY();
 			const int selectStageNowY=m_selectStagePos.GetY()+gapDY;
-			m_selectStagePos=PositionControl(m_selectStagePos.GetX(),GetTargetX(),selectStageNowY,GetTargetY(),m_selectStagePos.GetMaxFrame(),m_selectStagePos.GetType(),m_selectStagePos.GetFunction(),m_selectStagePos.GetDegree());
+			m_selectStagePos=PositionControl(m_selectStagePos.GetX(),GetTargetX(),selectStageNowY,GetTargetY(),selectAnimationFrame,Easing::TYPE_OUT,Easing::FUNCTION_EXPO,9.0);
 		}
 	}
 	//その他の入力処理
