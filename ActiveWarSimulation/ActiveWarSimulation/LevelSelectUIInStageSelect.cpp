@@ -4,13 +4,11 @@
 #include"CommonConstParameter.h"
 
 namespace {
-	const int levelBoxWidth=CommonConstParameter::gameResolutionX/4;
-	const int levelBoxHeight=CommonConstParameter::gameResolutionY/4-80;
 	int GetStageInfoTargetX(){
-		return StageInfoInStageSelect::boxWidth/2+10;
+		return StageInfoInStageSelect::stageBoxWidth/2+10;
 	}
 	int GetStageInfoTargetY(){
-		return StageInfoInStageSelect::boxHeight/2+10;
+		return StageInfoInStageSelect::stageBoxHeight/2+10;
 	}
 	const int slideInOutLevelBoxTargetX=CommonConstParameter::gameResolutionX*6/5;
 	const int slideInOutFrame=15;
@@ -24,12 +22,12 @@ LevelSelectUIInStageSelect::LevelSelectUIInStageSelect(const std::weak_ptr<Contr
 )
 	:BaseUIInStageSelect(controledData)
 	,m_stageInfo(stageInfo)
-	,m_levelButtonX(slideInOutLevelBoxTargetX,CommonConstParameter::gameResolutionX-infoDrawAreaWidth/2-levelBoxWidth/2,slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
-	,m_stageInfoCenterPos(-StageInfoInStageSelect::boxWidth,GetStageInfoTargetX(),GetStageInfoTargetY(),GetStageInfoTargetY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
-	,m_levelButton{MouseButtonUI(m_levelButtonX.GetX(),90,levelBoxWidth,levelBoxHeight,-1)
-		,MouseButtonUI(m_levelButtonX.GetX(),110+levelBoxHeight,levelBoxWidth,levelBoxHeight,-1)
-		,MouseButtonUI(m_levelButtonX.GetX(),130+levelBoxHeight*2,levelBoxWidth,levelBoxHeight,-1)
-		,MouseButtonUI(m_levelButtonX.GetX(),150+levelBoxHeight*3,levelBoxWidth,levelBoxHeight,-1)}
+	,m_levelButtonX(slideInOutLevelBoxTargetX,CommonConstParameter::gameResolutionX-infoDrawAreaWidth/2-StageInfoInStageSelect::levelBoxWidth/2,slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
+	,m_stageInfoCenterPos(-StageInfoInStageSelect::stageBoxWidth,GetStageInfoTargetX(),GetStageInfoTargetY(),GetStageInfoTargetY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
+	,m_levelButton{MouseButtonUI(m_levelButtonX.GetX(),90,StageInfoInStageSelect::StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)
+		,MouseButtonUI(m_levelButtonX.GetX(),110+StageInfoInStageSelect::levelBoxHeight,StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)
+		,MouseButtonUI(m_levelButtonX.GetX(),130+StageInfoInStageSelect::levelBoxHeight*2,StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)
+		,MouseButtonUI(m_levelButtonX.GetX(),150+StageInfoInStageSelect::levelBoxHeight*3,StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)}
 	,m_stageNameFont(stageNameFont)
 	,m_explainFont(explainFont)
 {}
@@ -50,6 +48,7 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 	//レベル選択更新処理
 	bool levelUpdate=false;
 	bool mouseInLevelBox=false;
+	bool levelBoxTap=false;
 	const Vector2D mousePos=GetMousePointVector2D();//現在のフレームのマウスの位置
 	if(!m_controledData.expired()){
 		const std::shared_ptr<ControledData> lock=m_controledData.lock();
@@ -107,48 +106,14 @@ void LevelSelectUIInStageSelect::Draw()const{
 		SetDrawBlendMode(mode,pal);
 	}
 	//左側にステージを表示
-	m_stageInfo.DrawInfo(m_stageInfoCenterPos.GetX(),m_stageInfoCenterPos.GetY(),m_stageNameFont,m_explainFont);
+	m_stageInfo.DrawStageInfo(m_stageInfoCenterPos.GetX(),m_stageInfoCenterPos.GetY(),m_stageNameFont,m_explainFont);
 	//右側にレベル選択を表示
 	for(size_t i=0;i<StageLevel::levelCount;i++){
 		int x,y;
 		m_levelButton[i].GetButtonInfo(&x,&y,nullptr,nullptr);
 		const StageLevel level=StageLevel::levelArray[i];
-		//背景の描画
-		m_levelButton[i].DrawButtonRect(GetColor(64,32,32),TRUE);
-		//レベル名の描画
-		DrawStringToHandle(x+5,y+5,level.GetString().c_str(),GetColor(255,255,255),m_explainFont);
-		//ランキングデータ一覧
-		const std::map<StageLevel,ScoreRankingData::LevelData>::const_iterator itLevel=m_stageInfo.m_rankingVec.levelMap.find(level);
-		size_t counter=0;
-		const size_t rankingSize=5;
-		const int nameX=10,scoreX=350;
-		int rankingY=40;
-		if(itLevel!=m_stageInfo.m_rankingVec.levelMap.end()){
-			//ランキングデータが存在する場合はデータを描画
-			std::set<ScoreRankingData::PlayerData>::const_iterator itPlayer;
-			for(const ScoreRankingData::PlayerData &data:itLevel->second.playerDataSet){
-				//名前
-				DrawStringToHandle(x+nameX,y+rankingY,data.name.c_str(),GetColor(255,255,255),m_explainFont);
-				//点数
-				DrawStringRightJustifiedToHandle(x+scoreX,y+rankingY,to_string_0d(data.score,7),GetColor(255,255,255),m_explainFont);
-				//位置ずらし
-				rankingY+=explainFontSize;
-				//個数を増やして、rankingSize個以上の描画になったら描画を打ち切る
-				counter++;
-				if(counter>=rankingSize){
-					break;
-				}
-			}
-		}
-		for(;counter<rankingSize;counter++){
-			//足りない分は-----を描画
-			//名前
-			DrawStringToHandle(x+nameX,y+rankingY,"----------",GetColor(255,255,255),m_explainFont);
-			//点数
-			DrawStringRightJustifiedToHandle(x+scoreX,y+rankingY,"-------",GetColor(255,255,255),m_explainFont);
-			//位置ずらし
-			rankingY+=explainFontSize;
-		}
+		m_stageInfo.DrawLevelInfo(level,x,y,m_explainFont,m_explainFont);
+
 	}
 	//選択しているレベルを強調
 	if(!m_controledData.expired()){

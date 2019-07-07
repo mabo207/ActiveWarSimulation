@@ -16,13 +16,16 @@ struct StageInfoInStageSelect{
 	Vector2D m_pos;//ボタンの位置
 
 	//静的変数
-	static const int boxWidth;
-	static const int boxHeight;
+	static const int stageBoxWidth;
+	static const int stageBoxHeight;
+	static const int levelBoxWidth;
+	static const int levelBoxHeight;
 
 	//関数
 	StageInfoInStageSelect(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData);
 	~StageInfoInStageSelect();
-	void DrawInfo(const int centerX,const int centerY,const int nameFont,const int explainFont)const;//ステージ名とマップ絵、説明文を描画する
+	void DrawStageInfo(const int centerX,const int centerY,const int nameFont,const int explainFont)const;//ステージ名とマップ絵、説明文を描画する
+	void DrawLevelInfo(const StageLevel level,const int x,const int y,const int levelNameFont,const int rankingFont)const;//指定されたレベルについて、レベル文字列とランキングを表示
 };
 
 

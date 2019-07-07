@@ -150,7 +150,7 @@ void StageSelectScene::Draw()const{
 	//ステージ情報とレベル情報の描画(ステージが選択されている時のみ描画可能)
 	if(m_uiControledData->stageIndex<m_stageInfoVec.size()){
 		//ステージ情報の描画
-		//m_stageInfoVec[m_uiControledData->stageIndex].DrawInfo(m_uiControledData->stageInfoPos.GetX(),m_uiControledData->stageInfoPos.GetY(),m_stageNameFont,m_explainFont);
+		//m_stageInfoVec[m_uiControledData->stageIndex].DrawStageInfo(m_uiControledData->stageInfoPos.GetX(),m_uiControledData->stageInfoPos.GetY(),m_stageNameFont,m_explainFont);
 		//レベル情報の描画
 
 	}

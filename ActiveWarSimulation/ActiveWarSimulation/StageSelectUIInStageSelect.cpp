@@ -14,7 +14,7 @@ namespace {
 	//初期化順によってはうまく処理されない可能性のあるパラメータを全て関数化する
 	//1つのステージ情報描画で用いるy方向の幅
 	int GetInfoDY(){
-		return StageInfoInStageSelect::boxHeight+offsetY;
+		return StageInfoInStageSelect::stageBoxHeight+offsetY;
 	}
 	//右側の移動目標位置
 	int GetTargetX(){
@@ -42,7 +42,7 @@ StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<Contr
 	,m_explainFont(explainFont)
 	,m_upButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,0,infoDrawAreaWidth,buttonHeight,LoadGraphEX((FilePath::graphicDir+"countUp.png").c_str()))
 	,m_downButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,CommonConstParameter::gameResolutionY-buttonHeight,infoDrawAreaWidth,buttonHeight,LoadGraphEX((FilePath::graphicDir+"countDown.png").c_str()))
-	,m_selectStageButton(GetTargetX()-StageInfoInStageSelect::boxWidth/2,GetTargetY()-StageInfoInStageSelect::boxHeight/2,StageInfoInStageSelect::boxWidth,StageInfoInStageSelect::boxHeight,-1)
+	,m_selectStageButton(GetTargetX()-StageInfoInStageSelect::stageBoxWidth/2,GetTargetY()-StageInfoInStageSelect::stageBoxHeight/2,StageInfoInStageSelect::stageBoxWidth,StageInfoInStageSelect::stageBoxHeight,-1)
 	,m_selectStagePos(GetSlideInOutX(),GetTargetX(),GetTargetY(),GetTargetY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,9.0)//最初は右から入ってくるような演出
 	,m_afterDicide(false)
 {}
@@ -172,13 +172,13 @@ void StageSelectUIInStageSelect::Draw()const{
 				const int centerY=m_selectStagePos.GetY()+gap*GetInfoDY();
 				if(i==selectIndex){
 					//選択しているステージなら、普通に描画
-					m_stageInfoVec[i].DrawInfo(centerX,centerY,m_stageNameFont,m_explainFont);
+					m_stageInfoVec[i].DrawStageInfo(centerX,centerY,m_stageNameFont,m_explainFont);
 				} else{
 					//選択していないステージなら、目立たないように描画
 					int mode,pal;
 					GetDrawBlendMode(&mode,&pal);
 					SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
-					m_stageInfoVec[i].DrawInfo(centerX,centerY,m_stageNameFont,m_explainFont);
+					m_stageInfoVec[i].DrawStageInfo(centerX,centerY,m_stageNameFont,m_explainFont);
 					SetDrawBlendMode(mode,pal);
 				}
 			}
