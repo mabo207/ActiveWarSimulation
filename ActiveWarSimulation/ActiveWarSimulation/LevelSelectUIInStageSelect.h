@@ -3,13 +3,12 @@
 
 #include"BaseUIInStageSelect.h"
 #include"StageInfoInStageSelect.h"
-#include"MyPolygon.h"
-#include"input.h"
 
 //ƒŒƒxƒ‹‘I‘ð‚ð‚·‚éUI
 class LevelSelectUIInStageSelect:public BaseUIInStageSelect{
 public:
 	LevelSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData
+		,const MouseButtonUI &backButton
 		,const StageInfoInStageSelect &stageInfo
 		,int stageNameFont
 		,int explainFont

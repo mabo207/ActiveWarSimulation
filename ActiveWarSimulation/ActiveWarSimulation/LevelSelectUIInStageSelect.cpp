@@ -17,11 +17,12 @@ namespace {
 
 //-------------------LevelSelectUIInStageSelect----------------------
 LevelSelectUIInStageSelect::LevelSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData
+	,const MouseButtonUI &backButton
 	,const StageInfoInStageSelect &stageInfo
 	,int stageNameFont
 	,int explainFont
 )
-	:BaseUIInStageSelect(controledData)
+	:BaseUIInStageSelect(controledData,backButton)
 	,m_stageInfo(stageInfo)
 	,m_levelButtonX(slideInOutLevelBoxTargetX,CommonConstParameter::gameResolutionX-infoDrawAreaWidth/2-StageInfoInStageSelect::levelBoxWidth/2,slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
 	,m_stageInfoCenterPos(-StageInfoInStageSelect::stageBoxWidth,GetStageInfoTargetX(),GetStageInfoTargetY(),GetStageInfoTargetY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
@@ -91,7 +92,7 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 				PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 				//決定後の状態にする(バトルへ進む)
 				BecomeAfterTransitionAction(UpdateResult::e_gotoBattle);
-			} else if(keyboard_get(KEY_INPUT_X)==1 || mouse_get(MOUSE_INPUT_RIGHT)==1){
+			} else if(keyboard_get(KEY_INPUT_X)==1 || mouse_get(MOUSE_INPUT_RIGHT)==1 || m_backButton.JudgePressMoment()){
 				//効果音を鳴らす
 				PlaySoundMem(GeneralPurposeResource::cancelSound,DX_PLAYTYPE_BACK,TRUE);
 				//決定後の状態にする(ステージセレクトに戻る)

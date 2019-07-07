@@ -13,6 +13,13 @@
 #include"StageSelectUIInStageSelect.h"
 #include"LevelSelectUIInStageSelect.h"
 
+namespace {
+	const int backButtonWidth=80;
+	const int backButtonHeight=80;
+	const int backButtonX=40;
+	const int backButtonY=CommonConstParameter::gameResolutionY-backButtonX-backButtonHeight;
+}
+
 //----------------------StageSelectScene------------------
 std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateIncompleteScene()const{
 	return std::shared_ptr<GameScene>(new StageSelectScene());
@@ -21,6 +28,7 @@ std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateInco
 StageSelectScene::StageSelectScene()
 	:m_nextSceneName(NextSceneName::e_title)
 	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/stageSelectBack.png"))
+	,m_backButton(backButtonX,backButtonY,backButtonWidth,backButtonHeight,LoadGraphEX(FilePath::graphicDir+"backButton.png"))
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 	,m_uiControledData(new BaseUIInStageSelect::ControledData(0,StageLevel::e_easy))
@@ -90,7 +98,7 @@ void StageSelectScene::InitCompletely(){
 		}
 	}
 	//UIの作成
-	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec,m_stageNameFont,m_explainFont));
+	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont));
 }
 
 void StageSelectScene::Activate(){
@@ -113,10 +121,10 @@ int StageSelectScene::Calculate(){
 		return -1;
 	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoStageSelect){
 		//ステージセレクトにUI遷移
-		m_ui=std::shared_ptr<BaseUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_stageInfoVec,m_stageNameFont,m_explainFont));
+		m_ui=std::shared_ptr<BaseUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont));
 	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoLevelSelect){
 		//レベルセレクトにUI遷移
-		m_ui=std::shared_ptr<BaseUIInStageSelect>(new LevelSelectUIInStageSelect(m_uiControledData,m_stageInfoVec[m_uiControledData->stageIndex],m_stageNameFont,m_explainFont));
+		m_ui=std::shared_ptr<BaseUIInStageSelect>(new LevelSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec[m_uiControledData->stageIndex],m_stageNameFont,m_explainFont));
 	}
 
 	return 0;
@@ -156,6 +164,8 @@ void StageSelectScene::Draw()const{
 	}
 	//UIの描画
 	m_ui->Draw();
+	//戻るボタンの描画
+	m_backButton.DrawButton();
 }
 
 std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{

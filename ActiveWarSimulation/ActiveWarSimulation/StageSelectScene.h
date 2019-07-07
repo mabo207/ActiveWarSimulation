@@ -35,8 +35,13 @@ protected:
 	std::shared_ptr<BaseUIInStageSelect> m_ui;//現在のUI
 	std::shared_ptr<BaseUIInStageSelect::ControledData> m_uiControledData;//UIが管理するデータ
 
-	//グラフィック等
+	//画像
 	const int m_backPic;
+
+	//ボタン
+	const MouseButtonUI m_backButton;
+
+	//フォント
 	const int m_stageNameFont;
 	const int m_explainFont;
 	

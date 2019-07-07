@@ -3,12 +3,12 @@
 
 #include"BaseUIInStageSelect.h"
 #include"StageInfoInStageSelect.h"
-#include"input.h"
 #include"ToolsLib.h"
 
 class StageSelectUIInStageSelect:public BaseUIInStageSelect{
 public:
 	StageSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData
+		,const MouseButtonUI &backButton
 		,const std::vector<StageInfoInStageSelect> &stageInfoVec
 		,int stageNameFont
 		,int explainFont

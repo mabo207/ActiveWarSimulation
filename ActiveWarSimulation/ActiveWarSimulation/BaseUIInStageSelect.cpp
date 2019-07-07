@@ -10,8 +10,9 @@ BaseUIInStageSelect::ControledData::ControledData(size_t i_stageIndex,StageLevel
 	,levelInfoPos()
 {}
 
-BaseUIInStageSelect::BaseUIInStageSelect(const std::weak_ptr<ControledData> &controledData)
+BaseUIInStageSelect::BaseUIInStageSelect(const std::weak_ptr<ControledData> &controledData,const MouseButtonUI &backButton)
 	:m_controledData(controledData)
+	,m_backButton(backButton)
 {}
 
 BaseUIInStageSelect::~BaseUIInStageSelect(){}

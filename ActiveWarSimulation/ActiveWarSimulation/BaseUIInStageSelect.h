@@ -4,6 +4,7 @@
 #include<memory>
 #include"StageLevel.h"
 #include"ToolsLib.h"
+#include"input.h"
 
 //バトルマップ選択場面のUIの基底クラス
 class BaseUIInStageSelect{
@@ -34,9 +35,10 @@ public:
 	static const int infoDrawAreaWidth;//情報描画できる右側の領域の横幅(素材によって決まるので、素材を見て入力)
 
 protected:
-	BaseUIInStageSelect(const std::weak_ptr<ControledData> &controledData);
+	BaseUIInStageSelect(const std::weak_ptr<ControledData> &controledData,const MouseButtonUI &backButton);
 
 	const std::weak_ptr<ControledData> m_controledData;
+	const MouseButtonUI& m_backButton;
 };
 
 #endif // !DEF_BASEUIINSTAGESELECT_H

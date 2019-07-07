@@ -31,17 +31,18 @@ namespace {
 
 //----------------------StageSelectUIInStageSelect-----------------------
 StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData
+	,const MouseButtonUI &backButton
 	,const std::vector<StageInfoInStageSelect> &stageInfoVec
 	,int stageNameFont
 	,int explainFont
 )
-	:BaseUIInStageSelect(controledData)
+	:BaseUIInStageSelect(controledData,backButton)
 	,m_beforeFrameMousePos(GetMousePointVector2D())
 	,m_stageInfoVec(stageInfoVec)
 	,m_stageNameFont(stageNameFont)
 	,m_explainFont(explainFont)
-	,m_upButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,0,infoDrawAreaWidth,buttonHeight,LoadGraphEX((FilePath::graphicDir+"countUp.png").c_str()))
-	,m_downButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,CommonConstParameter::gameResolutionY-buttonHeight,infoDrawAreaWidth,buttonHeight,LoadGraphEX((FilePath::graphicDir+"countDown.png").c_str()))
+	,m_upButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,0,infoDrawAreaWidth,buttonHeight,LoadGraphEX(FilePath::graphicDir+"countUp.png"))
+	,m_downButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,CommonConstParameter::gameResolutionY-buttonHeight,infoDrawAreaWidth,buttonHeight,LoadGraphEX(FilePath::graphicDir+"countDown.png"))
 	,m_selectStageButton(GetTargetX()-StageInfoInStageSelect::stageBoxWidth/2,GetTargetY()-StageInfoInStageSelect::stageBoxHeight/2,StageInfoInStageSelect::stageBoxWidth,StageInfoInStageSelect::stageBoxHeight,-1)
 	,m_selectStagePos(GetSlideInOutX(),GetTargetX(),GetTargetY(),GetTargetY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,9.0)//ç≈èâÇÕâEÇ©ÇÁì¸Ç¡ÇƒÇ≠ÇÈÇÊÇ§Ç»ââèo
 	,m_afterDicide(false)
@@ -123,7 +124,7 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 			m_selectStagePos=PositionControl(m_selectStagePos.GetX(),GetSlideInOutX(),m_selectStagePos.GetY(),m_selectStagePos.GetendY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,9.0);
 		}
 		//ñﬂÇÈ
-		if(keyboard_get(KEY_INPUT_X)==1 || mouse_get(MOUSE_INPUT_RIGHT)==1){
+		if(keyboard_get(KEY_INPUT_X)==1 || mouse_get(MOUSE_INPUT_RIGHT)==1 || m_backButton.JudgePressMoment()){
 			//backâπÇèoÇ∑
 			PlaySoundMem(GeneralPurposeResource::cancelSound,DX_PLAYTYPE_BACK,TRUE);
 			//ëJà⁄
