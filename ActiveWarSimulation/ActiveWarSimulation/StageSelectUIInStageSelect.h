@@ -4,6 +4,7 @@
 #include"BaseUIInStageSelect.h"
 #include"StageInfoInStageSelect.h"
 #include"input.h"
+#include"ToolsLib.h"
 
 class StageSelectUIInStageSelect:public BaseUIInStageSelect{
 public:
@@ -21,6 +22,8 @@ private:
 	const MouseButtonUI m_upButton,m_downButton;//ステージを上下に動かすためのボタン
 	const MouseButtonUI m_selectStageButton;//選んでいるステージのボタン（見えないボタンである）
 	Vector2D m_beforeFrameMousePos;//1フレーム前のマウスの位置
+	PositionControl m_selectStagePos;//選択しているステージ情報の描画位置
+	size_t m_beforeSelectStageIndex;//ステージ情報の描画位置が動いている時、動かす前に選択していたステージのindexを記録して2ステージ間のステージを全て描画できるようにする
 
 	//参照しているフォント（ここで削除はしない）
 	const int m_stageNameFont;
