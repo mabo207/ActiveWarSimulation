@@ -15,7 +15,7 @@ namespace {
 const int StageInfoInStageSelect::stageBoxWidth=picWidth+offsetLeft*2;
 const int StageInfoInStageSelect::stageBoxHeight=explainDY+120+offsetTop;
 const int StageInfoInStageSelect::levelBoxWidth=StageInfoInStageSelect::stageBoxWidth;
-const int StageInfoInStageSelect::levelBoxHeight=CommonConstParameter::gameResolutionY/4-70;
+const int StageInfoInStageSelect::levelBoxHeight=CommonConstParameter::gameResolutionY/4-25;
 
 StageInfoInStageSelect::StageInfoInStageSelect(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData)
 	:m_mapPic(mapPic)
@@ -45,7 +45,7 @@ void StageInfoInStageSelect::DrawStageInfo(const int centerX,const int centerY,c
 void StageInfoInStageSelect::DrawLevelInfo(const StageLevel level,const int x,const int y,const int levelNameFont,const int rankingFont)const{
 	const size_t rankingSize=5;
 	const int nameX=10,scoreX=350;
-	int rankingY=40;
+	int rankingY=80;
 	const int rankingFontSize=GetFontSizeToHandle(rankingFont);
 	//”wŒi‚Ì•`‰æ
 	//m_levelButton[i].DrawButtonRect(GetColor(64,32,32),TRUE);

@@ -12,6 +12,7 @@ namespace {
 	}
 	const int slideInOutLevelBoxTargetX=CommonConstParameter::gameResolutionX*6/5;
 	const int slideInOutFrame=15;
+	const int offsetY=20;
 }
 
 //-------------------LevelSelectUIInStageSelect----------------------
@@ -24,10 +25,10 @@ LevelSelectUIInStageSelect::LevelSelectUIInStageSelect(const std::weak_ptr<Contr
 	,m_stageInfo(stageInfo)
 	,m_levelButtonX(slideInOutLevelBoxTargetX,CommonConstParameter::gameResolutionX-infoDrawAreaWidth/2-StageInfoInStageSelect::levelBoxWidth/2,slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
 	,m_stageInfoCenterPos(-StageInfoInStageSelect::stageBoxWidth,GetStageInfoTargetX(),GetStageInfoTargetY(),GetStageInfoTargetY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
-	,m_levelButton{MouseButtonUI(m_levelButtonX.GetX(),90,StageInfoInStageSelect::StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)
-		,MouseButtonUI(m_levelButtonX.GetX(),110+StageInfoInStageSelect::levelBoxHeight,StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)
-		,MouseButtonUI(m_levelButtonX.GetX(),130+StageInfoInStageSelect::levelBoxHeight*2,StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)
-		,MouseButtonUI(m_levelButtonX.GetX(),150+StageInfoInStageSelect::levelBoxHeight*3,StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)}
+	,m_levelButton{MouseButtonUI(m_levelButtonX.GetX(),offsetY,StageInfoInStageSelect::StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)
+		,MouseButtonUI(m_levelButtonX.GetX(),offsetY+(StageInfoInStageSelect::levelBoxHeight+offsetY),StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)
+		,MouseButtonUI(m_levelButtonX.GetX(),offsetY+(StageInfoInStageSelect::levelBoxHeight+offsetY)*2,StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)
+		,MouseButtonUI(m_levelButtonX.GetX(),offsetY+(StageInfoInStageSelect::levelBoxHeight+offsetY)*3,StageInfoInStageSelect::levelBoxWidth,StageInfoInStageSelect::levelBoxHeight,-1)}
 	,m_afterTransitionAction(false)
 	,m_transitionResult(UpdateResult::e_gotoStageSelect)//テキトーに初期化
 	,m_stageNameFont(stageNameFont)
@@ -121,7 +122,7 @@ void LevelSelectUIInStageSelect::Draw()const{
 		int x,y;
 		m_levelButton[i].GetButtonInfo(&x,&y,nullptr,nullptr);
 		const StageLevel level=StageLevel::levelArray[i];
-		m_stageInfo.DrawLevelInfo(level,x,y,m_explainFont,m_explainFont);
+		m_stageInfo.DrawLevelInfo(level,x,y,m_stageNameFont,m_explainFont);
 
 	}
 	//選択しているレベルを強調
