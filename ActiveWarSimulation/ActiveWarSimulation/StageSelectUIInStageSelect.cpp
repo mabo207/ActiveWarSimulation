@@ -1,12 +1,14 @@
 #include"DxLib.h"
 #include"StageSelectUIInStageSelect.h"
-#include"input.h"
 #include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
+#include"GraphicControl.h"
+#include"FilePath.h"
 
 namespace {
 	const size_t displayOneSideInfoCount=2;//片方に余分にいくつ表示するか
 	const int offsetY=20;//ステージ情報描画UI間の隙間
+	const int buttonHeight=80;//ボタンの高さ(非同期読み込みを想定すると、画像から高さを求めるのが困難)
 }
 
 //----------------------StageSelectUIInStageSelect-----------------------
@@ -20,6 +22,8 @@ StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<Contr
 	,m_stageInfoVec(stageInfoVec)
 	,m_stageNameFont(stageNameFont)
 	,m_explainFont(explainFont)
+	,m_upButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,0,infoDrawAreaWidth,buttonHeight,LoadGraphEX((FilePath::graphicDir+"countUp.png").c_str()))
+	,m_downButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,CommonConstParameter::gameResolutionY-buttonHeight,infoDrawAreaWidth,buttonHeight,LoadGraphEX((FilePath::graphicDir+"countDown.png").c_str()))
 {}
 
 StageSelectUIInStageSelect::~StageSelectUIInStageSelect(){}
@@ -37,9 +41,9 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 		//更新処理
 		if(stageNum>0){
 			//十字キーでの切り替え
-			if(keyboard_get(KEY_INPUT_UP)==1){
+			if(keyboard_get(KEY_INPUT_UP)==1 || m_upButton.JudgePressMoment()){
 				lock->stageIndex=(lock->stageIndex+stageNum-1)%stageNum;
-			} else if(keyboard_get(KEY_INPUT_DOWN)==1){
+			} else if(keyboard_get(KEY_INPUT_DOWN)==1 || m_downButton.JudgePressMoment()){
 				lock->stageIndex=(lock->stageIndex+1)%stageNum;
 			} else{
 				//マウスでの切り替え
@@ -118,4 +122,7 @@ void StageSelectUIInStageSelect::Draw()const{
 			}
 		}
 	}
+	//ボタンの描画
+	m_upButton.DrawButton();
+	m_downButton.DrawButton();
 }

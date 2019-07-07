@@ -3,6 +3,7 @@
 
 #include"BaseUIInStageSelect.h"
 #include"StageInfoInStageSelect.h"
+#include"input.h"
 
 class StageSelectUIInStageSelect:public BaseUIInStageSelect{
 public:
@@ -17,6 +18,7 @@ public:
 
 private:
 	const std::vector<StageInfoInStageSelect> &m_stageInfoVec;
+	const MouseButtonUI m_upButton,m_downButton;//ステージを上下に動かすためのボタン
 	Vector2D m_beforeFrameMousePos;//1フレーム前のマウスの位置
 
 	//参照しているフォント（ここで削除はしない）
