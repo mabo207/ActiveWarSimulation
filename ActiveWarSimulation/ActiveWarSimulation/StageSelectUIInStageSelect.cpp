@@ -11,7 +11,6 @@ StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<Contr
 )
 	:BaseUIInStageSelect(controledData)
 	,m_beforeFrameMousePos(GetMousePointVector2D())
-	,m_drawStageInfo(true)
 	,m_stageInfoVec(stageInfoVec)
 	,m_stageNameFont(stageNameFont)
 	,m_explainFont(explainFont)
@@ -34,12 +33,8 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 			//十字キーでの切り替え
 			if(keyboard_get(KEY_INPUT_UP)==1){
 				lock->stageIndex=(lock->stageIndex+stageNum-1)%stageNum;
-				//m_drawStageInfoの更新
-				m_drawStageInfo=true;
 			} else if(keyboard_get(KEY_INPUT_DOWN)==1){
 				lock->stageIndex=(lock->stageIndex+1)%stageNum;
-				//m_drawStageInfoの更新
-				m_drawStageInfo=true;
 			} else{
 				//マウスでの切り替え
 				const float circleSize=30.0f;//当たり判定の円の大きさ
@@ -52,14 +47,6 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 						mouseInStage=(lock->stageIndex==i);//マウスが指しているステージと現在選択しているステージが一致しているか
 						break;
 					}
-				}
-				//m_drawStageInfoの更新
-				if(mouseInStage){
-					//マウスがステージの中にあればステージ選択していることにする
-					m_drawStageInfo=true;
-				} else if(mouseMoveFlag){
-					//マウスを動かしたのにマウスがステージ選択をしていない場合はステージが何も選ばれていない状態にする
-					m_drawStageInfo=false;
 				}
 			}
 		}
@@ -104,9 +91,7 @@ void StageSelectUIInStageSelect::Draw()const{
 			const Vector2D pos=m_stageInfoVec[lock->stageIndex].m_pos;
 			DrawCircleAA(pos.x,pos.y,30,10,GetColor(255,255,255),TRUE);
 			//ステージ情報の描画
-			if(m_drawStageInfo){
-				m_stageInfoVec[lock->stageIndex].DrawInfo(CommonConstParameter::gameResolutionX*3/4-20,300,m_stageNameFont,m_explainFont);
-			}
+			m_stageInfoVec[lock->stageIndex].DrawInfo(CommonConstParameter::gameResolutionX*3/4-20,300,m_stageNameFont,m_explainFont);
 		}
 	}
 }
