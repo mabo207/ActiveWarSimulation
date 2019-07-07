@@ -623,8 +623,15 @@ void MouseButtonUI::DrawButton()const{
 	DrawGraph(m_x,m_y,m_graphic,TRUE);
 }
 
-void MouseButtonUI::DrawButtonRect(unsigned int color,int fillFlag)const{
+void MouseButtonUI::DrawButtonRect(unsigned int color,int fillFlag,int lineThickness)const{
 	DrawBox(m_x,m_y,m_x+m_dx,m_y+m_dy,color,fillFlag);
+	//˜gü‚Ì•`‰æ(DrawBox()‚Í˜gü‚Ì‘¾‚³‚ÌŽw’è‚ª‚Å‚«‚È‚¢)
+	if(lineThickness>1){
+		DrawLine(m_x,m_y,m_x+m_dx,m_y,color,lineThickness);
+		DrawLine(m_x+m_dx,m_y,m_x+m_dx,m_y+m_dy,color,lineThickness);
+		DrawLine(m_x+m_dx,m_y+m_dy,m_x,m_y+m_dy,color,lineThickness);
+		DrawLine(m_x,m_y+m_dy,m_x,m_y,color,lineThickness);
+	}
 }
 
 void MouseButtonUI::GetButtonInfo(int *x,int *y,int *dx,int *dy)const{
@@ -647,6 +654,6 @@ void MouseButtonUI::WarpTo(int x,int y){
 	m_y=y;
 }
 
-MouseButtonUI MouseButtonUI::CreateButtonWithCenter(int x,int y,int dx,int dy,int graphic){
+MouseButtonUI MouseButtonUI::CreateWithCenter(int x,int y,int dx,int dy,int graphic){
 	return MouseButtonUI(x-dx/2,y-dy/2,dx,dy,graphic);
 }
