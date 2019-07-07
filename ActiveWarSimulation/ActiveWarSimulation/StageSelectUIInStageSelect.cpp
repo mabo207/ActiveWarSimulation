@@ -4,6 +4,11 @@
 #include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
 
+namespace {
+	const size_t displayOneSideInfoCount=2;//片方に余分にいくつ表示するか
+	const int offsetY=20;//ステージ情報描画UI間の隙間
+}
+
 //----------------------StageSelectUIInStageSelect-----------------------
 StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<ControledData> &controledData
 	,const std::vector<StageInfoInStageSelect> &stageInfoVec
@@ -93,10 +98,24 @@ void StageSelectUIInStageSelect::Draw()const{
 			const Vector2D pos=m_stageInfoVec[selectIndex].m_pos;
 			DrawCircleAA(pos.x,pos.y,30,10,GetColor(255,255,255),TRUE);
 			//ステージ情報の描画(選択ステージの前後各2つくらいは描画する)
-			const size_t displayOneSideInfoCount=2;//片方に余分にいくつ表示するか
 			const size_t startIndex=(selectIndex<displayOneSideInfoCount)?0:selectIndex-displayOneSideInfoCount;
-			const size_t endIndex=(selectIndex+displayOneSideInfoCount<m_stageInfoVec.size())?selectIndex:m_stageInfoVec.size()-1;
-			m_stageInfoVec[selectIndex].DrawInfo(CommonConstParameter::gameResolutionX-infoDrawAreaWidth/2,CommonConstParameter::gameResolutionY/2,m_stageNameFont,m_explainFont);
+			const size_t endIndex=(selectIndex+displayOneSideInfoCount<m_stageInfoVec.size())?selectIndex+displayOneSideInfoCount:m_stageInfoVec.size()-1;
+			for(size_t i=startIndex;i<=endIndex;i++){
+				const int gap=i-selectIndex;
+				const int centerX=CommonConstParameter::gameResolutionX-infoDrawAreaWidth/2;
+				const int centerY=CommonConstParameter::gameResolutionY/2+gap*(StageInfoInStageSelect::boxHeight+offsetY);
+				if(i==selectIndex){
+					//選択しているステージなら、普通に描画
+					m_stageInfoVec[i].DrawInfo(centerX,centerY,m_stageNameFont,m_explainFont);
+				} else{
+					//選択していないステージなら、目立たないように描画
+					int mode,pal;
+					GetDrawBlendMode(&mode,&pal);
+					SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
+					m_stageInfoVec[i].DrawInfo(centerX,centerY,m_stageNameFont,m_explainFont);
+					SetDrawBlendMode(mode,pal);
+				}
+			}
 		}
 	}
 }
