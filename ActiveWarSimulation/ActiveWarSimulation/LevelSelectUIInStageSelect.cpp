@@ -14,15 +14,6 @@ namespace {
 	}
 	const int slideInOutLevelBoxTargetX=CommonConstParameter::gameResolutionX*6/5;
 	const int slideInOutFrame=15;
-
-	const Vector2D levelBoxSize=Vector2D(400.0f,180.0f);
-	const std::array<MyPolygon,StageLevel::levelCount> levelBox={
-		MyPolygon::CreateRectangle(Vector2D(1280.0f,100.0f),levelBoxSize,Shape::Fix::e_ignore)
-		,MyPolygon::CreateRectangle(Vector2D(1280.0f,300.0f),levelBoxSize,Shape::Fix::e_ignore)
-		,MyPolygon::CreateRectangle(Vector2D(1280.0f,500.0f),levelBoxSize,Shape::Fix::e_ignore)
-		,MyPolygon::CreateRectangle(Vector2D(1280.0f,700.0f),levelBoxSize,Shape::Fix::e_ignore)
-	};
-	const int stageInfoCenterX=CommonConstParameter::gameResolutionX/4,stageInfoCenterY=CommonConstParameter::gameResolutionY/2;
 }
 
 //-------------------LevelSelectUIInStageSelect----------------------
@@ -70,7 +61,7 @@ BaseUIInStageSelect::UpdateResult LevelSelectUIInStageSelect::Update(){
 		} else{
 			//マウスによる更新処理
 			for(size_t i=0;i<StageLevel::levelCount;i++){
-				if(levelBox[i].VJudgePointInsideShape(mousePos)){
+				if(m_levelButton[i].JudgeIn()){
 					if((mousePos-m_beforeFrameMousePos).sqSize()>=4.0f){
 						//一定距離以上マウスを動かさないと更新されない
 						lock->selectLevel=StageLevel::levelArray[i];

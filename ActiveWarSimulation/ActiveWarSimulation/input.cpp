@@ -606,16 +606,19 @@ MouseButtonUI::~MouseButtonUI(){
 	DeleteGraphEX(m_graphic);
 }
 
+bool MouseButtonUI::JudgeIn()const{
+	int mouseX,mouseY;
+	GetMousePoint(&mouseX,&mouseY);
+	return (mouseX>=m_x && mouseX<m_x+m_dx && mouseY>=m_y && mouseY<m_y+m_dy);
+}
+
 bool MouseButtonUI::JudgePressMoment()const{
-	return (mouse_get(MOUSE_INPUT_LEFT)==1 && JudgePushed());
+	return (mouse_get(MOUSE_INPUT_LEFT)==1 && JudgeIn());
 }
 
 bool MouseButtonUI::JudgePushed()const{
-	int mouseX,mouseY;
-	GetMousePoint(&mouseX,&mouseY);
-	const bool inButton=(mouseX>=m_x && mouseX<m_x+m_dx && mouseY>=m_y && mouseY<m_y+m_dy);
 	const bool push=(mouse_get(MOUSE_INPUT_LEFT)>0);
-	return (push && inButton);
+	return (push && JudgeIn());
 }
 
 void MouseButtonUI::DrawButton()const{
