@@ -24,6 +24,7 @@ StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<Contr
 	,m_explainFont(explainFont)
 	,m_upButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,0,infoDrawAreaWidth,buttonHeight,LoadGraphEX((FilePath::graphicDir+"countUp.png").c_str()))
 	,m_downButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth,CommonConstParameter::gameResolutionY-buttonHeight,infoDrawAreaWidth,buttonHeight,LoadGraphEX((FilePath::graphicDir+"countDown.png").c_str()))
+	,m_selectStageButton(CommonConstParameter::gameResolutionX-infoDrawAreaWidth/2-StageInfoInStageSelect::boxWidth/2,CommonConstParameter::gameResolutionY/2-StageInfoInStageSelect::boxHeight/2,StageInfoInStageSelect::boxWidth,StageInfoInStageSelect::boxHeight,-1)
 {}
 
 StageSelectUIInStageSelect::~StageSelectUIInStageSelect(){}
@@ -71,7 +72,8 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 		//以下の遷移は選択ステージの変更が行われていない時のみできる
 		//ステージの決定
 		if(keyboard_get(KEY_INPUT_Z)==1
-			|| (mouse_get(MOUSE_INPUT_LEFT)==1 && mouseInStage))
+			|| (mouse_get(MOUSE_INPUT_LEFT)==1 && mouseInStage)
+			|| m_selectStageButton.JudgePressMoment())
 		{
 			//決定音を出す
 			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);

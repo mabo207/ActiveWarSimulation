@@ -19,6 +19,7 @@ public:
 private:
 	const std::vector<StageInfoInStageSelect> &m_stageInfoVec;
 	const MouseButtonUI m_upButton,m_downButton;//ステージを上下に動かすためのボタン
+	const MouseButtonUI m_selectStageButton;//選んでいるステージのボタン（見えないボタンである）
 	Vector2D m_beforeFrameMousePos;//1フレーム前のマウスの位置
 
 	//参照しているフォント（ここで削除はしない）
