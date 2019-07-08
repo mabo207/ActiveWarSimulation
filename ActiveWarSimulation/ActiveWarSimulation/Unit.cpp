@@ -459,27 +459,27 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 	int gHandle=-1;
 	switch(profession){
 	case(Profession::e_soldier):
-		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),6+(int)(lv*0.5),5+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),5+(int)(lv*0.5),6);
+		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),6+(int)(lv*0.5),5+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),6);
 		weapon=Weapon::GetWeapon("ìSÇÃåï");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/soldier.png");
 		break;
 	case(Profession::e_archer):
-		baseStatus=BaseStatus(name,profession,lv,18+(int)(lv*0.75),5+(int)(lv*0.45),4+(int)(lv*0.4),2+(int)(lv*0.1),4+(int)(lv*0.4),3+(int)(lv*0.3),6);
+		baseStatus=BaseStatus(name,profession,lv,18+(int)(lv*0.75),5+(int)(lv*0.45),4+(int)(lv*0.4),2+(int)(lv*0.1),4+(int)(lv*0.4),6);
 		weapon=Weapon::GetWeapon("ìSÇÃã|");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/archer.png");
 		break;
 	case(Profession::e_armer):
-		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),7+(int)(lv*0.6),7+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),1+(int)(lv*0.2),3);
+		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),7+(int)(lv*0.6),7+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),3);
 		weapon=Weapon::GetWeapon("ìSÇÃëÑ");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/armerknight.png");
 		break;
 	case(Profession::e_mage):
-		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),6+(int)(lv*0.45),5+(int)(lv*0.5),4);
+		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),6+(int)(lv*0.45),4);
 		weapon=Weapon::GetWeapon("ÉtÉ@ÉCÉAÅ[ÇÃèë");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/mage.png");
 		break;
 	case(Profession::e_healer):
-		baseStatus=BaseStatus(name,profession,lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
+		baseStatus=BaseStatus(name,profession,lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),7+(int)(lv*0.5),6);
 		weapon=Weapon::GetWeapon("ÉqÅ[ÉãÇÃèÒ");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/healer.png");
 		break;

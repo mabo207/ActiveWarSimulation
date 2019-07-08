@@ -55,11 +55,10 @@ public:
 		int def;
 		int mpower;
 		int mdef;
-		int speed;
 		int move;
 		BaseStatus(){}
-		BaseStatus(std::string i_name,Profession::Kind i_profession,int i_lv,int i_maxHP,int i_power,int i_def,int i_mpower,int i_mdef,int i_speed,int i_move)
-			:name(i_name),profession(i_profession),lv(i_lv),maxHP(i_maxHP),power(i_power),def(i_def),mpower(i_mpower),mdef(i_mdef),speed(i_speed),move(i_move){}
+		BaseStatus(std::string i_name,Profession::Kind i_profession,int i_lv,int i_maxHP,int i_power,int i_def,int i_mpower,int i_mdef,int i_move)
+			:name(i_name),profession(i_profession),lv(i_lv),maxHP(i_maxHP),power(i_power),def(i_def),mpower(i_mpower),mdef(i_mdef),move(i_move){}
 	};
 	struct BattleStatus{
 
