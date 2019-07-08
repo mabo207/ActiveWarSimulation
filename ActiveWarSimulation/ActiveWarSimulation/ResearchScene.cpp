@@ -230,15 +230,14 @@ void ResearchScene::thisDraw()const{
 			DrawFormatStringToHandle(paramBoxX+68,paramBoxY+203,GetColor(255,255,255),m_palFont,"%.0f/%.0f",battle.OP,battle.maxOP);
 			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+247,GetColor(255,255,255),m_palFont,"%d",base.power);
 			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+291,GetColor(255,255,255),m_palFont,"%d",base.def);
-			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+335,GetColor(255,255,255),m_palFont,"%d",base.mpower);
-			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+379,GetColor(255,255,255),m_palFont,"%d",base.mdef);
-			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+423,GetColor(255,255,255),m_palFont,"%d",base.speed);
-			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+467,GetColor(255,255,255),m_palFont,"%d",base.move);
+			DrawFormatStringToHandle(paramBoxX+234,paramBoxY+247,GetColor(255,255,255),m_palFont,"%d",base.mpower);
+			DrawFormatStringToHandle(paramBoxX+234,paramBoxY+291,GetColor(255,255,255),m_palFont,"%d",base.mdef);
+			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+336,GetColor(255,255,255),m_palFont,"%d",base.move);
 			//‘•”õà–¾•”•ª
 			//’Êí‘•”õ
-			DrawStringToHandle(paramBoxX+261,paramBoxY+159,m_researchUnit->GetBattleStatus().weapon->GetName().c_str(),GetColor(255,255,255),m_palFont);
-			DrawStringNewLineToHandle(paramBoxX+272,paramBoxY+192,310,36,m_researchUnit->GetBattleStatus().weapon->GetExplain().c_str(),GetColor(255,255,255),m_explainFont,2);
-			DrawStringNewLineToHandle(paramBoxX+272,paramBoxY+240,310,36,m_researchUnit->GetBattleStatus().weapon->GetEffectivenessString(m_researchUnit).c_str(),GetColor(255,255,255),m_explainFont,2);
+			DrawStringToHandle(paramBoxX+312,paramBoxY+159,m_researchUnit->GetBattleStatus().weapon->GetName().c_str(),GetColor(255,255,255),m_palFont);
+			DrawStringNewLineToHandle(paramBoxX+317,paramBoxY+192,263,40,m_researchUnit->GetBattleStatus().weapon->GetExplain().c_str(),GetColor(255,255,255),m_explainFont,4);
+			DrawStringNewLineToHandle(paramBoxX+317,paramBoxY+240,263,80,m_researchUnit->GetBattleStatus().weapon->GetEffectivenessString(m_researchUnit).c_str(),GetColor(255,255,255),m_explainFont,4);
 		}
 	}
 }
