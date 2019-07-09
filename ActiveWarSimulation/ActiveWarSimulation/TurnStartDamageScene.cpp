@@ -27,9 +27,7 @@ bool TurnStartDamageScene::JudgeTurnStartDamage(const std::shared_ptr<BattleScen
 }
 
 Weapon::AttackInfo TurnStartDamageScene::GetAttackInfo(const std::shared_ptr<BattleSceneData> &data){
-	Weapon::AttackInfo info;
-	info.damage=1;
-	return info;
+	return data->m_operateUnit->GetBattleStatus().weapon->GetTurnStartDamage();
 }
 
 void TurnStartDamageScene::DrawAnimation()const{
