@@ -201,6 +201,7 @@
     <ClCompile Include="SystemMenu.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="ToolsLib.cpp" />
+    <ClCompile Include="TurnStartDamageScene.cpp" />
     <ClCompile Include="TutorialBattleSceneData.cpp" />
     <ClCompile Include="TutorialPlayerMoveScene.cpp" />
     <ClCompile Include="TutorialScene.cpp" />
@@ -261,6 +262,7 @@
     <ClInclude Include="ResearchScene.h" />
     <ClInclude Include="SwitchUnitScene.h" />
     <ClInclude Include="ToolsLib.h" />
+    <ClInclude Include="TurnStartDamageScene.h" />
     <ClInclude Include="TutorialBattleSceneData.h" />
     <ClInclude Include="TutorialPlayerMoveScene.h" />
     <ClInclude Include="TutorialScene.h" />

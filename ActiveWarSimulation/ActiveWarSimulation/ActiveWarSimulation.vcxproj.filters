@@ -312,6 +312,9 @@
     <ClCompile Include="DamageScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\DamageScene</Filter>
     </ClCompile>
+    <ClCompile Include="TurnStartDamageScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\DamageScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -486,6 +489,9 @@
       <Filter>ヘッダー ファイル\GameScene\BattleScene\DamageScene</Filter>
     </ClInclude>
     <ClInclude Include="DamageScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\DamageScene</Filter>
+    </ClInclude>
+    <ClInclude Include="TurnStartDamageScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\DamageScene</Filter>
     </ClInclude>
   </ItemGroup>

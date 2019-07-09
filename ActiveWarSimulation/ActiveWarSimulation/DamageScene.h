@@ -30,7 +30,7 @@ protected:
 	//ゲームのデータ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
 	//次のシーンが何か
-	const SceneKind::Kind m_nextSceneKind;
+	SceneKind::Kind m_nextSceneKind;//分岐の可能性があるのでconstにはしない
 	//攻撃されるユニットのデータ
 	Unit *const m_aimedUnit;
 	//経過フレーム数

@@ -4,6 +4,7 @@
 #include"AttackScene.h"
 #include"ResearchScene.h"
 #include"SystemMenu.h"
+#include"TurnStartDamageScene.h"
 #include"input.h"
 #include"Edge.h"
 #include<algorithm>
@@ -27,6 +28,10 @@ MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	LoadDivGraphEX(FilePath::graphicDir+"attackedCursor.png",attackedCursorPicNum,attackedCursorPicNum,1,60,66,m_attackedCursor);
 	//m_aimedUnit等の初期化
 	FinishUnitOperation();
+	//もし最初にダメージ処理が入るのなら、m_nextSceneにダメージ処理場面を格納して、ダメージ処理を行わせる
+	if(TurnStartDamageScene::JudgeTurnStartDamage(m_battleSceneData)){
+		m_nextScene=std::shared_ptr<BattleSceneElement>(new TurnStartDamageScene(m_battleSceneData));
+	}
 }
 
 MoveScene::~MoveScene(){
