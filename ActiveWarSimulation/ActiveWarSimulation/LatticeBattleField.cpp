@@ -20,12 +20,8 @@ bool LatticeBattleField::LatticeDistanceInfo::operator==(const LatticeDistanceIn
 //-----------------------LatticeBattleField-------------------------
 const size_t LatticeBattleField::latticeIntervalSize=CommonConstParameter::unitCircleSize;
 
-std::shared_ptr<LatticeBattleField> LatticeBattleField::Create(const BattleSceneData &battleData){
-	return Create(battleData,battleData.m_operateUnit);
-}
-
-std::shared_ptr<LatticeBattleField> LatticeBattleField::Create(const BattleSceneData &battleData,const Unit * const punit){
-	return std::shared_ptr<LatticeBattleField>(new LatticeBattleField(battleData,punit));
+std::shared_ptr<LatticeBattleField> LatticeBattleField::Create(const BattleSceneData &battleData,const Unit * const punit,bool unitExist){
+	return std::shared_ptr<LatticeBattleField>(new LatticeBattleField(battleData,punit,unitExist));
 }
 
 LatticeBattleField::~LatticeBattleField(){}
@@ -128,14 +124,14 @@ Vector2D LatticeBattleField::CalculateLatticePointPos(size_t index)const{
 	return CalculateLatticePointPos(index%m_xLatticeNum,index/m_xLatticeNum);
 }
 
-LatticeBattleField::LatticeBattleField(const BattleSceneData &battleData,const Unit * const punit)
+LatticeBattleField::LatticeBattleField(const BattleSceneData &battleData,const Unit * const punit,bool unitExist)
 	:m_xLatticeNum((size_t)(battleData.m_stageSize.x)/latticeIntervalSize+1)
 	,m_yLatticeNum((size_t)(battleData.m_stageSize.y)/latticeIntervalSize+1)
 {
-	CalculateLatticeInShape(battleData,punit);
+	CalculateLatticeInShape(battleData,punit,unitExist);
 }
 
-void LatticeBattleField::CalculateLatticeInShape(const BattleSceneData &battleData,const Unit * const punit){
+void LatticeBattleField::CalculateLatticeInShape(const BattleSceneData &battleData,const Unit * const punit,bool unitExist){
 	const size_t vecSize=m_xLatticeNum*m_yLatticeNum;
 	//最初に全ての格子点が通れるとして初期化する
 	m_latticeInShape=std::vector<LatticePass>(vecSize,LatticePass::e_passable);
@@ -147,6 +143,9 @@ void LatticeBattleField::CalculateLatticeInShape(const BattleSceneData &battleDa
 
 		} else if(object->GetFix()==Shape::Fix::e_ignore){
 			//当たり判定のないオブジェクトは通れるか否かに影響を与えない
+
+		} else if(!unitExist && object->GetType()==BattleObject::Type::e_unit){
+			//unitExistがfalseの時、ユニットは通れるか否かに影響を与えない
 
 		} else if(punit!=nullptr && object->JudgePointInsideShape(punit->getPos())){
 			//object内部にユニットがいるなら、その外部を通れないようにする

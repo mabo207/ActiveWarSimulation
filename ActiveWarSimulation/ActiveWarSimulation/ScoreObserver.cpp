@@ -30,7 +30,7 @@ ScoreObserver::LatticeBonusData::~LatticeBonusData(){}
 void ScoreObserver::LatticeBonusData::InputData(const BattleSceneData * const battleData,const LogElement::UnitLogData &operateUnitData){
 	if(operateUnitData.punit!=nullptr){
 		//格子点情報の獲得
-		const auto latticeField=battleData->CalculateLatticeBattleField();
+		const auto latticeField=battleData->CalculateLatticeBattleField(true);//ユニットを含めた格子点情報でok
 		std::vector<LatticeBattleField::LatticeDistanceInfo> distanceInfo;
 		latticeField->CalculateLatticeDistanceInfo(distanceInfo,operateUnitData.punit->getPos());
 		//長さRについて「半径Rの円の中にある格子点の数」「距離がR以内にある格子点の数」を数える
