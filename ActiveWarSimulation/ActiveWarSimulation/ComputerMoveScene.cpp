@@ -27,7 +27,7 @@ void ComputerMoveScene::AttackFailedInfo::RetryProcess(){
 //---------------ComputerMoveScene------------------
 ComputerMoveScene::ComputerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:MoveScene(battleSceneData)
-	,m_latticeField(battleSceneData->CalculateLatticeBattleField())
+	,m_latticeField(battleSceneData->CalculateLatticeBattleField(true))
 	,m_actionWaiting(false)
 	,m_nextScene(SceneKind::e_move)
 	,m_aimChangeFrame(0)

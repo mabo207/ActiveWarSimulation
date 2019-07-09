@@ -245,8 +245,8 @@ int BattleSceneData::CalculateTurn()const{
 	return (int)(m_totalOP/Unit::BattleStatus::maxOP)+1;
 }
 
-std::shared_ptr<LatticeBattleField> BattleSceneData::CalculateLatticeBattleField()const{
-	return LatticeBattleField::Create(*this,this->m_operateUnit);
+std::shared_ptr<LatticeBattleField> BattleSceneData::CalculateLatticeBattleField(bool unitExist)const{
+	return LatticeBattleField::Create(*this,this->m_operateUnit,unitExist);
 }
 
 void BattleSceneData::ResisterSceneEndProcess(const std::function<void(void)> &func){

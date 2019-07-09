@@ -94,7 +94,7 @@ public:
 	Unit *GetUnitPointer(Vector2D pos)const;//pos(マップ上の座標)にいるユニットを返す。このユニットに攻撃する可能性がある事を考慮してconstはつけない。
 	bool CanOperateUnitMove()const;//m_operateUnitが移動することが可能か（周りに何があるかは考えない）
 	int CalculateTurn()const;
-	std::shared_ptr<LatticeBattleField> CalculateLatticeBattleField()const;//現在のステージの状態の格子点認識情報を計算して返す。
+	std::shared_ptr<LatticeBattleField> CalculateLatticeBattleField(bool unitExist)const;//現在のステージの状態の格子点認識情報を計算して返す。
 	void ResisterSceneEndProcess(const std::function<void(void)> &func);//画面暗転時に行う処理を登録する
 	void RunSceneEndProcess();//バトル場面終了時に行う処理を実行する
 
