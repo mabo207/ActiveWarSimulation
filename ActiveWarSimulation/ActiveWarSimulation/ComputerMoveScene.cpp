@@ -139,10 +139,31 @@ void ComputerMoveScene::CalculateLatticeRoute(){
 	//目標地点の決定
 	const std::pair<std::pair<size_t,Vector2D>,Unit *> targetPoint=DecideTargetPoint(latticeDistanceInfo);//ここはAIの行動傾向によって異なるので
 	m_targetUnit=targetPoint.second;
+	size_t targetPointIndex=targetPoint.first.first;//目標地点の格子点番号
+	Vector2D targetPointVec=targetPoint.first.second;//目標座標
+	if(targetPointIndex==latticeNum && m_battleSceneData->m_operateUnit->GetBattleStatus().aitype==Unit::AIType::e_assult){
+		//突撃型かつ目標地点が現在位置である場合、詰まりが発生している。そのため、途中まで進めるように再度計算をする。
+		//ユニットの当たり判定を無視した目標地点の計算を行う
+		const std::shared_ptr<LatticeBattleField> virtualLatticeField=m_battleSceneData->CalculateLatticeBattleField(false);//ユニットが誰もいない地形で計算をして比較しながらルート検索をすれば、詰まる地点までは進める
+		const size_t virtualLatticeNum=virtualLatticeField->GetLatticeInShapeSize();
+		std::vector<LatticeBattleField::LatticeDistanceInfo> virtualLatticeDistanceInfo;
+		virtualLatticeField->CalculateLatticeDistanceInfo(virtualLatticeDistanceInfo,m_battleSceneData->m_operateUnit->getPos());
+		const std::pair<std::pair<size_t,Vector2D>,Unit *> virtualTargetPoint=DecideTargetPoint(virtualLatticeDistanceInfo);
+		//目標地点計算(これでも探索に失敗すると、その場で動かなくなる。それ自体は構わない。)
+		for(size_t point=virtualTargetPoint.first.first;point<latticeNum;point=virtualLatticeDistanceInfo[point].from){
+			//latticeDistanceInfo[point].fromを辿っていけば最短距離となる
+			if(latticeDistanceInfo[point].from<latticeNum){
+				//pointにたどり着く事ができるならば(pointにたどり着く事ができる格子点の存在が見つけられれば良い)
+				targetPointIndex=point;
+				targetPointVec=m_latticeField->CalculateLatticePointPos(point);//その格子点の位置を最終目標地点とする
+				break;
+			}
+		}
+	}
 
 	//ルートの選定と格納
-	m_latticeRoute.push_back(std::pair<size_t,Vector2D>(latticeNum,targetPoint.first.second));//最終目標の格子点についた後に向かう位置を最初に格納しておく（これは恐らくユニット内部で入れない）
-	for(size_t point=targetPoint.first.first;point<latticeNum;point=latticeDistanceInfo[point].from){
+	m_latticeRoute.push_back(std::pair<size_t,Vector2D>(latticeNum,targetPointVec));//最終目標の格子点についた後に向かう位置を最初に格納しておく（これは恐らくユニット内部で入れない）
+	for(size_t point=targetPointIndex;point<latticeNum;point=latticeDistanceInfo[point].from){
 		//latticeDistanceInfo[point].fromを辿っていけば最短距離となる
 		Vector2D v;
 		if(point<latticeNum){
