@@ -253,3 +253,26 @@ void EditActionSettings::ReadUnit(){
 		}
 	}
 }
+
+//•ºí‚©‚ç„§•Šíí‚ğ•Ô‚·
+Weapon::Kind EditActionSettings::ProfessionToWeaponKind(Unit::Profession::Kind profession){
+	Weapon::Kind weaponKind;
+	switch(profession){
+	case(Unit::Profession::e_soldier):
+		weaponKind=Weapon::Kind::e_sword;
+		break;
+	case(Unit::Profession::e_armer):
+		weaponKind=Weapon::Kind::e_lance;
+		break;
+	case(Unit::Profession::e_archer):
+		weaponKind=Weapon::Kind::e_bow;
+		break;
+	case(Unit::Profession::e_mage):
+		weaponKind=Weapon::Kind::e_book;
+		break;
+	case(Unit::Profession::e_healer):
+		weaponKind=Weapon::Kind::e_rod;
+		break;
+	}
+	return weaponKind;
+}

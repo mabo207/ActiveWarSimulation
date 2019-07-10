@@ -19,7 +19,7 @@ void EditUnitParameter::EditUnitParameterButton::PushedProcess(EditActionSetting
 }
 
 //----------------------EditUnitParameter-----------------------
-const size_t EditUnitParameter::editItemNum=6;
+const size_t EditUnitParameter::editItemNum=7;
 
 EditUnitParameter::EditUnitParameter(int buttonX,int buttonY,int buttonDX,int buttonDY,unsigned int pushedColor)
 	:EditAction(buttonX,buttonY,buttonDX,buttonDY,pushedColor)
@@ -78,12 +78,15 @@ void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right){
 	} else if(left || right){
 		const int gap=(left?-1:1);
 		bool reduceHP=false;//HPを減らす作業をするかどうか
+		bool searchWeapon=false;//武器を選びなおす作業をするかどうか
 		int lv=punit->GetBaseStatus().lv;
 		Unit::Profession::Kind profession=punit->GetBaseStatus().profession;
 		Unit::AIType::Kind aiType=punit->GetBattleStatus().aitype;
 		int aiGroup=punit->GetBattleStatus().aiGroup;
 		int hp=punit->GetBattleStatus().HP;
 		Unit::Team::Kind team=punit->GetBattleStatus().team;
+		std::string weaponResisterName=punit->GetBattleStatus().weapon->GetResisterName();
+		int weaponSelectGap=0;
 		//項目の編集の仕方は項目によって変化する
 		if(m_editIndex==0){
 			//LV
@@ -98,6 +101,7 @@ void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right){
 		} else if(m_editIndex==2){
 			//profession
 			profession=Unit::Profession::link((profession+Unit::Profession::END+gap)%Unit::Profession::END);
+			searchWeapon=true;
 		} else if(m_editIndex==3){
 			//AItype
 			aiType=Unit::AIType::link((aiType+Unit::AIType::END+gap)%Unit::AIType::END);
@@ -116,6 +120,10 @@ void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right){
 				hp=tmp;
 			}
 			reduceHP=true;
+		} else if(m_editIndex==6){
+			//weapon(兵種が変わっても武器が変わるので、後で編集)
+			weaponSelectGap=gap;
+			searchWeapon=true;
 		}
 		//名前の決定（よく用いる命名パターンを置いておく）
 		std::string name="Mob";
@@ -142,8 +150,29 @@ void EditUnitParameter::EditParameter(bool up,bool down,bool left,bool right){
 			//敵の場合はモブの名前
 			name="敵兵";
 		}
+		//武器の選択
+		if(searchWeapon){
+			//武器リストを取得
+			const std::vector<std::shared_ptr<Weapon>> weaponList=Weapon::GetKindVecSorted(EditActionSettings::ProfessionToWeaponKind(profession));
+			//現在選択している武器のindexを探す
+			const size_t siz=weaponList.size();
+			size_t index;
+			for(index=0;index<siz;index++){
+				if(weaponList[index]->GetResisterName()==weaponResisterName){
+					break;
+				}
+			}
+			//武器登録名を返す
+			if(index<siz){
+				//現在の武器名がweaponListにあった場合はweaponSelectGapに従って返す
+				weaponResisterName=weaponList[(index+weaponSelectGap)%siz]->GetResisterName();
+			} else{
+				//現在の武器名がweaponListになかった場合はweaponListの先頭を返す
+				weaponResisterName=weaponList.front()->GetResisterName();
+			}
+		}
 		//編集内容を反映
-		m_editResult=std::shared_ptr<Unit>(Unit::CreateMobUnit(name,profession,lv,punit->getPos(),team,aiType,aiGroup,punit->GetBattleStatus().aiLinkage));
+		m_editResult=std::shared_ptr<Unit>(Unit::CreateMobUnit(name,profession,lv,weaponResisterName,punit->getPos(),team,aiType,aiGroup,punit->GetBattleStatus().aiLinkage));
 		if(reduceHP){
 			//AI,チーム,HPを編集した際は、HPを減らす処理をする
 			m_editResult->AddHP(hp-m_editResult->GetBattleStatus().HP);//HPの初期化
