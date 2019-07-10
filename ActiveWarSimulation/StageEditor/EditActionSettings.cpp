@@ -215,6 +215,7 @@ void EditActionSettings::WriteOutUnit()const{
 				ofs<<"(name,"<<baseStatus.name<<"),";
 				ofs<<"(profession,"<<baseStatus.profession<<"),";
 				ofs<<"(lv,"<<baseStatus.lv<<"),";
+				ofs<<"(weapon,"<<battleStatus.weapon->GetResisterName()<<"),";
 				ofs<<"(pos,"<<(int)(pos.x)<<','<<(int)(pos.y)<<"),";
 				ofs<<"(team,"<<battleStatus.team<<"),";
 				ofs<<"(ai,"<<battleStatus.aitype<<','<<battleStatus.aiGroup<<')';
