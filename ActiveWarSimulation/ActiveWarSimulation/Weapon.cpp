@@ -50,7 +50,7 @@ std::map<std::string,std::shared_ptr<Weapon>> Weapon::InitWeaponMap(){
 	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の槍",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格で扱いやすい標準的な槍。",AttackInfo(0)))));
 	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の弓",3,Weapon::longAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格で扱いやすい標準的な弓。",AttackInfo(0)))));
 	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ファイアーの書",5,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator()),"魔道の基本が詰まっている標準的な魔法。",AttackInfo(0)))));
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ヒールの杖",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator()),"回復の力を強める標準的な杖。",AttackInfo(-1)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ヒールの杖",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator()),"回復の力を強める標準的な杖。\n【特殊効果】行動開始時に装備キャラのHPを1回復",AttackInfo(-1)))));
 	//mapを返す
 	return map;
 }
