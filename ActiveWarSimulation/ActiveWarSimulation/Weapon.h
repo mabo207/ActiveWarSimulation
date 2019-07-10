@@ -30,6 +30,7 @@ public:
 	//•Ï”
 protected:
 	std::string m_name;//–¼‘O
+	std::string m_resisterName;//“o˜^–¼
 	int m_power;//ˆĞ—Í
 	float m_length;//Ë’ö
 	float m_cost;//Á”ïOP
@@ -40,6 +41,7 @@ protected:
 	//ŠÖ”
 protected:
 	Weapon(const std::string &name
+		,const std::string &resisterName
 		,int power
 		,float length
 		,float cost
@@ -48,6 +50,7 @@ protected:
 		,const AttackInfo &turnStartDamage
 	)
 		:m_name(name)
+		,m_resisterName(resisterName)
 		,m_power(power)
 		,m_length(length)
 		,m_cost(cost)
@@ -60,6 +63,9 @@ public:
 
 	std::string GetName()const{
 		return m_name;
+	}
+	std::string GetResisterName()const{
+		return m_resisterName;
 	}
 	int GetPower()const{
 		return m_power;
@@ -90,7 +96,7 @@ private:
 	//Ã“IŠÖ”
 private:
 	static std::map<std::string,std::shared_ptr<Weapon>> InitWeaponMap();
-	static std::pair<std::string,std::shared_ptr<Weapon>> CreateWeaponMapElement(std::shared_ptr<Weapon> weapon);
+	static std::pair<std::string,std::shared_ptr<Weapon>> CreateWeaponMapElement(const std::shared_ptr<Weapon> &weapon);
 public:
 	static const std::shared_ptr<Weapon> GetWeapon(const std::string &name);
 };
