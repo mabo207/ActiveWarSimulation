@@ -46,11 +46,26 @@ std::pair<std::string,std::shared_ptr<Weapon>> Weapon::CreateWeaponMapElement(co
 std::map<std::string,std::shared_ptr<Weapon>> Weapon::InitWeaponMap(){
 	std::map<std::string,std::shared_ptr<Weapon>> map;
 	//以下列挙してmapに格納していく
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の剣","sword_iron",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格で扱いやすい標準的な剣。",AttackInfo(0)))));
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の槍","lance_iron",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格で扱いやすい標準的な槍。",AttackInfo(0)))));
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の弓","bow_iron",3,Weapon::longAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格で扱いやすい標準的な弓。",AttackInfo(0)))));
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ファイアーの書","book_fire",5,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator()),"魔道の基本が詰まっている標準的な魔法。",AttackInfo(0)))));
-	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ヒールの杖","rod_heal",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator()),"回復の力を強める標準的な杖。\n【特殊効果】行動開始時に装備キャラのHPを1回復",AttackInfo(-1)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("青銅の剣","sword_bronze",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格な入門用の剣。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の剣","sword_iron",6,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"誰でも扱いやすい標準的な剣。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鋼の剣","sword_steel",7,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"少し扱いづらいが威力のある剣。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("銀の剣","sword_silver",8,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"高価で切れ味バツグンな剣。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("青銅の槍","lance_bronze",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格な入門用の槍。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の槍","lance_iron",6,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"誰でも扱いやすい標準的な槍。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鋼の槍","lance_steel",7,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"少し扱いづらいが威力のある槍。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("銀の槍","lance_silver",8,Weapon::closeAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"高価でとても鋭利な槍。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("青銅の弓","bow_bronze",3,Weapon::longAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"低価格な入門用の弓。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鉄の弓","bow_iron",4,Weapon::longAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"誰でも扱いやすい標準的な弓。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("鋼の弓","bow_steel",5,Weapon::longAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"少し扱いづらいが威力のある弓。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("銀の弓","bow_silver",6,Weapon::longAttackLength,50.0f,std::shared_ptr<DamageCalculator>(new PhysicalCalculator()),"反発力が強い高価な弓。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ファイアーの書","book_fire",5,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator()),"炎の基本が詰まった入門の魔道書。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("フレイムの書","book_flame",6,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator()),"誰でも扱いやすい炎の魔道書。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ブレイズの書","book_blaze",7,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator()),"少し読むのが難しい炎の魔道書。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ボルガノの書","book_volcano",8,Weapon::openAttackLength,60.0f,std::shared_ptr<DamageCalculator>(new MagicCalculator()),"炎のエキスパート向けの魔道書。",AttackInfo(0)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("ヒールの杖","rod_heal",5,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator()),"ちょっとした怪我に使える市販の杖。\n【特殊効果】行動開始時に装備キャラのHPを1回復",AttackInfo(-1)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("レストの杖","rod_rest",7,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator()),"そばにいる人に癒しを与える杖。\n【特殊効果】行動開始時に装備キャラのHPを1回復",AttackInfo(-1)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("キュアの杖","rod_cure",9,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator()),"回復の力を強める不思議な杖。\n【特殊効果】行動開始時に装備キャラのHPを2回復",AttackInfo(-2)))));
+	map.insert(CreateWeaponMapElement(std::shared_ptr<Weapon>(new Weapon("リカバーの杖","rod_recover",11,Weapon::closeAttackLength,50.0f,std::shared_ptr<RecoverCalculator>(new RecoverCalculator()),"ケガがすぐ治ると評判の杖。\n【特殊効果】行動開始時に装備キャラのHPを2回復",AttackInfo(-2)))));
 	//mapを返す
 	return map;
 }

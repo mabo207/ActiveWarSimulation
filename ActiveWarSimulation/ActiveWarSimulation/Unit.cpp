@@ -460,17 +460,17 @@ Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Ve
 	switch(profession){
 	case(Profession::e_soldier):
 		baseStatus=BaseStatus(name,profession,lv,21+(int)(lv*0.8),7+(int)(lv*0.5),6+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),6);
-		weapon=Weapon::GetWeapon("sword_iron");
+		weapon=Weapon::GetWeapon("sword_bronze");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/soldier.png");
 		break;
 	case(Profession::e_archer):
 		baseStatus=BaseStatus(name,profession,lv,19+(int)(lv*0.75),6+(int)(lv*0.45),5+(int)(lv*0.4),2+(int)(lv*0.1),5+(int)(lv*0.45),6);
-		weapon=Weapon::GetWeapon("bow_iron");
+		weapon=Weapon::GetWeapon("bow_bronze");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/archer.png");
 		break;
 	case(Profession::e_armer):
 		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),8+(int)(lv*0.6),8+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),3);
-		weapon=Weapon::GetWeapon("lance_iron");
+		weapon=Weapon::GetWeapon("lance_bronze");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/armerknight.png");
 		break;
 	case(Profession::e_mage):
