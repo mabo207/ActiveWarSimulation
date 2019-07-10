@@ -157,6 +157,7 @@
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
     <ClCompile Include="AttackLog.cpp" />
     <ClCompile Include="BGM.cpp" />
+    <ClCompile Include="DamageScene.cpp" />
     <ClCompile Include="FadeInScene.cpp" />
     <ClCompile Include="FadeOutScene.cpp" />
     <ClCompile Include="FilePath.cpp" />
@@ -200,6 +201,7 @@
     <ClCompile Include="SystemMenu.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="ToolsLib.cpp" />
+    <ClCompile Include="TurnStartDamageScene.cpp" />
     <ClCompile Include="TutorialBattleSceneData.cpp" />
     <ClCompile Include="TutorialPlayerMoveScene.cpp" />
     <ClCompile Include="TutorialScene.cpp" />
@@ -217,6 +219,7 @@
     <ClInclude Include="..\StageEditor\Terrain.h" />
     <ClInclude Include="AttackLog.h" />
     <ClInclude Include="BGM.h" />
+    <ClInclude Include="DamageScene.h" />
     <ClInclude Include="FadeInScene.h" />
     <ClInclude Include="FadeOutScene.h" />
     <ClInclude Include="FilePath.h" />
@@ -259,6 +262,7 @@
     <ClInclude Include="ResearchScene.h" />
     <ClInclude Include="SwitchUnitScene.h" />
     <ClInclude Include="ToolsLib.h" />
+    <ClInclude Include="TurnStartDamageScene.h" />
     <ClInclude Include="TutorialBattleSceneData.h" />
     <ClInclude Include="TutorialPlayerMoveScene.h" />
     <ClInclude Include="TutorialScene.h" />

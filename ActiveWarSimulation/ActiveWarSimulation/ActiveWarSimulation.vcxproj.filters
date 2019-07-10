@@ -127,6 +127,12 @@
     <Filter Include="ヘッダー ファイル\Tools\Resource">
       <UniqueIdentifier>{c936114d-557c-4c91-9410-dce45c446c89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\BattleScene\DamageScene">
+      <UniqueIdentifier>{9badcb69-296f-4567-8a6f-791b1463a227}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameScene\BattleScene\DamageScene">
+      <UniqueIdentifier>{697f4214-2f69-4929-9db7-242d1a1d0f22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -176,9 +182,6 @@
     </ClCompile>
     <ClCompile Include="DamageCalculators.cpp">
       <Filter>ソース ファイル\UnitHaving\Explain</Filter>
-    </ClCompile>
-    <ClCompile Include="AttackScene.cpp">
-      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
     </ClCompile>
     <ClCompile Include="MoveScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene</Filter>
@@ -303,6 +306,15 @@
     <ClCompile Include="BGM.cpp">
       <Filter>ソース ファイル\Tools\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="AttackScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\DamageScene</Filter>
+    </ClCompile>
+    <ClCompile Include="DamageScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\DamageScene</Filter>
+    </ClCompile>
+    <ClCompile Include="TurnStartDamageScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\DamageScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -349,9 +361,6 @@
     </ClInclude>
     <ClInclude Include="DamageCalculators.h">
       <Filter>ヘッダー ファイル\UnitHaving\Explain</Filter>
-    </ClInclude>
-    <ClInclude Include="AttackScene.h">
-      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
     <ClInclude Include="MoveScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
@@ -475,6 +484,15 @@
     </ClInclude>
     <ClInclude Include="BGM.h">
       <Filter>ヘッダー ファイル\Tools\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\DamageScene</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\DamageScene</Filter>
+    </ClInclude>
+    <ClInclude Include="TurnStartDamageScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\DamageScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

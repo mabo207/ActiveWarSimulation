@@ -15,6 +15,10 @@ public:
 		//攻撃結果を格納する構造体
 		int damage;//ダメージ
 		//状態異常などがあればそれも追加していく
+		explicit AttackInfo(int i_damage=0)
+			:damage(i_damage)
+		{}
+		~AttackInfo()=default;
 	};
 
 	//定数
@@ -31,10 +35,26 @@ protected:
 	float m_cost;//消費OP
 	std::shared_ptr<DamageCalculator> m_calculator;//ダメージ計算式
 	std::string m_explain;//説明文
+	AttackInfo m_turnStartDamage;//ターン開始時のダメージ処理
 
 	//関数
 protected:
-	Weapon(const std::string &name,int power,float length,float cost,std::shared_ptr<DamageCalculator> calculator,const std::string explain):m_name(name),m_power(power),m_length(length),m_cost(cost),m_calculator(calculator),m_explain(explain){}
+	Weapon(const std::string &name
+		,int power
+		,float length
+		,float cost
+		,std::shared_ptr<DamageCalculator> calculator
+		,const std::string &explain
+		,const AttackInfo &turnStartDamage
+	)
+		:m_name(name)
+		,m_power(power)
+		,m_length(length)
+		,m_cost(cost)
+		,m_calculator(calculator)
+		,m_explain(explain)
+		,m_turnStartDamage(turnStartDamage)
+	{}
 public:
 	~Weapon(){}
 
@@ -52,6 +72,9 @@ public:
 	}
 	std::string GetExplain()const{
 		return m_explain;
+	}
+	AttackInfo GetTurnStartDamage()const{
+		return m_turnStartDamage;
 	}
 	DamageCalculator::Kind GetActionKind()const;
 

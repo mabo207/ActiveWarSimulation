@@ -1,55 +1,41 @@
 #ifndef DEF_ATTACKSCENE_H
 #define DEF_ATTACKSCENE_H
 
-#include"BattleSceneElement.h"
-#include"BattleSceneData.h"
+#include"DamageScene.h"
 #include<memory>
 
 //ユニットを動かすゲーム場面
-class AttackScene:public BattleSceneElement{
+class AttackScene:public DamageScene{
 	//型・列挙体
 public:
 
 
 	//定数
 protected:
-	static const int motionFrame;//アニメーションする全体時間
-	static const int damageBeginFrame,damageEndFrame;//ダメージ文字が出現するタイミング、アニメーションが終わるタイミング
 	static const float moveLength;//アニメーション時に移動する距離
 
 	//変数
 protected:
-	//ゲームのデータ
-	std::shared_ptr<BattleSceneData> m_battleSceneData;
-
-	//攻撃されるユニットのデータ
-	Unit *m_aimedUnit;
-
 	//位置変更データ
-	PositionComplexControl m_attackMotion;//攻撃ユニット
-	PositionComplexControl m_damageMotion;//ダメージ文字
+	PositionComplexControl m_attackMotion;//攻撃ユニットのアニメーション
 
-	//攻撃情報についてのデータ
-	Weapon::AttackInfo m_attackinfo;//攻撃情報
-	int m_damageFont;//ダメージ描画に用いるフォント
-
+	//エフェクト
 	int m_effect[30];
 
 	//関数
 protected:
-	void ProcessAttack();//攻撃処理を行う
-
 	//仮想関数のオーバーライド
-	int thisCalculate();
-	void thisDraw()const;
+	void AnimationUpdate();//攻撃ユニットのアニメーション処理を追加
+	void DrawUnit()const;//攻撃ユニットもアニメーションして表示
+	void DrawAnimation()const;//エフェクトを表示する必要がある
+	bool JudgeAnimationEnd()const;//攻撃ユニットのアニメーション処理も終了判定に加える
+	void DamageProcess();//m_operatedUnitのOP削減を行ってからダメージ処理をする
 	int UpdateNextScene(int index);
 	void ReturnProcess();
 
 public:
-	AttackScene(std::shared_ptr<BattleSceneData> data,Unit *aimedUnit);
+	AttackScene(const std::shared_ptr<BattleSceneData> &data,Unit *aimedUnit);
 	~AttackScene();
-
-
 };
 
 #endif // !DEF_ATTACKSCENE_H
