@@ -4,6 +4,7 @@
 #include<memory>
 #include<vector>
 #include"ToolsLib.h"
+#include"Unit.h"
 
 //プロトタイプ宣言
 class EditAction;
@@ -83,6 +84,9 @@ public:
 	void ReadStage(const char *filename);
 	//ユニットの読み込み
 	void ReadUnit();
+
+	//ステージエディタ内のみで使う、兵種から推奨武器種を返す関数
+	static Weapon::Kind ProfessionToWeaponKind(Unit::Profession::Kind profession);
 };
 
 #endif // !DEF_EDITACTIONSETTINGS_H

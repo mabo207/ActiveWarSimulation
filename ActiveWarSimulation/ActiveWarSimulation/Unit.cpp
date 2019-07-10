@@ -453,34 +453,29 @@ std::shared_ptr<BattleObject> Unit::VCopy()const{
 	return std::shared_ptr<BattleObject>(new Unit(*this));
 }
 
-Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage){
+Unit *Unit::CreateMobUnit(const std::string &name,Profession::Kind profession,int lv,const std::string &weaponName,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage){
 	BaseStatus baseStatus;
-	std::shared_ptr<Weapon> weapon;
+	std::shared_ptr<Weapon> weapon=Weapon::GetWeapon(weaponName);
 	int gHandle=-1;
 	switch(profession){
 	case(Profession::e_soldier):
 		baseStatus=BaseStatus(name,profession,lv,21+(int)(lv*0.8),7+(int)(lv*0.5),6+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),6);
-		weapon=Weapon::GetWeapon("ìSÇÃåï");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/soldier.png");
 		break;
 	case(Profession::e_archer):
 		baseStatus=BaseStatus(name,profession,lv,19+(int)(lv*0.75),6+(int)(lv*0.45),5+(int)(lv*0.4),2+(int)(lv*0.1),5+(int)(lv*0.45),6);
-		weapon=Weapon::GetWeapon("ìSÇÃã|");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/archer.png");
 		break;
 	case(Profession::e_armer):
 		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),8+(int)(lv*0.6),8+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),3);
-		weapon=Weapon::GetWeapon("ìSÇÃëÑ");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/armerknight.png");
 		break;
 	case(Profession::e_mage):
 		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),2+(int)(lv*0.3),7+(int)(lv*0.6),6+(int)(lv*0.5),4);
-		weapon=Weapon::GetWeapon("ÉtÉ@ÉCÉAÅ[ÇÃèë");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/mage.png");
 		break;
 	case(Profession::e_healer):
 		baseStatus=BaseStatus(name,profession,lv,14+(int)(lv*0.5),0+(int)(lv*0.1),2+(int)(lv*0.3),6+(int)(lv*0.5),9+(int)(lv*0.65),6);
-		weapon=Weapon::GetWeapon("ÉqÅ[ÉãÇÃèÒ");
 		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/healer.png");
 		break;
 	}
@@ -510,6 +505,7 @@ Unit *Unit::CreateUnitFromBuilder(StringBuilder &unitdata){
 		std::optional<Vector2D> pos;
 		std::optional<int> lv;
 		std::optional<Unit::Profession::Kind> prof;
+		std::optional<std::string> weaponName;
 		std::optional<Unit::Team::Kind> team;
 		std::optional<Unit::AIType::Kind> aitype;
 		std::optional<int> aiGroup;
@@ -528,6 +524,8 @@ Unit *Unit::CreateUnitFromBuilder(StringBuilder &unitdata){
 						prof=Unit::Profession::link(std::stoi(sb.m_vec[1].GetString().c_str()));
 					} else if(sb.m_vec[0].GetString()=="lv" && sb.m_vec.size()>=2){
 						lv=std::stoi(sb.m_vec[1].GetString().c_str());
+					} else if(sb.m_vec[0].GetString()=="weapon" && sb.m_vec.size()>=2){
+						weaponName=sb.m_vec[1].GetString();
 					} else if(sb.m_vec[0].GetString()=="pos" && sb.m_vec.size()>=3){
 						pos=Vector2D((float)std::stoi(sb.m_vec[1].GetString().c_str()),(float)std::stoi(sb.m_vec[2].GetString().c_str()));
 					} else if(sb.m_vec[0].GetString()=="team" && sb.m_vec.size()>=2){
@@ -553,9 +551,9 @@ Unit *Unit::CreateUnitFromBuilder(StringBuilder &unitdata){
 			}
 		}
 		//äeílÇ©ÇÁÉÜÉjÉbÉgÇäiî[
-		if(name && prof && lv && pos && team && aiGroup && aitype){
+		if(name && prof && lv && weaponName && pos && team && aiGroup && aitype){
 			//ê›íËïKê{Ç≈Ç†ÇÈçÄñ⁄Ç™ê›íËÇ≥ÇÍÇƒÇ¢ÇÈÇ©
-			Unit * const pu=Unit::CreateMobUnit(name.value(),prof.value(),lv.value(),pos.value(),team.value(),aitype.value(),aiGroup.value(),aiLinkage);
+			Unit * const pu=Unit::CreateMobUnit(name.value(),prof.value(),lv.value(),weaponName.value(),pos.value(),team.value(),aitype.value(),aiGroup.value(),aiLinkage);
 			//ê›íËîCà”Ç≈Ç†ÇÈçÄñ⁄ÇÃê›íË
 			if(initHP && initHP.value()>0 && initHP.value()<pu->GetBattleStatus().HP){
 				//HPÇ™0à»â∫ÇæÇ¡ÇΩÇËç≈ëÂHPÇÊÇËëÂÇ´Ç≠Ç»Ç¡ÇΩÇËÇµÇ»Ç¢ÇÊÇ§Ç…Ç∑ÇÈ

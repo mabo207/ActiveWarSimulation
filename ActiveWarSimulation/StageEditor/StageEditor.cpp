@@ -319,12 +319,12 @@ void StageEditor::DrawUnitInfo(const std::shared_ptr<const Unit> &punit,const Ve
 		drawStr+="AItype: "+Unit::AIType::GetName(punit->GetBattleStatus().aitype)+'\n';
 		drawStr+="AIgroup: "+std::to_string(punit->GetBattleStatus().aiGroup)+'\n';
 		drawStr+="HP: "+std::to_string(punit->GetBattleStatus().HP)+" / "+std::to_string(punit->GetBaseStatus().maxHP)+'\n';
+		drawStr+="Weapon: "+punit->GetBattleStatus().weapon->GetName()+'\n';
 		//ˆÈ‰ºA•ÒW‚Å‚«‚È‚¢‚à‚Ì
 		drawStr+="\nPOW: "+std::to_string(punit->GetBaseStatus().power)+'\n';
 		drawStr+="DEF: "+std::to_string(punit->GetBaseStatus().def)+'\n';
 		drawStr+="MPOW: "+std::to_string(punit->GetBaseStatus().mpower)+'\n';
 		drawStr+="MDEF: "+std::to_string(punit->GetBaseStatus().mdef)+'\n';
-		drawStr+="Weapon: "+punit->GetBattleStatus().weapon->GetName()+'\n';
 		drawStr+=punit->GetBattleStatus().weapon->GetEffectivenessString(punit.get());
 		//‰º’n‚Ì•`‰æ
 		DrawTriangle(unitX+baseSize,unitY,left,unitY-10,left,unitY+10,backColor,TRUE);

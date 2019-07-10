@@ -4,6 +4,7 @@
 #include<string>
 #include<map>
 #include<memory>
+#include<vector>
 #include"DamageCalculators.h"
 class Unit;//循環参照を防ぐために宣言のみする
 
@@ -20,6 +21,13 @@ public:
 		{}
 		~AttackInfo()=default;
 	};
+	enum class Kind{
+		e_sword
+		,e_lance
+		,e_bow
+		,e_book
+		,e_rod
+	};
 
 	//定数
 public:
@@ -30,6 +38,8 @@ public:
 	//変数
 protected:
 	std::string m_name;//名前
+	std::string m_resisterName;//登録名
+	Kind m_kind;//武器の種類
 	int m_power;//威力
 	float m_length;//射程
 	float m_cost;//消費OP
@@ -40,6 +50,8 @@ protected:
 	//関数
 protected:
 	Weapon(const std::string &name
+		,const std::string &resisterName
+		,Kind kind
 		,int power
 		,float length
 		,float cost
@@ -48,6 +60,8 @@ protected:
 		,const AttackInfo &turnStartDamage
 	)
 		:m_name(name)
+		,m_resisterName(resisterName)
+		,m_kind(kind)
 		,m_power(power)
 		,m_length(length)
 		,m_cost(cost)
@@ -60,6 +74,12 @@ public:
 
 	std::string GetName()const{
 		return m_name;
+	}
+	std::string GetResisterName()const{
+		return m_resisterName;
+	}
+	Kind GetKind()const{
+		return m_kind;
 	}
 	int GetPower()const{
 		return m_power;
@@ -85,14 +105,15 @@ public:
 
 	//静的変数
 private:
-	static const std::map<std::string,std::shared_ptr<Weapon>> m_weaponMap;//武器の一覧を格納する静的変数
+	static const std::map<std::string,std::shared_ptr<Weapon>> s_weaponMap;//武器の一覧を格納する静的変数
 	
 	//静的関数
 private:
 	static std::map<std::string,std::shared_ptr<Weapon>> InitWeaponMap();
-	static std::pair<std::string,std::shared_ptr<Weapon>> CreateWeaponMapElement(std::shared_ptr<Weapon> weapon);
+	static std::pair<std::string,std::shared_ptr<Weapon>> CreateWeaponMapElement(const std::shared_ptr<Weapon> &weapon);
 public:
 	static const std::shared_ptr<Weapon> GetWeapon(const std::string &name);
+	static std::vector<std::shared_ptr<Weapon>> GetKindVecSorted(const Kind weaponKind);//特定の武器種を「コスト→射程→威力」でソートして返す
 };
 
 #endif // !DEF_WEAPON_H

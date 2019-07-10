@@ -215,6 +215,7 @@ void EditActionSettings::WriteOutUnit()const{
 				ofs<<"(name,"<<baseStatus.name<<"),";
 				ofs<<"(profession,"<<baseStatus.profession<<"),";
 				ofs<<"(lv,"<<baseStatus.lv<<"),";
+				ofs<<"(weapon,"<<battleStatus.weapon->GetResisterName()<<"),";
 				ofs<<"(pos,"<<(int)(pos.x)<<','<<(int)(pos.y)<<"),";
 				ofs<<"(team,"<<battleStatus.team<<"),";
 				ofs<<"(ai,"<<battleStatus.aitype<<','<<battleStatus.aiGroup<<')';
@@ -251,4 +252,27 @@ void EditActionSettings::ReadUnit(){
 			m_objects.push_back(punit);
 		}
 	}
+}
+
+//•ºŽí‚©‚ç„§•ŠíŽí‚ð•Ô‚·
+Weapon::Kind EditActionSettings::ProfessionToWeaponKind(Unit::Profession::Kind profession){
+	Weapon::Kind weaponKind;
+	switch(profession){
+	case(Unit::Profession::e_soldier):
+		weaponKind=Weapon::Kind::e_sword;
+		break;
+	case(Unit::Profession::e_armer):
+		weaponKind=Weapon::Kind::e_lance;
+		break;
+	case(Unit::Profession::e_archer):
+		weaponKind=Weapon::Kind::e_bow;
+		break;
+	case(Unit::Profession::e_mage):
+		weaponKind=Weapon::Kind::e_book;
+		break;
+	case(Unit::Profession::e_healer):
+		weaponKind=Weapon::Kind::e_rod;
+		break;
+	}
+	return weaponKind;
 }
