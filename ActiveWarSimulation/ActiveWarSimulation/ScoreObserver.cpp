@@ -150,22 +150,37 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 	}
 	//共通して用いられるデータ
 	size_t totalPlayerUnitCount=0,livePlayerUnitCount=0;//プレイヤーユニットの合計と生存数
+	size_t totalEnemyUnitCount=0,liveEnemyUnitCount=0;//敵ユニットの合計と生存数
 	const auto judgeExistProfession=[](const LogElement::UnitLogData &logData,Unit::Profession::Kind profession){
 		return (logData.punit!=nullptr
 			&& logData.punit->GetBaseStatus().profession==profession
 			&& logData.punit->GetBattleStatus().team==Unit::Team::e_player);
 	};
-	//生存数
+	//生存数(味方のついでに敵も計算)
 	{
 		//生存数からの得点計算(寝返りを想定していない)
 		for(const LogElement::UnitLogData &unitData:initLog->m_unitDataList){
-			if(unitData.punit!=nullptr && unitData.punit->GetBattleStatus().team==Unit::Team::e_player){
-				totalPlayerUnitCount++;
+			if(unitData.punit!=nullptr){
+				switch(unitData.punit->GetBattleStatus().team){
+				case(Unit::Team::e_player):
+					totalPlayerUnitCount++;
+					break;
+				case(Unit::Team::e_enemy):
+					totalEnemyUnitCount++;
+					break;
+				}
 			}
 		}
 		for(const LogElement::UnitLogData &unitData:finishLog->m_unitDataList){
-			if(unitData.punit!=nullptr && unitData.punit->GetBattleStatus().team==Unit::Team::e_player){
-				livePlayerUnitCount++;
+			if(unitData.punit!=nullptr){
+				switch(unitData.punit->GetBattleStatus().team){
+				case(Unit::Team::e_player):
+					livePlayerUnitCount++;
+					break;
+				case(Unit::Team::e_enemy):
+					liveEnemyUnitCount++;
+					break;
+				}
 			}
 		}
 		if(totalPlayerUnitCount>0){
@@ -725,7 +740,7 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 		score+=b.GetScore();
 	}
 	
-	return std::make_shared<ScoreExpression>(bonus,livePlayerUnitCount,totalPlayerUnitCount,clearTurn,score);
+	return std::make_shared<ScoreExpression>(bonus,livePlayerUnitCount,totalPlayerUnitCount,totalEnemyUnitCount-liveEnemyUnitCount,totalEnemyUnitCount,clearTurn,score);
 }
 
 ScoreObserver::ScoreObserver()
