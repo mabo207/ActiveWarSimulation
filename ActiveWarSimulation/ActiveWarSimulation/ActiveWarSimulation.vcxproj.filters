@@ -315,6 +315,9 @@
     <ClCompile Include="TurnStartDamageScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\DamageScene</Filter>
     </ClCompile>
+    <ClCompile Include="BrowserTweet.cpp">
+      <Filter>ソース ファイル\Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -493,6 +496,9 @@
     </ClInclude>
     <ClInclude Include="TurnStartDamageScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\DamageScene</Filter>
+    </ClInclude>
+    <ClInclude Include="BrowserTweet.h">
+      <Filter>ヘッダー ファイル\Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
