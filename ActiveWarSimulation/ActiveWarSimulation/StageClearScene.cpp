@@ -84,12 +84,23 @@ int StageClearScene::thisCalculate(){
 			//効果音
 			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 			//twitter投稿のURI作成のための情報を作成
-			const std::string text="くりあ！";
-			const std::vector<std::string> hashtagVec={"ActiveWarSimulation","あくうぉー"};
+			std::string text;
+			const std::string name=m_inputCharControler.GetString();
+			if(!name.empty()){
+				//名前入力がされている場合は、「○○さんが」という文言を載せる
+				text+=name+"さんが";
+			}
+			text+="『"+m_battleSceneData->m_stageTitleName+'('+m_battleSceneData->m_stageLevel.GetString()+")』をクリアしたよ！";
+			text+="\n生存ユニット数："+std::to_string(m_scoreExpression->m_surviveCount)+" / "+std::to_string(m_scoreExpression->m_unitCount);
+			text+="\nクリアターン数："+std::to_string(m_scoreExpression->m_turnCount);
+			text+="\nScore："+std::to_string(m_scoreExpression->m_totalScorePoint);
+			text+="\n\n";
+			const std::vector<std::string> hashtagVec={"ActiveWarSimulation"};
 			//既定ブラウザで上記tweetページを開いてツイートする
 			BrowserTweet::TweetText(text,hashtagVec);
 		}
 	}
+
 
 	return SceneKind::e_clear;
 }
