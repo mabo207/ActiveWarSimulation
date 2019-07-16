@@ -7,6 +7,10 @@
 #include"ScoreRankingData.h"
 #include"FilePath.h"
 
+#include<Windows.h>
+#include<shellapi.h>
+#include<objbase.h>
+
 //--------------------StageClearScene------------------
 const int StageClearScene::bonusFontSize=25;
 
@@ -25,6 +29,7 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_frame(0)
 	,m_inputCharControler("\\\"\'",11)
 	,m_nowProcess(ProcessKind::e_watchScore)
+	,m_tweetButton(100,900,LoadGraphEX((FilePath::graphicDir+"tweetButton.png").c_str()))
 {}
 
 StageClearScene::~StageClearScene(){
@@ -77,6 +82,36 @@ int StageClearScene::thisCalculate(){
 			ResisterScoreSave();
 			//バトルパート終了
 			return SceneKind::END;
+		}
+		if(m_tweetButton.JudgePressMoment()){
+			//効果音
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
+			//twitter投稿のURI作成のための情報を作成
+			const std::string siteUri="https://twitter.com/intent/tweet";//ブラウザのツイート投稿画面へのURL
+			const std::string text="clear";
+			const std::vector<std::string> hashtagVec={"ActiveWarSimulation"};
+			//twitter投稿のURIを作成
+			std::string uri=siteUri;
+			uri+="?text="+text;
+			if(!hashtagVec.empty()){
+				uri+="&hashtags=";
+				for(size_t i=0,siz=hashtagVec.size();i<siz;i++){
+					if(i>0){
+						uri+=',';
+					}
+					uri+=hashtagVec[i];
+				}
+			}
+			//既定ブラウザで上記URIを開く
+			CoInitializeEx(NULL,COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+			const HINSTANCE hInst = ShellExecute(GetDesktopWindow(),"open",uri.c_str(),"","",SW_SHOW);
+			if(32 >= (int)hInst) {
+				//エラー発生時
+				//特に何もしない
+			} else {
+				//成功時
+				//特に何もしない
+			}
 		}
 	}
 
@@ -164,6 +199,8 @@ void StageClearScene::thisDraw()const{
 			const int lineY=CommonConstParameter::gameResolutionY/2+GetFontSizeToHandle(GeneralPurposeResource::popLargeFont)/2+5;
 			DrawLine(CommonConstParameter::gameResolutionX*2/7,lineY,CommonConstParameter::gameResolutionX*5/7,lineY,GetColor(255,255,255),6);
 		}
+		//ツイートボタンの描画
+		m_tweetButton.DrawButton();
 	}
 }
 

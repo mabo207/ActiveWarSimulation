@@ -37,6 +37,7 @@ protected:
 	const std::pair<int,int> m_survivalBar;//生存数描画領域のハンドルとその透明度
 	const int m_resultBarPic;//勝った・負けたのバーの描画ハンドル
 	const int m_scoreBarPic;//合計スコア描画領域のハンドル
+	const MouseButtonUI m_tweetButton;//ツイートボタン
 
 	//フォント系
 	const int m_bonusFont;//ボーナス項目表示のフォント
