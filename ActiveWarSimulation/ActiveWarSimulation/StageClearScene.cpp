@@ -88,18 +88,72 @@ int StageClearScene::thisCalculate(){
 			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
 			//twitter投稿のURI作成のための情報を作成
 			const std::string siteUri="https://twitter.com/intent/tweet";//ブラウザのツイート投稿画面へのURL
-			const std::string text="clear";
-			const std::vector<std::string> hashtagVec={"ActiveWarSimulation"};
-			//twitter投稿のURIを作成
+			const std::string text="くりあ！";
+			const std::vector<std::string> hashtagVec={"ActiveWarSimulation","あくうぉー"};
+			//エンコード関数
+			const auto SjisToUtf8Convert=[](const std::string &str){
+				//Shift-JIS to wstring
+				auto const dest_wc_size = ::MultiByteToWideChar(CP_ACP,0U,str.data(),-1,nullptr,0U);
+				std::vector<wchar_t> destWide(dest_wc_size,L'\0');
+				if(::MultiByteToWideChar(CP_ACP,0U,str.data(),-1,destWide.data(),destWide.size()) == 0) {
+					throw std::system_error{static_cast<int>(::GetLastError()),std::system_category()};
+				}
+				destWide.resize(std::char_traits<wchar_t>::length(destWide.data()));
+				destWide.shrink_to_fit();
+				const std::wstring wide(destWide.begin(),destWide.end());
+				//wstring to utf-8
+				auto const dest_c_size = ::WideCharToMultiByte(CP_UTF8,0U,wide.data(),-1,nullptr,0,nullptr,nullptr);
+				std::vector<char> destChar(dest_c_size,'\0');
+				if(::WideCharToMultiByte(CP_UTF8,0U,wide.data(),-1,destChar.data(),destChar.size(),nullptr,nullptr) == 0) {
+					throw std::system_error{static_cast<int>(::GetLastError()),std::system_category()};
+				}
+				destChar.resize(std::char_traits<char>::length(destChar.data()));
+				destChar.shrink_to_fit();
+				return std::string(destChar.begin(),destChar.end());
+			};
+			const auto HttpEncode=[](const std::string &str){
+				const char encTable[16] ={
+					'0','1','2','3','4','5','6','7',
+					'8','9','a','b','c','d','e','f'
+				};
+				const bool safeTable[128] ={
+					//      0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F
+					/* 0 */ false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+					/* 1 */ false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+					/* 2 */ false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+					/* 3 */ true,true,true,true,true,true,true,true,true,true,false,false,false,false,false,false,
+					/* 4 */ false,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,
+					/* 5 */ true,true,true,true,true,true,true,true,true,true,true,false,false,false,false,false,
+					/* 6 */ false,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,
+					/* 7 */ true,true,true,true,true,true,true,true,true,true,true,false,false,false,false,false
+				};
+				std::string encStr="";
+				for(const char &ch:str){
+					//マルチバイト文字が入り、ch<0になる可能性も存在する事に注意
+					if(ch<0 || !safeTable[ch]){
+						//エンコードが必要な文字
+						encStr+='%';
+						char p=(ch>>0x04)&0x0f;//負数の右シフト演算は、左端を何で埋められるかは処理系依存で未定義動作。なので00001111とAND演算して0埋めした場合と同じにする。
+						encStr+=encTable[(ch>>0x04)&0x0f];
+						p=ch&0x0f;
+						encStr+=encTable[ch & 0x0f];
+					} else{
+						//エンコードが不必要な文字([0-9a-zA-Z])
+						encStr+=ch;
+					}
+				}
+				return encStr;
+			};
+			//URIの作成
 			std::string uri=siteUri;
-			uri+="?text="+text;
+			uri+="?text="+HttpEncode(SjisToUtf8Convert(text));
 			if(!hashtagVec.empty()){
 				uri+="&hashtags=";
 				for(size_t i=0,siz=hashtagVec.size();i<siz;i++){
 					if(i>0){
 						uri+=',';
 					}
-					uri+=hashtagVec[i];
+					uri+=HttpEncode(SjisToUtf8Convert(hashtagVec[i]));
 				}
 			}
 			//既定ブラウザで上記URIを開く
