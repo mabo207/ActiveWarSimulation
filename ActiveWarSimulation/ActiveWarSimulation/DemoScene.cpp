@@ -6,6 +6,8 @@
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
 
+#include"TitleScene.h"
+
 //--------------------DemoScene::DemoSceneFactory-------------------
 DemoScene::DemoSceneFactory::DemoSceneFactory()
 	:SceneFactory()
@@ -50,4 +52,10 @@ void DemoScene::Draw()const{
 	if((m_frame/120)%2==0){
 		DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/2,"Zキー、4ボタン、決定ボタンまたはマウスを左クリックするとタイトル画面に戻ります。",GetColor(255,255,255),m_font,true,GetColor(0,0,0));
 	}
+}
+
+std::shared_ptr<GameScene> DemoScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
+	//ゲームプレイが終わった時は、ステージセレクト画面へ
+	const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
+	return CreateFadeOutInSceneCompletely(thisSharedPtr,titleFactory,15,15);
 }

@@ -4,6 +4,8 @@
 #include"FileRead.h"
 #include"StageInfoReader.h"
 
+#include"TitleScene.h"
+
 //--------------------TutorialScene::TutorialSceneFactory--------------------
 TutorialScene::TutorialSceneFactory::TutorialSceneFactory(const std::string &stageDirName)
 	:m_stageDirName(stageDirName)
@@ -29,3 +31,9 @@ TutorialScene::TutorialScene(const std::string &stageDirName,const std::string &
 {}
 
 TutorialScene::~TutorialScene(){}
+
+std::shared_ptr<GameScene> TutorialScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
+	//ゲームプレイが終わった時は、ステージセレクト画面へ
+	const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
+	return CreateFadeOutInSceneCompletely(thisSharedPtr,titleFactory,15,15);
+}

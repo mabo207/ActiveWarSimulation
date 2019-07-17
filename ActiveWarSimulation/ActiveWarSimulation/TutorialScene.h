@@ -26,6 +26,9 @@ protected:
 	//関数
 public:
 	~TutorialScene();
+
+	//仮想関数のオーバーライド
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
 };
 
 #endif // !DEF_TUTORIALSCENE_H
