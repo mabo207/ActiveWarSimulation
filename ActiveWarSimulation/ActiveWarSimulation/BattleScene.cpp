@@ -1,9 +1,10 @@
 #include"BattleScene.h"
 #include"SwitchUnitScene.h"
-#include"TitleScene.h"
 #include"input.h"
 #include"DxLib.h"
 #include"CommonConstParameter.h"
+
+#include"StageSelectScene.h"
 
 //----------------------BattleScene::BattleSceneFactory----------------------
 BattleScene::BattleSceneFactory::BattleSceneFactory(const std::string &stageDirName,const std::string &title,const StageLevel level)
@@ -112,7 +113,7 @@ void BattleScene::Draw()const{
 }
 
 std::shared_ptr<GameScene> BattleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
-	//ゲームプレイが終わった時は、タイトル画面へ
-	const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
-	return CreateFadeOutInSceneCompletely(thisSharedPtr,titleFactory,15,15);
+	//ゲームプレイが終わった時は、ステージセレクト画面へ
+	const auto stageSelectFactory=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
+	return CreateFadeOutInSceneCompletely(thisSharedPtr,stageSelectFactory,15,15);
 }
