@@ -8,7 +8,7 @@
 //ステージセレクト場面におけるステージ情報
 struct StageInfoInStageSelect{
 	//変数
-	int m_mapPic;//マップグラフィック(縮小表示)(push_back()の際にデストラクタが呼ばれグラフィックが消されるので、削除はデストラクタでは行わない。どうしてもデストラクタでしたくなったら、コピーコンストラクタを作って再度CopyGraph()をしよう。)
+	int m_mapPicRef;//マップグラフィック(縮小表示)(参照)
 	std::string m_dirName;//ディレクトリ名
 	std::string m_titleName;//ステージ名
 	std::string m_explain;//ステージ説明文

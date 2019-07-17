@@ -4,7 +4,7 @@
 #include"CommonConstParameter.h"
 
 namespace {
-	//m_mapPicは加工されて画面全体の縦横共に1/4の大きさになっていることを用いる
+	//m_mapPicRefは加工されて画面全体の縦横共に1/4の大きさになっていることを用いる
 	const int offsetLeft=10,offsetTop=10,offsetSpace=20;
 	const int picWidth=CommonConstParameter::gameResolutionX/4,picHeight=CommonConstParameter::gameResolutionY/4;
 	const int stageNameDY=offsetTop+picHeight+offsetSpace;//ステージ描画UIの上端からどの位置にステージ名を配置するか
@@ -18,7 +18,7 @@ const int StageInfoInStageSelect::levelBoxWidth=StageInfoInStageSelect::stageBox
 const int StageInfoInStageSelect::levelBoxHeight=CommonConstParameter::gameResolutionY/4-25;
 
 StageInfoInStageSelect::StageInfoInStageSelect(const int mapPic,const std::string &dirName,const std::string &explain,const ScoreRankingData &rankingData)
-	:m_mapPic(mapPic)
+	:m_mapPicRef(mapPic)
 	,m_dirName(dirName)
 	,m_explain(explain)
 	,m_rankingVec(rankingData.GetStageScoreData(dirName))
@@ -30,14 +30,14 @@ StageInfoInStageSelect::StageInfoInStageSelect(const int mapPic,const std::strin
 }
 
 StageInfoInStageSelect::~StageInfoInStageSelect(){
-	//DeleteGraphEX(m_mapPic);
+	//DeleteGraphEX(m_mapPicRef);
 }
 
 void StageInfoInStageSelect::DrawStageInfo(const int centerX,const int centerY,const int nameFont,const int explainFont)const{
 	const int x=centerX-stageBoxWidth/2,y=centerY-stageBoxHeight/2;//左上の座標を計算
 	//描画
 	DrawBox(x,y,x+stageBoxWidth,y+stageBoxHeight,GetColor(32,64,32),TRUE);
-	DrawGraph(x+offsetLeft,y+offsetTop,m_mapPic,TRUE);
+	DrawGraph(x+offsetLeft,y+offsetTop,m_mapPicRef,TRUE);
 	DrawStringCenterBaseToHandle(x+stageBoxWidth/2,y+stageNameDY,m_titleName.c_str(),GetColor(255,255,255),nameFont,false);
 	DrawStringNewLineToHandle(x+offsetLeft,y+explainDY,stageBoxWidth,300,m_explain.c_str(),GetColor(255,255,255),explainFont,2);
 }

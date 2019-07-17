@@ -4,6 +4,7 @@
 #include"GameScene.h"
 #include<vector>
 #include<string>
+#include<map>
 #include"input.h"
 #include"BaseUIInStageSelect.h"
 #include"StageInfoInStageSelect.h"
@@ -46,6 +47,9 @@ protected:
 	const int m_explainFont;
 	
 	//効果音
+
+private:
+	std::map<std::string,int> m_stageInfoFactoryMap;//ステージ情報のロードのための情報(ミニマップについては別スレッド処理をするためにStageInfoInStageSelectクラスで直接ロードせずにこの変数にロードする)
 
 	//関数
 protected:

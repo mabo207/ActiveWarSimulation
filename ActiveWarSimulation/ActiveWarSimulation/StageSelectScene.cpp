@@ -33,8 +33,6 @@ StageSelectScene::StageSelectScene()
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 	,m_uiControledData(new BaseUIInStageSelect::ControledData(0,StageLevel::e_easy))
 {
-	//スコアデータの読み込み
-	const ScoreRankingData rankingData;
 	//フォルダを検索
 	char cdir[1024];
 	GetCurrentDirectory(1024,cdir);
@@ -71,26 +69,19 @@ StageSelectScene::StageSelectScene()
 			}
 		}
 	} while(FindNextFile(hFind,&find_dir_data));
-	//各フォルダの中身を検索して、StageInfoInStageSelectを構成していく
+	//各フォルダ名から、m_stageInfoFactoryMapを構築していく
 	for(const std::string &dirName:dirNameVec){
 		if(dirName!="demo" && dirName!="tutorial" && dirName!="tutorial_2"){
-			m_stageInfoVec.push_back(StageInfoInStageSelect(
-				LoadGraphEX((FilePath::stageDir+dirName+"/nonfree/minimap.png").c_str())
-				,dirName
-				,FileStrRead((FilePath::stageDir+dirName+"/explain.txt").c_str())
-				,rankingData
-			));
+			m_stageInfoFactoryMap.insert(std::make_pair(dirName,LoadGraphEX((FilePath::stageDir+dirName+"/nonfree/minimap.png").c_str())));
 		}
 	}
-	//UIの作成
-	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont));
 }
 
 StageSelectScene::~StageSelectScene(){
 	//グラフィックの解放
 	DeleteGraphEX(m_backPic);
-	for(const StageInfoInStageSelect &info:m_stageInfoVec){
-		DeleteGraphEX(info.m_mapPic);
+	for(const auto pair:m_stageInfoFactoryMap){
+		DeleteGraphEX(pair.second);
 	}
 	//フォントの解放
 	DeleteFontToHandleEX(m_stageNameFont);
@@ -99,9 +90,23 @@ StageSelectScene::~StageSelectScene(){
 
 }
 
-void StageSelectScene::InitCompletely(){}
+void StageSelectScene::InitCompletely(){
+	//スコアデータの読み込み
+	const ScoreRankingData rankingData;
+	//m_stageInfoFactoryMapからフォルダ検索を行いながら、StageInfoInStageSelectを構成していく
+	for(const std::pair<std::string,int> &info:m_stageInfoFactoryMap){
+		m_stageInfoVec.push_back(StageInfoInStageSelect(
+			info.second
+			,info.first
+			,FileStrRead((FilePath::stageDir+info.first+"/explain.txt").c_str())
+			,rankingData
+		));
+	}
+}
 
 void StageSelectScene::Activate(){
+	//UIの作成
+	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont));
 	//bgm再生
 }
 
