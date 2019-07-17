@@ -32,22 +32,7 @@ StageSelectScene::StageSelectScene()
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 	,m_uiControledData(new BaseUIInStageSelect::ControledData(0,StageLevel::e_easy))
-{}
-
-StageSelectScene::~StageSelectScene(){
-	//グラフィックの解放
-	DeleteGraphEX(m_backPic);
-	for(const StageInfoInStageSelect &info:m_stageInfoVec){
-		DeleteGraphEX(info.m_mapPic);
-	}
-	//フォントの解放
-	DeleteFontToHandleEX(m_stageNameFont);
-	DeleteFontToHandleEX(m_explainFont);
-	//音の解放
-
-}
-
-void StageSelectScene::InitCompletely(){
+{
 	//スコアデータの読み込み
 	const ScoreRankingData rankingData;
 	//フォルダを検索
@@ -100,6 +85,21 @@ void StageSelectScene::InitCompletely(){
 	//UIの作成
 	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont));
 }
+
+StageSelectScene::~StageSelectScene(){
+	//グラフィックの解放
+	DeleteGraphEX(m_backPic);
+	for(const StageInfoInStageSelect &info:m_stageInfoVec){
+		DeleteGraphEX(info.m_mapPic);
+	}
+	//フォントの解放
+	DeleteFontToHandleEX(m_stageNameFont);
+	DeleteFontToHandleEX(m_explainFont);
+	//音の解放
+
+}
+
+void StageSelectScene::InitCompletely(){}
 
 void StageSelectScene::Activate(){
 	//bgm再生
