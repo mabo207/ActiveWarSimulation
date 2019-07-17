@@ -8,6 +8,7 @@
 #include"input.h"
 #include"BaseUIInStageSelect.h"
 #include"StageInfoInStageSelect.h"
+#include"BGM.h"
 
 class StageSelectScene:public GameScene{
 	//Œ^E—ñ‹“‘Ì
@@ -46,6 +47,9 @@ protected:
 	const int m_stageNameFont;
 	const int m_explainFont;
 	
+	//BGM
+	const Resource::BGM m_bgm;
+
 	//Œø‰Ê‰¹
 
 private:
