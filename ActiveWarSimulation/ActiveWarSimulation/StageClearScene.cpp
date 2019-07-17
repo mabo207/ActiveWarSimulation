@@ -6,6 +6,7 @@
 #include"GeneralPurposeResource.h"
 #include"ScoreRankingData.h"
 #include"FilePath.h"
+#include"BrowserTweet.h"
 
 //--------------------StageClearScene------------------
 const int StageClearScene::bonusFontSize=25;
@@ -25,6 +26,8 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_frame(0)
 	,m_inputCharControler("\\\"\'",11)
 	,m_nowProcess(ProcessKind::e_watchScore)
+	,m_tweetButton(420,700,LoadGraphEX((FilePath::graphicDir+"tweetButton.png").c_str()))
+	,m_backToStageSelectButton(1100,700,LoadGraphEX((FilePath::graphicDir+"backToStageSelectButton.png").c_str()))
 {}
 
 StageClearScene::~StageClearScene(){
@@ -70,7 +73,7 @@ int StageClearScene::thisCalculate(){
 		}
 	} else if(m_nowProcess==ProcessKind::e_inputName){
 		m_inputCharControler.Update();
-		if(!m_inputCharControler.GetInputFlag()){
+		if(!m_inputCharControler.GetInputFlag() || m_backToStageSelectButton.JudgePressMoment()){
 			//入力終了したら
 			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
 			//記録処理を登録
@@ -78,7 +81,39 @@ int StageClearScene::thisCalculate(){
 			//バトルパート終了
 			return SceneKind::END;
 		}
+		if(m_tweetButton.JudgePressMoment()){
+			//効果音
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
+			//twitter投稿のURI作成のための情報を作成
+			std::string text;
+			const std::string name=m_inputCharControler.GetString();
+			if(m_winFlag){
+				//クリア時の文言
+				if(!name.empty()){
+					//名前入力がされている場合は、「○○さんが」という文言を載せる
+					text+=name+"さんが";
+				}
+				text+="『"+m_battleSceneData->m_stageTitleName+'('+m_battleSceneData->m_stageLevel.GetString()+")』をクリアしたよ！";
+				text+="\n生存ユニット数："+std::to_string(m_scoreExpression->m_surviveCount)+" / "+std::to_string(m_scoreExpression->m_unitCount);
+				text+="\nクリアターン数："+std::to_string(m_scoreExpression->m_turnCount);
+			} else{
+				//ミス時の文言
+				if(!name.empty()){
+					//名前入力がされていない場合は「○○さんは」という文言を載せる
+					text+=name+"さんは";
+				}
+				text+="『"+m_battleSceneData->m_stageTitleName+'('+m_battleSceneData->m_stageLevel.GetString()+")』で敵にボコボコにされてしまいました……";
+				text+="\n撃破ユニット数："+std::to_string(m_scoreExpression->m_defeatCount)+" / "+std::to_string(m_scoreExpression->m_enemyCount);
+				text+="\n粘ったターン数："+std::to_string(m_scoreExpression->m_turnCount);
+			}
+			text+="\nScore："+std::to_string(m_scoreExpression->m_totalScorePoint);
+			text+="\n\n";
+			const std::vector<std::string> hashtagVec={"ActiveWarSimulation"};
+			//既定ブラウザで上記tweetページを開いてツイートする
+			BrowserTweet::TweetText(text,hashtagVec);
+		}
 	}
+
 
 	return SceneKind::e_clear;
 }
@@ -153,17 +188,34 @@ void StageClearScene::thisDraw()const{
 		{
 			int mode,pal;
 			GetDrawBlendMode(&mode,&pal);
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA,196);
 			DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
 			SetDrawBlendMode(mode,pal);
 		}
 		//文字列の描画
 		{
+			//見出しの描画
 			DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/4,"名前を入力しよう！",GetColor(255,255,255),GeneralPurposeResource::popLargeFont,true);
-			DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/2,m_inputCharControler.GetStringCStr(),GetColor(255,255,255),GeneralPurposeResource::popLargeFont,true);
+			//名前の描画(縦棒描画のための情報を計算するため、DrawStringCenterBaseToHandle()を使う必要はない)
+			const std::string name=m_inputCharControler.GetString();
+			const int strWidth=GetDrawStringWidthToHandle(name.c_str(),name.size(),GeneralPurposeResource::popLargeFont);
+			const int strHeight=GetFontSizeToHandle(GeneralPurposeResource::popLargeFont);
+			const int strX=CommonConstParameter::gameResolutionX/2-strWidth/2;
+			const int strY=CommonConstParameter::gameResolutionY/2-strHeight/2;
+			DrawStringToHandle(strX,strY,name.c_str(),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
+			//下線の描画
 			const int lineY=CommonConstParameter::gameResolutionY/2+GetFontSizeToHandle(GeneralPurposeResource::popLargeFont)/2+5;
 			DrawLine(CommonConstParameter::gameResolutionX*2/7,lineY,CommonConstParameter::gameResolutionX*5/7,lineY,GetColor(255,255,255),6);
+			//入力可能だとわかるようにするため、点滅している縦棒の描画
+			if((m_battleSceneData->m_fpsMesuring.GetFrame()/30)%2==0){
+				//印象を統一するために文字描画で表現
+				DrawStringToHandle(strX+strWidth,strY,"|",GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
+			}
 		}
+		//ツイートボタンの描画
+		m_tweetButton.DrawButton();
+		//次に進むボタンの描画
+		m_backToStageSelectButton.DrawButton();
 	}
 }
 

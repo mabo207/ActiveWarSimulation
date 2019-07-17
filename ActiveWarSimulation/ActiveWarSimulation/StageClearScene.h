@@ -38,6 +38,10 @@ protected:
 	const int m_resultBarPic;//勝った・負けたのバーの描画ハンドル
 	const int m_scoreBarPic;//合計スコア描画領域のハンドル
 
+	//名前入力後に出てくるボタン類
+	const MouseButtonUI m_tweetButton;//ツイートするボタン
+	const MouseButtonUI m_backToStageSelectButton;//次に進むボタン
+
 	//フォント系
 	const int m_bonusFont;//ボーナス項目表示のフォント
 
