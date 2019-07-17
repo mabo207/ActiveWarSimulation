@@ -15,6 +15,9 @@ namespace Resource{
 		static BGM Load(const std::string &dirName);
 		static void Clear();
 
+		//エラー値
+		static const BGM errorObject;
+
 	private:
 		//画像をロードする際に必要な情報
 		struct LoadInfo{
@@ -35,23 +38,21 @@ namespace Resource{
 
 		//読み込まれているBGM一覧
 		static std::map<LoadInfo,std::pair<BGM,size_t>> s_bgmMap;
-		//エラー値
-		static const BGM errorObject;
 
 		//メンバ
 	public:
 		int GetHandle()const;//再生以外の処理がしたくなりハンドルが必要になった時に用いる
-		void SetOption()const;//volume,loopTop,loopButtomをハンドルに設定する
 		void SetAndPlay(int playType,int topPositionFlag)const;//SetOption()した後に再生
 		void Stop()const;
 		bool IsError()const;
 		BGM Copy()const;
 		void Delete()const;
 		~BGM()=default;
+		bool operator==(const BGM &otherobj)const;
 
 	private:
 		BGM(int i_handle,int i_volume,int i_loopTop,int i_loopBottom);//再生直前にvolume等を設定する事に注意
-		bool operator==(const BGM &otherobj)const;
+		void SetOption()const;//volume,loopTop,loopButtomをハンドルに設定する
 
 		int handle;//サウンドハンドル
 		int volume;
