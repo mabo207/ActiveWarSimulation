@@ -6,6 +6,7 @@
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResource.h"
 #include"FilePath.h"
+#include"BGMManager.h"
 
 #include"BattleScene.h"
 #include"TitleScene.h"
@@ -31,6 +32,7 @@ StageSelectScene::StageSelectScene()
 	,m_backButton(backButtonX,backButtonY,backButtonWidth,backButtonHeight,LoadGraphEX(FilePath::graphicDir+"backButton.png"))
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
+	,m_bgm(Resource::BGM::Load(FilePath::bgmDir+"nonfree/title/"))
 	,m_uiControledData(new BaseUIInStageSelect::ControledData(0,StageLevel::e_easy))
 {
 	//フォルダを検索
@@ -87,7 +89,7 @@ StageSelectScene::~StageSelectScene(){
 	DeleteFontToHandleEX(m_stageNameFont);
 	DeleteFontToHandleEX(m_explainFont);
 	//音の解放
-
+	m_bgm.Delete();
 }
 
 void StageSelectScene::InitCompletely(){
@@ -108,6 +110,9 @@ void StageSelectScene::Activate(){
 	//UIの作成
 	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont));
 	//bgm再生
+	if(BGMManager::s_instance.has_value()){
+		BGMManager::s_instance->PlayWithCopy(m_bgm);
+	}
 }
 
 int StageSelectScene::Calculate(){

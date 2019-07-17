@@ -157,6 +157,7 @@
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
     <ClCompile Include="AttackLog.cpp" />
     <ClCompile Include="BGM.cpp" />
+    <ClCompile Include="BGMManager.cpp" />
     <ClCompile Include="BrowserTweet.cpp" />
     <ClCompile Include="DamageScene.cpp" />
     <ClCompile Include="FadeInScene.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="..\StageEditor\Terrain.h" />
     <ClInclude Include="AttackLog.h" />
     <ClInclude Include="BGM.h" />
+    <ClInclude Include="BGMManager.h" />
     <ClInclude Include="BrowserTweet.h" />
     <ClInclude Include="DamageScene.h" />
     <ClInclude Include="FadeInScene.h" />

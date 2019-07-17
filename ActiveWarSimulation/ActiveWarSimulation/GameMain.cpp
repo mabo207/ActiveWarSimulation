@@ -9,6 +9,7 @@
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResource.h"
 #include"FilePath.h"
+#include"BGMManager.h"
 
 #include"TitleScene.h"
 #include"FadeInScene.h"
@@ -55,6 +56,9 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		//入力機構の初期化
 		InitInputControler();
+
+		//BGM再生管理クラスの初期化
+		BGMManager::Init();
 
 		//共通素材のロード
 		GeneralPurposeResource::LoadResource();
@@ -171,6 +175,7 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 
 		//終了処理
 		GeneralPurposeResource::ReleaseResource();//共通リソースの解放
+		BGMManager::Release();//BGM再生管理クラスの解放
 		DeleteInputControler();//入力機構の解放
 		GraphicControler_End();//グラフィック管理クラスの解放
 		FontControler_End();//フォント管理クラスの解放

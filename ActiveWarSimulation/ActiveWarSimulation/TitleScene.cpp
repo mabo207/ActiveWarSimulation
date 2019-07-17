@@ -8,6 +8,7 @@
 #include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
 #include"FilePath.h"
+#include"BGMManager.h"
 
 #include"StageSelectScene.h"
 #include"BattleScene.h"
@@ -88,7 +89,6 @@ TitleScene::~TitleScene(){
 	DeleteGraphEX(m_backPic);
 	DeleteFontToHandleEX(m_itemFont);
 	//ƒTƒEƒ“ƒh‰ð•ú
-	m_bgm.Stop();
 	m_bgm.Delete();
 	DeleteSoundMem(m_aimchangeSound);
 }
@@ -99,7 +99,10 @@ void TitleScene::InitCompletely(){
 
 void TitleScene::Activate(){
 	//bgmÄ¶
-	m_bgm.SetAndPlay(DX_PLAYTYPE_LOOP,TRUE);
+	if(BGMManager::s_instance.has_value()){
+		BGMManager::s_instance->PlayWithCopy(m_bgm);
+	}
+	//m_bgm.SetAndPlay(DX_PLAYTYPE_LOOP,TRUE);
 }
 
 int TitleScene::thisCalculate(){

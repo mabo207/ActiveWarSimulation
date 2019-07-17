@@ -6,7 +6,6 @@
 
 //--------------Resource::BGM::LoadInfo-----------------
 std::map<Resource::BGM::LoadInfo,std::pair<Resource::BGM,size_t>> Resource::BGM::s_bgmMap;
-const Resource::BGM Resource::BGM::errorObject(-1,-1,-1,-1);
 
 Resource::BGM Resource::BGM::LoadInfo::Load()const{
 	int loopTop=-1;
@@ -42,9 +41,11 @@ Resource::BGM Resource::BGM::LoadInfo::Load()const{
 }
 
 //--------------Resource::BGM----------------------
+const Resource::BGM Resource::BGM::errorObject(-1,-1,-1,-1);
+
 Resource::BGM Resource::BGM::Load(const std::string &fileName){
 	const LoadInfo info(fileName);
-	return info.Load();
+	return Load(info);
 }
 
 Resource::BGM Resource::BGM::Load(const LoadInfo &info){

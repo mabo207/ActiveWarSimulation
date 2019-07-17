@@ -3,6 +3,7 @@
 #include"input.h"
 #include"DxLib.h"
 #include"CommonConstParameter.h"
+#include"BGMManager.h"
 
 #include"StageSelectScene.h"
 
@@ -36,6 +37,10 @@ BattleScene::BattleScene(const std::string &stageDirName,const std::string &titl
 BattleScene::~BattleScene(){
 	//m_battleSceneDataにあるシーン終了時に行う処理群の一括処理をする
 	m_battleSceneData->RunSceneEndProcess();
+	//BGMを止める
+	if(BGMManager::s_instance.has_value()){
+		BGMManager::s_instance->Stop();
+	}
 }
 
 void BattleScene::InitCompletely(){
@@ -44,7 +49,10 @@ void BattleScene::InitCompletely(){
 
 void BattleScene::Activate(){
 	//bgm再生
-	m_battleSceneData->m_mapBGM.SetAndPlay(DX_PLAYTYPE_LOOP,TRUE);
+	//m_battleSceneData->m_mapBGM.SetAndPlay(DX_PLAYTYPE_LOOP,TRUE);
+	if(BGMManager::s_instance.has_value()){
+		BGMManager::s_instance->PlayWithCopy(m_battleSceneData->m_mapBGM);
+	}
 	//m_sceneDataの初期化、最初はユニット切り替え(m_battleSceneDataの初期化が終わった状態でこの処理はしたいのでActivate内で行う)
 	m_sceneData=VGetSwitchUnitScene();
 }
@@ -56,7 +64,11 @@ std::shared_ptr<BattleSceneElement> BattleScene::VGetSwitchUnitScene()const{
 void BattleScene::ResetGame(){
 	m_battleSceneData=std::shared_ptr<BattleSceneData>(new BattleSceneData(m_battleSceneData->m_stageDirName,m_battleSceneData->m_stageTitleName,m_battleSceneData->m_stageLevel));//バトルデータを変える
 	m_sceneData=VGetSwitchUnitScene();//クラスを変える
-	m_battleSceneData->m_mapBGM.SetAndPlay(DX_PLAYTYPE_LOOP,TRUE);//bgm再生
+	if(BGMManager::s_instance.has_value()){
+		//BGMを最初から再生しなおす。そのためには、一旦BGMを止めてから、Play()を呼ぶ必要がある
+		BGMManager::s_instance->Stop();
+		BGMManager::s_instance->PlayWithCopy(m_battleSceneData->m_mapBGM);
+	}
 }
 
 int BattleScene::Calculate(){
