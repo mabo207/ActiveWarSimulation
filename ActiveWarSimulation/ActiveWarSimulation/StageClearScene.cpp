@@ -194,10 +194,23 @@ void StageClearScene::thisDraw()const{
 		}
 		//文字列の描画
 		{
+			//見出しの描画
 			DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/4,"名前を入力しよう！",GetColor(255,255,255),GeneralPurposeResource::popLargeFont,true);
-			DrawStringCenterBaseToHandle(CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/2,m_inputCharControler.GetStringCStr(),GetColor(255,255,255),GeneralPurposeResource::popLargeFont,true);
+			//名前の描画(縦棒描画のための情報を計算するため、DrawStringCenterBaseToHandle()を使う必要はない)
+			const std::string name=m_inputCharControler.GetString();
+			const int strWidth=GetDrawStringWidthToHandle(name.c_str(),name.size(),GeneralPurposeResource::popLargeFont);
+			const int strHeight=GetFontSizeToHandle(GeneralPurposeResource::popLargeFont);
+			const int strX=CommonConstParameter::gameResolutionX/2-strWidth/2;
+			const int strY=CommonConstParameter::gameResolutionY/2-strHeight/2;
+			DrawStringToHandle(strX,strY,name.c_str(),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
+			//下線の描画
 			const int lineY=CommonConstParameter::gameResolutionY/2+GetFontSizeToHandle(GeneralPurposeResource::popLargeFont)/2+5;
 			DrawLine(CommonConstParameter::gameResolutionX*2/7,lineY,CommonConstParameter::gameResolutionX*5/7,lineY,GetColor(255,255,255),6);
+			//入力可能だとわかるようにするため、点滅している縦棒の描画
+			if((m_battleSceneData->m_fpsMesuring.GetFrame()/30)%2==0){
+				//印象を統一するために文字描画で表現
+				DrawStringToHandle(strX+strWidth,strY,"|",GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
+			}
 		}
 		//ツイートボタンの描画
 		m_tweetButton.DrawButton();
