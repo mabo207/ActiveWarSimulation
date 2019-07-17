@@ -86,7 +86,6 @@ BattleSceneData::~BattleSceneData(){
 		DeleteGraphEX(m_drawOrderHelp[i]);
 	}
 	//サウンド開放
-	m_mapBGM.Stop();
 	m_mapBGM.Delete();
 	DeleteSoundMem(m_aimchangeSound);
 	DeleteSoundMem(m_attackSound);
