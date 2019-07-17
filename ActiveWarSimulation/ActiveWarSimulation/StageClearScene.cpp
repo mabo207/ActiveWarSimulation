@@ -27,6 +27,7 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_inputCharControler("\\\"\'",11)
 	,m_nowProcess(ProcessKind::e_watchScore)
 	,m_tweetButton(100,900,LoadGraphEX((FilePath::graphicDir+"tweetButton.png").c_str()))
+	,m_backToStageSelectButton(1100,900,LoadGraphEX((FilePath::graphicDir+"backToStageSelectButton.png").c_str()))
 {}
 
 StageClearScene::~StageClearScene(){
@@ -72,7 +73,7 @@ int StageClearScene::thisCalculate(){
 		}
 	} else if(m_nowProcess==ProcessKind::e_inputName){
 		m_inputCharControler.Update();
-		if(!m_inputCharControler.GetInputFlag()){
+		if(!m_inputCharControler.GetInputFlag() || m_backToStageSelectButton.JudgePressMoment()){
 			//入力終了したら
 			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
 			//記録処理を登録
@@ -200,6 +201,8 @@ void StageClearScene::thisDraw()const{
 		}
 		//ツイートボタンの描画
 		m_tweetButton.DrawButton();
+		//次に進むボタンの描画
+		m_backToStageSelectButton.DrawButton();
 	}
 }
 
