@@ -26,8 +26,8 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_frame(0)
 	,m_inputCharControler("\\\"\'",11)
 	,m_nowProcess(ProcessKind::e_watchScore)
-	,m_tweetButton(100,900,LoadGraphEX((FilePath::graphicDir+"tweetButton.png").c_str()))
-	,m_backToStageSelectButton(1100,900,LoadGraphEX((FilePath::graphicDir+"backToStageSelectButton.png").c_str()))
+	,m_tweetButton(420,700,LoadGraphEX((FilePath::graphicDir+"tweetButton.png").c_str()))
+	,m_backToStageSelectButton(1100,700,LoadGraphEX((FilePath::graphicDir+"backToStageSelectButton.png").c_str()))
 {}
 
 StageClearScene::~StageClearScene(){
@@ -188,7 +188,7 @@ void StageClearScene::thisDraw()const{
 		{
 			int mode,pal;
 			GetDrawBlendMode(&mode,&pal);
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA,196);
 			DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
 			SetDrawBlendMode(mode,pal);
 		}
