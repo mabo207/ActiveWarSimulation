@@ -743,6 +743,15 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 	return std::make_shared<ScoreExpression>(bonus,livePlayerUnitCount,totalPlayerUnitCount,totalEnemyUnitCount-liveEnemyUnitCount,totalEnemyUnitCount,clearTurn,score);
 }
 
+std::shared_ptr<const LogElement> ScoreObserver::GetLatestLog()const{
+	if(m_logList.empty()){
+		//ƒƒO‚ª‘¶İ‚µ‚È‚¢ê‡‚ÍA–³‚ğ•Ô‚·
+		return std::shared_ptr<const LogElement>();
+	} else{
+		return m_logList.back();
+	}
+}
+
 ScoreObserver::ScoreObserver()
 	:m_researchCount(0)
 	,m_cancelCount(0)
