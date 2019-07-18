@@ -395,16 +395,7 @@ int StageEditor::Calculate() {
 	m_actionSettings.UpdateMouseObjectDepth(mouse_get(MOUSE_INPUT_RIGHT));//押してない時でも更新することがあるので、押しているフレーム数を渡す。
 
 	//キーボード入力受付
-	if(keyboard_get(KEY_INPUT_S)==10){
-		//Sキー長押しで地形を保存
-		m_actionSettings.WriteOutStage("SaveData/stage.txt");
-	} else if(keyboard_get(KEY_INPUT_U)==10){
-		//Uキー長押しでユニットを保存
-		m_actionSettings.WriteOutUnit();
-	} else if(keyboard_get(KEY_INPUT_R)==10){
-		//Rキー長押しで読み込み
-		m_actionSettings.ReadData();
-	} else if(keyboard_get(KEY_INPUT_NUMPADENTER) == 1){
+	if(keyboard_get(KEY_INPUT_NUMPADENTER) == 1){
 		//Enterキー入力でエディタを終了
 		return -1;
 	} else{
