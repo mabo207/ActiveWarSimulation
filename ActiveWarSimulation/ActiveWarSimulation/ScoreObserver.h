@@ -6,6 +6,7 @@
 #include<set>
 #include"LogElement.h"
 #include"StageLevel.h"
+#include"SelfDecideSubmission.h"
 
 //"BattleSceneData.h"と"ScoreSystem.h"は循環参照になってしまうので宣言
 struct BattleSceneData;
@@ -89,6 +90,8 @@ private:
 	};
 
 	std::vector<std::shared_ptr<LogElement>> m_logList;
+	//サブミッションに関するデータ
+	SelfDecideSubmission m_submission;
 	//ログとして残さない些細なデータ
 	StageLevel m_stageLevel;
 	size_t m_researchCount;

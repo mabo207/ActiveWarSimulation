@@ -10,12 +10,12 @@ namespace{
 }
 
 //--------------SelfDecideSubmission---------------
-bool SelfDecideSubmission::JudgeEvaluatedOrder(const std::shared_ptr<BattleSceneData> &battleData)const{
+bool SelfDecideSubmission::JudgeEvaluatedOrder(const BattleSceneData * const battleData)const{
 	return (battleData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player
 		&& battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_archer);
 }
 
-void SelfDecideSubmission::RubricEvaluate(const std::shared_ptr<BattleSceneData> &battleData){
+void SelfDecideSubmission::RubricEvaluate(const BattleSceneData * const battleData){
 	//- —áŠOˆ—
 	//	- UŒ‚‚µ‚È‚¢(-1)
 	//- •]‰¿

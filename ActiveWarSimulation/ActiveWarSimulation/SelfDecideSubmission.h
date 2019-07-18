@@ -14,9 +14,9 @@ public:
 	SelfDecideSubmission()=default;
 	~SelfDecideSubmission()=default;
 	//観察条件
-	bool JudgeEvaluatedOrder(const std::shared_ptr<BattleSceneData> &battleData)const;
+	bool JudgeEvaluatedOrder(const BattleSceneData * const battleData)const;
 	//ルーブリック評価を行い蓄積する
-	void RubricEvaluate(const std::shared_ptr<BattleSceneData> &battleData);
+	void RubricEvaluate(const BattleSceneData * const battleData);
 	//総括的振り返りをする
 	void WholeLookBack();
 	//ミッション内容を描画する
