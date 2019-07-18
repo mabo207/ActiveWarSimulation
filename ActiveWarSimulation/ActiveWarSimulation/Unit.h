@@ -148,6 +148,7 @@ public:
 	void DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const;//マップ上のユニットを描画
 	void DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const;//マップ上のユニットを描画
 	float GetMoveDistance()const;//移動可能な直線距離を返す。定式化しておくとラクになるため
+	float GetMaxMoveDistance()const;//行動開始時に移動可能な直線距離を返す。
 	
 	//仮想関数・純粋仮想関数のオーバーライド
 	const Shape *GetHitJudgeShape()const;//当たり判定図形を取得。

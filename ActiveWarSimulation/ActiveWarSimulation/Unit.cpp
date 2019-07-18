@@ -249,7 +249,7 @@ void Unit::DrawMaxMoveInfo(Vector2D adjust)const{
 }
 
 void Unit::DrawMaxMoveInfo(Vector2D point,Vector2D adjust)const{
-	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost)),point,adjust,Unit::Team::GetColor(m_battleStatus.team,128,255,255,255),Unit::Team::GetColor(m_battleStatus.team,128,220,220,220));//キャラの中の色で塗る
+	DrawMoveInfo(GetMaxMoveDistance(),point,adjust,Unit::Team::GetColor(m_battleStatus.team,128,255,255,255),Unit::Team::GetColor(m_battleStatus.team,128,220,220,220));//キャラの中の色で塗る
 }
 
 void Unit::DrawHPGage(Vector2D adjust)const{
@@ -416,8 +416,13 @@ float Unit::GetMoveDistance()const{
 }
 
 float Unit::GetMoveDistance(float vOP)const{
-	//残りOPで移動可能な直線距離を求める。
+	//vOPで移動可能な直線距離を求める。
 	return vOP/CalculateConsumeOP(1.0f)*m_baseStatus.move;
+}
+
+float Unit::GetMaxMoveDistance()const{
+	//行動開始時のOPで移動可能な直線距離を求める
+	return GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost));
 }
 
 const Shape *Unit::GetHitJudgeShape()const{
