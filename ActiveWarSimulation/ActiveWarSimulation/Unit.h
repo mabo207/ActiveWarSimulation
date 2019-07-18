@@ -152,6 +152,7 @@ public:
 	
 	//仮想関数・純粋仮想関数のオーバーライド
 	const Shape *GetHitJudgeShape()const;//当たり判定図形を取得。
+	const Shape *GetHitJudgeShape(bool penetratable)const;//侵入可否を指定して当たり判定図形を取得する、専らログ評価で用いる。
 	void Move(Vector2D v);//当たり判定図形の移動。２種類の当たり判定図形を共に移動させる。
 	Shape::Fix::Kind SetFix(Shape::Fix::Kind fix)const;//m_hitJudgeShape.m_fixを変更
 	void VDraw(Vector2D point,Vector2D adjust)const;//描画処理(任意座標に描画)
