@@ -32,17 +32,17 @@ void SelfDecideSubmission::RubricEvaluate(const BattleSceneData * const battleDa
 		//距離に関する評価をする
 		//直線距離を求める
 		const float directDistance=(attackLog->GetOperateUnitData().pos-attackLog->GetAimedUnitData().pos).size();
-		//ルート距離を求める
+		//被弾ユニット→行動ユニットへのルート距離を求める
 		std::shared_ptr<LatticeBattleField> latticeField=battleData->CalculateLatticeBattleField(false);
 		const Unit *operatedUnit=attackLog->GetOperateUnitData().punit;
 		const Unit *aimedUnit=attackLog->GetAimedUnit();
 		for(const LogElement::UnitLogData &logData:attackLog->m_unitDataList){
-			//ユニットの格子点追加
+			//ユニットの格子点追加(被弾ユニットが動く事を想定している)
 			if(logData.punit!=operatedUnit && logData.punit!=aimedUnit){
-				latticeField->BecomeImpassibleLattice(logData.punit,operatedUnit->GetBattleStatus().team);
+				latticeField->BecomeImpassibleLattice(logData.punit,aimedUnit->GetBattleStatus().team);
 			}
 		}
-		std::vector<float> distVec=latticeField->CalculateRouteDistance(operatedUnit->getPos(),{aimedUnit->getPos()});
+		std::vector<float> distVec=latticeField->CalculateRouteDistance(aimedUnit->getPos(),{operatedUnit->getPos()});
 		const float routeDistance=distVec.front();
 		//評価(高い方から判定していく)
 		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance()){
