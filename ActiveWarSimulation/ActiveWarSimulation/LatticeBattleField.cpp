@@ -139,6 +139,34 @@ Vector2D LatticeBattleField::CalculateLatticePointPos(size_t index)const{
 	return CalculateLatticePointPos(index%m_xLatticeNum,index/m_xLatticeNum);
 }
 
+std::vector<float> LatticeBattleField::CalculateRouteDistance(const Vector2D start,const std::vector<Vector2D> &endVec)const{
+	//距離マップを作成
+	std::vector<LatticeDistanceInfo> distanceInfoVec;
+	CalculateLatticeDistanceInfo(distanceInfoVec,start);
+	//各格子点に対して距離を求める
+	std::vector<float> retPal;
+	const auto CalcMinDistance=[&distanceInfoVec,this](size_t x,size_t y,float minDistance){
+		if(x>=0 && x<m_xLatticeNum && y>=0 && y<m_yLatticeNum){
+			const float dist=distanceInfoVec[x+y*m_xLatticeNum].dist;
+			if(minDistance<0.0f || dist<minDistance){
+				return dist;
+			}
+		}
+		return minDistance;
+	};
+	for(const Vector2D &end:endVec){
+		//endの周辺の格子点までの距離を求め,最小距離のものをendまでのルート距離とする
+		const size_t endLeftUpX=(size_t)(end.x/latticeIntervalSize),endLeftUpY=(size_t)(end.y/latticeIntervalSize);
+		float minDistance=-0.1f;
+		minDistance=CalcMinDistance(endLeftUpX,endLeftUpY,minDistance);
+		minDistance=CalcMinDistance(endLeftUpX+1,endLeftUpY,minDistance);
+		minDistance=CalcMinDistance(endLeftUpX,endLeftUpY+1,minDistance);
+		minDistance=CalcMinDistance(endLeftUpX+1,endLeftUpY+1,minDistance);
+		retPal.push_back(minDistance);
+	}
+	return retPal;
+}
+
 LatticeBattleField::LatticeBattleField(const BattleSceneData &battleData,const Unit * const punit,bool unitExist)
 	:m_xLatticeNum((size_t)(battleData.m_stageSize.x)/latticeIntervalSize+1)
 	,m_yLatticeNum((size_t)(battleData.m_stageSize.y)/latticeIntervalSize+1)
