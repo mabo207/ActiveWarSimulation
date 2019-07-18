@@ -258,11 +258,7 @@ StageEditor::StageEditor()
 		Vector2D(buttonsLeftEdge+(float)(readWriteButtonWidth/readWriteButtonWidthNum*0),buttonY)
 		,Vector2D((float)(readWriteButtonWidth/readWriteButtonWidthNum),(float)(readWriteButtonHeight/readWriteButtonHeightNum))
 		,"ReadStageAndUnit"
-		,[](EditActionSettings &settings){
-			settings.InitObjects();
-			settings.ReadStage("SaveData/stage.txt");
-			settings.ReadUnit();
-		}
+		,[](EditActionSettings &settings){settings.ReadData();}
 	)));
 	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SettingFunction::SettingFunctionButton(
 		Vector2D(buttonsLeftEdge+(float)(readWriteButtonWidth/readWriteButtonWidthNum*1),buttonY)
@@ -291,9 +287,7 @@ StageEditor::StageEditor()
 	m_mapPic=LoadGraph("Savedata/stage.png");
 
 	//図形の読み込み
-	m_actionSettings.InitObjects();
-	m_actionSettings.ReadStage("Savedata/stage.txt");
-	m_actionSettings.ReadUnit();
+	m_actionSettings.ReadData();
 }
 
 StageEditor::~StageEditor() {
@@ -409,9 +403,7 @@ int StageEditor::Calculate() {
 		m_actionSettings.WriteOutUnit();
 	} else if(keyboard_get(KEY_INPUT_R)==10){
 		//Rキー長押しで読み込み
-		m_actionSettings.InitObjects();
-		m_actionSettings.ReadStage("SaveData/stage.txt");
-		m_actionSettings.ReadUnit();
+		m_actionSettings.ReadData();
 	} else if(keyboard_get(KEY_INPUT_NUMPADENTER) == 1){
 		//Enterキー入力でエディタを終了
 		return -1;

@@ -41,7 +41,12 @@ public:
 
 	//関数
 protected:
-	std::vector<std::shared_ptr<BattleObject>>::const_iterator GetMousePointedObject(Vector2D point)const;//pointを含む図形を返す
+	//ステージの読み込み
+	void ReadStage(const char *filename);
+	//ユニットの読み込み
+	void ReadUnit();
+	//pointを含む図形を返す
+	std::vector<std::shared_ptr<BattleObject>>::const_iterator GetMousePointedObject(Vector2D point)const;
 
 public:
 	//コンストラクタとデストラクタ
@@ -82,10 +87,8 @@ public:
 	void WriteOutStage(const char *filename)const;
 	//ユニットデータの書き出し
 	void WriteOutUnit()const;
-	//ステージの読み込み
-	void ReadStage(const char *filename);
-	//ユニットの読み込み
-	void ReadUnit();
+	//データの読み込み
+	void ReadData();
 
 	//ステージエディタ内のみで使う、兵種から推奨武器種を返す関数
 	static Weapon::Kind ProfessionToWeaponKind(Unit::Profession::Kind profession);
