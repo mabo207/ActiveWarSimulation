@@ -18,10 +18,14 @@ public:
 	Vector2D GetPos()const{
 		return pos;
 	}
+	std::string GetBgmFolderName()const{
+		return bgmFolderName;
+	}
 
 private:
 	std::string titleName;
 	Vector2D pos;
+	std::string bgmFolderName;
 };
 
 #endif // !DEF_STAGEINFOREADER_H

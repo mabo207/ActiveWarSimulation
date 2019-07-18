@@ -10,6 +10,7 @@
 #include"StringBuilder.h"
 #include"FilePath.h"
 #include<optional>
+#include"StageInfoReader.h"
 
 //----------------------BattleSceneData----------------------
 const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::mapSizeX,(float)CommonConstParameter::mapSizeY);
@@ -30,8 +31,8 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_turnTimerPic(LoadGraphEX(FilePath::graphicDir+"turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
 	,m_playMode(playMode)
-	,m_mapPic(LoadGraphEX((FilePath::stageDir+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
-	,m_mapBGM(Resource::BGM::Load(FilePath::bgmDir+"/nonfree/wild-road_loop/"))
+	,m_mapPic(LoadGraphEX((FilePath::stageDir+stageDirName+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
+	,m_mapBGM(Resource::BGM::Load(FilePath::bgmDir+StageInfoReader(stageDirName).GetBgmFolderName()))
 	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
 	,m_attackSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/damage.ogg").c_str()))
 	,m_healSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/recover.ogg").c_str()))

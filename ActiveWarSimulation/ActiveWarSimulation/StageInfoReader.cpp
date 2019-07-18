@@ -21,6 +21,8 @@ StageInfoReader::StageInfoReader(const std::string &dirName){
 			} catch(const std::out_of_range &){
 				//�͈͊O
 			}
+		} else if(vecSize>=2 && sb.m_vec[0].GetString()=="bgm"){
+			bgmFolderName=sb.m_vec[1].GetString();
 		}
 	}
 }
