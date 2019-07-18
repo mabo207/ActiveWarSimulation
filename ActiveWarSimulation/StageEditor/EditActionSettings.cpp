@@ -254,6 +254,13 @@ void EditActionSettings::ReadUnit(){
 	}
 }
 
+//ƒf[ƒ^‚Ì“Ç‚İ‚İ
+void EditActionSettings::ReadData(){
+	InitObjects();
+	ReadStage("SaveData/stage.txt");
+	ReadUnit();
+}
+
 //•ºí‚©‚ç„§•Šíí‚ğ•Ô‚·
 Weapon::Kind EditActionSettings::ProfessionToWeaponKind(Unit::Profession::Kind profession){
 	Weapon::Kind weaponKind;
