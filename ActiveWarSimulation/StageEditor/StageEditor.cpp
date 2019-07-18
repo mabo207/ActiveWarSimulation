@@ -27,6 +27,8 @@
 
 #include"SelectLevel.h"
 
+#include"SettingFunction.h"
+
 #include"ScrollBar.h"
 
 //定数の定義
@@ -61,6 +63,12 @@ namespace {
 	//「レベル設定」ボタン部分全体での横幅,縦幅
 	const int levelButtonWidth=buttonWidth;
 	const int levelButtonHeight=120;
+	//「入出力」ボタンの縦横の個数
+	const size_t readWriteButtonWidthNum=3;
+	const size_t readWriteButtonHeightNum=1;
+	//「入出力」ボタン部分全体での横幅,縦幅
+	const int readWriteButtonWidth=buttonWidth;
+	const int readWriteButtonHeight=120;
 	//エディタで作られる物のサイズの基準の大きさ・基本単位
 	const int baseSize=CommonConstParameter::unitCircleSize;
 }
@@ -244,6 +252,31 @@ StageEditor::StageEditor()
 		,StageLevel::e_lunatic
 	)));
 	buttonY+=(float)(levelButtonHeight/levelButtonHeightNum);
+	
+	//ReadStageボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SettingFunction::SettingFunctionButton(
+		Vector2D(buttonsLeftEdge+(float)(readWriteButtonWidth/readWriteButtonWidthNum*0),buttonY)
+		,Vector2D((float)(readWriteButtonWidth/readWriteButtonWidthNum),(float)(readWriteButtonHeight/readWriteButtonHeightNum))
+		,"ReadStageAndUnit"
+		,[](EditActionSettings &settings){
+			settings.InitObjects();
+			settings.ReadStage("SaveData/stage.txt");
+			settings.ReadUnit();
+		}
+	)));
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SettingFunction::SettingFunctionButton(
+		Vector2D(buttonsLeftEdge+(float)(readWriteButtonWidth/readWriteButtonWidthNum*1),buttonY)
+		,Vector2D((float)(readWriteButtonWidth/readWriteButtonWidthNum),(float)(readWriteButtonHeight/readWriteButtonHeightNum))
+		,"WriteStage"
+		,[](EditActionSettings &settings){settings.WriteOutStage("SaveData/stage.txt");}
+	)));
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SettingFunction::SettingFunctionButton(
+		Vector2D(buttonsLeftEdge+(float)(readWriteButtonWidth/readWriteButtonWidthNum*2),buttonY)
+		,Vector2D((float)(readWriteButtonWidth/readWriteButtonWidthNum),(float)(readWriteButtonHeight/readWriteButtonHeightNum))
+		,"WriteUnit"
+		,[](EditActionSettings &settings){settings.WriteOutUnit();}
+	)));
+	buttonY+=(float)(readWriteButtonHeight/readWriteButtonHeightNum);
 
 	//最初から押されているようにするボタンを押す(順番に注意！)
 	pRectangleFactoryButton->PushedProcess(m_actionSettings);
@@ -493,6 +526,11 @@ void StageEditor::Draw() {
 	
 	//入力されているレベル設定ボタンの描画
 	m_actionSettings.m_pSelectLevel->LightUpButton();
+
+	//入力されている出入力ボタンの描画
+	if(m_actionSettings.m_pSettingFunction){
+		m_actionSettings.m_pSettingFunction->LightUpButton();
+	}
 
 	//ボタン群の描画
 	for(std::shared_ptr<ButtonHaving::Button> &pb:m_buttons){

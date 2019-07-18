@@ -12,6 +12,7 @@ class BattleObject;
 class PosSetting;
 class ShapeFactory;
 class SelectLevel;
+class SettingFunction;
 
 //ステージ編集をおこなう際の「何を行うか」の設定を集約したクラス
 class EditActionSettings {
@@ -36,6 +37,7 @@ public:
 	std::shared_ptr<ShapeFactory> m_pShapeFactory;//EditPut時に置く図形
 	std::shared_ptr<PosSetting> m_pPosSetting;//位置合わせの手法
 	std::shared_ptr<SelectLevel> m_pSelectLevel;//unitlistファイルの出入力先
+	std::shared_ptr<SettingFunction> m_pSettingFunction;//EditActionSettingsの何らかの関数を呼び出す
 
 	//関数
 protected:
