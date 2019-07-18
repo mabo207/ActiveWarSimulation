@@ -40,6 +40,7 @@ public:
 	}
 	void BecomeImpassibleLattice(size_t index);//m_latticeInShape[index]をe_unpassableにして、その周辺の格子点に対する処理もする
 	void BecomeImpassibleLattice(size_t x,size_t y);
+	void BecomeImpassibleLattice(const Unit *punit,const Unit::Team::Kind operateTeam);//Unit内部を通過不能にする。Unit以外のobjectは操作ユニット内部か外部かの判定が必要なので、BattleObjectに拡張することはしない。専らログ分析用。
 	void CalculateLatticeDistanceInfo(std::vector<LatticeDistanceInfo> &retPal,const Vector2D startPos)const;//m_latticeInShapeを元に、各格子点とスタート地点までの距離・ルートに関する情報を返す
 	Vector2D CalculateLatticePointPos(size_t x,size_t y)const;
 	Vector2D CalculateLatticePointPos(size_t index)const;

@@ -71,6 +71,21 @@ void LatticeBattleField::BecomeImpassibleLattice(size_t x,size_t y){
 	}
 }
 
+void LatticeBattleField::BecomeImpassibleLattice(const Unit *punit,const Unit::Team::Kind operateTeam){
+	const size_t vecSize=m_xLatticeNum*m_yLatticeNum;
+	std::vector<int> info(vecSize,0);//通れるかの情報を一旦格納する。通れないところのみを1とする。
+	//Teamを用いてpunitの当たり判定図形を再構築
+	const Shape *shape=punit->GetHitJudgeShape(Unit::Team::JudgeFriend(punit->GetBattleStatus().team,operateTeam));
+	//当たり判定図形からunpassableな格子点を追加、既存のunpasssable格子点追加関数を用いて楽をする
+	shape->RecordLatticePointInShape(info,m_xLatticeNum,m_yLatticeNum,latticeIntervalSize,latticeIntervalSize,1);
+	for(size_t i=0,size=vecSize;i<size;i++){
+		if(info[i]==1){
+			//通れないと分かった場所を通れなくさせる
+			BecomeImpassibleLattice(i);
+		}
+	}
+}
+
 void LatticeBattleField::CalculateLatticeDistanceInfo(std::vector<LatticeDistanceInfo> &retPal,const Vector2D startPos)const{
 	//事前準備
 	const size_t latticeNum=m_latticeInShape.size();//何度も使うので予め計算しておく
