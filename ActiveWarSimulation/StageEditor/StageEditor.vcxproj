@@ -178,6 +178,7 @@
     <ClInclude Include="EditUnitParameter.h" />
     <ClInclude Include="PolygonFactory.h" />
     <ClInclude Include="SelectLevel.h" />
+    <ClInclude Include="SettingFunction.h" />
     <ClInclude Include="StageEditor.h" />
     <ClInclude Include="PosSetting.h" />
     <ClInclude Include="ScrollBar.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="EditUnitParameter.cpp" />
     <ClCompile Include="PolygonFactory.cpp" />
     <ClCompile Include="SelectLevel.cpp" />
+    <ClCompile Include="SettingFunction.cpp" />
     <ClCompile Include="StageEditor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PosSetting.cpp" />
