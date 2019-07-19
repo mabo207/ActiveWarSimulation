@@ -3,6 +3,7 @@
 #include"BattleSceneData.h"
 #include"AttackLog.h"
 #include"ToolsLib.h"
+#include"GraphicControl.h"
 
 namespace{
 	const int width=500;
@@ -10,6 +11,18 @@ namespace{
 }
 
 //--------------SelfDecideSubmission---------------
+SelfDecideSubmission::SelfDecideSubmission()
+	:m_rubricList()
+	,m_wholeComment()
+	,m_sentenceFont(CreateFontToHandleEX("メイリオ",24,2,DX_FONTTYPE_NORMAL))
+	,m_rubricFont(CreateFontToHandleEX("メイリオ",16,2,DX_FONTTYPE_EDGE,-1,2))
+{}
+
+SelfDecideSubmission::~SelfDecideSubmission(){
+	DeleteFontToHandleEX(m_sentenceFont);
+	DeleteFontToHandleEX(m_rubricFont);
+}
+
 bool SelfDecideSubmission::JudgeEvaluatedOrder(const BattleSceneData * const battleData)const{
 	return (battleData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player
 		&& battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_archer);
@@ -114,14 +127,14 @@ void SelfDecideSubmission::WholeLookBack(){
 	}
 }
 
-void SelfDecideSubmission::DrawSubmission(int x,int y,int font)const{
+void SelfDecideSubmission::DrawSubmission(int x,int y)const{
 	const std::string submissionStr="地形や味方キャラの壁を利用して、\n安全地帯から攻撃してみよう！";
 	DrawBox(x,y,x+width,y+height,GetColor(64,192,64),TRUE);
 	DrawBox(x,y,x+width,y+height,GetColor(192,255,192),FALSE);
-	DrawStringNewLineToHandle(x+5,y+5,width-10,height-10,submissionStr.c_str(),GetColor(255,255,255),font,2);
+	DrawStringNewLineToHandle(x+5,y+5,width-10,height-10,submissionStr.c_str(),GetColor(255,255,255),m_sentenceFont,2);
 }
 
-void SelfDecideSubmission::DrawRubric(int x,int y,int font)const{
+void SelfDecideSubmission::DrawRubric(int x,int y)const{
 	if(!m_rubricList.empty()){
 		//ルーブリック評価の文言を定義
 		std::string rubricStr;
@@ -153,12 +166,12 @@ void SelfDecideSubmission::DrawRubric(int x,int y,int font)const{
 			break;
 		}
 		//描画
-		DrawStringToHandle(x,y,rubricStr.c_str(),GetColor(255,255,255),font,edgeColor);
+		DrawStringToHandle(x,y,rubricStr.c_str(),GetColor(255,255,255),m_rubricFont,edgeColor);
 	}
 }
 
-void SelfDecideSubmission::DrawWholeLookBack(int x,int y,int font)const{
+void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{
 	DrawBox(x,y,x+width,y+height,GetColor(64,192,64),TRUE);
 	DrawBox(x,y,x+width,y+height,GetColor(192,255,192),FALSE);
-	DrawStringNewLineToHandle(x+5,y+5,width-10,height-10,m_wholeComment.c_str(),GetColor(255,255,255),font,2);
+	DrawStringNewLineToHandle(x+5,y+5,width-10,height-10,m_wholeComment.c_str(),GetColor(255,255,255),m_sentenceFont,2);
 }

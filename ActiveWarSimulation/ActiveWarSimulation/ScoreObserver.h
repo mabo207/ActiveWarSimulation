@@ -68,6 +68,10 @@ public:
 	std::shared_ptr<ScoreExpression> GetScoreExpression(bool winFlag)const;
 	//直近ログを取得(サブミッション等に用いる)
 	std::shared_ptr<const LogElement> GetLatestLog()const;
+	//サブミッションの参照を取得
+	const SelfDecideSubmission &GetSubmission()const{
+		return m_submission;
+	}
 	//コンストラクタ等
 	ScoreObserver();
 	virtual ~ScoreObserver();

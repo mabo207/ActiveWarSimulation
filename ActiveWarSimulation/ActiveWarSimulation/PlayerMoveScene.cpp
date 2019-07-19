@@ -388,6 +388,11 @@ void PlayerMoveScene::thisDraw()const{
 	m_waitButton.DrawButton();
 	m_researchButton.DrawButton();
 	m_menuButton.DrawButton();
+
+	//サブミッション描画
+	if(m_battleSceneData->m_submissionRunFlag){
+		m_battleSceneData->m_scoreObserver->GetSubmission().DrawSubmission(0,50);
+	}
 }
 
 void PlayerMoveScene::ReturnProcess(){
