@@ -4,6 +4,13 @@
 #include"GeneralPurposeResource.h"
 #include<iostream>
 #include"FilePath.h"
+#include"CommonConstParameter.h"
+
+namespace{
+	int GetSubmissionX(){
+		return CommonConstParameter::gameResolutionX-SelfDecideSubmission::s_submissionWidth;
+	}
+}
 
 //----------------------PlayerMoveScene------------------------
 const std::array<std::function<std::pair<bool,int>(PlayerMoveScene&)>,11> PlayerMoveScene::inCalculateProcessFunction={
@@ -213,6 +220,8 @@ PlayerMoveScene::PlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_attackableOnlyChangeInherit(true)
 	,m_moveableOnlyChangeInherit(true)
 	,m_waitableOnlyChangeInherit(true)
+	,m_submissionPosition(GetSubmissionX(),-SelfDecideSubmission::s_submissionHeight,10,Easing::TYPE_IN,Easing::FUNCTION_LINER,0.0)
+	,m_notOperateFrame(0)
 {}
 
 Vector2D PlayerMoveScene::CalculateInputVec()const{
@@ -373,11 +382,30 @@ int PlayerMoveScene::thisCalculate(){
 	}
 //*/
 
+	//無操作時間の更新(マウスのみで)
+	if(mousePos!=m_mousePosJustBefore){
+		m_notOperateFrame=0;
+	} else{
+		m_notOperateFrame++;
+	}
+	printfDx("frame:%d y:%d targety:%d\n",m_notOperateFrame,m_submissionPosition.GetY(),m_submissionPosition.GetendY());
+
+	//サブミッションの位置の更新
+	if(m_notOperateFrame==0){
+		//操作されたら、画面外に移動させる
+		//動かし続けても外に移動しなくなってしまうため、bool値は工夫する
+		m_submissionPosition.SetTarget(GetSubmissionX(),-SelfDecideSubmission::s_submissionHeight,m_submissionPosition.GetendY()!=-SelfDecideSubmission::s_submissionHeight);
+	} else if(m_notOperateFrame==120){
+		//2秒無操作状態が続いたら画面内に移動させる
+		m_submissionPosition.SetTarget(GetSubmissionX(),0,true);
+	} else{
+		m_submissionPosition.Update();
+	}
+
 	//次フレームに、本フレームにおけるマウスの位置が分かるようにする
 	m_mousePosJustBefore=mousePos;
 	
-	return SceneKind::e_move;
-	
+	return SceneKind::e_move;	
 }
 
 void PlayerMoveScene::thisDraw()const{
@@ -391,7 +419,7 @@ void PlayerMoveScene::thisDraw()const{
 
 	//サブミッション描画
 	if(m_battleSceneData->m_submissionRunFlag){
-		m_battleSceneData->m_scoreObserver->GetSubmission().DrawSubmission(0,50);
+		m_battleSceneData->m_scoreObserver->GetSubmission().DrawSubmission(m_submissionPosition.GetX(),m_submissionPosition.GetY());
 	}
 }
 

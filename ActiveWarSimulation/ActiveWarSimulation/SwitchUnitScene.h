@@ -26,6 +26,9 @@ protected:
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
 
+	//ルーブリック評価描画位置
+	PositionControl m_rubricWordPosition;
+
 	//フォント
 	const int m_turnFont;
 

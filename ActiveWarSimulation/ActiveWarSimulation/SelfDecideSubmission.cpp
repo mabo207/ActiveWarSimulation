@@ -6,16 +6,19 @@
 #include"GraphicControl.h"
 
 namespace{
-	const int width=500;
-	const int height=200;
+	const int wholeCommentWidth=500;
+	const int wholeCommentHeight=200;
 }
 
 //--------------SelfDecideSubmission---------------
+const int SelfDecideSubmission::s_submissionWidth=500;
+const int SelfDecideSubmission::s_submissionHeight=60;
+
 SelfDecideSubmission::SelfDecideSubmission()
 	:m_rubricList()
 	,m_wholeComment()
 	,m_sentenceFont(CreateFontToHandleEX("メイリオ",24,2,DX_FONTTYPE_NORMAL))
-	,m_rubricFont(CreateFontToHandleEX("メイリオ",16,2,DX_FONTTYPE_EDGE,-1,2))
+	,m_rubricFont(CreateFontToHandleEX("メイリオ",20,2,DX_FONTTYPE_EDGE,-1,2))
 {}
 
 SelfDecideSubmission::~SelfDecideSubmission(){
@@ -129,12 +132,12 @@ void SelfDecideSubmission::WholeLookBack(){
 
 void SelfDecideSubmission::DrawSubmission(int x,int y)const{
 	const std::string submissionStr="地形や味方キャラの壁を利用して、\n安全地帯から攻撃してみよう！";
-	DrawBox(x,y,x+width,y+height,GetColor(64,192,64),TRUE);
-	DrawBox(x,y,x+width,y+height,GetColor(192,255,192),FALSE);
-	DrawStringNewLineToHandle(x+5,y+5,width-10,height-10,submissionStr.c_str(),GetColor(255,255,255),m_sentenceFont,2);
+	DrawBox(x,y,x+s_submissionWidth,y+s_submissionHeight,GetColor(64,192,64),TRUE);
+	DrawBox(x,y,x+s_submissionWidth,y+s_submissionHeight,GetColor(192,255,192),FALSE);
+	DrawStringNewLineToHandle(x+5,y+5,s_submissionWidth-10,s_submissionHeight-10,submissionStr.c_str(),GetColor(255,255,255),m_sentenceFont,2);
 }
 
-void SelfDecideSubmission::DrawRubric(int x,int y)const{
+void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 	if(!m_rubricList.empty()){
 		//ルーブリック評価の文言を定義
 		std::string rubricStr;
@@ -166,12 +169,12 @@ void SelfDecideSubmission::DrawRubric(int x,int y)const{
 			break;
 		}
 		//描画
-		DrawStringToHandle(x,y,rubricStr.c_str(),GetColor(255,255,255),m_rubricFont,edgeColor);
+		DrawStringCenterBaseToHandle(centerX,centerY,rubricStr.c_str(),GetColor(255,255,255),m_rubricFont,true,edgeColor);
 	}
 }
 
 void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{
-	DrawBox(x,y,x+width,y+height,GetColor(64,192,64),TRUE);
-	DrawBox(x,y,x+width,y+height,GetColor(192,255,192),FALSE);
-	DrawStringNewLineToHandle(x+5,y+5,width-10,height-10,m_wholeComment.c_str(),GetColor(255,255,255),m_sentenceFont,2);
+	DrawBox(x,y,x+wholeCommentWidth,y+wholeCommentHeight,GetColor(64,128,192),TRUE);
+	DrawBox(x,y,x+wholeCommentWidth,y+wholeCommentHeight,GetColor(128,192,255),FALSE);
+	DrawStringNewLineToHandle(x+5,y+5,wholeCommentWidth-10,wholeCommentHeight-10,m_wholeComment.c_str(),GetColor(255,255,255),m_sentenceFont,2);
 }

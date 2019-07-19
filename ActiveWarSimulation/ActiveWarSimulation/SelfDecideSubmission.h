@@ -22,9 +22,13 @@ public:
 	//ミッション内容を描画する
 	void DrawSubmission(int x,int y)const;
 	//トップのルーブリック評価の結果を描画する
-	void DrawRubric(int x,int y)const;
+	void DrawRubric(int centerX,int centerY)const;
 	//総括的振り返りの内容を描画する
 	void DrawWholeLookBack(int x,int y)const;
+
+	//サブミッション描画の領域の大きさ
+	static const int s_submissionWidth;
+	static const int s_submissionHeight;
 
 private:
 	std::vector<int> m_rubricList;//ルーブリック評価一覧
