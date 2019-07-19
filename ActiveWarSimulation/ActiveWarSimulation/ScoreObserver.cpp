@@ -106,12 +106,18 @@ void ScoreObserver::FinishUpdate(const BattleSceneData * const battleData){
 	m_logList.push_back(std::make_shared<FinishLog>(battleData));
 	//クリア難易度もここで測定する
 	m_stageLevel=battleData->m_stageLevel;
+	//サブミッションの総括的振り返りをする
+	m_submission.WholeLookBack();
 }
 
 void ScoreObserver::AttackUpdate(const BattleSceneData * const battleData,const Unit * const aimedUnit){
 	const std::shared_ptr<LogElement> logData=std::make_shared<AttackLog>(battleData,aimedUnit);
 	m_latticeBonusData.InputData(battleData,logData->GetOperateUnitData());
 	m_logList.push_back(logData);
+	//サブミッション更新
+	if(m_submission.JudgeEvaluatedOrder(battleData)){
+		m_submission.RubricEvaluate(battleData);
+	}
 }
 
 void ScoreObserver::ResearchUpdate(){
@@ -122,6 +128,10 @@ void ScoreObserver::WaitUpdate(const BattleSceneData * const battleData){
 	const std::shared_ptr<LogElement> logData=std::make_shared<WaitLog>(battleData);
 	m_latticeBonusData.InputData(battleData,logData->GetOperateUnitData());
 	m_logList.push_back(logData);
+	//サブミッション更新
+	if(m_submission.JudgeEvaluatedOrder(battleData)){
+		m_submission.RubricEvaluate(battleData);
+	}
 }
 
 void ScoreObserver::CancelUpdate(){
@@ -743,11 +753,21 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 	return std::make_shared<ScoreExpression>(bonus,livePlayerUnitCount,totalPlayerUnitCount,totalEnemyUnitCount-liveEnemyUnitCount,totalEnemyUnitCount,clearTurn,score);
 }
 
+std::shared_ptr<const LogElement> ScoreObserver::GetLatestLog()const{
+	if(m_logList.empty()){
+		//ログが存在しない場合は、無を返す
+		return std::shared_ptr<const LogElement>();
+	} else{
+		return m_logList.back();
+	}
+}
+
 ScoreObserver::ScoreObserver()
 	:m_researchCount(0)
 	,m_cancelCount(0)
 	,m_logList()
 	,m_latticeBonusData()
+	,m_submission()
 {}
 
 ScoreObserver::~ScoreObserver(){}

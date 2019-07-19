@@ -6,6 +6,7 @@
 #include<set>
 #include"LogElement.h"
 #include"StageLevel.h"
+#include"SelfDecideSubmission.h"
 
 //"BattleSceneData.h"と"ScoreSystem.h"は循環参照になってしまうので宣言
 struct BattleSceneData;
@@ -65,6 +66,12 @@ public:
 	void CancelUpdate();
 	//スコアの結果出力処理
 	std::shared_ptr<ScoreExpression> GetScoreExpression(bool winFlag)const;
+	//直近ログを取得(サブミッション等に用いる)
+	std::shared_ptr<const LogElement> GetLatestLog()const;
+	//サブミッションの参照を取得
+	const SelfDecideSubmission &GetSubmission()const{
+		return m_submission;
+	}
 	//コンストラクタ等
 	ScoreObserver();
 	virtual ~ScoreObserver();
@@ -87,6 +94,8 @@ private:
 	};
 
 	std::vector<std::shared_ptr<LogElement>> m_logList;
+	//サブミッションに関するデータ
+	SelfDecideSubmission m_submission;
 	//ログとして残さない些細なデータ
 	StageLevel m_stageLevel;
 	size_t m_researchCount;

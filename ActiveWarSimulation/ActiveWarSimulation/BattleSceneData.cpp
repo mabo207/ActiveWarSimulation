@@ -37,6 +37,7 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_attackSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/damage.ogg").c_str()))
 	,m_healSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/recover.ogg").c_str()))
 	,m_footSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/foot.ogg").c_str()))
+	,m_submissionRunFlag(false)
 {
 	//グラフィックデータの読み込み
 	LoadDivGraphEX(FilePath::graphicDir+"drawOrderHelp.png",drawOrderHelpNum,1,drawOrderHelpNum,90,15,m_drawOrderHelp);
@@ -475,4 +476,8 @@ bool BattleSceneData::JudgeMousePushInsideMapDrawZone(int mouseCode,bool continu
 		}
 	}
 	return false;
+}
+
+bool BattleSceneData::JudgeEvaluateSubmission(){
+	return m_submissionRunFlag=m_scoreObserver->GetSubmission().JudgeEvaluatedOrder(this);
 }

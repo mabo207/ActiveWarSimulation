@@ -191,6 +191,7 @@
     <ClCompile Include="ResearchScene.cpp" />
     <ClCompile Include="ScoreObserver.cpp" />
     <ClCompile Include="ScoreRankingData.cpp" />
+    <ClCompile Include="SelfDecideSubmission.cpp" />
     <ClCompile Include="StageClearScene.cpp" />
     <ClCompile Include="StageInfoInStageSelect.cpp" />
     <ClCompile Include="StageInfoReader.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="GraphicProgramming.h" />
     <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="ScoreRankingData.h" />
+    <ClInclude Include="SelfDecideSubmission.h" />
     <ClInclude Include="StageClearScene.h" />
     <ClInclude Include="StageInfoInStageSelect.h" />
     <ClInclude Include="StageInfoReader.h" />

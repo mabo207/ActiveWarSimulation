@@ -12,8 +12,10 @@ SwitchUnitScene::SwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	:BattleSceneElement(SceneKind::e_switch)
 	,m_battleSceneData(battleSceneData)
 	,m_judgeEnd(JudgeEnd::e_notEnd)
+	,m_rubricWordPosition(-50,-50)
 	,m_turnFont(CreateFontToHandleEX("メイリオ",80,8,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,3))
 {
+	//進行データを更新
 	ReturnProcess();
 	if(m_judgeEnd==JudgeEnd::e_notEnd){
 		//バトル開始直後はかならずe_notEndからe_notEnd_TurnChangeに切り替える
@@ -43,6 +45,8 @@ std::shared_ptr<BattleSceneElement> SwitchUnitScene::GetPlayerMoveScene()const{
 int SwitchUnitScene::thisCalculate(){
 	//タイマー更新
 	m_battleSceneData->m_fpsMesuring.Update();
+	//ルーブリック描画位置の更新
+	m_rubricWordPosition.Update();
 	
 	//勝敗判定によって、遷移処理は分岐
 	switch(m_judgeEnd){
@@ -87,6 +91,11 @@ void SwitchUnitScene::thisDraw()const{
 		SetDrawBlendMode(mode,pal);
 		DrawStringToHandle(1030,760,("BATTLE PHASE "+to_string_0d(CalculateTurn(),2)).c_str(),GetColor(255,255,255),m_turnFont,GetColor(0,0,0));
 	}
+
+	//サブミッション評価表示
+	if(m_battleSceneData->m_submissionRunFlag){
+		m_battleSceneData->m_scoreObserver->GetSubmission().DrawRubric(m_rubricWordPosition.GetX(),m_rubricWordPosition.GetY());
+	}
 }
 
 int SwitchUnitScene::UpdateNextScene(int index){
@@ -117,6 +126,12 @@ int SwitchUnitScene::UpdateNextScene(int index){
 
 void SwitchUnitScene::ReturnProcess(){
 	m_battleSceneData->m_fpsMesuring.RecordTime();//タイマー初期化
+	//ユニット切り替え前にルーブリック評価描画の移動先を設定
+	if(m_battleSceneData->m_operateUnit!=nullptr){
+		//初期位置の設定
+		m_rubricWordPosition=PositionControl((int)m_battleSceneData->m_operateUnit->getPos().x,(int)m_battleSceneData->m_operateUnit->getPos().y-10,10,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
+	}
+	m_rubricWordPosition.SetTarget(m_rubricWordPosition.GetX(),m_rubricWordPosition.GetY()-50,true);//初期位置より50px上に移動
 	//勝敗判定
 	size_t playerUnitNum=0,enemyUnitNum=0;
 	for(size_t i=0,size=m_battleSceneData->m_unitList.size();i<size;i++){

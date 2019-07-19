@@ -32,6 +32,8 @@ MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	if(TurnStartDamageScene::JudgeTurnStartDamage(m_battleSceneData)){
 		m_nextScene=std::shared_ptr<BattleSceneElement>(new TurnStartDamageScene(m_battleSceneData));
 	}
+	//サブミッションについての描画フラグを操作する
+	m_battleSceneData->JudgeEvaluateSubmission();
 }
 
 MoveScene::~MoveScene(){

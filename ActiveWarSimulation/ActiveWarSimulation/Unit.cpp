@@ -249,7 +249,7 @@ void Unit::DrawMaxMoveInfo(Vector2D adjust)const{
 }
 
 void Unit::DrawMaxMoveInfo(Vector2D point,Vector2D adjust)const{
-	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost)),point,adjust,Unit::Team::GetColor(m_battleStatus.team,128,255,255,255),Unit::Team::GetColor(m_battleStatus.team,128,220,220,220));//キャラの中の色で塗る
+	DrawMoveInfo(GetMaxMoveDistance(),point,adjust,Unit::Team::GetColor(m_battleStatus.team,128,255,255,255),Unit::Team::GetColor(m_battleStatus.team,128,220,220,220));//キャラの中の色で塗る
 }
 
 void Unit::DrawHPGage(Vector2D adjust)const{
@@ -263,22 +263,6 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 	const int gageLength=gageMaxLength*m_battleStatus.HP/m_baseStatus.maxHP;
 	//ゲージの色
 	unsigned int color;
-/*
-	//HPの割合で色を決める
-	if(gageLength>gageMaxLength*3/4){
-		//HPが全体の3/4以上なら水色
-		color=GetColor(0,196,255);
-	} else if(gageLength>gageMaxLength*2/4){
-		//HPが全体の1/2以上なら黄緑色
-		color=GetColor(32,196,0);
-	} else if(gageLength>gageMaxLength*1/4){
-		//HPが全体の1/4以上なら黄色
-		color=GetColor(196,196,0);
-	} else{
-		//HPが全体の1/4以下なら赤色
-		color=GetColor(255,64,0);
-	}
-//*/
 	//HPの値で色を決める
 	const int interval=5;
 	if(m_battleStatus.HP<=interval*1){
@@ -416,12 +400,21 @@ float Unit::GetMoveDistance()const{
 }
 
 float Unit::GetMoveDistance(float vOP)const{
-	//残りOPで移動可能な直線距離を求める。
+	//vOPで移動可能な直線距離を求める。
 	return vOP/CalculateConsumeOP(1.0f)*m_baseStatus.move;
 }
 
+float Unit::GetMaxMoveDistance()const{
+	//行動開始時のOPで移動可能な直線距離を求める
+	return GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost));
+}
+
 const Shape *Unit::GetHitJudgeShape()const{
-	if(m_penetratable){
+	return GetHitJudgeShape(m_penetratable);
+}
+
+const Shape *Unit::GetHitJudgeShape(bool penetratable)const{
+	if(penetratable){
 		//味方の行動フェイズならば、ユニット自身の当たり判定図形を返す
 		return m_hitJudgeShape.get();
 	} else{
