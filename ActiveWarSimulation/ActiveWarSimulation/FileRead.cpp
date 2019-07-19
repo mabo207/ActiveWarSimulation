@@ -1,17 +1,19 @@
 #include<iostream>
 #include<fstream>
-#include<cassert>
 #include"FileRead.h"
 #include<climits>
 
+//ファイルオープン失敗時の例外
+const char *FileOpenFailedException::what()const noexcept{
+	return "Opening file failed.";
+}
 
 //ファイルを読み込みstd::string型にして返す
 std::string FileStrRead(const char *DatabaseName){
 	//ファイルを開く
 	std::ifstream ifs(DatabaseName);
 	if(!ifs){
-		assert(false);
-		return "";
+		throw FileOpenFailedException();
 	}
 	//ファイルサイズを取得
 	ifs.seekg(0,std::ifstream::end);
