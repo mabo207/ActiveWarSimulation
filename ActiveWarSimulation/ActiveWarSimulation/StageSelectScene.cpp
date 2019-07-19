@@ -97,12 +97,17 @@ void StageSelectScene::InitCompletely(){
 	const ScoreRankingData rankingData;
 	//m_stageInfoFactoryMapからフォルダ検索を行いながら、StageInfoInStageSelectを構成していく
 	for(const std::pair<std::string,int> &info:m_stageInfoFactoryMap){
-		m_stageInfoVec.push_back(StageInfoInStageSelect(
-			info.second
-			,info.first
-			,FileStrRead((FilePath::stageDir+info.first+"/explain.txt").c_str())
-			,rankingData
-		));
+		try{
+			m_stageInfoVec.push_back(StageInfoInStageSelect(
+				info.second
+				,info.first
+				,FileStrRead((FilePath::stageDir+info.first+"/explain.txt").c_str())
+				,rankingData
+			));
+		} catch(const FileOpenFailedException &){
+			//この場面では、ファイルを開くのに失敗することを許容する。
+			//ファイルを開くのに失敗した場合は、insert()を行わないだけでそのまま処理を続ける
+		}
 	}
 }
 
