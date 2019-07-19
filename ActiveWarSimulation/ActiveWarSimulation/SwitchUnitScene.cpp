@@ -87,6 +87,11 @@ void SwitchUnitScene::thisDraw()const{
 		SetDrawBlendMode(mode,pal);
 		DrawStringToHandle(1030,760,("BATTLE PHASE "+to_string_0d(CalculateTurn(),2)).c_str(),GetColor(255,255,255),m_turnFont,GetColor(0,0,0));
 	}
+
+	//サブミッション評価表示
+	if(m_battleSceneData->m_submissionRunFlag){
+		m_battleSceneData->m_scoreObserver->GetSubmission().DrawRubric(0,50);
+	}
 }
 
 int SwitchUnitScene::UpdateNextScene(int index){

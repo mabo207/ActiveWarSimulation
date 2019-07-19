@@ -181,6 +181,10 @@ void StageClearScene::thisDraw()const{
 		DrawGraph(backX+x,backY+y,m_scoreBarPic,TRUE);
 		DrawStringToHandle(backX+x+650,backY+y+30,(std::to_string(m_scoreExpression->m_totalScorePoint)).c_str(),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
 	}
+	//サブミッションの総括的振り返りの描画
+	{
+		m_battleSceneData->m_scoreObserver->GetSubmission().DrawWholeLookBack(backX+60,backY+500);
+	}
 
 	//名前入力中の描画処理
 	if(m_nowProcess==ProcessKind::e_inputName){
