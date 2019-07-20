@@ -234,23 +234,31 @@ void EditActionSettings::WriteOutUnit()const{
 //ステージの読み込み
 void EditActionSettings::ReadStage(const char *filename){
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-	StringBuilder sb(FileStrRead(filename),'\n','{','}');
-	for(StringBuilder &ssb:sb.m_vec){
-		const std::shared_ptr<BattleObject> pb=BattleObject::CreateObject(ssb);//sb,ssbは変更される
-		if(pb.get()!=nullptr){
-			m_objects.push_back(pb);
+	try{
+		StringBuilder sb(FileStrRead(filename),'\n','{','}');
+		for(StringBuilder &ssb:sb.m_vec){
+			const std::shared_ptr<BattleObject> pb=BattleObject::CreateObject(ssb);//sb,ssbは変更される
+			if(pb.get()!=nullptr){
+				m_objects.push_back(pb);
+			}
 		}
+	} catch(const FileOpenFailedException &){
+		//ファイル読み込み失敗を許容する
 	}
 }
 
 //ステージの読み込み
 void EditActionSettings::ReadUnit(){
-	StringBuilder unitlist(FileStrRead(m_pSelectLevel->GetUnitListFileName().c_str()),'\n','{','}');
-	for(StringBuilder &unitdata:unitlist.m_vec){
-		const std::shared_ptr<BattleObject> punit(Unit::CreateUnitFromBuilder(unitdata));
-		if(punit){
-			m_objects.push_back(punit);
+	try{
+		StringBuilder unitlist(FileStrRead(m_pSelectLevel->GetUnitListFileName().c_str()),'\n','{','}');
+		for(StringBuilder &unitdata:unitlist.m_vec){
+			const std::shared_ptr<BattleObject> punit(Unit::CreateUnitFromBuilder(unitdata));
+			if(punit){
+				m_objects.push_back(punit);
+			}
 		}
+	} catch(const FileOpenFailedException &){
+		//ファイル読み込み失敗を許容する
 	}
 }
 
