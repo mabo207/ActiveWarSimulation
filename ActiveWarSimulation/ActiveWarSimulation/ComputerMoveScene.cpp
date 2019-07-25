@@ -94,6 +94,12 @@ std::pair<std::pair<size_t,Vector2D>,Unit *> ComputerMoveScene::DecideTargetPoin
 
 	//‘_‚¤ƒ†ƒjƒbƒg‚Æ–Ú“I’n‚ªŒˆ‚Ü‚Á‚½‚Ì‚ÅAAI‚Ìƒ‹[ƒ‹‚É]‚Á‚Ä‚»‚±‚És‚­‚©‚Ç‚¤‚©Œˆ‚ß‚é
 	switch(m_battleSceneData->m_operateUnit->GetBattleStatus().aitype){
+	case(Unit::AIType::e_wait):
+		//‘Ò‹@Œ^AI
+		//•K‚¸‚»‚Ìê‚Å‘Ò‹@‚·‚é
+		target=vecSize;
+		targetPointVec=m_battleSceneData->m_operateUnit->getPos();
+		break;
 	case(Unit::AIType::e_intercept):
 	case(Unit::AIType::e_linkageIntercept):
 		//Œ}Œ‚Œ^AI‚Æ˜A“®Œ}Œ‚Œ^AI

@@ -41,6 +41,7 @@ public:
 			e_assult//“ËŒ‚Œ^
 			,e_intercept//Œ}Œ‚Œ^
 			,e_linkageIntercept//˜A“®Œ}Œ‚Œ^
+			,e_wait//‘Ò‹@Œ^
 			,END
 		};
 		static Kind link(int num);

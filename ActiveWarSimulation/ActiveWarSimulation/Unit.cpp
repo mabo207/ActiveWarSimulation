@@ -116,6 +116,8 @@ std::string Unit::AIType::GetName(Kind type){
 		return "intercept";
 	case(e_linkageIntercept):
 		return "linkintercept";
+	case(e_wait):
+		return "wait";
 	}
 	return "";
 }
