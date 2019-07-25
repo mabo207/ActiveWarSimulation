@@ -6,6 +6,6 @@
 {(definition,mob),(name,“G•º),(profession,2),(lv,12),(weapon,lance_iron),(pos,946,544),(team,1),(ai,3,0)}
 {(definition,mob),(name,“G•º),(profession,1),(lv,9),(weapon,bow_iron),(pos,836,705),(team,1),(ai,1,0)}
 {(definition,mob),(name,“G•º),(profession,1),(lv,9),(weapon,bow_iron),(pos,682,823),(team,1),(ai,1,0)}
-{(definition,mob),(name,“G•º),(profession,4),(lv,9),(weapon,rod_rest),(pos,534,597),(team,1),(ai,1,0)}
+{(definition,mob),(name,“G•º),(profession,4),(lv,9),(weapon,rod_rest),(pos,565,567),(team,1),(ai,1,0)}
 {(definition,mob),(name,“G•º),(profession,3),(lv,9),(weapon,book_flame),(pos,668,593),(team,1),(ai,1,0)}
 {(definition,mob),(name,“G•º),(profession,0),(lv,9),(weapon,sword_iron),(pos,166,394),(team,1),(ai,0,0)}
