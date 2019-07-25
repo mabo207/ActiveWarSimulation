@@ -1,1 +1,1 @@
-(title,’²®’†),(pos,360,859),(bgm,nonfree/wild-road_loop/)
+(title,—Ñ‚ÌŒP—ûê‚P),(pos,119,838),(bgm,nonfree/wild-road_loop/)
