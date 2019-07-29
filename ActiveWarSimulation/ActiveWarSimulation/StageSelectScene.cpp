@@ -1,3 +1,4 @@
+#define NOMINMAX	//std::max()の衝突の回避
 #include"StageSelectScene.h"
 #include"DxLib.h"
 #include"GraphicControl.h"
@@ -7,6 +8,7 @@
 #include"GeneralPurposeResource.h"
 #include"FilePath.h"
 #include"BGMManager.h"
+#include<algorithm>
 
 #include"BattleScene.h"
 #include"TitleScene.h"
@@ -157,11 +159,11 @@ void StageSelectScene::Draw()const{
 			const float dist=dir.size();
 			//何個丸を描画するか決める
 			const float circleSize=10.0f;
-			const int num=(int)(dist/(circleSize*6.0f));
+			const int divideNum=std::max((int)(dist/(circleSize*6.0f)),2);//最低1個は描画、divideNumは隙間の個数なので(divideNum-1)個の丸が道として描画される
 			//描画
-			for(int j=1;j<num;j++){
-				//ここの中身はnum>0の時のみ処理されるので、numの0チェックは必要ない
-				const Vector2D pos=m_stageInfoVec[i].m_pos+dir*((float)j)/((float)num);
+			for(int j=1;j<divideNum;j++){
+				//ここの中身はdivideNum>0の時のみ処理されるので、divideNumの0チェックは必要ない
+				const Vector2D pos=m_stageInfoVec[i].m_pos+dir*((float)j)/((float)divideNum);
 				DrawCircleAA(pos.x,pos.y,circleSize,10,GetColor(64,64,128),TRUE);
 				DrawCircleAA(pos.x,pos.y,circleSize*0.6f,10,GetColor(64,128,196),TRUE);
 			}
@@ -169,13 +171,6 @@ void StageSelectScene::Draw()const{
 		//ステージの位置の描画
 		DrawCircleAA(m_stageInfoVec[i].m_pos.x,m_stageInfoVec[i].m_pos.y,30,10,GetColor(64,64,255),TRUE);
 		DrawCircleAA(m_stageInfoVec[i].m_pos.x,m_stageInfoVec[i].m_pos.y,20,10,GetColor(128,196,255),TRUE);
-	}
-	//ステージ情報とレベル情報の描画(ステージが選択されている時のみ描画可能)
-	if(m_uiControledData->stageIndex<m_stageInfoVec.size()){
-		//ステージ情報の描画
-		//m_stageInfoVec[m_uiControledData->stageIndex].DrawStageInfo(m_uiControledData->stageInfoPos.GetX(),m_uiControledData->stageInfoPos.GetY(),m_stageNameFont,m_explainFont);
-		//レベル情報の描画
-
 	}
 	//UIの描画
 	m_ui->Draw();
