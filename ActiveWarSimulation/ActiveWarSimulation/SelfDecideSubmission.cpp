@@ -13,6 +13,8 @@ namespace{
 //--------------SelfDecideSubmission---------------
 const int SelfDecideSubmission::s_submissionWidth=500;
 const int SelfDecideSubmission::s_submissionHeight=60;
+const int SelfDecideSubmission::s_reasonWidth=600;
+const int SelfDecideSubmission::s_reasonHeight=100;
 
 SelfDecideSubmission::SelfDecideSubmission()
 	:m_rubricList()
@@ -172,6 +174,30 @@ void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 		//•`‰æ
 		DrawStringCenterBaseToHandle(centerX,centerY,rubricStr.c_str(),GetColor(255,255,255),m_rubricFont,true,edgeColor);
 	}
+}
+
+void SelfDecideSubmission::DrawReason(int x,int y)const{
+	//‰º’n
+	DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(64,128,192),TRUE);
+	DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(128,192,255),FALSE);
+	//“à—e‚Ì•`‰æ
+	const int evaluate=m_rubricList.back();
+	std::string str;
+	switch(evaluate){
+	case(0):
+		str="“G‚ª‚»‚Ìê‚ÅUŒ‚‚Å‚«‚é‚­‚ç‚¢‚É‹ß‚­‚ÅUŒ‚‚µ‚¿‚á‚Á‚Ä‚é‚æI";
+		break;
+	case(1):
+		str="áŠQ•¨‚ªü‚è‚É‚È‚¢‚©‚çUŒ‚‚µ‚½“G‚Ì”½Œ‚‚É‡‚¢‚â‚·‚»‚¤‚¶‚á‚È‚¢H";
+		break;
+	case(2):
+		str="áŠQ•¨‰z‚µ‚ÉUŒ‚‚Å‚«‚Ä‚é‚¯‚ÇAˆÄŠO“G‚Í‰ñ‚è‚ñ‚ÅUŒ‚‚Å‚«‚»‚¤B";
+		break;
+	case(3):
+		str="ˆÀ‘S’n‘Ñ‚©‚ç‚ÌUŒ‚A‚Æ‚Á‚Ä‚à—Ç‚¢Š´‚¶II";
+		break;
+	}
+	DrawStringNewLineToHandle(x+5,y+5,s_reasonWidth-10,s_reasonHeight-10,str.c_str(),GetColor(255,255,255),m_sentenceFont,2);
 }
 
 void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{
