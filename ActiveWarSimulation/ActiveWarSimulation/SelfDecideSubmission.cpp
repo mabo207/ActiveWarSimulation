@@ -212,9 +212,12 @@ void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{
 	int strY=y+5;
 	const int fontSize=GetFontSizeToHandle(m_sentenceFont);
 	for(const auto &pair:m_rubricFrequencyMap){
-		DrawStringToHandle(x+5,strY,m_rubricStrMap.find(pair.first)->second.c_str(),GetColor(255,255,255),m_sentenceFont);//“ïˆÕ“x–¼
-		DrawStringToHandle(x+wholeCommentWidth-150,strY,(":   ~"+to_string_0d(pair.second,2)).c_str(),GetColor(255,255,255),m_sentenceFont);//‰ñ”‚Ì•`‰æ
-		strY+=fontSize+2;
+		const auto rubricStrIt=m_rubricStrMap.find(pair.first);
+		if(rubricStrIt!=m_rubricStrMap.end()){
+			DrawStringToHandle(x+5,strY,rubricStrIt->second.c_str(),GetColor(255,255,255),m_sentenceFont);//“ïˆÕ“x–¼
+			DrawStringToHandle(x+wholeCommentWidth-150,strY,(":   ~"+to_string_0d(pair.second,2)).c_str(),GetColor(255,255,255),m_sentenceFont);//‰ñ”‚Ì•`‰æ
+			strY+=fontSize+2;
+		}
 	}
 	//•ïŠ‡“IƒRƒƒ“ƒg
 	DrawStringNewLineToHandle(x+5,strY+10,wholeCommentWidth-10,y+wholeCommentHeight-5-strY,m_wholeComment.c_str(),GetColor(255,255,255),m_sentenceFont,2);
