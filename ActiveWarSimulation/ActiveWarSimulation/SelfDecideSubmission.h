@@ -4,6 +4,7 @@
 #include<memory>
 #include<vector>
 #include<string>
+#include<map>
 
 struct BattleSceneData;
 
@@ -33,6 +34,7 @@ public:
 private:
 	std::vector<int> m_rubricList;//ルーブリック評価一覧
 	std::string m_wholeComment;//総括的振り返りにおけるコメント
+	std::map<int,size_t> m_rubricFrequencyMap;//戦闘終了時にルーブリック評価の回数の一覧を格納する
 
 	const std::map<int,std::string> m_rubricStrMap;//ルーブリック評価の名前一覧(good,greatなど)
 

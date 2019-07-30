@@ -18,6 +18,7 @@ SelfDecideSubmission::SelfDecideSubmission()
 	:m_rubricList()
 	,m_wholeComment()
 	,m_rubricStrMap{std::make_pair(0,"Worst"),std::make_pair(1,"Bad"),std::make_pair(2,"Not good"),std::make_pair(3,"Good")}
+	,m_rubricFrequencyMap()
 	,m_sentenceFont(CreateFontToHandleEX("メイリオ",24,2,DX_FONTTYPE_NORMAL))
 	,m_rubricFont(CreateFontToHandleEX("メイリオ",20,2,DX_FONTTYPE_EDGE,-1,2))
 {}
@@ -85,19 +86,18 @@ void SelfDecideSubmission::WholeLookBack(){
 		return;
 	}
 	//最頻値を求める
-	std::map<int,size_t> frequencyMap;
 	for(const int &rubric:m_rubricList){
-		std::map<int,size_t>::iterator it=frequencyMap.find(rubric);
-		if(it==frequencyMap.end()){
-			//まだrubricが1回も生じていない場合は、frequencyMapに追加
-			frequencyMap.insert(std::make_pair(rubric,1));
+		std::map<int,size_t>::iterator it=m_rubricFrequencyMap.find(rubric);
+		if(it==m_rubricFrequencyMap.end()){
+			//まだrubricが1回も生じていない場合は、m_rubricFrequencyMapに追加
+			m_rubricFrequencyMap.insert(std::make_pair(rubric,1));
 		} else{
 			//既に見つかっている場合は、回数を1増やす
 			it->second++;
 		}
 	}
-	std::pair<int,size_t> mostFrequent=*frequencyMap.begin();
-	for(const std::pair<int,size_t> &pair:frequencyMap){
+	std::pair<int,size_t> mostFrequent=*m_rubricFrequencyMap.begin();
+	for(const std::pair<int,size_t> &pair:m_rubricFrequencyMap){
 		if(mostFrequent.first==-1){
 			//mostFrequentが「攻撃していない」である場合は、必ず上書きする
 			mostFrequent=pair;
@@ -175,7 +175,17 @@ void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 }
 
 void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{
+	//下地
 	DrawBox(x,y,x+wholeCommentWidth,y+wholeCommentHeight,GetColor(64,128,192),TRUE);
 	DrawBox(x,y,x+wholeCommentWidth,y+wholeCommentHeight,GetColor(128,192,255),FALSE);
-	DrawStringNewLineToHandle(x+5,y+5,wholeCommentWidth-10,wholeCommentHeight-10,m_wholeComment.c_str(),GetColor(255,255,255),m_sentenceFont,2);
+	//評価の一覧を描画
+	int strY=y+5;
+	const int fontSize=GetFontSizeToHandle(m_sentenceFont);
+	for(const auto &pair:m_rubricFrequencyMap){
+		DrawStringToHandle(x+5,strY,m_rubricStrMap.find(pair.first)->second.c_str(),GetColor(255,255,255),m_sentenceFont);//難易度名
+		DrawStringToHandle(x+wholeCommentWidth-150,strY,(":   ×"+to_string_0d(pair.second,2)).c_str(),GetColor(255,255,255),m_sentenceFont);//回数の描画
+		strY+=fontSize+2;
+	}
+	//包括的コメント
+	DrawStringNewLineToHandle(x+5,strY+10,wholeCommentWidth-10,y+wholeCommentHeight-5-strY,m_wholeComment.c_str(),GetColor(255,255,255),m_sentenceFont,2);
 }
