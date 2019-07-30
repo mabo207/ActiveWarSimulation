@@ -17,6 +17,7 @@ const int SelfDecideSubmission::s_submissionHeight=60;
 SelfDecideSubmission::SelfDecideSubmission()
 	:m_rubricList()
 	,m_wholeComment()
+	,m_rubricStrMap{std::make_pair(0,"Worst"),std::make_pair(1,"Bad"),std::make_pair(2,"Not good"),std::make_pair(3,"Good")}
 	,m_sentenceFont(CreateFontToHandleEX("メイリオ",24,2,DX_FONTTYPE_NORMAL))
 	,m_rubricFont(CreateFontToHandleEX("メイリオ",20,2,DX_FONTTYPE_EDGE,-1,2))
 {}
@@ -140,31 +141,31 @@ void SelfDecideSubmission::DrawSubmission(int x,int y)const{
 void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 	if(!m_rubricList.empty()){
 		//ルーブリック評価の文言を定義
+		const int evaluate=m_rubricList.back();
 		std::string rubricStr;
+		const auto it=m_rubricStrMap.find(evaluate);
+		if(it!=m_rubricStrMap.end()){
+			rubricStr=it->second;
+		}
 		unsigned int edgeColor;
-		switch(m_rubricList.back()){
+		switch(evaluate){
 		case(-1):
-			rubricStr="";
-			edgeColor=GetColor(0,0,0);
-			break;
+			//攻撃してないときは描画しない
+			return;
 		case(0):
 			//悪い
-			rubricStr="Worst";
 			edgeColor=GetColor(128,0,196);
 			break;
 		case(1):
 			//悪い
-			rubricStr="Bad";
 			edgeColor=GetColor(96,96,196);
 			break;
 		case(2):
 			//微妙
-			rubricStr="Not good";
 			edgeColor=GetColor(128,128,196);
 			break;
 		case(3):
 			//完璧
-			rubricStr="Good!!";
 			edgeColor=GetColor(196,196,64);
 			break;
 		}
