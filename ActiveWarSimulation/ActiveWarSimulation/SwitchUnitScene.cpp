@@ -4,6 +4,7 @@
 #include"ComputerMoveScene.h"
 #include"StageClearScene.h"
 #include"GraphicControl.h"
+#include"CommonConstParameter.h"
 
 #include"TutorialPlayerMoveScene.h"
 
@@ -42,11 +43,27 @@ std::shared_ptr<BattleSceneElement> SwitchUnitScene::GetPlayerMoveScene()const{
 	}
 }
 
+bool SwitchUnitScene::JudgeTimeProcessed()const{
+	return m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0f;
+}
+
+bool SwitchUnitScene::JudgeGoToMoveScene()const{
+	//サブミッション情報を描画するかどうかで決まる
+	if(m_battleSceneData->m_submissionRunFlag){
+		//サブミッション情報を描画する時は、ポップアップが画面外に出てから
+		return m_rubricPopupExiting & m_rubricReasonPosition.GetEndFlag();
+	} else{
+		//サブミッション情報を描画しない時は、時間経過で良い
+		return JudgeTimeProcessed();
+	}
+}
+
 int SwitchUnitScene::thisCalculate(){
 	//タイマー更新
 	m_battleSceneData->m_fpsMesuring.Update();
 	//ルーブリック描画位置の更新
 	m_rubricWordPosition.Update();
+	m_rubricReasonPosition.Update();
 	
 	//勝敗判定によって、遷移処理は分岐
 	switch(m_judgeEnd){
@@ -54,10 +71,15 @@ int SwitchUnitScene::thisCalculate(){
 	case(JudgeEnd::e_notEnd_TurnChange):
 		//勝負がついていない
 		//一定時間経ったらユニット移動へ
-		if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0f){
+		if(JudgeGoToMoveScene()){
 			//ユニット移行処理へ
 			m_battleSceneData->m_fpsMesuring.RecordTime();//タイマー初期化
 			return SceneKind::e_move;
+		} else if(!m_rubricPopupExiting && JudgeTimeProcessed() && (mouse_get(MOUSE_INPUT_LEFT)==1 || keyboard_get(KEY_INPUT_Z)==1)){
+			//移行時間が経って以降に次に進む入力をしたら、ポップアップを新たな位置へ
+			//サブミッションのルーブリック評価の表示がない時は、JudgeGoToMoveScene()がJudgeTimeProcessed()と一致するので、ここには来ない。
+			m_rubricPopupExiting=true;
+			m_rubricReasonPosition.SetTarget(m_rubricReasonPosition.GetX(),-SelfDecideSubmission::s_submissionHeight,true);
 		}
 		break;
 	case(JudgeEnd::e_playerWin):
@@ -95,6 +117,7 @@ void SwitchUnitScene::thisDraw()const{
 	//サブミッション評価表示
 	if(m_battleSceneData->m_submissionRunFlag){
 		m_battleSceneData->m_scoreObserver->GetSubmission().DrawRubric(m_rubricWordPosition.GetX(),m_rubricWordPosition.GetY());
+		m_battleSceneData->m_scoreObserver->GetSubmission().DrawSubmission(m_rubricReasonPosition.GetX(),m_rubricReasonPosition.GetY());
 	}
 }
 
@@ -126,12 +149,15 @@ int SwitchUnitScene::UpdateNextScene(int index){
 
 void SwitchUnitScene::ReturnProcess(){
 	m_battleSceneData->m_fpsMesuring.RecordTime();//タイマー初期化
-	//ユニット切り替え前にルーブリック評価描画の移動先を設定
+	//ユニット切り替え前にルーブリック評価関連の設定
 	if(m_battleSceneData->m_operateUnit!=nullptr){
 		//初期位置の設定
 		m_rubricWordPosition=PositionControl((int)m_battleSceneData->m_operateUnit->getPos().x,(int)m_battleSceneData->m_operateUnit->getPos().y-10,10,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
 	}
 	m_rubricWordPosition.SetTarget(m_rubricWordPosition.GetX(),m_rubricWordPosition.GetY()-50,true);//初期位置より50px上に移動
+	m_rubricReasonPosition=PositionControl(CommonConstParameter::gameResolutionX-SelfDecideSubmission::s_submissionWidth,-SelfDecideSubmission::s_submissionHeight,20,Easing::TYPE_IN,Easing::FUNCTION_LINER,0.0);
+	m_rubricReasonPosition.SetTarget(m_rubricReasonPosition.GetX(),0,true);
+	m_rubricPopupExiting=false;
 	//勝敗判定
 	size_t playerUnitNum=0,enemyUnitNum=0;
 	for(size_t i=0,size=m_battleSceneData->m_unitList.size();i<size;i++){
