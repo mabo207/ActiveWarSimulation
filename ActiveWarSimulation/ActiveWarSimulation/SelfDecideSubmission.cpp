@@ -177,13 +177,13 @@ void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 }
 
 void SelfDecideSubmission::DrawReason(int x,int y)const{
-	//下地
-	DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(64,128,192),TRUE);
-	DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(128,192,255),FALSE);
-	//内容の描画
+	//描画内容の決定
 	const int evaluate=m_rubricList.back();
 	std::string str;
 	switch(evaluate){
+	case(-1):
+		//描画を行わない
+		return;
 	case(0):
 		str="敵がその場で攻撃できるくらいに近くで攻撃しちゃってるよ！";
 		break;
@@ -197,6 +197,10 @@ void SelfDecideSubmission::DrawReason(int x,int y)const{
 		str="安全地帯からの攻撃、とっても良い感じ！！";
 		break;
 	}
+	//下地
+	DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(64,128,192),TRUE);
+	DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(128,192,255),FALSE);
+	//内容の描画
 	DrawStringNewLineToHandle(x+5,y+5,s_reasonWidth-10,s_reasonHeight-10,str.c_str(),GetColor(255,255,255),m_sentenceFont,2);
 }
 
