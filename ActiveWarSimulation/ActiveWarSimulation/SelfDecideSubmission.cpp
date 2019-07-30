@@ -35,6 +35,14 @@ bool SelfDecideSubmission::JudgeEvaluatedOrder(const BattleSceneData * const bat
 		&& battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_archer);
 }
 
+bool SelfDecideSubmission::JudgeDrawRubric()const{
+	if(!m_rubricList.empty()){
+		const int evaluate=m_rubricList.back();
+		return evaluate>=0;
+	}
+	return false;
+}
+
 void SelfDecideSubmission::RubricEvaluate(const BattleSceneData * const battleData){
 	//- —áŠOˆ—
 	//	- UŒ‚‚µ‚È‚¢(-1)
@@ -177,31 +185,33 @@ void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 }
 
 void SelfDecideSubmission::DrawReason(int x,int y)const{
-	//•`‰æ“à—e‚ÌŒˆ’è
-	const int evaluate=m_rubricList.back();
-	std::string str;
-	switch(evaluate){
-	case(-1):
-		//•`‰æ‚ğs‚í‚È‚¢
-		return;
-	case(0):
-		str="“G‚ª‚»‚Ìê‚ÅUŒ‚‚Å‚«‚é‚­‚ç‚¢‚É‹ß‚­‚ÅUŒ‚‚µ‚¿‚á‚Á‚Ä‚é‚æI";
-		break;
-	case(1):
-		str="áŠQ•¨‚ªü‚è‚É‚È‚¢‚©‚çUŒ‚‚µ‚½“G‚Ì”½Œ‚‚É‡‚¢‚â‚·‚»‚¤‚¶‚á‚È‚¢H";
-		break;
-	case(2):
-		str="áŠQ•¨‰z‚µ‚ÉUŒ‚‚Å‚«‚Ä‚é‚¯‚ÇAˆÄŠO“G‚Í‰ñ‚è‚ñ‚ÅUŒ‚‚Å‚«‚»‚¤B";
-		break;
-	case(3):
-		str="ˆÀ‘S’n‘Ñ‚©‚ç‚ÌUŒ‚A‚Æ‚Á‚Ä‚à—Ç‚¢Š´‚¶II";
-		break;
+	if(!m_rubricList.empty()){
+		//•`‰æ“à—e‚ÌŒˆ’è
+		const int evaluate=m_rubricList.back();
+		std::string str;
+		switch(evaluate){
+		case(-1):
+			//•`‰æ‚ğs‚í‚È‚¢
+			return;
+		case(0):
+			str="“G‚ª‚»‚Ìê‚ÅUŒ‚‚Å‚«‚é‚­‚ç‚¢‚É‹ß‚­‚ÅUŒ‚‚µ‚¿‚á‚Á‚Ä‚é‚æI";
+			break;
+		case(1):
+			str="áŠQ•¨‚ªü‚è‚É‚È‚¢‚©‚çUŒ‚‚µ‚½“G‚Ì”½Œ‚‚É‡‚¢‚â‚·‚»‚¤‚¶‚á‚È‚¢H";
+			break;
+		case(2):
+			str="áŠQ•¨‰z‚µ‚ÉUŒ‚‚Å‚«‚Ä‚é‚¯‚ÇAˆÄŠO“G‚Í‰ñ‚è‚ñ‚ÅUŒ‚‚Å‚«‚»‚¤B";
+			break;
+		case(3):
+			str="ˆÀ‘S’n‘Ñ‚©‚ç‚ÌUŒ‚A‚Æ‚Á‚Ä‚à—Ç‚¢Š´‚¶II";
+			break;
+		}
+		//‰º’n
+		DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(64,128,192),TRUE);
+		DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(128,192,255),FALSE);
+		//“à—e‚Ì•`‰æ
+		DrawStringNewLineToHandle(x+5,y+5,s_reasonWidth-10,s_reasonHeight-10,str.c_str(),GetColor(255,255,255),m_sentenceFont,2);
 	}
-	//‰º’n
-	DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(64,128,192),TRUE);
-	DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(128,192,255),FALSE);
-	//“à—e‚Ì•`‰æ
-	DrawStringNewLineToHandle(x+5,y+5,s_reasonWidth-10,s_reasonHeight-10,str.c_str(),GetColor(255,255,255),m_sentenceFont,2);
 }
 
 void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{

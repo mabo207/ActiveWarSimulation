@@ -40,6 +40,7 @@ protected:
 	std::shared_ptr<BattleSceneElement> GetPlayerMoveScene()const;
 	bool JudgeTimeProcessed()const;//規定時間経ったかどうか
 	bool JudgeGoToMoveScene()const;//移動シーンに行くかどうか
+	bool JudgeDrawRubric()const;//ルーブリック評価を描画するかどうか
 
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了

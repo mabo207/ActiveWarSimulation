@@ -49,13 +49,18 @@ bool SwitchUnitScene::JudgeTimeProcessed()const{
 
 bool SwitchUnitScene::JudgeGoToMoveScene()const{
 	//サブミッション情報を描画するかどうかで決まる
-	if(m_battleSceneData->m_submissionRunFlag){
+	if(JudgeDrawRubric()){
 		//サブミッション情報を描画する時は、ポップアップが画面外に出てから
 		return m_rubricPopupExiting & m_rubricReasonPosition.GetEndFlag();
 	} else{
 		//サブミッション情報を描画しない時は、時間経過で良い
 		return JudgeTimeProcessed();
 	}
+}
+
+bool SwitchUnitScene::JudgeDrawRubric()const{
+	//サブミッション機能が走っていて、なおかつ描画する評価の内容が描画可能内容である(-1評価などは描画しないなどがある)時
+	return m_battleSceneData->m_submissionRunFlag && m_battleSceneData->m_scoreObserver->GetSubmission().JudgeDrawRubric();
 }
 
 int SwitchUnitScene::thisCalculate(){
@@ -115,7 +120,7 @@ void SwitchUnitScene::thisDraw()const{
 	}
 
 	//サブミッション評価表示
-	if(m_battleSceneData->m_submissionRunFlag){
+	if(JudgeDrawRubric()){
 		m_battleSceneData->m_scoreObserver->GetSubmission().DrawRubric(m_rubricWordPosition.GetX(),m_rubricWordPosition.GetY());
 		m_battleSceneData->m_scoreObserver->GetSubmission().DrawReason(m_rubricReasonPosition.GetX(),m_rubricReasonPosition.GetY());
 	}

@@ -16,6 +16,8 @@ public:
 	~SelfDecideSubmission();
 	//観察条件
 	bool JudgeEvaluatedOrder(const BattleSceneData * const battleData)const;
+	//ルーブリック描画条件
+	bool JudgeDrawRubric()const;
 	//ルーブリック評価を行い蓄積する
 	void RubricEvaluate(const BattleSceneData * const battleData);
 	//総括的振り返りをする
