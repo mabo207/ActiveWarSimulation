@@ -73,7 +73,8 @@ void SelfDecideSubmission::RubricEvaluate(const BattleSceneData * const battleDa
 		std::vector<float> distVec=latticeField->CalculateRouteDistance(aimedUnit->getPos(),{operatedUnit->getPos()});
 		const float routeDistance=distVec.front();
 		//評価(高い方から判定していく)
-		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance()){
+		if(routeDistance<0.0f || routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance()){
+			//routeDistance<0は「そこにどんなルートでも行けない」を表しているので、評価は3になる
 			evaluate=3;
 		} else if(routeDistance>=attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetLength()){
 			evaluate=2;
