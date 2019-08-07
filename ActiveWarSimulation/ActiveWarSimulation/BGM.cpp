@@ -85,7 +85,7 @@ void Resource::BGM::SetOption()const{
 		SetLoopStartSamplePosSoundMem(loopBottom,handle);//ループが始まる位置の設定、ループ区間の後ろ端になる。
 	}
 	if(loopTop>=0){
-		SetLoopPosSoundMem(loopTop,handle);//ループ位置の設定、ループするとどこに飛ぶかなのでループ区間の前端になる。
+		SetLoopSamplePosSoundMem(loopTop,handle);//ループ位置の設定、ループするとどこに飛ぶかなのでループ区間の前端になる。
 	}
 	ChangeVolumeSoundMem(volume,handle);//ボリュームを0~255で設定
 }
