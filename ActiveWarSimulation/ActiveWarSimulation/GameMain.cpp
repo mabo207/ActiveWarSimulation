@@ -38,6 +38,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 		SetAlwaysRunFlag(FALSE);
 		//背景色は黒より少しだけ白っぽくする
 		SetBackgroundColor(32,32,32);
+		//DXアーカイバの使用
+		SetUseDXArchiveFlag(TRUE);
 
 		if(ChangeWindowMode(TRUE) != 0) {
 			throw(std::runtime_error("ChangeWindowMode(TRUE) failed."));
