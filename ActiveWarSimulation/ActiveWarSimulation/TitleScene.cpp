@@ -72,7 +72,7 @@ TitleScene::TitleScene()
 	:GameScene()
 	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
 	,m_itemPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleItem.png"))
-	,m_itemFont(CreateFontToHandleEX("メイリオ",16,1,-1))
+	,m_itemFont(CreateFontToHandleEX("メイリオ",24,2,-1))
 	,m_bgm(Resource::BGM::Load(FilePath::bgmDir+"nonfree/title/"))
 	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
 	,m_mousePosJustBefore(GetMousePointVector2D())
@@ -218,26 +218,22 @@ void TitleScene::Draw()const{
 	//背景の描画
 	DrawGraph(0,0,m_backPic,TRUE);
 	//バージョン情報
-	const std::string VERSION_STRING="- GAME^3 9th Trial Edition -";
+	const std::string VERSION_STRING="- ver 1.0 -";
 	const int verX=CommonConstParameter::gameResolutionX-GetDrawStringWidthToHandle(VERSION_STRING.c_str(),VERSION_STRING.size(),m_itemFont);
 	const int verY=CommonConstParameter::gameResolutionY-GetFontSizeToHandle(m_itemFont);
 	DrawStringToHandle(verX,verY,VERSION_STRING.c_str(),GetColor(0,0,0),m_itemFont);
 	//項目の描画
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
-		unsigned int inColor,frameColor,fontColor;
+		const unsigned int fontColor=GetColor(0,0,0);
+		double rotate=0.0;
 		int strDy=0;
-		if(i!=m_selectItem){
-			inColor=GetColor(224,224,224);
-			frameColor=GetColor(32,32,32);
-			fontColor=GetColor(0,0,0);
-		} else{
-			inColor=GetColor(32,32,32);
-			frameColor=GetColor(224,224,224);
-			fontColor=GetColor(255,255,255);
-			strDy=std::abs((int)(std::cos(M_PI*2*m_frame/120)*5.0));
+		double exRate=1.0;
+		if(i==m_selectItem){
+			rotate=M_PI*2*m_frame/120;
+			exRate=1.1;
+			strDy=std::abs((int)(std::cos(rotate)*5.0));
 		}
-		m_hitJudgeShapeVec[i]->Draw(Vector2D(),inColor,TRUE);
-		m_hitJudgeShapeVec[i]->Draw(Vector2D(),frameColor,FALSE,3.0f);
+		DrawRotaGraph((int)strPos[i].x,(int)strPos[i].y,exRate,rotate,m_itemPic,TRUE);
 		DrawStringCenterBaseToHandle((int)strPos[i].x,(int)strPos[i].y+strDy,SelectItem::GetString(static_cast<SelectItem::Kind>(i)).c_str(),fontColor,m_itemFont,true);
 	}
 }
