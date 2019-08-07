@@ -159,6 +159,7 @@
     <ClCompile Include="BGM.cpp" />
     <ClCompile Include="BGMManager.cpp" />
     <ClCompile Include="BrowserTweet.cpp" />
+    <ClCompile Include="ClearStageData.cpp" />
     <ClCompile Include="DamageScene.cpp" />
     <ClCompile Include="FadeInScene.cpp" />
     <ClCompile Include="FadeOutScene.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="BGM.h" />
     <ClInclude Include="BGMManager.h" />
     <ClInclude Include="BrowserTweet.h" />
+    <ClInclude Include="ClearStageData.h" />
     <ClInclude Include="DamageScene.h" />
     <ClInclude Include="FadeInScene.h" />
     <ClInclude Include="FadeOutScene.h" />

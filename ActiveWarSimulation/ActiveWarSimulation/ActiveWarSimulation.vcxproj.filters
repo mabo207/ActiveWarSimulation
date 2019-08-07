@@ -321,6 +321,9 @@
     <ClCompile Include="BGMManager.cpp">
       <Filter>ソース ファイル\Tools</Filter>
     </ClCompile>
+    <ClCompile Include="ClearStageData.cpp">
+      <Filter>ソース ファイル\SaveData</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -505,6 +508,9 @@
     </ClInclude>
     <ClInclude Include="BGMManager.h">
       <Filter>ヘッダー ファイル\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ClearStageData.h">
+      <Filter>ヘッダー ファイル\SaveData</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
