@@ -7,6 +7,7 @@
 #include"ScoreRankingData.h"
 #include"FilePath.h"
 #include"BrowserTweet.h"
+#include"ClearStageData.h"
 
 //--------------------StageClearScene------------------
 const int StageClearScene::bonusFontSize=25;
@@ -59,6 +60,22 @@ void StageClearScene::ResisterScoreSave(){
 	m_battleSceneData->ResisterSceneEndProcess(saveFunc);
 }
 
+void StageClearScene::ResisterClearSave(){
+	//クリア時のみクリアデータの更新の登録をする
+	if(m_winFlag){
+		//必要なデータの抽出
+		const std::string dirName=m_battleSceneData->m_stageDirName;
+		//関数オブジェクト作成
+		const std::function<void(void)> saveFunc=[dirName](){
+			ClearStageData clearData;
+			clearData.BecomeClear(dirName);
+			clearData.Save();
+		};
+		//登録
+		m_battleSceneData->ResisterSceneEndProcess(saveFunc);
+	}
+}
+
 int StageClearScene::thisCalculate(){
 	m_frame++;
 
@@ -78,6 +95,7 @@ int StageClearScene::thisCalculate(){
 			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
 			//記録処理を登録
 			ResisterScoreSave();
+			ResisterClearSave();
 			//バトルパート終了
 			return SceneKind::END;
 		}
