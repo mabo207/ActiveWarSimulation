@@ -16,7 +16,7 @@ ClearStageData::ClearStageData(){
 		const StringBuilder strBuilder(FileStrRead((FilePath::savedataDir+fileName).c_str()),',','(',')');
 		for(const StringBuilder &data:strBuilder.m_vec){
 			const size_t vecSize=data.m_vec.size();
-			if(vecSize>2 && data.m_vec[0].GetString()==idName){
+			if(vecSize>1 && data.m_vec[0].GetString()==idName){
 				//データの該当箇所を見つけた場合、全てのディレクトリ情報を挿入
 				for(size_t i=1;i<vecSize;i++){
 					m_clearDir.insert(data.m_vec[i].GetString());
