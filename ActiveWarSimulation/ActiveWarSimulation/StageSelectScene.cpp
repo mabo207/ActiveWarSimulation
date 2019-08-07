@@ -8,6 +8,7 @@
 #include"FilePath.h"
 #include"BGMManager.h"
 #include<algorithm>
+#include"ClearStageData.h"
 
 #include"BattleScene.h"
 #include"TitleScene.h"
@@ -37,6 +38,7 @@ StageSelectScene::StageSelectScene()
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 	,m_bgm(Resource::BGM::Load(FilePath::bgmDir+"nonfree/title/"))
 	,m_uiControledData(new BaseUIInStageSelect::ControledData(0,StageLevel::e_easy))
+	,m_clearStageNum(0)
 {
 	//フォルダを検索
 	const std::vector<std::string> dirNameVec={"1_1","1_2","1_3","1_4","2_1","2_2","2_3","2_4","3_1","3_2","3_3","3_4","4_1","4_2","4_3","4_4","4_5"};
@@ -79,7 +81,19 @@ void StageSelectScene::InitCompletely(){
 		}
 	}
 	//ステージの個数の計算
-	m_clearStageNum=m_stageInfoVec.size()-1;//暫定
+	const ClearStageData clearStageData;
+	for(size_t i=m_stageInfoVec.size()-1;;i--){
+		//クリアしたステージの検索(末尾から)
+		if(clearStageData.JudgeClear(m_stageInfoVec[i].m_dirName)){
+			//検索がhitしたら、そこより前が全てクリアできているものとする
+			m_clearStageNum=i+1;
+			break;
+		}
+		if(i==0){
+			//終了条件
+			break;
+		}
+	}
 }
 
 void StageSelectScene::Activate(){
