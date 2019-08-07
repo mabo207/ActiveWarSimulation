@@ -20,7 +20,6 @@ private:
 			,e_tutorial
 			,e_tutorial_2
 			,e_gameFinish
-			,e_demo
 			,COUNTER
 		};
 		static std::string GetString(const Kind kind);

@@ -26,8 +26,6 @@ std::string TitleScene::SelectItem::GetString(const Kind kind){
 		return "TUTORIAL";
 	case(e_tutorial_2):
 		return "TUTORIAL2";
-	case(e_demo):
-		return "DEMO PLAY";
 	case(e_gameFinish):
 		return "EXIT GAME";
 	}
@@ -65,7 +63,6 @@ const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={
 	,Vector2D(600.0f,930.0f)
 	,Vector2D(1320.0f,580.0f)
 	,Vector2D(1320.0f,930.0f)
-	,Vector2D(1770.0f,790.0f)
 };
 
 TitleScene::TitleScene()
@@ -187,10 +184,6 @@ int TitleScene::Calculate(){
 		//m_nextScene=std::shared_ptr<GameScene>(new StageSelectScene(m_sharedData));
 		//break;
 		return 1;
-	case(SelectItem::e_demo):
-		//デモ画面へ
-		return 1;
-		break;
 	case(SelectItem::e_tutorial):
 		//チュートリアル画面へ
 		return 1;
@@ -249,9 +242,6 @@ std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameS
 	if(m_selectItem==SelectItem::e_stageSelect){
 		const auto stageselect=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,stageselect,15,15);
-	} else if(m_selectItem==SelectItem::e_demo){
-		const auto demo=std::make_shared<DemoScene::DemoSceneFactory>();
-		return CreateFadeOutInSceneCompletely(thisSharedPtr,demo,15,15);
 	} else if(m_selectItem==SelectItem::e_tutorial){
 		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,tutorial,15,15);
