@@ -71,6 +71,7 @@ const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={
 TitleScene::TitleScene()
 	:GameScene()
 	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
+	,m_itemPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleItem.png"))
 	,m_itemFont(CreateFontToHandleEX("メイリオ",16,1,-1))
 	,m_bgm(Resource::BGM::Load(FilePath::bgmDir+"nonfree/title/"))
 	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
@@ -87,6 +88,7 @@ TitleScene::TitleScene()
 TitleScene::~TitleScene(){
 	//グラフィック解放
 	DeleteGraphEX(m_backPic);
+	DeleteGraphEX(m_itemPic);
 	DeleteFontToHandleEX(m_itemFont);
 	//サウンド解放
 	m_bgm.Delete();
