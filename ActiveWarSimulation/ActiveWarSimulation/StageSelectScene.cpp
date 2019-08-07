@@ -30,7 +30,9 @@ std::shared_ptr<GameScene> StageSelectScene::StageSelectSceneFactory::CreateInco
 
 StageSelectScene::StageSelectScene()
 	:m_nextSceneName(NextSceneName::e_title)
-	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/stageSelectBack.png"))
+	,m_backDefaultPic(LoadGraphEX(FilePath::graphicDir+"nonfree/stageSelectBack_default.png"))
+	,m_backNightPic(LoadGraphEX(FilePath::graphicDir+"nonfree/stageSelectBack_night.png"))
+	,m_backMorningPic(LoadGraphEX(FilePath::graphicDir+"nonfree/stageSelectBack_morning.png"))
 	,m_backButton(backButtonX,backButtonY,backButtonWidth,backButtonHeight,LoadGraphEX(FilePath::graphicDir+"backButton.png"))
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
@@ -47,7 +49,9 @@ StageSelectScene::StageSelectScene()
 
 StageSelectScene::~StageSelectScene(){
 	//グラフィックの解放
-	DeleteGraphEX(m_backPic);
+	DeleteGraphEX(m_backDefaultPic);
+	DeleteGraphEX(m_backNightPic);
+	DeleteGraphEX(m_backMorningPic);
 	for(const auto pair:m_stageInfoFactoryMap){
 		DeleteGraphEX(pair.second);
 	}
@@ -113,7 +117,7 @@ int StageSelectScene::Calculate(){
 
 void StageSelectScene::Draw()const{
 	//背景の描画
-	DrawGraph(0,0,m_backPic,TRUE);
+	DrawBack();
 	//ステージ一覧と経路の描画
 	for(size_t i=0,siz=m_stageInfoVec.size();i<siz;i++){
 		//ステージの経路の描画
@@ -154,4 +158,18 @@ std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,battleFactory,15,15);
 	}
 	return std::shared_ptr<GameScene>();
+}
+
+void StageSelectScene::DrawBack()const{
+	const size_t index=m_uiControledData->stageIndex;
+	if(index>=12 && index<16){
+		//"4_1"~"4_4"では夜背景
+		DrawGraph(0,0,m_backNightPic,TRUE);
+	} else if(index==16){
+		//"4_5"では朝背景
+		DrawGraph(0,0,m_backMorningPic,TRUE);
+	} else{
+		//それ以外はデフォルト背景
+		DrawGraph(0,0,m_backDefaultPic,TRUE);
+	}
 }
