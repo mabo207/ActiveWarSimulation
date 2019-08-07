@@ -126,7 +126,7 @@ int StageClearScene::thisCalculate(){
 			}
 			text+="\nScore："+std::to_string(m_scoreExpression->m_totalScorePoint);
 			text+="\n\n";
-			const std::vector<std::string> hashtagVec={"ActiveWarSimulation"};
+			const std::vector<std::string> hashtagVec={"ActiveWarSimulation","あくうぉー"};
 			//既定ブラウザで上記tweetページを開いてツイートする
 			BrowserTweet::TweetText(text,hashtagVec);
 		}
