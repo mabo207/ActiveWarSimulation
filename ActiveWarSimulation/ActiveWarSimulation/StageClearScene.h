@@ -17,7 +17,6 @@ private:
 
 	//定数
 protected:
-	static const int bonusFontSize;
 
 	//変数
 protected:
@@ -25,6 +24,7 @@ protected:
 	int m_frame;
 	InputSingleCharStringControler m_inputCharControler;//文字入力を管理するクラス
 	ProcessKind m_nowProcess;
+	Easing m_bonusStrDY;//デフォルトの文字描画開始位置からのズレ
 
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
