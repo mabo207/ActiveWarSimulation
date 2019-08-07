@@ -1,0 +1,10 @@
+{(definition,mob),(name,アインス),(profession,0),(lv,19),(weapon,sword_silver),(pos,986,743),(team,0),(ai,0,0)}
+{(definition,mob),(name,フィーア),(profession,2),(lv,19),(weapon,lance_silver),(pos,1345,735),(team,0),(ai,0,0)}
+{(definition,mob),(name,ツヴァイ),(profession,1),(lv,19),(weapon,bow_silver),(pos,618,734),(team,0),(ai,0,0)}
+{(definition,mob),(name,ドライ),(profession,3),(lv,19),(weapon,book_volcano),(pos,1169,842),(team,0),(ai,0,0)}
+{(definition,mob),(name,フンフ),(profession,4),(lv,19),(weapon,rod_recover),(pos,800,842),(team,0),(ai,0,0)}
+{(definition,mob),(name,敵兵),(profession,0),(lv,15),(weapon,sword_silver),(pos,1505,126),(team,1),(ai,2,1,1,2)}
+{(definition,mob),(name,敵兵),(profession,0),(lv,15),(weapon,sword_silver),(pos,444,121),(team,1),(ai,2,0,0,2)}
+{(definition,mob),(name,敵兵),(profession,3),(lv,15),(weapon,book_volcano),(pos,968,73),(team,1),(ai,1,2)}
+{(definition,mob),(name,敵兵),(profession,2),(lv,15),(weapon,lance_silver),(pos,1150,428),(team,1),(ai,2,1,1,2)}
+{(definition,mob),(name,敵兵),(profession,2),(lv,15),(weapon,lance_silver),(pos,788,425),(team,1),(ai,2,0,0,2)}
