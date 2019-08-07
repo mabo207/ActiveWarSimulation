@@ -76,6 +76,7 @@ TitleScene::TitleScene()
 	,m_selectItem(SelectItem::e_stageSelect)
 	,m_frame(0)
 	,m_selectLocked(true)
+	,m_gotoDemo(false)
 {
 	m_itemAlpha=Easing(0,60,Easing::TYPE_IN,Easing::FUNCTION_LINER,0.0);
 	m_itemAlpha.SetTarget(255,true);
@@ -121,6 +122,9 @@ int TitleScene::thisCalculate(){
 		//クリックするまで待つ場合
 		if(keyboard_get(KEY_INPUT_Z)==1	|| mouse_get(MOUSE_INPUT_LEFT)==1){
 			m_selectLocked=false;
+		} else if(m_frame>1800){
+			//30秒放置していると、デモ画面に進む
+			m_gotoDemo=true;
 		}
 	}else{
 		//項目選択ができる時
@@ -193,7 +197,10 @@ int TitleScene::Calculate(){
 		return 1;
 		break;
 	case(SelectItem::COUNTER):
-		//現状維持
+		//基本的に現状維持
+		if(m_gotoDemo){
+			return 1;//m_gotoDemoがtrueになった場合だけ特殊な遷移
+		}
 		break;
 	default:
 		break;
@@ -239,7 +246,10 @@ void TitleScene::Draw()const{
 }
 
 std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
-	if(m_selectItem==SelectItem::e_stageSelect){
+	if(m_gotoDemo){
+		const auto demo=std::make_shared<DemoScene::DemoSceneFactory>();
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,demo,15,15);
+	} else if(m_selectItem==SelectItem::e_stageSelect){
 		const auto stageselect=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,stageselect,15,15);
 	} else if(m_selectItem==SelectItem::e_tutorial){

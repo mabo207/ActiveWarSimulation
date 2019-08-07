@@ -47,6 +47,7 @@ protected:
 	std::array<PositionControl,SelectItem::COUNTER> m_itemPosVec;
 	Easing m_itemAlpha;//選択項目の描画透明度
 	bool m_selectLocked;//最初の「Tap to Start」みたいなのが描画されていて選択ができないかどうか
+	bool m_gotoDemo;//デモに進む
 
 	//グラフィック
 	const int m_backPic;//背景
