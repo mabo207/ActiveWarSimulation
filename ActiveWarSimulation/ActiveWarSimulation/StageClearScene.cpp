@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include"StageClearScene.h"
 #include"DxLib.h"
 #include"GraphicControl.h"
@@ -11,7 +12,8 @@
 
 namespace {
 	const int bonusFontSize=25;
-	const int bonusLineHeight=bonusFontSize+10;
+	const int bonusLineHeight=bonusFontSize+20;
+	const int bonusStrAreaHeight=450;
 }
 
 //--------------------StageClearScene------------------
@@ -33,7 +35,10 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_bonusStrDY(0,15,Easing::TYPE_IN,Easing::FUNCTION_LINER,0.0)
 	,m_tweetButton(420,700,LoadGraphEX((FilePath::graphicDir+"tweetButton.png").c_str()))
 	,m_backToStageSelectButton(1100,700,LoadGraphEX((FilePath::graphicDir+"backToStageSelectButton.png").c_str()))
-{}
+{
+	const int bonusStrTotalHeight=m_scoreExpression->m_bonusVec.size()*bonusLineHeight;//ボーナスをすべて描画したらどのくらいの高さがあるか
+	m_bonusStrMinDY=std::min(0,bonusStrAreaHeight-bonusStrTotalHeight);
+}
 
 StageClearScene::~StageClearScene(){
 	//グラフィック解放
@@ -95,11 +100,11 @@ int StageClearScene::thisCalculate(){
 			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
 			m_nowProcess=ProcessKind::e_inputName;
 		} else if(keyboard_get(KEY_INPUT_UP)%15==1 || mouse_wheel_get()>0){
-			//マウスを上スクロールするか、上キーを押すと、ボーナス画面が上に進む
-			m_bonusStrDY.SetTarget(m_bonusStrDY.GetendX()-bonusLineHeight,true);
+			//マウスを上スクロールするか、上キーを押すと、ボーナス画面が下に進む
+			m_bonusStrDY.SetTarget(std::min(m_bonusStrDY.GetendX()+bonusLineHeight,0),true);
 		} else if(keyboard_get(KEY_INPUT_DOWN)%15==1 || mouse_wheel_get()<0){
-			//マウスを下スクロールするか、下キーを押すと、ボーナス画面が下に進む
-			m_bonusStrDY.SetTarget(m_bonusStrDY.GetendX()+bonusLineHeight,true);
+			//マウスを下スクロールするか、下キーを押すと、ボーナス画面が上に進む
+			m_bonusStrDY.SetTarget(std::max(m_bonusStrDY.GetendX()-bonusLineHeight,m_bonusStrMinDY),true);
 		}
 	} else if(m_nowProcess==ProcessKind::e_inputName){
 		m_inputCharControler.Update();
@@ -201,8 +206,8 @@ void StageClearScene::thisDraw()const{
 		DrawGraph(backX+x,backY+y,m_bonusBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
 		const int strX=backX+x+20,strY=backY+y+115;
-		const int strWidth=bonusWidth-40,strHeight=bonusHeight-125;
-		SetDrawArea(strX,strY,strX+bonusWidth,strY+strHeight);
+		const int strWidth=bonusWidth-40;
+		SetDrawArea(strX,strY,strX+bonusWidth,strY+bonusStrAreaHeight);
 		const int strStartY=strY+m_bonusStrDY.GetX();//描画開始位置と描画範囲の上は違う
 		for(int i=0;i<(int)m_scoreExpression->m_bonusVec.size();i++){
 			const int drawY=strStartY+i*bonusLineHeight;

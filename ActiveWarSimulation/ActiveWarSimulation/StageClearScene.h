@@ -25,6 +25,7 @@ protected:
 	InputSingleCharStringControler m_inputCharControler;//文字入力を管理するクラス
 	ProcessKind m_nowProcess;
 	Easing m_bonusStrDY;//デフォルトの文字描画開始位置からのズレ
+	int m_bonusStrMinDY;//m_bonusStrDYの最小値
 
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
