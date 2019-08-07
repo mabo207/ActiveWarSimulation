@@ -417,7 +417,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 		}
 		//区間が見つからなかったら一番後ろということ
 		if(!flag){
-			arrowPos[j]=calDrawPoint(listsize);
+			arrowPos[j]=calDrawPoint(listsize)-Vector2D(Unit::unitCircleSize*1.5f,0.0f);//最後のものより後ろなのがわかれば良いので、少し左にズラしてよい
 			arrowPos[j].x+=(float)(j*8);//ズレさせてあげることで2矢印が完全に被る事を防ぐ
 		}
 	}
