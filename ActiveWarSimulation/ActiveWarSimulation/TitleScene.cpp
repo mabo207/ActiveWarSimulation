@@ -121,6 +121,7 @@ int TitleScene::thisCalculate(){
 	if(m_selectLocked){
 		//クリックするまで待つ場合
 		if(keyboard_get(KEY_INPUT_Z)==1	|| mouse_get(MOUSE_INPUT_LEFT)==1){
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
 			m_selectLocked=false;
 		} else if(m_frame>1800){
 			//30秒放置していると、デモ画面に進む
