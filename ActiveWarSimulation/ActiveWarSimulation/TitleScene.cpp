@@ -148,10 +148,36 @@ int TitleScene::thisCalculate(){
 			}
 		} else{
 			//そうでない場合は、キー入力で行う
-			if(keyboard_get(KEY_INPUT_UP)==1 || keyboard_get(KEY_INPUT_LEFT)==1){
-				m_selectItem=static_cast<SelectItem::Kind>((m_selectItem+SelectItem::COUNTER-1)%SelectItem::COUNTER);
-			} else if(keyboard_get(KEY_INPUT_DOWN)==1 || keyboard_get(KEY_INPUT_RIGHT)==1){
-				m_selectItem=static_cast<SelectItem::Kind>((m_selectItem+1)%SelectItem::COUNTER);
+			if(keyboard_get(KEY_INPUT_UP)==1 || keyboard_get(KEY_INPUT_DOWN)==1){
+				switch(m_selectItem){
+				case(SelectItem::e_stageSelect):
+					m_selectItem=SelectItem::e_tutorial;
+					break;
+				case(SelectItem::e_tutorial):
+					m_selectItem=SelectItem::e_stageSelect;
+					break;
+				case(SelectItem::e_tutorial_2):
+					m_selectItem=SelectItem::e_gameFinish;
+					break;
+				case(SelectItem::e_gameFinish):
+					m_selectItem=SelectItem::e_tutorial_2;
+					break;
+				}
+			} else if(keyboard_get(KEY_INPUT_LEFT)==1 || keyboard_get(KEY_INPUT_RIGHT)==1){
+				switch(m_selectItem){
+				case(SelectItem::e_stageSelect):
+					m_selectItem=SelectItem::e_tutorial_2;
+					break;
+				case(SelectItem::e_tutorial):
+					m_selectItem=SelectItem::e_gameFinish;
+					break;
+				case(SelectItem::e_tutorial_2):
+					m_selectItem=SelectItem::e_stageSelect;
+					break;
+				case(SelectItem::e_gameFinish):
+					m_selectItem=SelectItem::e_tutorial;
+					break;
+				}
 			}
 		}
 		if(beforeSelectItem!=m_selectItem){
