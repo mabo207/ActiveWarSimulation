@@ -13,7 +13,7 @@ void GeneralPurposeResource::LoadResource(){
 	//画像
 
 	//フォント
-	popLargeFont=CreateFontToHandleEX("りいポップ角 R",60,7,DX_FONTTYPE_ANTIALIASING_4X4);
+	popLargeFont=CreateFontToHandleEX("りいポップ角 R",60,7,DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
 
 	//音
 	decideSound=LoadSoundMem((FilePath::effectSoundDir+"nonfree/decide.ogg").c_str());

@@ -19,8 +19,8 @@ private:
 			e_stageSelect
 			,e_tutorial
 			,e_tutorial_2
-			,e_demo
 			,e_gameFinish
+			,e_demo
 			,COUNTER
 		};
 		static std::string GetString(const Kind kind);
@@ -45,6 +45,9 @@ protected:
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 	SelectItem::Kind m_selectItem;//現在選択している項目
 	std::array<std::shared_ptr<Shape>,SelectItem::COUNTER> m_hitJudgeShapeVec;
+	std::array<PositionControl,SelectItem::COUNTER> m_itemPosVec;
+	Easing m_itemAlpha;//選択項目の描画透明度
+	bool m_selectLocked;//最初の「Tap to Start」みたいなのが描画されていて選択ができないかどうか
 
 	//グラフィック
 	const int m_backPic;//背景
