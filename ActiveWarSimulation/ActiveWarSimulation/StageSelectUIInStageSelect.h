@@ -12,6 +12,7 @@ public:
 		,const std::vector<StageInfoInStageSelect> &stageInfoVec
 		,int stageNameFont
 		,int explainFont
+		,size_t clearStageNum
 	);
 	~StageSelectUIInStageSelect();
 	UpdateResult Update();
@@ -25,6 +26,7 @@ private:
 	PositionControl m_selectStagePos;//選択しているステージ情報の描画位置
 	size_t m_beforeSelectStageIndex;//ステージ情報の描画位置が動いている時、動かす前に選択していたステージのindexを記録して2ステージ間のステージを全て描画できるようにする
 	bool m_afterDicide;//trueなら項目がスライドアウトするアニメーションをしている
+	const size_t m_stageNum;//選択できるステージの個数
 
 	//参照しているフォント（ここで削除はしない）
 	const int m_stageNameFont;

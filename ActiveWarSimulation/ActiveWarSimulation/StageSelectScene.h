@@ -36,6 +36,7 @@ protected:
 	NextSceneName m_nextSceneName;//次の場面は何か、VGetNextScene()で使用
 	std::shared_ptr<BaseUIInStageSelect> m_ui;//現在のUI
 	std::shared_ptr<BaseUIInStageSelect::ControledData> m_uiControledData;//UIが管理するデータ
+	size_t m_clearStageNum;//クリアしたステージの個数
 
 	//画像
 	const int m_backDefaultPic;//背景（デフォルト）

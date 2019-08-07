@@ -3,7 +3,6 @@
 #include"DxLib.h"
 #include"GraphicControl.h"
 #include"FileRead.h"
-#include<Windows.h>
 #include"CommonConstParameter.h"
 #include"GeneralPurposeResource.h"
 #include"FilePath.h"
@@ -79,11 +78,13 @@ void StageSelectScene::InitCompletely(){
 			//ファイルを開くのに失敗した場合は、insert()を行わないだけでそのまま処理を続ける
 		}
 	}
+	//ステージの個数の計算
+	m_clearStageNum=m_stageInfoVec.size()-1;//暫定
 }
 
 void StageSelectScene::Activate(){
 	//UIの作成
-	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont));
+	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont,m_clearStageNum));
 	//bgm再生
 	if(BGMManager::s_instance.has_value()){
 		BGMManager::s_instance->PlayWithCopy(m_bgm);
@@ -106,7 +107,7 @@ int StageSelectScene::Calculate(){
 		return -1;
 	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoStageSelect){
 		//ステージセレクトにUI遷移
-		m_ui=std::shared_ptr<BaseUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont));
+		m_ui=std::shared_ptr<BaseUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont,m_clearStageNum));
 	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoLevelSelect){
 		//レベルセレクトにUI遷移
 		m_ui=std::shared_ptr<BaseUIInStageSelect>(new LevelSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec[m_uiControledData->stageIndex],m_stageNameFont,m_explainFont));
@@ -119,7 +120,7 @@ void StageSelectScene::Draw()const{
 	//背景の描画
 	DrawBack();
 	//ステージ一覧と経路の描画
-	for(size_t i=0,siz=m_stageInfoVec.size();i<siz;i++){
+	for(size_t i=0,siz=std::min(m_clearStageNum+1,m_stageInfoVec.size());i<siz;i++){
 		//ステージの経路の描画
 		if(i+1<siz){
 			//次のステージとの距離を求める
@@ -137,8 +138,18 @@ void StageSelectScene::Draw()const{
 			}
 		}
 		//ステージの位置の描画
-		DrawCircleAA(m_stageInfoVec[i].m_pos.x,m_stageInfoVec[i].m_pos.y,30,10,GetColor(64,64,255),TRUE);
-		DrawCircleAA(m_stageInfoVec[i].m_pos.x,m_stageInfoVec[i].m_pos.y,20,10,GetColor(128,196,255),TRUE);
+		unsigned int inColor,outColor;
+		if(i<m_clearStageNum){
+			//クリアステージは青基調で描画
+			inColor=GetColor(128,196,255);
+			outColor=GetColor(64,64,255);
+		} else{
+			//まだのステージは赤基調で描画
+			inColor=GetColor(255,196,128);
+			outColor=GetColor(255,64,64);
+		}
+		DrawCircleAA(m_stageInfoVec[i].m_pos.x,m_stageInfoVec[i].m_pos.y,30,10,outColor,TRUE);
+		DrawCircleAA(m_stageInfoVec[i].m_pos.x,m_stageInfoVec[i].m_pos.y,20,10,inColor,TRUE);
 	}
 	//UIの描画
 	m_ui->Draw();

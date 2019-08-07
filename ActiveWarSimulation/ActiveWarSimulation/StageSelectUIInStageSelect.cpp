@@ -1,3 +1,4 @@
+#define NOMINMAX	//std::max()の衝突の回避
 #include"DxLib.h"
 #include"StageSelectUIInStageSelect.h"
 #include"GeneralPurposeResource.h"
@@ -35,6 +36,7 @@ StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<Contr
 	,const std::vector<StageInfoInStageSelect> &stageInfoVec
 	,int stageNameFont
 	,int explainFont
+	,size_t clearStageNum
 )
 	:BaseUIInStageSelect(controledData,backButton)
 	,m_beforeFrameMousePos(GetMousePointVector2D())
@@ -46,6 +48,7 @@ StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<Contr
 	,m_selectStageButton(GetTargetX()-StageInfoInStageSelect::stageBoxWidth/2,GetTargetY()-StageInfoInStageSelect::stageBoxHeight/2,StageInfoInStageSelect::stageBoxWidth,StageInfoInStageSelect::stageBoxHeight,-1)
 	,m_selectStagePos(GetSlideInOutX(),GetTargetX(),GetTargetY(),GetTargetY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,9.0)//最初は右から入ってくるような演出
 	,m_afterDicide(false)
+	,m_stageNum(std::min(clearStageNum+1,stageInfoVec.size()))
 {}
 
 StageSelectUIInStageSelect::~StageSelectUIInStageSelect(){}
@@ -69,20 +72,19 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 		}
 		if(!m_afterDicide){
 			//選択ステージの更新
-			const size_t stageNum=m_stageInfoVec.size();
 			const std::shared_ptr<ControledData> lock=m_controledData.lock();
 			const size_t beforeIndex=lock->stageIndex;//効果音再生の可否判定に用いる
 			//更新処理
-			if(stageNum>0){
+			if(m_stageNum>0){
 				//十字キーでの切り替え
 				if(keyboard_get(KEY_INPUT_UP)==1 || m_upButton.JudgePressMoment()){
-					lock->stageIndex=(lock->stageIndex+stageNum-1)%stageNum;
+					lock->stageIndex=(lock->stageIndex+m_stageNum-1)%m_stageNum;
 				} else if(keyboard_get(KEY_INPUT_DOWN)==1 || m_downButton.JudgePressMoment()){
-					lock->stageIndex=(lock->stageIndex+1)%stageNum;
+					lock->stageIndex=(lock->stageIndex+1)%m_stageNum;
 				} else{
 					//マウスでの切り替え
 					const float circleSize=30.0f;//当たり判定の円の大きさ
-					for(size_t i=0;i<stageNum;i++){
+					for(size_t i=0;i<m_stageNum;i++){
 						if((m_stageInfoVec[i].m_pos-mousePos).sqSize()<=circleSize*circleSize){
 							if(mouseMoveFlag){
 								//マウスを一定距離以上動かした場合のみ更新
@@ -141,7 +143,7 @@ void StageSelectUIInStageSelect::Draw()const{
 	if(!m_controledData.expired()){
 		//選択しているステージの表示と場所の強調
 		const std::shared_ptr<ControledData> lock=m_controledData.lock();
-		const size_t infoVecSize=m_stageInfoVec.size();
+		const size_t infoVecSize=m_stageNum;//m_stageNumはm_stageInfoVec.size()以下であることは保証されている
 		const size_t selectIndex=lock->stageIndex;
 		if(selectIndex<infoVecSize){
 			//場所の協調
