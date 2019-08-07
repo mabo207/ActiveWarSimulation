@@ -28,7 +28,9 @@ int FadeOutScene::Calculate(){
 		m_afterAlphaEndFrame++;
 	}
 	if(m_afterAlphaEndFrame>2){
-		// フェードアウトが終了してから2f経ったら次の場面へ
+		// フェードアウトが終了してから2f経ったら次の場面へ(DXライブラリの仕様上実際に描画されるまで少し時間がかかるため)
+		// このタイミングでm_previousSceneを解放する(m_nextFactoryでのScene作成の前にシーン解放をする方が、シーンの作業の時間軸を複雑化せずに済むため)
+		m_previousScene=std::shared_ptr<GameScene>();
 		return 1;
 	}
 	return 0;
