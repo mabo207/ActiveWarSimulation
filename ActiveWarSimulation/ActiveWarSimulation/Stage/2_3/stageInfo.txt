@@ -1,1 +1,1 @@
-(title,ピラミッドの文化遺産),(pos,225,200),(bgm,nonfree/wild-road_loop/)
+(title,ピラミッドの文化遺産),(pos,225,200),(bgm,battle1.txt)

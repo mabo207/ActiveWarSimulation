@@ -36,7 +36,7 @@ StageSelectScene::StageSelectScene()
 	,m_backButton(backButtonX,backButtonY,backButtonWidth,backButtonHeight,LoadGraphEX(FilePath::graphicDir+"backButton.png"))
 	,m_stageNameFont(CreateFontToHandleEX("メイリオ",32,2,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
-	,m_bgm(Resource::BGM::Load(FilePath::bgmDir+"nonfree/title/"))
+	,m_bgm(Resource::BGM::Load("title.txt"))
 	,m_uiControledData(new BaseUIInStageSelect::ControledData(0,StageLevel::e_easy))
 	,m_clearStageNum(0)
 {
