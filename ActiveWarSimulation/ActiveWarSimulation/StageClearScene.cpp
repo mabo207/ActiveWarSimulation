@@ -12,7 +12,7 @@
 
 namespace {
 	const int bonusFontSize=25;
-	const int bonusLineHeight=bonusFontSize+20;
+	const int bonusLineHeight=bonusFontSize+10;
 	const int bonusStrAreaHeight=450;
 }
 
@@ -206,7 +206,7 @@ void StageClearScene::thisDraw()const{
 		DrawGraph(backX+x,backY+y,m_bonusBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
 		const int strX=backX+x+20,strY=backY+y+115;
-		const int strWidth=bonusWidth-40;
+		const int strWidth=bonusWidth-60;
 		SetDrawArea(strX,strY,strX+bonusWidth,strY+bonusStrAreaHeight);
 		const int strStartY=strY+m_bonusStrDY.GetX();//描画開始位置と描画範囲の上は違う
 		for(int i=0;i<(int)m_scoreExpression->m_bonusVec.size();i++){
@@ -215,6 +215,15 @@ void StageClearScene::thisDraw()const{
 			DrawStringRightJustifiedToHandle(strX+strWidth,drawY,std::to_string(m_scoreExpression->m_bonusVec[i].GetScore()),GetColor(255,255,255),m_bonusFont);
 		}
 		SetDrawAllArea();
+		//行の位置のバーの描画
+		const int barHeight=bonusStrAreaHeight*bonusStrAreaHeight/(bonusStrAreaHeight-m_bonusStrMinDY);//大きさは、バーの描画可能位置の高さのうち、ボーナス全体の高さに対する描画可能範囲の高さの割合だけ表示
+		int barY;
+		if(m_bonusStrMinDY!=0){
+			barY=strY+(bonusStrAreaHeight-barHeight)*m_bonusStrDY.GetX()/m_bonusStrMinDY;
+		} else{
+			barY=strY;
+		}
+		DrawBox(strX+strWidth+10,barY,strX+strWidth+30,barY+barHeight,GetColor(32,48,96),TRUE);
 	}
 	//合計スコア描画
 	{
