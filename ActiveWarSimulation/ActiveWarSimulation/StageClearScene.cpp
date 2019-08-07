@@ -163,7 +163,7 @@ void StageClearScene::thisDraw()const{
 	DrawGraph(0,0,m_resultBarPic,TRUE);
 	//ターン数描画
 	{
-		const int x=50,y=50;
+		const int x=50,y=60;
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_turnBar.second/100);
 		DrawGraph(backX+x,backY+y,m_turnBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
@@ -171,7 +171,7 @@ void StageClearScene::thisDraw()const{
 	}
 	//生存数描画
 	{
-		const int x=50,y=200;
+		const int x=50,y=210;
 		const int stringY=backY+y+40;
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_survivalBar.second/100);
 		DrawGraph(backX+x,backY+y,m_survivalBar.first,TRUE);
@@ -181,17 +181,21 @@ void StageClearScene::thisDraw()const{
 	}
 	//ボーナス画面描画
 	{
-		const int x=850,y=70;
+		const int x=850,y=50;
 		int bonusWidth,bonusHeight;
 		GetGraphSize(m_bonusBar.first,&bonusWidth,&bonusHeight);
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_bonusBar.second/100);
 		DrawGraph(backX+x,backY+y,m_bonusBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
+		const int strX=backX+x+20,strY=backY+y+115;
+		const int strWidth=bonusWidth-40,strHeight=bonusHeight-125;
+		SetDrawArea(strX,strY,strX+bonusWidth,strY+strHeight);
 		for(int i=0;i<(int)m_scoreExpression->m_bonusVec.size();i++){
-			const int drawY=backY+y+115+(int)(i*bonusFontSize*1.3);
-			DrawStringToHandle(backX+x+20,drawY,m_scoreExpression->m_bonusVec[i].GetExplain().c_str(),GetColor(255,255,255),m_bonusFont);
-			DrawStringRightJustifiedToHandle(backX+x+bonusWidth-40,drawY,std::to_string(m_scoreExpression->m_bonusVec[i].GetScore()),GetColor(255,255,255),m_bonusFont);
+			const int drawY=strY+(int)(i*bonusFontSize*1.4);
+			DrawStringToHandle(strX,drawY,m_scoreExpression->m_bonusVec[i].GetExplain().c_str(),GetColor(255,255,255),m_bonusFont);
+			DrawStringRightJustifiedToHandle(strX+strWidth,drawY,std::to_string(m_scoreExpression->m_bonusVec[i].GetScore()),GetColor(255,255,255),m_bonusFont);
 		}
+		SetDrawAllArea();
 	}
 	//合計スコア描画
 	{
