@@ -1,1 +1,1 @@
-(title,チュートリアル１),(bgm,nonfree/wild-road_loop/)
+(title,チュートリアル１),(bgm,battle1.txt)

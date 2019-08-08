@@ -159,6 +159,8 @@
     <ClCompile Include="BGM.cpp" />
     <ClCompile Include="BGMManager.cpp" />
     <ClCompile Include="BrowserTweet.cpp" />
+    <ClCompile Include="ClearStageData.cpp" />
+    <ClCompile Include="CreditScene.cpp" />
     <ClCompile Include="DamageScene.cpp" />
     <ClCompile Include="FadeInScene.cpp" />
     <ClCompile Include="FadeOutScene.cpp" />
@@ -224,6 +226,8 @@
     <ClInclude Include="BGM.h" />
     <ClInclude Include="BGMManager.h" />
     <ClInclude Include="BrowserTweet.h" />
+    <ClInclude Include="ClearStageData.h" />
+    <ClInclude Include="CreditScene.h" />
     <ClInclude Include="DamageScene.h" />
     <ClInclude Include="FadeInScene.h" />
     <ClInclude Include="FadeOutScene.h" />
@@ -276,6 +280,9 @@
     <ClInclude Include="AttackScene.h" />
     <ClInclude Include="WaitLog.h" />
     <ClInclude Include="Weapon.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

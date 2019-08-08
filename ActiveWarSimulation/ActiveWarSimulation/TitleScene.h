@@ -19,7 +19,6 @@ private:
 			e_stageSelect
 			,e_tutorial
 			,e_tutorial_2
-			,e_demo
 			,e_gameFinish
 			,COUNTER
 		};
@@ -45,10 +44,15 @@ protected:
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置
 	SelectItem::Kind m_selectItem;//現在選択している項目
 	std::array<std::shared_ptr<Shape>,SelectItem::COUNTER> m_hitJudgeShapeVec;
+	std::array<PositionControl,SelectItem::COUNTER> m_itemPosVec;
+	Easing m_itemAlpha;//選択項目の描画透明度
+	bool m_selectLocked;//最初の「Tap to Start」みたいなのが描画されていて選択ができないかどうか
+	bool m_gotoDemo;//デモに進む
 
 	//グラフィック
 	const int m_backPic;//背景
-	const int m_itemFont;//選択項目のフォント
+	const int m_itemPic;//選択項目の背景
+	const int m_startFont;//「Press To Play」の表示フォント
 
 	//bgm
 	const Resource::BGM m_bgm;

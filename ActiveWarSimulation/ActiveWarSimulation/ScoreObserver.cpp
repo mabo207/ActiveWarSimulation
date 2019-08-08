@@ -79,7 +79,7 @@ ScoreObserver::Bonus ScoreObserver::LatticeBonusData::GetPlayerBonus()const{
 		const double rate=m_totalPlayerRate/m_playerCount;
 		if(rate>=0.50){
 			//この数値は要調整
-			return Bonus("広所確保",2000);
+			return Bonus("広所確保",3000);
 		}
 	}
 	return Bonus("",0);
@@ -90,7 +90,7 @@ ScoreObserver::Bonus ScoreObserver::LatticeBonusData::GetEnemyBonus()const{
 		const double rate=m_totalEnemyRate/m_enemyCount;
 		if(rate<=0.35){
 			//この数値は要調整
-			return Bonus("敵に狭所を押し付けた",2000);
+			return Bonus("敵に狭所を押し付けた",3000);
 		}
 	}
 	return Bonus("",0);
@@ -166,6 +166,21 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 			&& logData.punit->GetBaseStatus().profession==profession
 			&& logData.punit->GetBattleStatus().team==Unit::Team::e_player);
 	};
+	//クリア難易度
+	{
+		if(winFlag){
+			//勝利している時のみボーナス付与
+			if(m_stageLevel==StageLevel::e_easy){
+				bonus.push_back(Bonus("難易度EASYをクリア",5000));
+			} else if(m_stageLevel==StageLevel::e_normal){
+				bonus.push_back(Bonus("難易度NORMALをクリア",20000));
+			} else if(m_stageLevel==StageLevel::e_hard){
+				bonus.push_back(Bonus("難易度HARDをクリア",35000));
+			} else if(m_stageLevel==StageLevel::e_lunatic){
+				bonus.push_back(Bonus("難易度LUNATICをクリア",50000));
+			}
+		}
+	}
 	//生存数(味方のついでに敵も計算)
 	{
 		//生存数からの得点計算(寝返りを想定していない)
@@ -194,13 +209,13 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 			}
 		}
 		if(totalPlayerUnitCount>0){
-			liveScore=10000*livePlayerUnitCount/totalPlayerUnitCount;
+			liveScore=40000*livePlayerUnitCount/totalPlayerUnitCount;
 		} else{
 			liveScore=0;
 		}
 		//生存数のボーナス得点
 		if(totalPlayerUnitCount-livePlayerUnitCount==0){
-			bonus.push_back(Bonus("全員生存",3000));
+			bonus.push_back(Bonus("全員生存",7000));
 		} else if(livePlayerUnitCount==1){
 			bonus.push_back(Bonus("ほぼ引き分け",200));
 		}
@@ -211,29 +226,14 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 	{
 		if(winFlag){
 			//勝利している時のみスコア計算
-			turnScore=std::max(0,20-clearTurn)*500;
+			turnScore=std::max(0,20-clearTurn)*2000;
 			//クリアターン数のボーナス得点
-			if(clearTurn<5){
-				bonus.push_back(Bonus("神速進軍",3000));
-			} else if(clearTurn<7){
-				bonus.push_back(Bonus("速攻進軍",2000));
-			} else if(clearTurn>15){
+			if(clearTurn<(int)(totalEnemyUnitCount)){
+				bonus.push_back(Bonus("神速進軍",6000));
+			} else if(clearTurn<(int)(totalEnemyUnitCount+2)){
+				bonus.push_back(Bonus("速攻進軍",3000));
+			} else if(clearTurn>10){
 				bonus.push_back(Bonus("ノロノロ進軍",100));
-			}
-		}
-	}
-	//クリア難易度
-	{
-		if(winFlag){
-			//勝利している時のみボーナス付与
-			if(m_stageLevel==StageLevel::e_easy){
-				bonus.push_back(Bonus("難易度EASYをクリア",2000));
-			}else if(m_stageLevel==StageLevel::e_normal){
-				bonus.push_back(Bonus("難易度NORMALをクリア",4000));
-			} else if(m_stageLevel==StageLevel::e_hard){
-				bonus.push_back(Bonus("難易度HARDをクリア",7000));
-			} else if(m_stageLevel==StageLevel::e_lunatic){
-				bonus.push_back(Bonus("難易度LUNATICをクリア",10000));
 			}
 		}
 	}
@@ -270,11 +270,11 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 			}
 			//最小HP割合が求まれば、それに応じたボーナスを出す
 			if(minMinRate>=1.00){
-				bonus.push_back(Bonus("ノーダメージ",5000));
+				bonus.push_back(Bonus("ノーダメージ",8000));
 			} else if(minMinRate>=0.75){
-				bonus.push_back(Bonus("HP75%キープ",2000));
+				bonus.push_back(Bonus("HP75%キープ",4000));
 			} else if(minMinRate>=0.50){
-				bonus.push_back(Bonus("HP50%キープ",1000));
+				bonus.push_back(Bonus("HP50%キープ",2000));
 			} else if(maxMinRate<=0.25){
 				bonus.push_back(Bonus("ギリギリの戦い",500));
 			}
@@ -311,14 +311,14 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 			if(moveCount>0){
 				double averageWalkOP=totalWalkOP/moveCount;
 				if(averageWalkOP>80.0){
-					bonus.push_back(Bonus("遊撃のプロフェッショナル",1500));
+					bonus.push_back(Bonus("遊撃のプロフェッショナル",2000));
 				} else if(averageWalkOP>60.0){
-					bonus.push_back(Bonus("遊撃兵士",1000));
+					bonus.push_back(Bonus("戦士が積極的に移動した",1300));
 				}
 			}
 			//攻撃回数
 			if(attackCount>=finishLog->GetClearTurn()){
-				bonus.push_back(Bonus("生粋のアタッカー",2000));
+				bonus.push_back(Bonus("戦士が積極的に攻撃した",3000));
 			}
 		}
 	}
@@ -368,16 +368,16 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 				if(magicAttackedCount==0){
 					bonus.push_back(Bonus("重装兵で魔法攻撃を受けない",2000));
 				} else if(magicAttackedCount==magicTotalCount){
-					bonus.push_back(Bonus("重装兵が弱点を突かれ続けた",100));
+					bonus.push_back(Bonus("重装兵が魔法で弱点を突かれ続けた",100));
 				}
 			}
 			//物理被弾回数
 			if(physicTotalCount>0){
 				double rate=1.0*physicAttackedCount/physicTotalCount;
 				if(rate>=0.75){
-					bonus.push_back(Bonus("物理鉄壁",1500));
+					bonus.push_back(Bonus("重装兵が鉄壁と化していた",2000));
 				} else if(rate>=0.50){
-					bonus.push_back(Bonus("物理壁",1000));
+					bonus.push_back(Bonus("重装兵がたくさんの物理攻撃を引き受けた",1400));
 				}
 			}
 		}
@@ -428,9 +428,9 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 			if(attackCount>0){
 				const double averageRate=totalAttackLengthRate/attackCount;
 				if(averageRate>=0.75){
-					bonus.push_back(Bonus("狙撃手",2000));
+					bonus.push_back(Bonus("ロングレンジスナイパーの異名を持つ射手",2000));
 				} else if(averageRate>=0.50){
-					bonus.push_back(Bonus("後衛",1000));
+					bonus.push_back(Bonus("射手が射程を活かした攻撃に徹していた",1200));
 				}
 			}
 			//狙う兵種
@@ -442,7 +442,7 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 			}
 			if(effectiveAttackCount>0 && effectiveAttackCount>=effectiveUnitCount){
 				//効果的な攻撃相手に１回ずつ攻撃しているなら（ただし、厳密にはせず回数の合計だけみる）
-				bonus.push_back(Bonus("弱点狙いの射手",1500));
+				bonus.push_back(Bonus("弱点狙いの射手",1800));
 			}
 		}
 	}
@@ -498,14 +498,14 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 			if(armerCount>0){
 				const double average=1.0*armerAttackCount/armerCount;
 				if(average>=1.5){
-					bonus.push_back(Bonus("重装兵キラー",2000));
+					bonus.push_back(Bonus("重装兵キラーの魔道士",3000));
 				} else if(average>=1.0){
-					bonus.push_back(Bonus("魔道士で重装兵狙い",1000));
+					bonus.push_back(Bonus("魔道士で重装兵狙い",1800));
 				}
 			}
 			//近接攻撃被弾回数
 			if(nearAttackedCount<=0){
-				bonus.push_back(Bonus("魔道士が近接攻撃を受けない",1500));
+				bonus.push_back(Bonus("魔道士が近接攻撃を受けない",1600));
 			}
 		}
 	}
@@ -573,15 +573,15 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 			//味方に衛生兵がいる場合、ボーナス処理をする
 			//物理攻撃被弾回数
 			if(physicAttackedCount==0){
-				bonus.push_back(Bonus("衛生兵が物理攻撃を受けない",2000));
+				bonus.push_back(Bonus("衛生兵が物理攻撃を受けない",3000));
 			}
 			//回復量
 			if(totalDamage>0){
 				const double rate=1.0*totalRecoverPoint/totalDamage;
 				if(rate>=0.75){
-					bonus.push_back(Bonus("回復のスペシャリスト",1500));
+					bonus.push_back(Bonus("回復のスペシャリスト",1600));
 				} else if(rate>=0.50){
-					bonus.push_back(Bonus("回復役",1000));
+					bonus.push_back(Bonus("衛生兵がたくさん味方を癒した",900));
 				}
 			}
 		}
@@ -672,9 +672,9 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 		if(enemyCount>0){
 			const double rate=totalEachRate/enemyCount;
 			if(rate>=0.80){
-				bonus.push_back(Bonus("集中攻撃をとても心がけた",2500));
+				bonus.push_back(Bonus("集中攻撃をとても心がけた",3500));
 			} else if(rate>=0.60){
-				bonus.push_back(Bonus("集中攻撃を心がけた",1500));
+				bonus.push_back(Bonus("集中攻撃を心がけた",2600));
 			}
 		}
 	}
@@ -699,16 +699,16 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 		if(orderCount>0){
 			const double rate=1.0*actionCount/orderCount;
 			if(rate>=0.80){
-				bonus.push_back(Bonus("超アクティブバトル",2400));
+				bonus.push_back(Bonus("待機行動を殆ど行わなかった",2400));
 			} else if(rate>=0.60){
-				bonus.push_back(Bonus("アクティブバトル",1300));
+				bonus.push_back(Bonus("待機行動が控えめだった",1300));
 			}
 		}
 	}
 	//移動キャンセル回数
 	{
 		if(m_cancelCount==0){
-			bonus.push_back(Bonus("ノーキャンセル",1200));
+			bonus.push_back(Bonus("ノー移動キャンセル",2200));
 		}
 	}
 	//合計移動距離
@@ -732,13 +732,13 @@ std::shared_ptr<ScoreObserver::ScoreExpression> ScoreObserver::GetScoreExpressio
 		}
 		//ボーナス処理
 		if(totalMoveDistance==0.0f){
-			bonus.push_back(Bonus("移動せずにクリア",6000));
+			bonus.push_back(Bonus("移動せずにクリア",20000));
 		}
 	}
 	//探索使用回数
 	{
 		if(m_researchCount==0){
-			bonus.push_back(Bonus("偵察いらず",3000));
+			bonus.push_back(Bonus("偵察いらずの用兵術",3000));
 		} else if(m_researchCount>=10){
 			bonus.push_back(Bonus("偵察のプロフェッショナル",400));
 		}

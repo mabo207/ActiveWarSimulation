@@ -18,7 +18,7 @@ public:
 	Vector2D GetPos()const{
 		return pos;
 	}
-	std::string GetBgmFolderName()const{
+	std::string GetBgmInfoFileName()const{
 		return bgmFolderName;
 	}
 

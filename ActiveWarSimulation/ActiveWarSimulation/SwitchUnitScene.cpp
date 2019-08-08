@@ -4,6 +4,7 @@
 #include"ComputerMoveScene.h"
 #include"StageClearScene.h"
 #include"GraphicControl.h"
+#include"FilePath.h"
 
 #include"TutorialPlayerMoveScene.h"
 
@@ -13,7 +14,7 @@ SwitchUnitScene::SwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_battleSceneData(battleSceneData)
 	,m_judgeEnd(JudgeEnd::e_notEnd)
 	,m_rubricWordPosition(-50,-50)
-	,m_turnFont(CreateFontToHandleEX("メイリオ",80,8,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,3))
+	,m_turnFont(LoadFontDataToHandleEX(FilePath::fontDir+"TurnFont.dft",3))
 {
 	//進行データを更新
 	ReturnProcess();

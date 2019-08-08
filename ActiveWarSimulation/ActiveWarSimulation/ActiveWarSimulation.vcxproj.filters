@@ -139,6 +139,12 @@
     <Filter Include="ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson">
       <UniqueIdentifier>{8c79322b-d453-4a26-b102-4e9b264cc12e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameScene\CreditScene">
+      <UniqueIdentifier>{68e60e47-bb5c-48b9-aa15-c4aaf12d5960}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\CreditScene">
+      <UniqueIdentifier>{f972cb70-0eb3-4ee3-bcf8-555947d085e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -330,6 +336,12 @@
     <ClCompile Include="SelfDecideSubmission.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson</Filter>
     </ClCompile>
+    <ClCompile Include="ClearStageData.cpp">
+      <Filter>ソース ファイル\SaveData</Filter>
+    </ClCompile>
+    <ClCompile Include="CreditScene.cpp">
+      <Filter>ソース ファイル\GameScene\CreditScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -518,5 +530,16 @@
     <ClInclude Include="SelfDecideSubmission.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission</Filter>
     </ClInclude>
+    <ClInclude Include="ClearStageData.h">
+      <Filter>ヘッダー ファイル\SaveData</Filter>
+    </ClInclude>
+    <ClInclude Include="CreditScene.h">
+      <Filter>ヘッダー ファイル\GameScene\CreditScene</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\Resource.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

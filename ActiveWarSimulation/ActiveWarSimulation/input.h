@@ -13,6 +13,8 @@ int keyboard_get(int KeyCode);
 
 int mouse_get(int MouseCode);
 
+int mouse_wheel_get();
+
 Vector2D analogjoypad_get(int InputType);
 
 void input_erase();//入力情報を全て消す(どのボタンも入力されてないことにする)
@@ -59,6 +61,7 @@ protected:
 	//変数
 	int m_keyboardFrame[KeyNum];//各キーボードが入力されたフレーム数
 	int m_mouseFrame[MouseButtonNum];//各マウスのボタンが入力されたフレーム数
+	int m_mouseWheelRotVol;//マウスホイールの変化量
 	std::set<GamepadKeyboardMap> m_connectmap;//ゲームパッドとキーボードの対応表
 	std::set<AnalogJoypadKeyboardMap> m_stickmap;//アナログスティックとキーボードの対応表
 
@@ -71,6 +74,7 @@ public:
 	int Update();
 	int Get(int KeyCode);
 	int MouseGet(int MouseCode);
+	int MouseWheelGet();
 	void InitInput();
 	void COMinput(int KeyCode);
 	void AddConnectMap(int KeyCode,int PadButton);

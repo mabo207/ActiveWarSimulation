@@ -3,6 +3,7 @@
 #include"FileRead.h"
 #include<optional>
 #include"StringBuilder.h"
+#include"FilePath.h"
 
 //--------------Resource::BGM::LoadInfo-----------------
 std::map<Resource::BGM::LoadInfo,std::pair<Resource::BGM,size_t>> Resource::BGM::s_bgmMap;
@@ -13,7 +14,7 @@ Resource::BGM Resource::BGM::LoadInfo::Load()const{
 	int volume=255;
 	std::optional<std::string> fileName;
 	//ループ位置の設定。info.txtに「ループ開始位置」「ループ終了位置」「音量%」「ファイル名」が格納されている
-	StringBuilder builder(FileStrRead((dirName+"info.txt").c_str()),',','(',')');
+	StringBuilder builder(FileStrRead((FilePath::bgmInfoDir+infoFileName).c_str()),',','(',')');
 	for(StringBuilder &sb:builder.m_vec){
 		try{
 			//std::stoiを用いるので例外処理を用意
@@ -24,7 +25,7 @@ Resource::BGM Resource::BGM::LoadInfo::Load()const{
 			} else if(sb.m_vec.size()>=2 && sb.m_vec[0].GetString()=="volume"){
 				volume=std::stoi(sb.m_vec[1].GetString());
 			} else if(sb.m_vec.size()>=2 && sb.m_vec[0].GetString()=="fileName"){
-				fileName=dirName+sb.m_vec[1].GetString();
+				fileName=sb.m_vec[1].GetString();
 			}
 		} catch(const std::invalid_argument &){
 			//数値じゃないものを検出した場合
@@ -34,7 +35,7 @@ Resource::BGM Resource::BGM::LoadInfo::Load()const{
 	}
 	//ファイル名が発見された場合とそうでない場合がある
 	if(fileName){
-		return BGM(LoadSoundMem(fileName.value().c_str()),volume,loopTop,loopBottom);
+		return BGM(LoadSoundMem((FilePath::bgmDir+fileName.value()).c_str()),volume,loopTop,loopBottom);
 	} else{
 		return errorObject;
 	}
@@ -84,7 +85,7 @@ void Resource::BGM::SetOption()const{
 		SetLoopStartSamplePosSoundMem(loopBottom,handle);//ループが始まる位置の設定、ループ区間の後ろ端になる。
 	}
 	if(loopTop>=0){
-		SetLoopPosSoundMem(loopTop,handle);//ループ位置の設定、ループするとどこに飛ぶかなのでループ区間の前端になる。
+		SetLoopSamplePosSoundMem(loopTop,handle);//ループ位置の設定、ループするとどこに飛ぶかなのでループ区間の前端になる。
 	}
 	ChangeVolumeSoundMem(volume,handle);//ボリュームを0~255で設定
 }

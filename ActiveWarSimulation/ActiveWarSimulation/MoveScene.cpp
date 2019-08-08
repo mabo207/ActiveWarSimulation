@@ -22,8 +22,8 @@ MoveScene::MoveScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_battleSceneData(battleSceneData)
 	,m_operatedCursor(LoadGraphEX(FilePath::graphicDir+"operatedCursor.png"))
 	,m_cannotMovePic(LoadGraphEX(FilePath::graphicDir+"cannotWalk.png"))
-	,m_predictExplainFont(CreateFontToHandleEX("メイリオ",20,3,DX_FONTTYPE_ANTIALIASING_EDGE_4X4))
-	,m_predictNumberFont(CreateFontToHandleEX("メイリオ",56,8,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,3))
+	,m_predictExplainFont(LoadFontDataToHandleEX(FilePath::fontDir+"PredictExplainFont.dft",1))
+	,m_predictNumberFont(LoadFontDataToHandleEX(FilePath::fontDir+"PredictNumberFont.dft",3))
 {
 	LoadDivGraphEX(FilePath::graphicDir+"attackedCursor.png",attackedCursorPicNum,attackedCursorPicNum,1,60,66,m_attackedCursor);
 	//m_aimedUnit等の初期化
@@ -280,77 +280,67 @@ int MoveScene::thisCalculate(){
 void MoveScene::thisDraw()const{
 	//フィールドの描画
 	m_battleSceneData->DrawField();
+	//経路の描画
+	for(size_t i=0,max=m_route.size();i+1<max;i++){
+		DrawLineAA(m_route[i].pos.x,m_route[i].pos.y,m_route[i+1].pos.x,m_route[i+1].pos.y,GetColor(255,255,0),1.0f);
+	}
 
-	if(keyboard_get(KEY_INPUT_0)<=0){
-		//開発用コマンド、0を押している間はフィールド描画以外されず、60フレーム経つとスクショされる
+	//ユニットの描画
+	const Unit *pMouseUnit=m_battleSceneData->GetUnitPointer(GetMousePointVector2D());
+	m_battleSceneData->DrawUnit(true,std::set<const Unit *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
 
-		//経路の描画
-		for(size_t i=0,max=m_route.size();i+1<max;i++){
-			DrawLineAA(m_route[i].pos.x,m_route[i].pos.y,m_route[i+1].pos.x,m_route[i+1].pos.y,GetColor(255,255,0),1.0f);
-		}
+	//狙っているユニットの描画
+	if(m_aimedUnit!=nullptr && m_aimedUnit!=pMouseUnit){
+		m_aimedUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,true,false);//アイコンの描画
+	}
 
-		//ユニットの描画
-		const Unit *pMouseUnit=m_battleSceneData->GetUnitPointer(GetMousePointVector2D());
-		m_battleSceneData->DrawUnit(true,std::set<const Unit *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
+	//マウスを指しているユニットの移動範囲の描画
+	if(pMouseUnit!=nullptr && pMouseUnit!=m_battleSceneData->m_operateUnit){
+		pMouseUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,true,true);//アイコンの描画
+		pMouseUnit->DrawMaxMoveInfo();//次のターンにおける移動情報なので、DrawMoveInfo()でなくDrawMaxMoveInfo()を用いる。
+	}
 
-		//狙っているユニットの描画
-		if(m_aimedUnit!=nullptr && m_aimedUnit!=pMouseUnit){
-			m_aimedUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,true,false);//アイコンの描画
-		}
+	//操作中ユニットの描画
+	m_battleSceneData->m_operateUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),true,true,true);
+	m_battleSceneData->m_operateUnit->DrawMoveInfo();//移動情報の描画
 
-		//マウスを指しているユニットの移動範囲の描画
-		if(pMouseUnit!=nullptr && pMouseUnit!=m_battleSceneData->m_operateUnit){
-			pMouseUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,true,true);//アイコンの描画
-			pMouseUnit->DrawMaxMoveInfo();//次のターンにおける移動情報なので、DrawMoveInfo()でなくDrawMaxMoveInfo()を用いる。
-		}
+	//全ユニットのHPゲージの描画
+	m_battleSceneData->DrawHPGage();
 
-		//操作中ユニットの描画
-		m_battleSceneData->m_operateUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),true,true,true);
-		m_battleSceneData->m_operateUnit->DrawMoveInfo();//移動情報の描画
-
-		//全ユニットのHPゲージの描画
-		m_battleSceneData->DrawHPGage();
-
-		//アイコン等を描く
-		//移動できない時のアイコン
-		if(!m_battleSceneData->CanOperateUnitMove()){
-			//移動できない場合
-			const Vector2D v=m_battleSceneData->m_operateUnit->getPos();
-			DrawGraph(((int)v.x)+5,((int)v.y)-10,m_cannotMovePic,TRUE);
-		}
-		//ユニットのオーダー順番を描画
-		m_battleSceneData->DrawOrder(std::set<const BattleObject *>{pMouseUnit});//マウスが指している、行動範囲を表示しているユニットはオーダーと線で結ぶ
-		//狙っているユニット
-		if(m_aimedUnit!=nullptr){
-			if(JudgeAttackCommandUsable()){
-				//攻撃可能ならマーカーと戦闘予測を描画
-				Vector2D pos=m_aimedUnit->getPos();
-				//DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
-				size_t index=(m_battleSceneData->m_fpsMesuring.GetFrame()/15)%attackedCursorPicNum;
-				float dx,dy;
-				GetGraphSizeF(m_attackedCursor[index],&dx,&dy);
-				//DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_attackedCursor[index],TRUE);
-				//戦闘予測の描画
-				const int period=60;
-				//const int dx2=(int)(5*std::cos(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period));
-				const int dx2=0;
-				const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period));
-				//const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period))-30;
-				m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->DrawPredict((int)pos.x+dx2,(int)pos.y+dy2,m_predictExplainFont,m_predictNumberFont,m_battleSceneData->m_operateUnit,m_aimedUnit);
-			}
-		}
-		//操作ユニット
-		{
-			Vector2D pos=m_battleSceneData->m_operateUnit->getPos();
+	//アイコン等を描く
+	//移動できない時のアイコン
+	if(!m_battleSceneData->CanOperateUnitMove()){
+		//移動できない場合
+		const Vector2D v=m_battleSceneData->m_operateUnit->getPos();
+		DrawGraph(((int)v.x)+5,((int)v.y)-10,m_cannotMovePic,TRUE);
+	}
+	//ユニットのオーダー順番を描画
+	m_battleSceneData->DrawOrder(std::set<const BattleObject *>{pMouseUnit});//マウスが指している、行動範囲を表示しているユニットはオーダーと線で結ぶ
+	//狙っているユニット
+	if(m_aimedUnit!=nullptr){
+		if(JudgeAttackCommandUsable()){
+			//攻撃可能ならマーカーと戦闘予測を描画
+			Vector2D pos=m_aimedUnit->getPos();
+			//DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(0,255,0),TRUE);
+			size_t index=(m_battleSceneData->m_fpsMesuring.GetFrame()/15)%attackedCursorPicNum;
 			float dx,dy;
-			GetGraphSizeF(m_operatedCursor,&dx,&dy);
-			DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_operatedCursor,TRUE);
+			GetGraphSizeF(m_attackedCursor[index],&dx,&dy);
+			//DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_attackedCursor[index],TRUE);
+			//戦闘予測の描画
+			const int period=60;
+			//const int dx2=(int)(5*std::cos(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period));
+			const int dx2=0;
+			const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period));
+			//const int dy2=(int)(5*std::sin(M_PI*2*(m_battleSceneData->m_fpsMesuring.GetFrame()%period)/period))-30;
+			m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->DrawPredict((int)pos.x+dx2,(int)pos.y+dy2,m_predictExplainFont,m_predictNumberFont,m_battleSceneData->m_operateUnit,m_aimedUnit);
 		}
-	} else if(keyboard_get(KEY_INPUT_0)==60){
-		//int x,y;
-		//GetWindowSize(&x,&y);
-		//SaveDrawScreenToPNG(0,0,x,y,"screenshot.png");
-		SaveDrawScreenToPNG(0,0,(int)BattleSceneData::mapDrawSize.x,(int)BattleSceneData::mapDrawSize.y,"screenshot.png");
+	}
+	//操作ユニット
+	{
+		Vector2D pos=m_battleSceneData->m_operateUnit->getPos();
+		float dx,dy;
+		GetGraphSizeF(m_operatedCursor,&dx,&dy);
+		DrawGraph((int)(pos.x-dx/2.0f),(int)(pos.y-dy-Unit::unitCircleSize+10.0f),m_operatedCursor,TRUE);
 	}
 }
 

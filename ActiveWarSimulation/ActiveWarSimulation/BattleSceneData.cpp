@@ -28,11 +28,12 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_stageDirName(stageDirName)
 	,m_stageTitleName(titleName)
 	,m_stageLevel(level)
+	,m_gotoCredit(false)
 	,m_turnTimerPic(LoadGraphEX(FilePath::graphicDir+"turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
 	,m_playMode(playMode)
 	,m_mapPic(LoadGraphEX((FilePath::stageDir+stageDirName+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
-	,m_mapBGM(Resource::BGM::Load(FilePath::bgmDir+StageInfoReader(stageDirName).GetBgmFolderName()))
+	,m_mapBGM(Resource::BGM::Load(StageInfoReader(stageDirName).GetBgmInfoFileName()))
 	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
 	,m_attackSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/damage.ogg").c_str()))
 	,m_healSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/recover.ogg").c_str()))
@@ -418,7 +419,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 		}
 		//区間が見つからなかったら一番後ろということ
 		if(!flag){
-			arrowPos[j]=calDrawPoint(listsize);
+			arrowPos[j]=calDrawPoint(listsize)-Vector2D(Unit::unitCircleSize*1.5f,0.0f);//最後のものより後ろなのがわかれば良いので、少し左にズラしてよい
 			arrowPos[j].x+=(float)(j*8);//ズレさせてあげることで2矢印が完全に被る事を防ぐ
 		}
 	}

@@ -186,8 +186,8 @@ void ComputerMoveScene::CalculateLatticeRoute(){
 Vector2D ComputerMoveScene::CalculateInputVec()const{
 	Vector2D moveVec;
 	//コンピュータ操作時、AIが方向を決める
-	//ターン開始から1秒経ったら動く
-	if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0){
+	//ターン開始から1秒経ったら動く、また待機までの待ち時間(=m_actionWaitingがtrueの時)は移動しない
+	if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0 && !m_actionWaiting){
 		//m_latticeRouteの先頭に向かって動く
 		if(!m_latticeRoute.empty()){
 			moveVec=m_latticeRoute.front().second-m_battleSceneData->m_operateUnit->getPos();

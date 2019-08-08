@@ -181,7 +181,6 @@ void TutorialBattleSceneData::BlankTutorial::DrawSupplement(int font)const{}
 //----------------TutorialBattleSceneData-----------------------
 TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel)
 	:BattleSceneData(stageDirName,titleName,stageLevel,PlayMode::e_tutorial)
-	,m_tutorialFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 {
 	//チュートリアルデータの読み込み
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
@@ -194,7 +193,4 @@ TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName
 	}
 }
 
-TutorialBattleSceneData::~TutorialBattleSceneData()
-{
-	DeleteFontToHandleEX(m_tutorialFont);
-}
+TutorialBattleSceneData::~TutorialBattleSceneData(){}
