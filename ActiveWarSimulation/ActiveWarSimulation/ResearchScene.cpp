@@ -17,7 +17,7 @@ const int ResearchScene::explainFontSize=16;
 
 ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_research)
-	,m_palFont(CreateFontToHandleEX("メイリオ",28,1,-1))
+	,m_palFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 	,m_nameFont(CreateFontToHandleEX("メイリオ",32,1,-1))
 	,m_explainFont(CreateFontToHandleEX("メイリオ",explainFontSize,1,-1))
 	,m_palBackPic(LoadGraphEX(FilePath::graphicDir+"researchInfoBack.png"))

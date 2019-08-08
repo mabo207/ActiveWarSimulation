@@ -23,7 +23,7 @@ std::shared_ptr<GameScene> DemoScene::DemoSceneFactory::CreateIncompleteScene()c
 DemoScene::DemoScene()
 	:BattleScene("demo","デモステージ",StageLevel::e_easy)
 	,m_frame(0)
-	,m_font(CreateFontToHandleEX("メイリオ",36,5,DX_FONTTYPE_ANTIALIASING_EDGE,-1,3))
+	,m_font(CreateFontToHandleEX("メイリオ",30,4,DX_FONTTYPE_ANTIALIASING_EDGE,-1,3))
 {}
 
 DemoScene::~DemoScene(){
