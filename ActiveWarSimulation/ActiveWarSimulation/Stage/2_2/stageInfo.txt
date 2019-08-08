@@ -1,1 +1,1 @@
-(title,“ä‚Ì»”™ˆâÕ),(pos,285,300),(bgm,battle1.txt)
+(title,“ä‚Ì»”™ˆâÕ),(pos,285,300),(bgm,battle2.txt)

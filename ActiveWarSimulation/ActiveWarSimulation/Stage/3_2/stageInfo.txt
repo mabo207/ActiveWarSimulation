@@ -1,1 +1,1 @@
-(title,áR‚Ì’ÇÕí),(pos,1145,200),(bgm,battle1.txt)
+(title,áR‚Ì’ÇÕí),(pos,1145,200),(bgm,battle3.txt)
