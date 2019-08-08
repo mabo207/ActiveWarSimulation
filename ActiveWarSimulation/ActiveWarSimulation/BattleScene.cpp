@@ -6,6 +6,7 @@
 #include"BGMManager.h"
 
 #include"StageSelectScene.h"
+#include"CreditScene.h"
 
 //----------------------BattleScene::BattleSceneFactory----------------------
 BattleScene::BattleSceneFactory::BattleSceneFactory(const std::string &stageDirName,const std::string &title,const StageLevel level)
@@ -125,7 +126,13 @@ void BattleScene::Draw()const{
 }
 
 std::shared_ptr<GameScene> BattleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
-	//ゲームプレイが終わった時は、ステージセレクト画面へ
-	const auto stageSelectFactory=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
-	return CreateFadeOutInSceneCompletely(thisSharedPtr,stageSelectFactory,15,15);
+	//ゲームプレイが終わった時は、基本的にはステージセレクト画面へ
+	if(m_battleSceneData->m_stageDirName!="4_5"){
+		const auto stageSelectFactory=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,stageSelectFactory,15,15);
+	} else{
+		//最終ステージクリア時のみ、クレジットへ
+		const auto creditFactory=std::make_shared<CreditScene::CreditSceneFactory>();
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,creditFactory,15,15);
+	}
 }
