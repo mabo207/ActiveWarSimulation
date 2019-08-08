@@ -1,1 +1,1 @@
-(title,…ê‚Ìí‚¢),(pos,70,670),(bgm,nonfree/wild-road_loop/)
+(title,…ê‚Ìí‚¢),(pos,70,670),(bgm,battle1.txt)

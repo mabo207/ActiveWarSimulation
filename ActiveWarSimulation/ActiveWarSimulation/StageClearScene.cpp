@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include"StageClearScene.h"
 #include"DxLib.h"
 #include"GraphicControl.h"
@@ -7,10 +8,15 @@
 #include"ScoreRankingData.h"
 #include"FilePath.h"
 #include"BrowserTweet.h"
+#include"ClearStageData.h"
+
+namespace {
+	const int bonusFontSize=25;
+	const int bonusLineHeight=bonusFontSize+10;
+	const int bonusStrAreaHeight=450;
+}
 
 //--------------------StageClearScene------------------
-const int StageClearScene::bonusFontSize=25;
-
 StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneData,bool winFlag)
 	:BattleSceneElement(SceneKind::e_clear)
 	,m_winFlag(winFlag)
@@ -22,13 +28,18 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_survivalBar(LoadGraphEX(FilePath::graphicDir+"result/survivalBar.png"),75)
 	,m_resultBarPic(LoadGraphEX((winFlag?FilePath::graphicDir+"result/stageClear.png":FilePath::graphicDir+"result/missionFailed.png")))
 	,m_scoreBarPic(LoadGraphEX(FilePath::graphicDir+"result/scoreBar.png"))
-	,m_bonusFont(CreateFontToHandleEX("りいポップ角 R",bonusFontSize,4,DX_FONTTYPE_ANTIALIASING_4X4))
+	,m_bonusFont(LoadFontDataToHandleEX(FilePath::fontDir+"BonusListFont.dft",0))
 	,m_frame(0)
 	,m_inputCharControler("\\\"\'",11)
 	,m_nowProcess(ProcessKind::e_watchScore)
+	,m_bonusStrDY(0,15,Easing::TYPE_IN,Easing::FUNCTION_LINER,0.0)
 	,m_tweetButton(420,700,LoadGraphEX((FilePath::graphicDir+"tweetButton.png").c_str()))
 	,m_backToStageSelectButton(1100,700,LoadGraphEX((FilePath::graphicDir+"backToStageSelectButton.png").c_str()))
-{}
+{
+	const int bonusStrTotalHeight=m_scoreExpression->m_bonusVec.size()*bonusLineHeight;//ボーナスをすべて描画したらどのくらいの高さがあるか
+	m_bonusStrMinDY=std::min(0,bonusStrAreaHeight-bonusStrTotalHeight);
+	m_battleSceneData->m_gotoCredit=(winFlag && m_battleSceneData->m_stageDirName=="4_5");//クレジット画面に行くかどうかの設定
+}
 
 StageClearScene::~StageClearScene(){
 	//グラフィック解放
@@ -59,17 +70,42 @@ void StageClearScene::ResisterScoreSave(){
 	m_battleSceneData->ResisterSceneEndProcess(saveFunc);
 }
 
+void StageClearScene::ResisterClearSave(){
+	//クリア時のみクリアデータの更新の登録をする
+	if(m_winFlag){
+		//必要なデータの抽出
+		const std::string dirName=m_battleSceneData->m_stageDirName;
+		//関数オブジェクト作成
+		const std::function<void(void)> saveFunc=[dirName](){
+			ClearStageData clearData;
+			clearData.BecomeClear(dirName);
+			clearData.Save();
+		};
+		//登録
+		m_battleSceneData->ResisterSceneEndProcess(saveFunc);
+	}
+}
+
 int StageClearScene::thisCalculate(){
 	m_frame++;
+	//ボーナスの描画位置更新
+	m_bonusStrDY.Update();
 
+	//場面ごとの入力処理
 	if(m_nowProcess==ProcessKind::e_watchScore){
-		//スコアを見ている時に0.5秒たって以降に決定ボタンを押せば名前入力への終了
 		if(m_frame>30 &&
 			(keyboard_get(KEY_INPUT_Z)==1 || mouse_get(MOUSE_INPUT_LEFT)==1)
 			)
 		{
+			//スコアを見ている時に0.5秒たって以降に決定ボタンを押せば名前入力への終了
 			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
 			m_nowProcess=ProcessKind::e_inputName;
+		} else if(keyboard_get(KEY_INPUT_UP)%15==1 || mouse_wheel_get()>0){
+			//マウスを上スクロールするか、上キーを押すと、ボーナス画面が下に進む
+			m_bonusStrDY.SetTarget(std::min(m_bonusStrDY.GetendX()+bonusLineHeight,0),true);
+		} else if(keyboard_get(KEY_INPUT_DOWN)%15==1 || mouse_wheel_get()<0){
+			//マウスを下スクロールするか、下キーを押すと、ボーナス画面が上に進む
+			m_bonusStrDY.SetTarget(std::max(m_bonusStrDY.GetendX()-bonusLineHeight,m_bonusStrMinDY),true);
 		}
 	} else if(m_nowProcess==ProcessKind::e_inputName){
 		m_inputCharControler.Update();
@@ -78,6 +114,7 @@ int StageClearScene::thisCalculate(){
 			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定の効果音を鳴らす
 			//記録処理を登録
 			ResisterScoreSave();
+			ResisterClearSave();
 			//バトルパート終了
 			return SceneKind::END;
 		}
@@ -108,7 +145,7 @@ int StageClearScene::thisCalculate(){
 			}
 			text+="\nScore："+std::to_string(m_scoreExpression->m_totalScorePoint);
 			text+="\n\n";
-			const std::vector<std::string> hashtagVec={"ActiveWarSimulation"};
+			const std::vector<std::string> hashtagVec={"ActiveWarSimulation","あくうぉー"};
 			//既定ブラウザで上記tweetページを開いてツイートする
 			BrowserTweet::TweetText(text,hashtagVec);
 		}
@@ -145,7 +182,7 @@ void StageClearScene::thisDraw()const{
 	DrawGraph(0,0,m_resultBarPic,TRUE);
 	//ターン数描画
 	{
-		const int x=50,y=50;
+		const int x=50,y=60;
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_turnBar.second/100);
 		DrawGraph(backX+x,backY+y,m_turnBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
@@ -153,7 +190,7 @@ void StageClearScene::thisDraw()const{
 	}
 	//生存数描画
 	{
-		const int x=50,y=200;
+		const int x=50,y=210;
 		const int stringY=backY+y+40;
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_survivalBar.second/100);
 		DrawGraph(backX+x,backY+y,m_survivalBar.first,TRUE);
@@ -163,17 +200,31 @@ void StageClearScene::thisDraw()const{
 	}
 	//ボーナス画面描画
 	{
-		const int x=850,y=70;
+		const int x=850,y=50;
 		int bonusWidth,bonusHeight;
 		GetGraphSize(m_bonusBar.first,&bonusWidth,&bonusHeight);
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,256*m_bonusBar.second/100);
 		DrawGraph(backX+x,backY+y,m_bonusBar.first,TRUE);
 		SetDrawBlendMode(mode,pal);
+		const int strX=backX+x+20,strY=backY+y+115;
+		const int strWidth=bonusWidth-60;
+		SetDrawArea(strX,strY,strX+bonusWidth,strY+bonusStrAreaHeight);
+		const int strStartY=strY+m_bonusStrDY.GetX();//描画開始位置と描画範囲の上は違う
 		for(int i=0;i<(int)m_scoreExpression->m_bonusVec.size();i++){
-			const int drawY=backY+y+115+(int)(i*bonusFontSize*1.3);
-			DrawStringToHandle(backX+x+20,drawY,m_scoreExpression->m_bonusVec[i].GetExplain().c_str(),GetColor(255,255,255),m_bonusFont);
-			DrawStringRightJustifiedToHandle(backX+x+bonusWidth-40,drawY,std::to_string(m_scoreExpression->m_bonusVec[i].GetScore()),GetColor(255,255,255),m_bonusFont);
+			const int drawY=strStartY+i*bonusLineHeight;
+			DrawStringToHandle(strX,drawY,m_scoreExpression->m_bonusVec[i].GetExplain().c_str(),GetColor(255,255,255),m_bonusFont);
+			DrawStringRightJustifiedToHandle(strX+strWidth,drawY,std::to_string(m_scoreExpression->m_bonusVec[i].GetScore()),GetColor(255,255,255),m_bonusFont);
 		}
+		SetDrawAllArea();
+		//行の位置のバーの描画
+		const int barHeight=bonusStrAreaHeight*bonusStrAreaHeight/(bonusStrAreaHeight-m_bonusStrMinDY);//大きさは、バーの描画可能位置の高さのうち、ボーナス全体の高さに対する描画可能範囲の高さの割合だけ表示
+		int barY;
+		if(m_bonusStrMinDY!=0){
+			barY=strY+(bonusStrAreaHeight-barHeight)*m_bonusStrDY.GetX()/m_bonusStrMinDY;
+		} else{
+			barY=strY;
+		}
+		DrawBox(strX+strWidth+10,barY,strX+strWidth+30,barY+barHeight,GetColor(32,48,96),TRUE);
 	}
 	//合計スコア描画
 	{

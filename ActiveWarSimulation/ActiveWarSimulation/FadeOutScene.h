@@ -37,7 +37,7 @@ protected:
 
 private:
 	Easing m_drawAlpha;		// 描画透明度をxに管理
-	const std::shared_ptr<GameScene> m_previousScene;	// 直前場面。描画のために使う。
+	std::shared_ptr<GameScene> m_previousScene;	// 直前場面。描画のために使う。m_nextFactoryによるScene作成の前にm_previousSceneを解放したいのでconst化しない
 	const std::shared_ptr<GameScene::SceneFactory> m_nextFactory;	// 次の場面、描画の情報は得たいので実体を作成しておく
 	int m_afterAlphaEndFrame;	// m_drawAlphaの変動が終了してから何フレーム経ったか。2f経った後でないと画面が完全に暗転しない。
 };

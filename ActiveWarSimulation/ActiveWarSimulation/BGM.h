@@ -21,15 +21,15 @@ namespace Resource{
 	private:
 		//画像をロードする際に必要な情報
 		struct LoadInfo{
-			const std::string dirName;
-			explicit LoadInfo(const std::string &i_dirName):dirName(i_dirName){}
+			const std::string infoFileName;
+			explicit LoadInfo(const std::string &i_infoFileName):infoFileName(i_infoFileName){}
 			~LoadInfo()=default;
 			BGM Load()const;
 			bool operator<(const LoadInfo &other)const{
-				return this->dirName<other.dirName;
+				return this->infoFileName<other.infoFileName;
 			}
 			bool operator==(const LoadInfo &other)const{
-				return this->dirName==other.dirName;
+				return this->infoFileName==other.infoFileName;
 			}
 		};
 

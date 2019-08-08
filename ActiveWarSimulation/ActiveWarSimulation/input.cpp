@@ -21,6 +21,10 @@ int mouse_get(int MouseCode){
 	return inputControler->MouseGet(MouseCode);
 }
 
+int mouse_wheel_get(){
+	return inputControler->MouseWheelGet();
+}
+
 //アナログジョイパッド関連
 Vector2D analogjoypad_get(int InputType){
 	int x,y;
@@ -125,6 +129,7 @@ InputControler::InputControler(){
 	for(int i=0;i<MouseButtonNum;i++){
 		m_mouseFrame[i]=0;
 	}
+	m_mouseWheelRotVol=0;
 	
 	//ジョイパッドボタンとキーボードの対応表
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_Z,PAD_INPUT_4));
@@ -189,6 +194,8 @@ int InputControler::Update(){
 			m_mouseFrame[i]=0;
 		}
 	}
+	m_mouseWheelRotVol=GetMouseWheelRotVol();
+
 	return 0;
 }
 
@@ -210,6 +217,10 @@ int InputControler::MouseGet(int MouseCode){
 		}
 	}
 	return 0;
+}
+
+int InputControler::MouseWheelGet(){
+	return m_mouseWheelRotVol;
 }
 
 void InputControler::InitInput(){

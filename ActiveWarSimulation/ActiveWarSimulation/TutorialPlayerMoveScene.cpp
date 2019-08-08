@@ -288,7 +288,7 @@ void TutorialPlayerMoveScene::thisDraw()const{
 			DrawBox(0,0,CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,GetColor(0,0,0),TRUE);
 			SetDrawBlendMode(mode,pal);
 		}
-		m_tutorialBattleSceneData->m_tutorialData[0]->DrawSupplement(m_tutorialBattleSceneData->m_tutorialFont);
+		m_tutorialBattleSceneData->m_tutorialData[0]->DrawSupplement(GeneralPurposeResource::gothicMiddleFont);
 	}
 
 }

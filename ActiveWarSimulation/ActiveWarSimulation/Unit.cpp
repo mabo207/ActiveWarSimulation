@@ -131,15 +131,14 @@ const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
 const float Unit::reduceStartActionCost=50.0f;//定数値なのでヘッダー内初期化と同じ順番になり、ここで初期化してもUnit::BattleStatus::maxOPの初期化より先に処理が行われることになる。
 const float Unit::attackCost=50.0f;
 
-const int Unit::hpFontSize=20;
+const int Unit::hpFontSize=24;
 
 Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
 	,m_baseStatus(baseStatus)
 	,m_battleStatus(100,Unit::BattleStatus::maxOP,team,aitype,aiGroup,aiLinkage,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
-//	,m_hpFont(CreateFontToHandleEX("04かんじゅくゴシック",hpFontSize,2,DX_FONTTYPE_EDGE,-1,2))
-	,m_hpFont(LoadFontDataToHandleEX(FilePath::fontDir+"UnitHPFont.dft",2))
+	,m_hpFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
 {
 	//テスト用のコンストラクタ
 	m_battleStatus.HP=m_baseStatus.maxHP;
@@ -462,23 +461,43 @@ Unit *Unit::CreateMobUnit(const std::string &name,Profession::Kind profession,in
 	switch(profession){
 	case(Profession::e_soldier):
 		baseStatus=BaseStatus(name,profession,lv,21+(int)(lv*0.8),7+(int)(lv*0.5),6+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),6);
-		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/soldier.png");
+		if(team==Team::e_player){
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/soldier_1P.png");
+		} else{
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/soldier_2P.png");
+		}
 		break;
 	case(Profession::e_archer):
 		baseStatus=BaseStatus(name,profession,lv,19+(int)(lv*0.75),6+(int)(lv*0.45),5+(int)(lv*0.4),2+(int)(lv*0.1),5+(int)(lv*0.45),6);
-		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/archer.png");
+		if(team==Team::e_player){
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/archer_1P.png");
+		} else{
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/archer_2P.png");
+		}
 		break;
 	case(Profession::e_armer):
 		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),8+(int)(lv*0.6),8+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),3);
-		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/armerknight.png");
+		if(team==Team::e_player){
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/armerknight_1P.png");
+		} else{
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/armerknight_2P.png");
+		}
 		break;
 	case(Profession::e_mage):
 		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),2+(int)(lv*0.3),7+(int)(lv*0.6),6+(int)(lv*0.5),4);
-		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/mage.png");
+		if(team==Team::e_player){
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/mage_1P.png");
+		} else{
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/mage_2P.png");
+		}
 		break;
 	case(Profession::e_healer):
 		baseStatus=BaseStatus(name,profession,lv,14+(int)(lv*0.5),0+(int)(lv*0.1),2+(int)(lv*0.3),6+(int)(lv*0.5),9+(int)(lv*0.65),6);
-		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/healer.png");
+		if(team==Team::e_player){
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/healer_1P.png");
+		} else{
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/healer_2P.png");
+		}
 		break;
 	}
 	return new Unit(baseStatus,weapon,position,gHandle,team,aitype,aiGroup,aiLinkage);

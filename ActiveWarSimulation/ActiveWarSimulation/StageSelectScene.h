@@ -36,16 +36,18 @@ protected:
 	NextSceneName m_nextSceneName;//次の場面は何か、VGetNextScene()で使用
 	std::shared_ptr<BaseUIInStageSelect> m_ui;//現在のUI
 	std::shared_ptr<BaseUIInStageSelect::ControledData> m_uiControledData;//UIが管理するデータ
+	size_t m_clearStageNum;//クリアしたステージの個数
 
 	//画像
-	const int m_backPic;
+	const int m_backDefaultPic;//背景（デフォルト）
+	const int m_backNightPic;//背景（夜）
+	const int m_backMorningPic;//背景（朝焼け）
 
 	//ボタン
 	const MouseButtonUI m_backButton;
 
 	//フォント
 	const int m_stageNameFont;
-	const int m_explainFont;
 	
 	//BGM
 	const Resource::BGM m_bgm;
@@ -59,6 +61,7 @@ private:
 protected:
 	StageSelectScene();
 	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
+	void DrawBack()const;//背景の描画
 
 public:
 	~StageSelectScene();

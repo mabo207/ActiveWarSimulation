@@ -5,6 +5,7 @@
 
 //---------------------GeneralPurposeResource---------------------
 int GeneralPurposeResource::popLargeFont=-1;
+int GeneralPurposeResource::gothicMiddleFont=-1;
 int GeneralPurposeResource::cancelSound=-1;
 int GeneralPurposeResource::decideSound=-1;
 int GeneralPurposeResource::selectSound=-1;
@@ -13,7 +14,8 @@ void GeneralPurposeResource::LoadResource(){
 	//画像
 
 	//フォント
-	popLargeFont=CreateFontToHandleEX("りいポップ角 R",60,7,DX_FONTTYPE_ANTIALIASING_4X4);
+	popLargeFont=LoadFontDataToHandleEX(FilePath::fontDir+"LargePopFont.dft",0);
+	gothicMiddleFont=LoadFontDataToHandleEX(FilePath::fontDir+"ExplainGothicFont.dft",0);
 
 	//音
 	decideSound=LoadSoundMem((FilePath::effectSoundDir+"nonfree/decide.ogg").c_str());
@@ -26,6 +28,7 @@ void GeneralPurposeResource::ReleaseResource(){
 
 	//フォント
 	DeleteFontToHandleEX(popLargeFont);
+	DeleteFontToHandleEX(gothicMiddleFont);
 
 	//音
 	DeleteSoundMem(decideSound);

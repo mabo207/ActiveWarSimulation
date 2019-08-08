@@ -23,7 +23,7 @@ DamageScene::DamageScene(SceneKind::Kind sceneKind
 		,PositionControl(0,0,-(int)Unit::unitCircleSize,-(int)Unit::unitCircleSize,(damageEndFrame-damageBeginFrame)/2,Easing::TYPE_OUT,Easing::FUNCTION_QUAD,9.0)
 	})
 	,m_attackinfo(attackInfo)
-	,m_damageFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",30,4,DX_FONTTYPE_ANTIALIASING_EDGE))
+	,m_damageFont(LoadFontDataToHandleEX(FilePath::fontDir+"LargeThickGothicFont.dft",1))
 {}
 
 DamageScene::~DamageScene(){
