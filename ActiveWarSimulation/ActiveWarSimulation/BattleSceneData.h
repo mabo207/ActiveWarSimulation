@@ -72,6 +72,7 @@ public:
 	FpsMeasuring m_fpsMesuring;//fps計測器。タイマーの意味合いも兼ねる。
 	const int m_orderFont;//オーダー表示の際のフォント
 	const PlayMode m_playMode;//今のプレイモード
+	bool m_gotoCredit;//勝ってクリアした状態であるかどうか(4_5からクレジットに行くかどうかにのみ用いる)
 	
 
 	//デバッグ用変数

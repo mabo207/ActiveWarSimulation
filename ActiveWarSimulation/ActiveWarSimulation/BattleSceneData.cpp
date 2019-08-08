@@ -28,6 +28,7 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_stageDirName(stageDirName)
 	,m_stageTitleName(titleName)
 	,m_stageLevel(level)
+	,m_gotoCredit(false)
 	,m_turnTimerPic(LoadGraphEX(FilePath::graphicDir+"turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
 	,m_playMode(playMode)

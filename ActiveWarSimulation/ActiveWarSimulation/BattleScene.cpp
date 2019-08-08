@@ -127,7 +127,7 @@ void BattleScene::Draw()const{
 
 std::shared_ptr<GameScene> BattleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	//ゲームプレイが終わった時は、基本的にはステージセレクト画面へ
-	if(m_battleSceneData->m_stageDirName!="4_5"){
+	if(!m_battleSceneData->m_gotoCredit){
 		const auto stageSelectFactory=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,stageSelectFactory,15,15);
 	} else{

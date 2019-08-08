@@ -38,6 +38,7 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 {
 	const int bonusStrTotalHeight=m_scoreExpression->m_bonusVec.size()*bonusLineHeight;//ボーナスをすべて描画したらどのくらいの高さがあるか
 	m_bonusStrMinDY=std::min(0,bonusStrAreaHeight-bonusStrTotalHeight);
+	m_battleSceneData->m_gotoCredit=(winFlag && m_battleSceneData->m_stageDirName=="4_5");//クレジット画面に行くかどうかの設定
 }
 
 StageClearScene::~StageClearScene(){
