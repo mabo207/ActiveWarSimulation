@@ -70,6 +70,7 @@ TitleScene::TitleScene()
 	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
 	,m_itemPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleItem.png"))
 	,m_itemFont(CreateFontToHandleEX("メイリオ",24,2,-1))
+	,m_startFont(LoadFontDataToHandleEX(FilePath::fontDir+"LargePopFont.dft",3))
 	,m_bgm(Resource::BGM::Load("title.txt"))
 	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
 	,m_mousePosJustBefore(GetMousePointVector2D())
@@ -93,6 +94,7 @@ TitleScene::~TitleScene(){
 	DeleteGraphEX(m_backPic);
 	DeleteGraphEX(m_itemPic);
 	DeleteFontToHandleEX(m_itemFont);
+	DeleteFontToHandleEX(m_startFont);
 	//サウンド解放
 	m_bgm.Delete();
 	DeleteSoundMem(m_aimchangeSound);
@@ -248,7 +250,7 @@ void TitleScene::Draw()const{
 		int mode,pal;
 		GetDrawBlendMode(&mode,&pal);
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,120+(int)(135*std::cos(M_PI*2*m_frame/120)));
-		DrawStringCenterBaseToHandle(960,800,"CLICK OR PRESS TO START",GetColor(255,255,255),GeneralPurposeResource::popLargeFont,true,GetColor(0,0,0));
+		DrawStringCenterBaseToHandle(960,800,"CLICK OR PRESS TO START",GetColor(255,255,255),m_startFont,true,GetColor(0,0,0));
 		SetDrawBlendMode(mode,pal);
 	}else{
 		//項目の描画

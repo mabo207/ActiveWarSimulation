@@ -53,6 +53,7 @@ protected:
 	const int m_backPic;//背景
 	const int m_itemPic;//選択項目の背景
 	const int m_itemFont;//選択項目のフォント
+	const int m_startFont;//「Press To Play」の表示フォント
 
 	//bgm
 	const Resource::BGM m_bgm;
