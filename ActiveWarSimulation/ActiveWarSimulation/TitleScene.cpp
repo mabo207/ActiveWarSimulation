@@ -69,7 +69,6 @@ TitleScene::TitleScene()
 	:GameScene()
 	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
 	,m_itemPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleItem.png"))
-	,m_itemFont(CreateFontToHandleEX("メイリオ",24,2,-1))
 	,m_startFont(LoadFontDataToHandleEX(FilePath::fontDir+"LargePopFont.dft",3))
 	,m_bgm(Resource::BGM::Load("title.txt"))
 	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
@@ -93,7 +92,6 @@ TitleScene::~TitleScene(){
 	//グラフィック解放
 	DeleteGraphEX(m_backPic);
 	DeleteGraphEX(m_itemPic);
-	DeleteFontToHandleEX(m_itemFont);
 	DeleteFontToHandleEX(m_startFont);
 	//サウンド解放
 	m_bgm.Delete();
@@ -242,9 +240,9 @@ void TitleScene::Draw()const{
 	DrawGraph(0,0,m_backPic,TRUE);
 	//バージョン情報
 	const std::string VERSION_STRING="- ver 1.0 -";
-	const int verX=CommonConstParameter::gameResolutionX-GetDrawStringWidthToHandle(VERSION_STRING.c_str(),VERSION_STRING.size(),m_itemFont);
-	const int verY=CommonConstParameter::gameResolutionY-GetFontSizeToHandle(m_itemFont);
-	DrawStringToHandle(verX,verY,VERSION_STRING.c_str(),GetColor(0,0,0),m_itemFont);
+	const int verX=CommonConstParameter::gameResolutionX-GetDrawStringWidthToHandle(VERSION_STRING.c_str(),VERSION_STRING.size(),GeneralPurposeResource::gothicMiddleFont);
+	const int verY=CommonConstParameter::gameResolutionY-GetFontSizeToHandle(GeneralPurposeResource::gothicMiddleFont);
+	DrawStringToHandle(verX,verY,VERSION_STRING.c_str(),GetColor(0,0,0),GeneralPurposeResource::gothicMiddleFont);
 	if(m_selectLocked){
 		//文字の描画
 		int mode,pal;
@@ -268,7 +266,7 @@ void TitleScene::Draw()const{
 				strDy=(int)(std::cos(rotate)*5.0);
 			}
 			DrawRotaGraph(m_itemPosVec[i].GetX(),m_itemPosVec[i].GetY(),exRate,rotate,m_itemPic,TRUE);
-			DrawStringCenterBaseToHandle(m_itemPosVec[i].GetX(),m_itemPosVec[i].GetY()+strDy,SelectItem::GetString(static_cast<SelectItem::Kind>(i)).c_str(),fontColor,m_itemFont,true);
+			DrawStringCenterBaseToHandle(m_itemPosVec[i].GetX(),m_itemPosVec[i].GetY()+strDy,SelectItem::GetString(static_cast<SelectItem::Kind>(i)).c_str(),fontColor,GeneralPurposeResource::gothicMiddleFont,true);
 		}
 		SetDrawBlendMode(mode,pal);
 	}

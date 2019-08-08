@@ -35,7 +35,6 @@ StageSelectScene::StageSelectScene()
 	,m_backMorningPic(LoadGraphEX(FilePath::graphicDir+"nonfree/stageSelectBack_morning.png"))
 	,m_backButton(backButtonX,backButtonY,backButtonWidth,backButtonHeight,LoadGraphEX(FilePath::graphicDir+"backButton.png"))
 	,m_stageNameFont(LoadFontDataToHandleEX(FilePath::fontDir+"ExplainGothicFont_Large.dft",0))
-	,m_explainFont(CreateFontToHandleEX("メイリオ",24,1,-1))
 	,m_bgm(Resource::BGM::Load("title.txt"))
 	,m_uiControledData(new BaseUIInStageSelect::ControledData(0,StageLevel::e_easy))
 	,m_clearStageNum(0)
@@ -58,7 +57,6 @@ StageSelectScene::~StageSelectScene(){
 	}
 	//フォントの解放
 	DeleteFontToHandleEX(m_stageNameFont);
-	DeleteFontToHandleEX(m_explainFont);
 	//音の解放
 	m_bgm.Delete();
 }
@@ -98,7 +96,7 @@ void StageSelectScene::InitCompletely(){
 
 void StageSelectScene::Activate(){
 	//UIの作成
-	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont,m_clearStageNum));
+	m_ui=std::shared_ptr<StageSelectUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,GeneralPurposeResource::gothicMiddleFont,m_clearStageNum));
 	//bgm再生
 	if(BGMManager::s_instance.has_value()){
 		BGMManager::s_instance->PlayWithCopy(m_bgm);
@@ -121,10 +119,10 @@ int StageSelectScene::Calculate(){
 		return -1;
 	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoStageSelect){
 		//ステージセレクトにUI遷移
-		m_ui=std::shared_ptr<BaseUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,m_explainFont,m_clearStageNum));
+		m_ui=std::shared_ptr<BaseUIInStageSelect>(new StageSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec,m_stageNameFont,GeneralPurposeResource::gothicMiddleFont,m_clearStageNum));
 	} else if(updateResult==BaseUIInStageSelect::UpdateResult::e_gotoLevelSelect){
 		//レベルセレクトにUI遷移
-		m_ui=std::shared_ptr<BaseUIInStageSelect>(new LevelSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec[m_uiControledData->stageIndex],m_stageNameFont,m_explainFont));
+		m_ui=std::shared_ptr<BaseUIInStageSelect>(new LevelSelectUIInStageSelect(m_uiControledData,m_backButton,m_stageInfoVec[m_uiControledData->stageIndex],m_stageNameFont,GeneralPurposeResource::gothicMiddleFont));
 	}
 
 	return 0;

@@ -48,7 +48,6 @@ protected:
 
 	//ƒtƒHƒ“ƒg
 	const int m_stageNameFont;
-	const int m_explainFont;
 	
 	//BGM
 	const Resource::BGM m_bgm;

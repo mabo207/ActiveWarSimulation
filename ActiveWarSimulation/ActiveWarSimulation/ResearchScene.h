@@ -26,7 +26,6 @@ protected:
 	const MouseButtonUI m_moveButton;//移動シーンに戻るボタン
 	Easing m_paramBoxX;//パラメータ表示UIの描画基準位置
 
-	const int m_palFont;//パラメータ表示のためのフォント
 	const int m_nameFont;//名前表示のためのフォント
 	const int m_explainFont;//説明文表示のためのフォント
 	const int m_palBackPic;//パラメータ表示のための背景絵
