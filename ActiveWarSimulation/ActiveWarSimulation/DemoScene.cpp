@@ -5,6 +5,7 @@
 #include"GraphicControl.h"
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
+#include"FilePath.h"
 
 #include"TitleScene.h"
 
@@ -23,7 +24,7 @@ std::shared_ptr<GameScene> DemoScene::DemoSceneFactory::CreateIncompleteScene()c
 DemoScene::DemoScene()
 	:BattleScene("demo","デモステージ",StageLevel::e_easy)
 	,m_frame(0)
-	,m_font(CreateFontToHandleEX("メイリオ",30,4,DX_FONTTYPE_ANTIALIASING_EDGE,-1,3))
+	,m_font(LoadFontDataToHandleEX(FilePath::fontDir+"LargeThickGothicFont.dft",3))
 {}
 
 DemoScene::~DemoScene(){

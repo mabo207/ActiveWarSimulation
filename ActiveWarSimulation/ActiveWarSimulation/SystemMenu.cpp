@@ -20,7 +20,7 @@ SystemMenu::SystemMenu(std::shared_ptr<BattleSceneData> battleSceneData)
 	,m_battleSceneData(battleSceneData)
 	,m_index(0)
 	,m_systemBoard(LoadGraphEX(FilePath::graphicDir+"systemBoard.png"))
-	,m_contentFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",48,7,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,3))
+	,m_contentFont(LoadFontDataToHandleEX(FilePath::fontDir+"HugeGothicFont.dft",3))
 {}
 
 SystemMenu::~SystemMenu(){

@@ -28,7 +28,7 @@ StageClearScene::StageClearScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_survivalBar(LoadGraphEX(FilePath::graphicDir+"result/survivalBar.png"),75)
 	,m_resultBarPic(LoadGraphEX((winFlag?FilePath::graphicDir+"result/stageClear.png":FilePath::graphicDir+"result/missionFailed.png")))
 	,m_scoreBarPic(LoadGraphEX(FilePath::graphicDir+"result/scoreBar.png"))
-	,m_bonusFont(CreateFontToHandleEX("‚è‚¢ƒ|ƒbƒvŠp R",bonusFontSize,4,DX_FONTTYPE_ANTIALIASING_4X4))
+	,m_bonusFont(LoadFontDataToHandleEX(FilePath::fontDir+"BonusListFont.dft",0))
 	,m_frame(0)
 	,m_inputCharControler("\\\"\'",11)
 	,m_nowProcess(ProcessKind::e_watchScore)

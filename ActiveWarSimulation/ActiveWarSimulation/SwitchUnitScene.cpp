@@ -4,6 +4,7 @@
 #include"ComputerMoveScene.h"
 #include"StageClearScene.h"
 #include"GraphicControl.h"
+#include"FilePath.h"
 
 #include"TutorialPlayerMoveScene.h"
 
@@ -12,7 +13,7 @@ SwitchUnitScene::SwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	:BattleSceneElement(SceneKind::e_switch)
 	,m_battleSceneData(battleSceneData)
 	,m_judgeEnd(JudgeEnd::e_notEnd)
-	,m_turnFont(CreateFontToHandleEX("ÉÅÉCÉäÉI",80,8,DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1,3))
+	,m_turnFont(LoadFontDataToHandleEX(FilePath::fontDir+"TurnFont.dft",3))
 {
 	ReturnProcess();
 	if(m_judgeEnd==JudgeEnd::e_notEnd){
