@@ -10,10 +10,10 @@
 #include"TitleScene.h"
 
 namespace {
-	const int professionHeight=60;
-	const int nameHeight=45;
-	const int pairMergin=20;
-	const int creditSpeed=3;
+	const int professionHeight=70;
+	const int nameHeight=55;
+	const int pairMergin=30;
+	const int creditSpeed=2;
 }
 
 //-----------------------CreditScene-----------------
@@ -22,7 +22,8 @@ std::shared_ptr<GameScene> CreditScene::CreditSceneFactory::CreateIncompleteScen
 }
 
 CreditScene::CreditScene()
-	:m_creditList{CreditPair("企画・プログラム・ドット絵など",std::vector<std::string>{"まーぼう"})
+	:m_creditList{CreditPair("クレジット",std::vector<std::string>{" "})
+		,CreditPair("企画・プログラム・ドット絵など",std::vector<std::string>{"まーぼう"})
 		,CreditPair("イラスト・キャラクターデザイン",std::vector<std::string>{"文苺"})
 		,CreditPair("使用させていただいた素材やライブラリ",std::vector<std::string>{"DXライブラリ 様","ザ・マッチメイカァズ 様","フリーBGM・音楽素材MusMus 様","Wingless Seraph 様","あおいりい 様(りいポップ角 R)"})
 		,CreditPair("協力",std::vector<std::string>{"東工大ロボット技術研究会の皆様","東工大デジタル創作同好会traPの皆様","大学の友人や先生の方々"})}
