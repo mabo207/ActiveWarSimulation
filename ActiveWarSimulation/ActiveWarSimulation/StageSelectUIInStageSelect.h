@@ -27,6 +27,7 @@ private:
 	size_t m_beforeSelectStageIndex;//ステージ情報の描画位置が動いている時、動かす前に選択していたステージのindexを記録して2ステージ間のステージを全て描画できるようにする
 	bool m_afterDicide;//trueなら項目がスライドアウトするアニメーションをしている
 	const size_t m_stageNum;//選択できるステージの個数
+	int m_frame;
 
 	//参照しているフォント（ここで削除はしない）
 	const int m_stageNameFont;
