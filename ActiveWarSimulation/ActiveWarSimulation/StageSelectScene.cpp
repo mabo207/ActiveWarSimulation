@@ -92,6 +92,14 @@ void StageSelectScene::InitCompletely(){
 			break;
 		}
 	}
+	//選択ステージの初期化（一番最後のステージを選択するようにする）
+	if(m_clearStageNum>=m_stageInfoVec.size()){
+		//全ステージクリアしているなら、最終ステージを指すようにする
+		m_uiControledData->stageIndex=m_stageInfoVec.size()-1;
+	} else{
+		//クリアしていないステージがあるなら、一番最新のステージを指すようにする
+		m_uiControledData->stageIndex=m_clearStageNum;
+	}
 }
 
 void StageSelectScene::Activate(){

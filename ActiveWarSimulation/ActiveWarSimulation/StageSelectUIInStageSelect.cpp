@@ -49,6 +49,7 @@ StageSelectUIInStageSelect::StageSelectUIInStageSelect(const std::weak_ptr<Contr
 	,m_selectStagePos(GetSlideInOutX(),GetTargetX(),GetTargetY(),GetTargetY(),slideInOutFrame,Easing::TYPE_OUT,Easing::FUNCTION_LINER,9.0)//最初は右から入ってくるような演出
 	,m_afterDicide(false)
 	,m_stageNum(std::min(clearStageNum+1,stageInfoVec.size()))
+	,m_frame(0)
 {}
 
 StageSelectUIInStageSelect::~StageSelectUIInStageSelect(){}
@@ -58,6 +59,7 @@ BaseUIInStageSelect::UpdateResult StageSelectUIInStageSelect::Update(){
 	bool mouseInStage=false;
 	const Vector2D mousePos=GetMousePointVector2D();//今のフレームのマウスの位置
 	const bool mouseMoveFlag=((mousePos-m_beforeFrameMousePos).sqSize()>=4.0f);//このフレームでマウスの移動を行ったか
+	m_frame++;//フレームを追加
 	if(!m_controledData.expired()){
 		//描画位置更新
 		m_selectStagePos.Update();
@@ -148,7 +150,12 @@ void StageSelectUIInStageSelect::Draw()const{
 		if(selectIndex<infoVecSize){
 			//場所の協調
 			const Vector2D pos=m_stageInfoVec[selectIndex].m_pos;
+			int mode,pal;
+			GetDrawBlendMode(&mode,&pal);
+			const int duration=m_frame%90;//90フレーム周期
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA,std::max(0,255*duration*(60-duration)/700));
 			DrawCircleAA(pos.x,pos.y,30,10,GetColor(255,255,255),TRUE);
+			SetDrawBlendMode(mode,pal);
 			//情報を描画するステージの決定(選択ステージの前後各2つくらいは描画する)
 			size_t startIndex,endIndex;
 			if(m_beforeSelectStageIndex<selectIndex){
