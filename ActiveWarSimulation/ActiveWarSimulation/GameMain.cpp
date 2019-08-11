@@ -21,15 +21,22 @@ std::shared_ptr<GameScene> CreateStartScene(){
 	return LoadingScene::LoadingSceneFactory(fadeInFactory).CreateCompleteScene();
 }
 
+void SetMainWindowString(){
+	//タイトルメニューの文字を設定する、毎フレーム呼び出すので関数化してわかりやすく。
+	int width,height;
+	GetWindowSize(&width,&height);
+	SetMainWindowText(("Active War Simulation ["+std::to_string(height)+"p] [長押しで解像度切り替え F2:1080p F3:720p F4:540p F1:ウインドウ・フルスクリーン切り替え]").c_str());
+}
+
 int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 	try{
 		//dxライブラリの初期化
 		//画面モードの設定(一応こんな感じ)
 		SetGraphMode(CommonConstParameter::gameResolutionX,CommonConstParameter::gameResolutionY,16);
+		//ウインドウサイズの変更(1280x720をデフォに)
+		SetWindowSizeExtendRate(0.667);
 		//タイトルメニュー文字
-		SetMainWindowText("ActiveWarSimulation [F2長押し:画面サイズ1倍 / F3長押し:画面サイズ0.5倍 / F1長押し:ウインドウ・フルスクリーン切替]");
-		//ウインドウサイズの変更
-		SetWindowSizeExtendRate(1.0);
+		SetMainWindowString();
 		//ウインドウサイズの変更をできるようにする
 		SetWindowSizeChangeEnableFlag(TRUE);
 		//アイコンの設定
@@ -81,6 +88,8 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 			//実行
 			while(ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
 				//ゲーム本体
+				//ウインドウのテキストを変える
+				SetMainWindowString();
 				//キー情報更新
 				input_update();
 
@@ -123,7 +132,12 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int){
 					SetWindowSizeExtendRate(1.0);
 					SetMouseDispFlag(mouseDispFlag);
 				} else if(keyboard_get(KEY_INPUT_F3)==60){
-					//F3長押しで、ウインドウサイズを1.0倍に
+					//F3長押しで、ウインドウサイズを0.667倍に
+					const int mouseDispFlag=GetMouseDispFlag();
+					SetWindowSizeExtendRate(0.667);
+					SetMouseDispFlag(mouseDispFlag);
+				} else if(keyboard_get(KEY_INPUT_F4)==60){
+					//F4長押しで、ウインドウサイズを0.5倍に
 					const int mouseDispFlag=GetMouseDispFlag();
 					SetWindowSizeExtendRate(0.5);
 					SetMouseDispFlag(mouseDispFlag);
