@@ -1,0 +1,1 @@
+(title,’©Ä‚¯‚ÌÅIŒˆí),(pos,1200,890),(bgm,battle6.txt)

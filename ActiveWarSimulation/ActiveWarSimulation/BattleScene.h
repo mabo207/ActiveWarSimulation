@@ -44,7 +44,7 @@ protected:
 	BattleScene(const std::string &stageDirName,const std::string &titleName,const StageLevel stageLevel);
 	virtual std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
 	void ResetGame();
-	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
+	virtual std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;//チュートリアルとデモと通常プレイで戻る場所が違う
 
 public:
 	virtual ~BattleScene();

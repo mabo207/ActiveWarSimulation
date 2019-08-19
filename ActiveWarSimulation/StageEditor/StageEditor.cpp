@@ -27,6 +27,8 @@
 
 #include"SelectLevel.h"
 
+#include"SettingFunction.h"
+
 #include"ScrollBar.h"
 
 //定数の定義
@@ -61,6 +63,12 @@ namespace {
 	//「レベル設定」ボタン部分全体での横幅,縦幅
 	const int levelButtonWidth=buttonWidth;
 	const int levelButtonHeight=120;
+	//「入出力」ボタンの縦横の個数
+	const size_t readWriteButtonWidthNum=3;
+	const size_t readWriteButtonHeightNum=1;
+	//「入出力」ボタン部分全体での横幅,縦幅
+	const int readWriteButtonWidth=buttonWidth;
+	const int readWriteButtonHeight=120;
 	//エディタで作られる物のサイズの基準の大きさ・基本単位
 	const int baseSize=CommonConstParameter::unitCircleSize;
 }
@@ -244,6 +252,27 @@ StageEditor::StageEditor()
 		,StageLevel::e_lunatic
 	)));
 	buttonY+=(float)(levelButtonHeight/levelButtonHeightNum);
+	
+	//ReadStageボタン
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SettingFunction::SettingFunctionButton(
+		Vector2D(buttonsLeftEdge+(float)(readWriteButtonWidth/readWriteButtonWidthNum*0),buttonY)
+		,Vector2D((float)(readWriteButtonWidth/readWriteButtonWidthNum),(float)(readWriteButtonHeight/readWriteButtonHeightNum))
+		,"ReadStageAndUnit"
+		,[](EditActionSettings &settings){settings.ReadData();}
+	)));
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SettingFunction::SettingFunctionButton(
+		Vector2D(buttonsLeftEdge+(float)(readWriteButtonWidth/readWriteButtonWidthNum*1),buttonY)
+		,Vector2D((float)(readWriteButtonWidth/readWriteButtonWidthNum),(float)(readWriteButtonHeight/readWriteButtonHeightNum))
+		,"WriteStage"
+		,[](EditActionSettings &settings){settings.WriteOutStage("SaveData/stage.txt");}
+	)));
+	m_buttons.push_back(std::shared_ptr<ButtonHaving::Button>(new SettingFunction::SettingFunctionButton(
+		Vector2D(buttonsLeftEdge+(float)(readWriteButtonWidth/readWriteButtonWidthNum*2),buttonY)
+		,Vector2D((float)(readWriteButtonWidth/readWriteButtonWidthNum),(float)(readWriteButtonHeight/readWriteButtonHeightNum))
+		,"WriteUnit"
+		,[](EditActionSettings &settings){settings.WriteOutUnit();}
+	)));
+	buttonY+=(float)(readWriteButtonHeight/readWriteButtonHeightNum);
 
 	//最初から押されているようにするボタンを押す(順番に注意！)
 	pRectangleFactoryButton->PushedProcess(m_actionSettings);
@@ -258,9 +287,7 @@ StageEditor::StageEditor()
 	m_mapPic=LoadGraph("Savedata/stage.png");
 
 	//図形の読み込み
-	m_actionSettings.InitObjects();
-	m_actionSettings.ReadStage("Savedata/stage.txt");
-	m_actionSettings.ReadUnit();
+	m_actionSettings.ReadData();
 }
 
 StageEditor::~StageEditor() {
@@ -319,12 +346,12 @@ void StageEditor::DrawUnitInfo(const std::shared_ptr<const Unit> &punit,const Ve
 		drawStr+="AItype: "+Unit::AIType::GetName(punit->GetBattleStatus().aitype)+'\n';
 		drawStr+="AIgroup: "+std::to_string(punit->GetBattleStatus().aiGroup)+'\n';
 		drawStr+="HP: "+std::to_string(punit->GetBattleStatus().HP)+" / "+std::to_string(punit->GetBaseStatus().maxHP)+'\n';
+		drawStr+="Weapon: "+punit->GetBattleStatus().weapon->GetName()+'\n';
 		//以下、編集できないもの
 		drawStr+="\nPOW: "+std::to_string(punit->GetBaseStatus().power)+'\n';
 		drawStr+="DEF: "+std::to_string(punit->GetBaseStatus().def)+'\n';
 		drawStr+="MPOW: "+std::to_string(punit->GetBaseStatus().mpower)+'\n';
 		drawStr+="MDEF: "+std::to_string(punit->GetBaseStatus().mdef)+'\n';
-		drawStr+="Weapon: "+punit->GetBattleStatus().weapon->GetName()+'\n';
 		drawStr+=punit->GetBattleStatus().weapon->GetEffectivenessString(punit.get());
 		//下地の描画
 		DrawTriangle(unitX+baseSize,unitY,left,unitY-10,left,unitY+10,backColor,TRUE);
@@ -368,18 +395,7 @@ int StageEditor::Calculate() {
 	m_actionSettings.UpdateMouseObjectDepth(mouse_get(MOUSE_INPUT_RIGHT));//押してない時でも更新することがあるので、押しているフレーム数を渡す。
 
 	//キーボード入力受付
-	if(keyboard_get(KEY_INPUT_S)==10){
-		//Sキー長押しで地形を保存
-		m_actionSettings.WriteOutStage("SaveData/stage.txt");
-	} else if(keyboard_get(KEY_INPUT_U)==10){
-		//Uキー長押しでユニットを保存
-		m_actionSettings.WriteOutUnit();
-	} else if(keyboard_get(KEY_INPUT_R)==10){
-		//Rキー長押しで読み込み
-		m_actionSettings.InitObjects();
-		m_actionSettings.ReadStage("SaveData/stage.txt");
-		m_actionSettings.ReadUnit();
-	} else if(keyboard_get(KEY_INPUT_NUMPADENTER) == 1){
+	if(keyboard_get(KEY_INPUT_NUMPADENTER) == 1){
 		//Enterキー入力でエディタを終了
 		return -1;
 	} else{
@@ -493,6 +509,11 @@ void StageEditor::Draw() {
 	
 	//入力されているレベル設定ボタンの描画
 	m_actionSettings.m_pSelectLevel->LightUpButton();
+
+	//入力されている出入力ボタンの描画
+	if(m_actionSettings.m_pSettingFunction){
+		m_actionSettings.m_pSettingFunction->LightUpButton();
+	}
 
 	//ボタン群の描画
 	for(std::shared_ptr<ButtonHaving::Button> &pb:m_buttons){

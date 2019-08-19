@@ -4,6 +4,15 @@
 //インクルード等
 #include<vector>
 #include<string>
+#include<exception>
+
+//ファイル読み込み失敗時の例外
+class FileOpenFailedException:public std::exception{
+public:
+	FileOpenFailedException()=default;
+	~FileOpenFailedException()=default;
+	const char *what()const noexcept;
+};
 
 //関数
 //ファイルを読み込みstring型にして返す

@@ -73,9 +73,6 @@ public:
 public:
 	std::vector<std::shared_ptr<TutorialBase>> m_tutorialData;//どのようなチュートリアルを提供するか
 
-	//フォント
-	const int m_tutorialFont;//チュートリアルの補足説明に用いるフォント
-
 	//関数
 protected:
 

@@ -1,1 +1,1 @@
-(title,ƒfƒ‚)
+(title,ƒfƒ‚),(bgm,battle1.txt)

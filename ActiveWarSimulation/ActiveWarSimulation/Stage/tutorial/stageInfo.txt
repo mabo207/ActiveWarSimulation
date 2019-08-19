@@ -1,1 +1,1 @@
-(title,チュートリアル１)
+(title,チュートリアル１),(bgm,battle1.txt)

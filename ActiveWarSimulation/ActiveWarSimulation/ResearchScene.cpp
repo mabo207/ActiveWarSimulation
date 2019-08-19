@@ -3,6 +3,7 @@
 #include"GraphicControl.h"
 #include"CommonConstParameter.h"
 #include"FilePath.h"
+#include"GeneralPurposeResource.h"
 
 namespace {
 	const int paramBoxInitLeftX=-600;
@@ -17,9 +18,8 @@ const int ResearchScene::explainFontSize=16;
 
 ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:BattleSceneElement(SceneKind::e_research)
-	,m_palFont(CreateFontToHandleEX("メイリオ",28,1,-1))
-	,m_nameFont(CreateFontToHandleEX("メイリオ",32,1,-1))
-	,m_explainFont(CreateFontToHandleEX("メイリオ",explainFontSize,1,-1))
+	,m_nameFont(LoadFontDataToHandleEX(FilePath::fontDir+"ExplainGothicFont_Large.dft",0))
+	,m_explainFont(LoadFontDataToHandleEX(FilePath::fontDir+"ExplainGothicFont_Small.dft",0))
 	,m_palBackPic(LoadGraphEX(FilePath::graphicDir+"researchInfoBack.png"))
 	,m_battleSceneData(battleSceneData)
 	,m_researchPic(LoadGraphEX(FilePath::graphicDir+"operatedCursor.png"))
@@ -33,7 +33,6 @@ ResearchScene::ResearchScene(std::shared_ptr<BattleSceneData> battleSceneData)
 }
 
 ResearchScene::~ResearchScene(){
-	DeleteFontToHandleEX(m_palFont);
 	DeleteFontToHandleEX(m_nameFont);
 	DeleteFontToHandleEX(m_explainFont);
 	DeleteGraphEX(m_palBackPic);
@@ -184,8 +183,7 @@ void ResearchScene::thisDraw()const{
 
 	//調べているユニットについての描画
 	if(m_researchUnit!=nullptr){
-		m_researchUnit->BattleObject::VDraw();
-		m_researchUnit->GetHitJudgeShape()->Draw(Vector2D(),GetColor(255,255,255),FALSE);//調べてるよってことを強調
+		m_researchUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,true,true);
 		m_researchUnit->DrawMaxMoveInfo();//最大移動距離を表示
 	}
 
@@ -193,7 +191,6 @@ void ResearchScene::thisDraw()const{
 	if(m_battleSceneData->m_operateUnit!=m_researchUnit){
 		m_battleSceneData->m_operateUnit->BattleObject::VDraw();
 		Vector2D pos=m_battleSceneData->m_operateUnit->getPos();
-		//DrawTriangleAA(pos.x-15.0f,pos.y-60.0f,pos.x+15.0f,pos.y-60.0f,pos.x,pos.y-30.0f,GetColor(255,255,0),TRUE);
 	}
 
 
@@ -226,21 +223,20 @@ void ResearchScene::thisDraw()const{
 			//ネームプレート部分
 			m_researchUnit->DrawFacePic(Vector2D((float)(paramBoxX+70),(float)(paramBoxY+60)));
 			DrawStringToHandle(paramBoxX+150,paramBoxY+12,base.name.c_str(),GetColor(255,255,255),m_nameFont);
-			DrawFormatStringToHandle(paramBoxX+180,paramBoxY+65,GetColor(255,255,255),m_palFont,"%s Lv%d",Unit::Profession::GetName(base.profession).c_str(),base.lv);
+			DrawFormatStringToHandle(paramBoxX+180,paramBoxY+65,GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont,"%s Lv%d",Unit::Profession::GetName(base.profession).c_str(),base.lv);
 			//パラメータ部分
-			DrawFormatStringToHandle(paramBoxX+68,paramBoxY+159,GetColor(255,255,255),m_palFont,"%d/%d",battle.HP,base.maxHP);
-			DrawFormatStringToHandle(paramBoxX+68,paramBoxY+203,GetColor(255,255,255),m_palFont,"%.0f/%.0f",battle.OP,battle.maxOP);
-			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+247,GetColor(255,255,255),m_palFont,"%d",base.power);
-			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+291,GetColor(255,255,255),m_palFont,"%d",base.def);
-			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+335,GetColor(255,255,255),m_palFont,"%d",base.mpower);
-			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+379,GetColor(255,255,255),m_palFont,"%d",base.mdef);
-			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+423,GetColor(255,255,255),m_palFont,"%d",base.speed);
-			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+467,GetColor(255,255,255),m_palFont,"%d",base.move);
+			DrawFormatStringToHandle(paramBoxX+68,paramBoxY+159,GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont,"%d/%d",battle.HP,base.maxHP);
+			DrawFormatStringToHandle(paramBoxX+68,paramBoxY+203,GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont,"%.0f/%.0f",battle.OP,battle.maxOP);
+			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+247,GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont,"%d",base.power);
+			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+291,GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont,"%d",base.def);
+			DrawFormatStringToHandle(paramBoxX+234,paramBoxY+247,GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont,"%d",base.mpower);
+			DrawFormatStringToHandle(paramBoxX+234,paramBoxY+291,GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont,"%d",base.mdef);
+			DrawFormatStringToHandle(paramBoxX+94,paramBoxY+336,GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont,"%d",base.move);
 			//装備説明部分
 			//通常装備
-			DrawStringToHandle(paramBoxX+261,paramBoxY+159,m_researchUnit->GetBattleStatus().weapon->GetName().c_str(),GetColor(255,255,255),m_palFont);
-			DrawStringNewLineToHandle(paramBoxX+272,paramBoxY+192,310,36,m_researchUnit->GetBattleStatus().weapon->GetExplain().c_str(),GetColor(255,255,255),m_explainFont,2);
-			DrawStringNewLineToHandle(paramBoxX+272,paramBoxY+240,310,36,m_researchUnit->GetBattleStatus().weapon->GetEffectivenessString(m_researchUnit).c_str(),GetColor(255,255,255),m_explainFont,2);
+			DrawStringToHandle(paramBoxX+312,paramBoxY+159,m_researchUnit->GetBattleStatus().weapon->GetName().c_str(),GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont);
+			DrawStringNewLineToHandle(paramBoxX+317,paramBoxY+192,263,60,m_researchUnit->GetBattleStatus().weapon->GetEffectivenessString(m_researchUnit).c_str(),GetColor(255,255,255),m_explainFont,4);
+			DrawStringNewLineToHandle(paramBoxX+317,paramBoxY+240,263,80,m_researchUnit->GetBattleStatus().weapon->GetExplain().c_str(),GetColor(255,255,255),m_explainFont,4);
 		}
 	}
 }

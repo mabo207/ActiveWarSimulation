@@ -10,6 +10,7 @@
 #include"LatticeBattleField.h"
 #include"StageLevel.h"
 #include<functional>
+#include"BGM.h"
 
 //バトル場面で、各クラスに渡すゲーム全体で扱うデータを一括管理するクラス
 struct BattleSceneData{
@@ -60,7 +61,7 @@ public:
 
 	//サウンドデータ
 	//bgm
-	const int m_mapBGM;//マップBGM
+	const Resource::BGM m_mapBGM;//マップBGM
 	//effect
 	const int m_aimchangeSound;//狙いが変わった時の音
 	const int m_attackSound;//ダメージの音
@@ -71,6 +72,7 @@ public:
 	FpsMeasuring m_fpsMesuring;//fps計測器。タイマーの意味合いも兼ねる。
 	const int m_orderFont;//オーダー表示の際のフォント
 	const PlayMode m_playMode;//今のプレイモード
+	bool m_gotoCredit;//勝ってクリアした状態であるかどうか(4_5からクレジットに行くかどうかにのみ用いる)
 	
 
 	//デバッグ用変数
@@ -93,7 +95,7 @@ public:
 	Unit *GetUnitPointer(Vector2D pos)const;//pos(マップ上の座標)にいるユニットを返す。このユニットに攻撃する可能性がある事を考慮してconstはつけない。
 	bool CanOperateUnitMove()const;//m_operateUnitが移動することが可能か（周りに何があるかは考えない）
 	int CalculateTurn()const;
-	std::shared_ptr<LatticeBattleField> CalculateLatticeBattleField()const;//現在のステージの状態の格子点認識情報を計算して返す。
+	std::shared_ptr<LatticeBattleField> CalculateLatticeBattleField(bool unitExist)const;//現在のステージの状態の格子点認識情報を計算して返す。
 	void ResisterSceneEndProcess(const std::function<void(void)> &func);//画面暗転時に行う処理を登録する
 	void RunSceneEndProcess();//バトル場面終了時に行う処理を実行する
 

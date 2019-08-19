@@ -215,6 +215,7 @@ void EditActionSettings::WriteOutUnit()const{
 				ofs<<"(name,"<<baseStatus.name<<"),";
 				ofs<<"(profession,"<<baseStatus.profession<<"),";
 				ofs<<"(lv,"<<baseStatus.lv<<"),";
+				ofs<<"(weapon,"<<battleStatus.weapon->GetResisterName()<<"),";
 				ofs<<"(pos,"<<(int)(pos.x)<<','<<(int)(pos.y)<<"),";
 				ofs<<"(team,"<<battleStatus.team<<"),";
 				ofs<<"(ai,"<<battleStatus.aitype<<','<<battleStatus.aiGroup<<')';
@@ -233,22 +234,60 @@ void EditActionSettings::WriteOutUnit()const{
 //ステージの読み込み
 void EditActionSettings::ReadStage(const char *filename){
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-	StringBuilder sb(FileStrRead(filename),'\n','{','}');
-	for(StringBuilder &ssb:sb.m_vec){
-		const std::shared_ptr<BattleObject> pb=BattleObject::CreateObject(ssb);//sb,ssbは変更される
-		if(pb.get()!=nullptr){
-			m_objects.push_back(pb);
+	try{
+		StringBuilder sb(FileStrRead(filename),'\n','{','}');
+		for(StringBuilder &ssb:sb.m_vec){
+			const std::shared_ptr<BattleObject> pb=BattleObject::CreateObject(ssb);//sb,ssbは変更される
+			if(pb.get()!=nullptr){
+				m_objects.push_back(pb);
+			}
 		}
+	} catch(const FileOpenFailedException &){
+		//ファイル読み込み失敗を許容する
 	}
 }
 
 //ステージの読み込み
 void EditActionSettings::ReadUnit(){
-	StringBuilder unitlist(FileStrRead(m_pSelectLevel->GetUnitListFileName().c_str()),'\n','{','}');
-	for(StringBuilder &unitdata:unitlist.m_vec){
-		const std::shared_ptr<BattleObject> punit(Unit::CreateUnitFromBuilder(unitdata));
-		if(punit){
-			m_objects.push_back(punit);
+	try{
+		StringBuilder unitlist(FileStrRead(m_pSelectLevel->GetUnitListFileName().c_str()),'\n','{','}');
+		for(StringBuilder &unitdata:unitlist.m_vec){
+			const std::shared_ptr<BattleObject> punit(Unit::CreateUnitFromBuilder(unitdata));
+			if(punit){
+				m_objects.push_back(punit);
+			}
 		}
+	} catch(const FileOpenFailedException &){
+		//ファイル読み込み失敗を許容する
 	}
+}
+
+//データの読み込み
+void EditActionSettings::ReadData(){
+	InitObjects();
+	ReadStage("SaveData/stage.txt");
+	ReadUnit();
+}
+
+//兵種から推奨武器種を返す
+Weapon::Kind EditActionSettings::ProfessionToWeaponKind(Unit::Profession::Kind profession){
+	Weapon::Kind weaponKind;
+	switch(profession){
+	case(Unit::Profession::e_soldier):
+		weaponKind=Weapon::Kind::e_sword;
+		break;
+	case(Unit::Profession::e_armer):
+		weaponKind=Weapon::Kind::e_lance;
+		break;
+	case(Unit::Profession::e_archer):
+		weaponKind=Weapon::Kind::e_bow;
+		break;
+	case(Unit::Profession::e_mage):
+		weaponKind=Weapon::Kind::e_book;
+		break;
+	case(Unit::Profession::e_healer):
+		weaponKind=Weapon::Kind::e_rod;
+		break;
+	}
+	return weaponKind;
 }

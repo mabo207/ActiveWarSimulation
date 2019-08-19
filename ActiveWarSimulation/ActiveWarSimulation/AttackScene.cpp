@@ -4,133 +4,68 @@
 #include"FilePath.h"
 
 //-------------------AttackScene-------------------
-const int AttackScene::motionFrame=20;
-const int AttackScene::damageBeginFrame=AttackScene::motionFrame/2;
-const int AttackScene::damageEndFrame=AttackScene::damageBeginFrame+30;
 const float AttackScene::moveLength=40.0;
 
-AttackScene::AttackScene(std::shared_ptr<BattleSceneData> data,Unit *aimedUnit)
-	:BattleSceneElement(SceneKind::e_attackNormal)
-	,m_battleSceneData(data),m_aimedUnit(aimedUnit)
+AttackScene::AttackScene(const std::shared_ptr<BattleSceneData> &data,Unit *aimedUnit)
+	:DamageScene(SceneKind::e_attackNormal
+		,data
+		,SceneKind::e_switch
+		,aimedUnit
+		,data->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(data->m_operateUnit,aimedUnit))
 	,m_attackMotion({
 		PositionControl(data->m_operateUnit->getPos(),data->m_operateUnit->getPos()+(m_aimedUnit->getPos()-data->m_operateUnit->getPos()).norm()*moveLength,motionFrame/2,Easing::TYPE_OUT,Easing::FUNCTION_LINER,1.0)
 		,PositionControl(data->m_operateUnit->getPos()+(m_aimedUnit->getPos()-data->m_operateUnit->getPos()).norm()*moveLength,data->m_operateUnit->getPos(),motionFrame/2,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0)
 	})
-	,m_damageMotion({
-		PositionControl(0,0,0,-(int)Unit::unitCircleSize,(damageEndFrame-damageBeginFrame)/2,Easing::TYPE_OUT,Easing::FUNCTION_EXPO,9.0)
-		,PositionControl(0,0,-(int)Unit::unitCircleSize,-(int)Unit::unitCircleSize,(damageEndFrame-damageBeginFrame)/2,Easing::TYPE_OUT,Easing::FUNCTION_QUAD,9.0)
-	})
 {
-	//攻撃情報の記録
-	m_attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,m_aimedUnit);
-	m_damageFont=CreateFontToHandleEX("メイリオ",30,4,DX_FONTTYPE_ANTIALIASING_EDGE);
-
+	//エフェクトの作成
 	LoadDivGraph((FilePath::graphicDir+"effect/zangeki.png").c_str(),30,30,1,100,100,m_effect);
 }
 
 AttackScene::~AttackScene(){
-	DeleteFontToHandleEX(m_damageFont);
-
+	//エフェクトの解放
 	for(size_t i=0;i<30;i++){
 		DeleteGraph(m_effect[i]);
 	}
 }
 
-void AttackScene::ProcessAttack(){
-	//コストの消費
-	//攻撃実行時に攻撃分のOPを消費する仕様を変える場合は、波及箇所を考慮せよ（スコアの計算などはこの仕様を前提とした実装をしている）
-	//m_battleSceneData->m_operateUnit->AddOP(m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack());
-	m_battleSceneData->m_operateUnit->ConsumeOPByCost(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetCost());
-	//操作ユニット→対象ユニットへの攻撃情報の計算
-	Weapon::AttackInfo attackinfo=m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetAttackInfo(m_battleSceneData->m_operateUnit,m_aimedUnit);
-	//操作ユニット→対象ユニットへの攻撃処理
-	int aimedHP=m_aimedUnit->AddHP(-attackinfo.damage);
-	//効果音を鳴らす
-	if(attackinfo.damage>0){
-		//ダメージがあれば攻撃音
-		PlaySoundMem(m_battleSceneData->m_attackSound,DX_PLAYTYPE_BACK,TRUE);
-	} else{
-		//回復しているなら回復音
-		PlaySoundMem(m_battleSceneData->m_healSound,DX_PLAYTYPE_BACK,TRUE);
-	}
-	if(aimedHP<=0){
-		//対象ユニットのHPが0以下なら、ステージからユニットを取り除く
-		m_aimedUnit->SetFix(Shape::Fix::e_ignore);//当たり判定の対象から取り除く
-		//m_unitListからm_aimedUnitを取り除く
-		for(std::vector<Unit *>::const_iterator it=m_battleSceneData->m_unitList.begin(),ite=m_battleSceneData->m_unitList.end();it!=ite;it++){
-			if(*it==m_aimedUnit){
-				m_battleSceneData->m_unitList.erase(it);
-				break;
-			}
-		}
-	} else{
-		//対象ユニットが生き残っているなら反撃処理を行う
-		//未実装
-	}
+void AttackScene::AnimationUpdate(){
+	DamageScene::AnimationUpdate();//ダメージ文字のアニメーション更新
+	m_attackMotion.Update();//攻撃ユニットのアニメーション更新
 }
 
-int AttackScene::thisCalculate(){
-	//アニメーション更新
-	m_attackMotion.Update();
-	m_damageMotion.Update();
-	const int frame=m_attackMotion.GetFrame();
-	//ダメージモーションの開始
-	if(frame==damageBeginFrame){
-		//アニメーションの初期化
-		m_damageMotion.Retry();
-		//ダメージ処理
-		ProcessAttack();
-	}
-	//終了判定
-	if(m_attackMotion.GetEndFlag() && m_damageMotion.GetEndFlag()){
-		//ユニット切り替え場面へ
-		return SceneKind::e_switch;
-	}
-
-	return SceneKind::e_attackNormal;
-}
-
-void AttackScene::thisDraw()const{
-	//フィールドの描画
-	m_battleSceneData->DrawField();
-
+void AttackScene::DrawUnit()const{
 	//ユニットの描画
 	m_battleSceneData->DrawUnit(false,std::set<const Unit *>{m_battleSceneData->m_operateUnit,m_aimedUnit});
-
 	//攻撃対象ユニットの描画
 	if(m_aimedUnit!=nullptr){
-		m_aimedUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,false);
+		m_aimedUnit->DrawUnit(Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,false,false);
 	}
-	
 	//攻撃を実行するユニットの描画
-	m_battleSceneData->m_operateUnit->DrawUnit(Vector2D((float)m_attackMotion.GetX(),(float)m_attackMotion.GetY()),Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,false);
-	
-	//全ユニットのHPゲージの描画
-	m_battleSceneData->DrawHPGage();
+	m_battleSceneData->m_operateUnit->DrawUnit(Vector2D((float)m_attackMotion.GetX(),(float)m_attackMotion.GetY()),Vector2D(),m_battleSceneData->m_fpsMesuring.GetFrame(),false,false,false);
+}
 
+void AttackScene::DrawAnimation()const{
 	//エフェクトの描画
 	if(m_attackMotion.GetFrame()<30){
 		//DrawGraph(((int)m_aimedUnit->getPos().x)-50,((int)m_aimedUnit->getPos().y)-50,m_effect[m_attackMotion.GetFrame()],TRUE);
 	}
+	//ダメージ文字の描画
+	DamageScene::DrawAnimation();
+}
 
-	//ダメージの描画
-	if(m_attackMotion.GetFrame()>damageBeginFrame){
-		//表示するフレームより前は描画処理を行わない
-		//色の決定
-		unsigned int incolor,outcolor;
-		if(m_attackinfo.damage<=0){
-			//ノーダメージや回復の場合は緑で描画
-			incolor=GetColor(64,255,64);
-			outcolor=GetColor(0,0,0);
-		} else{
-			//ダメージは赤く描画
-			incolor=GetColor(255,0,0);
-			outcolor=GetColor(255,255,255);
-		}
-		//描画
-		const int x=(int)m_aimedUnit->getPos().x+m_damageMotion.GetX(),y=(int)m_aimedUnit->getPos().y+m_damageMotion.GetY();
-		DrawStringCenterBaseToHandle(x,y,std::to_string(std::abs(m_attackinfo.damage)).c_str(),incolor,m_damageFont,true,outcolor);
-	}
+bool AttackScene::JudgeAnimationEnd()const{
+	return (DamageScene::JudgeAnimationEnd() && m_attackMotion.GetEndFlag());
+}
+
+void AttackScene::DamageProcess(){
+	//コストの消費
+	//攻撃実行時に攻撃分のOPを消費する仕様を変える場合は、波及箇所を考慮せよ（スコアの計算などはこの仕様を前提とした実装をしている）
+	//m_battleSceneData->m_operateUnit->AddOP(m_battleSceneData->m_operateUnit->CalculateAddOPNormalAttack());
+	m_battleSceneData->m_operateUnit->ConsumeOPByCost(m_battleSceneData->m_operateUnit->GetBattleStatus().weapon->GetCost());
+	//操作ユニット→対象ユニットへの攻撃処理
+	DamageScene::DamageProcess();
+	//対象ユニットが生き残っているなら反撃処理を行う
+	//未実装
 }
 
 int AttackScene::UpdateNextScene(int index){

@@ -4,6 +4,7 @@
 #include<memory>
 #include<vector>
 #include"ToolsLib.h"
+#include"Unit.h"
 
 //プロトタイプ宣言
 class EditAction;
@@ -11,6 +12,7 @@ class BattleObject;
 class PosSetting;
 class ShapeFactory;
 class SelectLevel;
+class SettingFunction;
 
 //ステージ編集をおこなう際の「何を行うか」の設定を集約したクラス
 class EditActionSettings {
@@ -35,10 +37,16 @@ public:
 	std::shared_ptr<ShapeFactory> m_pShapeFactory;//EditPut時に置く図形
 	std::shared_ptr<PosSetting> m_pPosSetting;//位置合わせの手法
 	std::shared_ptr<SelectLevel> m_pSelectLevel;//unitlistファイルの出入力先
+	std::shared_ptr<SettingFunction> m_pSettingFunction;//EditActionSettingsの何らかの関数を呼び出す
 
 	//関数
 protected:
-	std::vector<std::shared_ptr<BattleObject>>::const_iterator GetMousePointedObject(Vector2D point)const;//pointを含む図形を返す
+	//ステージの読み込み
+	void ReadStage(const char *filename);
+	//ユニットの読み込み
+	void ReadUnit();
+	//pointを含む図形を返す
+	std::vector<std::shared_ptr<BattleObject>>::const_iterator GetMousePointedObject(Vector2D point)const;
 
 public:
 	//コンストラクタとデストラクタ
@@ -79,10 +87,11 @@ public:
 	void WriteOutStage(const char *filename)const;
 	//ユニットデータの書き出し
 	void WriteOutUnit()const;
-	//ステージの読み込み
-	void ReadStage(const char *filename);
-	//ユニットの読み込み
-	void ReadUnit();
+	//データの読み込み
+	void ReadData();
+
+	//ステージエディタ内のみで使う、兵種から推奨武器種を返す関数
+	static Weapon::Kind ProfessionToWeaponKind(Unit::Profession::Kind profession);
 };
 
 #endif // !DEF_EDITACTIONSETTINGS_H

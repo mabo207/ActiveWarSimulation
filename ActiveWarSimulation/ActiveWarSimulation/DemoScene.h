@@ -38,7 +38,7 @@ public:
 	std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitScene‚©DemoSwitchUnitScene‚Ì‚Ç‚Á‚¿‚ðŽg‚¤‚©
 	int Calculate();
 	void Draw()const;
-
+	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;
 };
 
 #endif // !DEF_DEMOSCENE_H

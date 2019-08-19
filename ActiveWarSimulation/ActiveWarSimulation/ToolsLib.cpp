@@ -336,27 +336,6 @@ bool JudgeMouseInWindow(){
 	return (x>=0 && x<resolution.first && y>=0 && y<resolution.second);
 }
 
-//bgmを読み込む関数
-int LoadBGMMem(const std::string &dirname,int BufferNum,int UnionHandle){
-	//音を読み込む。
-	int handle=LoadSoundMem((dirname+"bgm.ogg").c_str(),BufferNum,UnionHandle);
-	//ループ位置の設定。info.csvに「ループ開始位置」「ループ終了位置」「音量%」が格納されている
-	std::vector<std::vector<int>> info=CSVRead((dirname+"info.csv").c_str());
-	if(!info.empty() && info[0].size()>=3){
-		const int loopstart=info[0][0];
-		const int loopend=info[0][1];
-		const int volume=info[0][2];
-		if(loopstart>=0){
-			SetLoopStartSamplePosSoundMem(loopstart,handle);
-		}
-		if(loopend>=0){
-			SetLoopSamplePosSoundMem(loopend,handle);
-		}
-		ChangeVolumeSoundMem(volume,handle);
-	}
-	return handle;
-}
-
 //グラデーション有りの四角形描画(x1<x2,y1<y2でないと正しく動作しない)
 void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsigned int rightDownColor,bool horizontal){
 	//水平方向または垂直方向のみのグラデーション

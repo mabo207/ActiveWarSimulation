@@ -1,1 +1,1 @@
-(title,橋ステージ１),(pos,300,400)
+(title,砂漠の入口),(pos,200,460),(bgm,battle2.txt)

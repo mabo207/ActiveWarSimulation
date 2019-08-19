@@ -1,0 +1,1 @@
+(title,áR‚Ì’ÇÕí),(pos,1020,160),(bgm,battle3.txt)

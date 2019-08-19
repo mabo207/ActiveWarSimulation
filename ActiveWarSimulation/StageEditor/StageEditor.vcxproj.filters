@@ -91,6 +91,12 @@
     <Filter Include="ソース ファイル\StageEditor\ButtonHaving\SelectLevel">
       <UniqueIdentifier>{202537c9-ad69-4ae7-9245-c80f0869b741}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\StageEditor\ButtonHaving\SettingsFunction">
+      <UniqueIdentifier>{177e841e-ac9a-43ce-a14b-b63b563a1e41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\StageEditor\ButtonHaving\SettingFunction">
+      <UniqueIdentifier>{803e8c82-8df5-4719-ba0e-7023e45bb92b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ActiveWarSimulation\input.h">
@@ -204,6 +210,9 @@
     <ClInclude Include="SelectLevel.h">
       <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\SelectLevel</Filter>
     </ClInclude>
+    <ClInclude Include="SettingFunction.h">
+      <Filter>ヘッダー ファイル\StageEditor\ButtonHaving\SettingsFunction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -316,6 +325,9 @@
     </ClCompile>
     <ClCompile Include="SelectLevel.cpp">
       <Filter>ソース ファイル\StageEditor\ButtonHaving\SelectLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingFunction.cpp">
+      <Filter>ソース ファイル\StageEditor\ButtonHaving\SettingFunction</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

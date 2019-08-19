@@ -33,20 +33,26 @@ public:
 		ScoreExpression(const std::vector<Bonus> &bonusVec
 			,size_t surviveCount
 			,size_t unitCount
+			,size_t defeatCount
+			,size_t enemyCount
 			,size_t turnCount
 			,int totalScorePoint)
 			:m_bonusVec(bonusVec)
 			,m_surviveCount(surviveCount)
 			,m_unitCount(unitCount)
+			,m_defeatCount(defeatCount)
+			,m_enemyCount(enemyCount)
 			,m_turnCount(turnCount)
 			,m_totalScorePoint(totalScorePoint)
 		{}
 		virtual ~ScoreExpression(){}
 
 		std::vector<Bonus> m_bonusVec;//ボーナス一覧
-		const int m_surviveCount;//生存数
-		const int m_unitCount;//自ユニット数
-		const int m_turnCount;//ターン数
+		const size_t m_surviveCount;//生存数
+		const size_t m_unitCount;//自ユニット数
+		const size_t m_defeatCount;//撃破数(ツイートにのみ用いる)
+		const size_t m_enemyCount;//敵ユニット数(ツイートにのみ用いる)
+		const size_t m_turnCount;//ターン数
 		const int m_totalScorePoint;//合計スコア
 	};
 

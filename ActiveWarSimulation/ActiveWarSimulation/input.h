@@ -13,6 +13,8 @@ int keyboard_get(int KeyCode);
 
 int mouse_get(int MouseCode);
 
+int mouse_wheel_get();
+
 Vector2D analogjoypad_get(int InputType);
 
 void input_erase();//入力情報を全て消す(どのボタンも入力されてないことにする)
@@ -59,6 +61,7 @@ protected:
 	//変数
 	int m_keyboardFrame[KeyNum];//各キーボードが入力されたフレーム数
 	int m_mouseFrame[MouseButtonNum];//各マウスのボタンが入力されたフレーム数
+	int m_mouseWheelRotVol;//マウスホイールの変化量
 	std::set<GamepadKeyboardMap> m_connectmap;//ゲームパッドとキーボードの対応表
 	std::set<AnalogJoypadKeyboardMap> m_stickmap;//アナログスティックとキーボードの対応表
 
@@ -71,6 +74,7 @@ public:
 	int Update();
 	int Get(int KeyCode);
 	int MouseGet(int MouseCode);
+	int MouseWheelGet();
 	void InitInput();
 	void COMinput(int KeyCode);
 	void AddConnectMap(int KeyCode,int PadButton);
@@ -123,10 +127,16 @@ public:
 	MouseButtonUI(int x,int y,int dx,int dy,int graphic);
 	MouseButtonUI(int x,int y,int graphic);
 	~MouseButtonUI();
+	bool JudgeIn()const;//ボタンにマウスが乗っているかを調べる
 	bool JudgePressMoment()const;//ボタンを押した瞬間を調べる
 	bool JudgePushed()const;//ボタンを押しているかを調べる
 	void DrawButton()const;
+	void DrawButtonRect(unsigned int color,int fillFlag,int lineThickness=1)const;//m_graphicを使わずに長方形描画
 	void GetButtonInfo(int *x,int *y,int *dx,int *dy)const;
+	void WarpTo(int x,int y);
+	//静的関数
+public:
+	static MouseButtonUI CreateWithCenter(int x,int y,int dx,int dy,int graphic);//中央座標を用いてボタン作成
 };
 
 

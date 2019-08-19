@@ -41,6 +41,7 @@ public:
 			e_assult//突撃型
 			,e_intercept//迎撃型
 			,e_linkageIntercept//連動迎撃型
+			,e_wait//待機型
 			,END
 		};
 		static Kind link(int num);
@@ -55,11 +56,10 @@ public:
 		int def;
 		int mpower;
 		int mdef;
-		int speed;
 		int move;
 		BaseStatus(){}
-		BaseStatus(std::string i_name,Profession::Kind i_profession,int i_lv,int i_maxHP,int i_power,int i_def,int i_mpower,int i_mdef,int i_speed,int i_move)
-			:name(i_name),profession(i_profession),lv(i_lv),maxHP(i_maxHP),power(i_power),def(i_def),mpower(i_mpower),mdef(i_mdef),speed(i_speed),move(i_move){}
+		BaseStatus(std::string i_name,Profession::Kind i_profession,int i_lv,int i_maxHP,int i_power,int i_def,int i_mpower,int i_mdef,int i_move)
+			:name(i_name),profession(i_profession),lv(i_lv),maxHP(i_maxHP),power(i_power),def(i_def),mpower(i_mpower),mdef(i_mdef),move(i_move){}
 	};
 	struct BattleStatus{
 
@@ -146,8 +146,8 @@ public:
 	void DrawHPGage(Vector2D adjust=Vector2D())const;//HPゲージの描画
 	void DrawHPGage(Vector2D point,Vector2D adjust)const;//HPゲージの描画
 	void DrawFacePic(Vector2D point)const;//ユニットの顔グラフィックを用いたアイコンの描画を行う
-	void DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const;//マップ上のユニットを描画
-	void DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const;//マップ上のユニットを描画
+	void DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const;//マップ上のユニットを描画
+	void DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const;//マップ上のユニットを描画
 	float GetMoveDistance()const;//移動可能な直線距離を返す。定式化しておくとラクになるため
 	
 	//仮想関数・純粋仮想関数のオーバーライド
@@ -160,7 +160,7 @@ public:
 
 	//静的関数
 public:
-	static Unit *CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage);//モブユニットを動的生成する。
+	static Unit *CreateMobUnit(const std::string &name,Profession::Kind profession,int lv,const std::string &weaponName,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage);//モブユニットを動的生成する。
 	static Unit *CreateUnitFromBuilder(StringBuilder &unitdata);
 };
 

@@ -160,9 +160,6 @@ std::pair<int,int> GetWindowResolution();
 //マウスがウインドウ内に入っているかの判定
 bool JudgeMouseInWindow();
 
-//bgmを読み込む関数
-int LoadBGMMem(const std::string &dirname,int BufferNum=3,int UnionHandle=-1);
-
 //グラデーション有りの四角形描画(x1<x2,y1<y2でないと正しく動作しない)
 void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsigned int rightDownColor,bool horizontal);
 
@@ -210,7 +207,7 @@ protected:
 	double degree;//変化度合い
 	//関数
 public:
-	Easing(int i_x=0,int i_maxframe=0,TYPE i_type=TYPE_IN,FUNCTION i_function=FUNCTION_LINER,double i_degree=0.0)
+	explicit Easing(int i_x=0,int i_maxframe=0,TYPE i_type=TYPE_IN,FUNCTION i_function=FUNCTION_LINER,double i_degree=0.0)
 		:Easing(i_x,i_x,i_maxframe,i_type,i_function,i_degree){}
 	Easing(int i_x,int i_endx,int i_maxframe,TYPE i_type,FUNCTION i_function,double i_degree);
 	virtual ~Easing(){}//デストラクタ
@@ -255,7 +252,7 @@ protected:
 	Easing x,y;
 	//関数
 public:
-	PositionControl(int i_x=0,int i_y=0,int i_maxframe=0,Easing::TYPE i_type=Easing::TYPE_IN,Easing::FUNCTION i_function=Easing::FUNCTION_LINER,double i_degree=0.0)
+	explicit PositionControl(int i_x=0,int i_y=0,int i_maxframe=0,Easing::TYPE i_type=Easing::TYPE_IN,Easing::FUNCTION i_function=Easing::FUNCTION_LINER,double i_degree=0.0)
 		:PositionControl(i_x,i_x,i_y,i_y,i_maxframe,i_type,i_function,i_degree){}//位置の初期化（最初のみ）
 	PositionControl(int i_x,int i_endx,int i_y,int i_endy,int i_maxframe,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
 		:x(i_x,i_endx,i_maxframe,i_type,i_function,i_degree),y(i_y,i_endy,i_maxframe,i_type,i_function,i_degree){}
@@ -326,7 +323,7 @@ protected:
 
 	//関数
 public:
-	PositionComplexControl(int i_x=0,int i_endx=0,int i_y=0,int i_endy=0,int i_maxframe=0,Easing::TYPE i_type=Easing::TYPE_IN,Easing::FUNCTION i_function=Easing::FUNCTION_LINER,double i_degree=0.0)
+	explicit PositionComplexControl(int i_x=0,int i_endx=0,int i_y=0,int i_endy=0,int i_maxframe=0,Easing::TYPE i_type=Easing::TYPE_IN,Easing::FUNCTION i_function=Easing::FUNCTION_LINER,double i_degree=0.0)
 		:indexX(0),indexY(0),x{Easing(i_x,i_endx,i_maxframe,i_type,i_function,i_degree)},y{Easing(i_y,i_endy,i_maxframe,i_type,i_function,i_degree)}{}//位置の初期化（最初のみ）
 	PositionComplexControl(Vector2D start,Vector2D end,int i_maxframe,Easing::TYPE i_type,Easing::FUNCTION i_function,double i_degree)
 		:PositionComplexControl((int)start.x,(int)end.x,(int)start.y,(int)end.y,i_maxframe,i_type,i_function,i_degree){}

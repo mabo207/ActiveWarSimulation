@@ -3,6 +3,8 @@
 
 #include<memory>
 #include"StageLevel.h"
+#include"ToolsLib.h"
+#include"input.h"
 
 //バトルマップ選択場面のUIの基底クラス
 class BaseUIInStageSelect{
@@ -11,8 +13,9 @@ public:
 	struct ControledData{
 		size_t stageIndex;
 		StageLevel selectLevel;
-		ControledData(size_t i_stageIndex,StageLevel i_selectLevel)
-			:stageIndex(i_stageIndex),selectLevel(i_selectLevel){}
+		PositionControl stageInfoPos;
+		PositionControl levelInfoPos;
+		ControledData(size_t i_stageIndex,StageLevel i_selectLevel);
 		~ControledData(){}
 	};
 
@@ -29,10 +32,13 @@ public:
 	virtual UpdateResult Update()=0;
 	virtual void Draw()const=0;//UIの表示
 
+	static const int infoDrawAreaWidth;//情報描画できる右側の領域の横幅(素材によって決まるので、素材を見て入力)
+
 protected:
-	BaseUIInStageSelect(const std::weak_ptr<ControledData> &controledData);
+	BaseUIInStageSelect(const std::weak_ptr<ControledData> &controledData,const MouseButtonUI &backButton);
 
 	const std::weak_ptr<ControledData> m_controledData;
+	const MouseButtonUI& m_backButton;
 };
 
 #endif // !DEF_BASEUIINSTAGESELECT_H

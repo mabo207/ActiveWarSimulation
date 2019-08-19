@@ -156,10 +156,17 @@
     <ClCompile Include="..\StageEditor\BattleObject.cpp" />
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
     <ClCompile Include="AttackLog.cpp" />
+    <ClCompile Include="BGM.cpp" />
+    <ClCompile Include="BGMManager.cpp" />
+    <ClCompile Include="BrowserTweet.cpp" />
+    <ClCompile Include="ClearStageData.cpp" />
+    <ClCompile Include="CreditScene.cpp" />
+    <ClCompile Include="DamageScene.cpp" />
     <ClCompile Include="FadeInScene.cpp" />
     <ClCompile Include="FadeOutScene.cpp" />
     <ClCompile Include="FilePath.cpp" />
     <ClCompile Include="FinishLog.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="InitLog.cpp" />
     <ClCompile Include="LatticeBattleField.cpp" />
     <ClCompile Include="LevelSelectUIInStageSelect.cpp" />
@@ -198,6 +205,7 @@
     <ClCompile Include="SystemMenu.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="ToolsLib.cpp" />
+    <ClCompile Include="TurnStartDamageScene.cpp" />
     <ClCompile Include="TutorialBattleSceneData.cpp" />
     <ClCompile Include="TutorialPlayerMoveScene.cpp" />
     <ClCompile Include="TutorialScene.cpp" />
@@ -214,10 +222,17 @@
     <ClInclude Include="..\StageEditor\BattleObject.h" />
     <ClInclude Include="..\StageEditor\Terrain.h" />
     <ClInclude Include="AttackLog.h" />
+    <ClInclude Include="BGM.h" />
+    <ClInclude Include="BGMManager.h" />
+    <ClInclude Include="BrowserTweet.h" />
+    <ClInclude Include="ClearStageData.h" />
+    <ClInclude Include="CreditScene.h" />
+    <ClInclude Include="DamageScene.h" />
     <ClInclude Include="FadeInScene.h" />
     <ClInclude Include="FadeOutScene.h" />
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FinishLog.h" />
+    <ClInclude Include="Graph.h" />
     <ClInclude Include="LatticeBattleField.h" />
     <ClInclude Include="LevelSelectUIInStageSelect.h" />
     <ClInclude Include="LoadingScene.h" />
@@ -255,6 +270,7 @@
     <ClInclude Include="ResearchScene.h" />
     <ClInclude Include="SwitchUnitScene.h" />
     <ClInclude Include="ToolsLib.h" />
+    <ClInclude Include="TurnStartDamageScene.h" />
     <ClInclude Include="TutorialBattleSceneData.h" />
     <ClInclude Include="TutorialPlayerMoveScene.h" />
     <ClInclude Include="TutorialScene.h" />
@@ -262,6 +278,9 @@
     <ClInclude Include="AttackScene.h" />
     <ClInclude Include="WaitLog.h" />
     <ClInclude Include="Weapon.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,6 +21,10 @@ int mouse_get(int MouseCode){
 	return inputControler->MouseGet(MouseCode);
 }
 
+int mouse_wheel_get(){
+	return inputControler->MouseWheelGet();
+}
+
 //アナログジョイパッド関連
 Vector2D analogjoypad_get(int InputType){
 	int x,y;
@@ -125,6 +129,7 @@ InputControler::InputControler(){
 	for(int i=0;i<MouseButtonNum;i++){
 		m_mouseFrame[i]=0;
 	}
+	m_mouseWheelRotVol=0;
 	
 	//ジョイパッドボタンとキーボードの対応表
 	m_connectmap.insert(GamepadKeyboardMap(KEY_INPUT_Z,PAD_INPUT_4));
@@ -189,6 +194,8 @@ int InputControler::Update(){
 			m_mouseFrame[i]=0;
 		}
 	}
+	m_mouseWheelRotVol=GetMouseWheelRotVol();
+
 	return 0;
 }
 
@@ -210,6 +217,10 @@ int InputControler::MouseGet(int MouseCode){
 		}
 	}
 	return 0;
+}
+
+int InputControler::MouseWheelGet(){
+	return m_mouseWheelRotVol;
 }
 
 void InputControler::InitInput(){
@@ -606,21 +617,35 @@ MouseButtonUI::~MouseButtonUI(){
 	DeleteGraphEX(m_graphic);
 }
 
+bool MouseButtonUI::JudgeIn()const{
+	int mouseX,mouseY;
+	GetMousePoint(&mouseX,&mouseY);
+	return (mouseX>=m_x && mouseX<m_x+m_dx && mouseY>=m_y && mouseY<m_y+m_dy);
+}
+
 bool MouseButtonUI::JudgePressMoment()const{
-	return (mouse_get(MOUSE_INPUT_LEFT)==1 && JudgePushed());
+	return (mouse_get(MOUSE_INPUT_LEFT)==1 && JudgeIn());
 }
 
 bool MouseButtonUI::JudgePushed()const{
-	int mouseX,mouseY;
-	GetMousePoint(&mouseX,&mouseY);
-	const bool inButton=(mouseX>=m_x && mouseX<m_x+m_dx && mouseY>=m_y && mouseY<m_y+m_dy);
 	const bool push=(mouse_get(MOUSE_INPUT_LEFT)>0);
-	return (push && inButton);
+	return (push && JudgeIn());
 }
 
 void MouseButtonUI::DrawButton()const{
 	//DrawBox(m_x,m_y,m_x+m_dx,m_y+m_dy,GetColor(255,255,0),TRUE);//デバッグ用
 	DrawGraph(m_x,m_y,m_graphic,TRUE);
+}
+
+void MouseButtonUI::DrawButtonRect(unsigned int color,int fillFlag,int lineThickness)const{
+	DrawBox(m_x,m_y,m_x+m_dx,m_y+m_dy,color,fillFlag);
+	//枠線の描画(DrawBox()は枠線の太さの指定ができない)
+	if(lineThickness>1){
+		DrawLine(m_x,m_y,m_x+m_dx,m_y,color,lineThickness);
+		DrawLine(m_x+m_dx,m_y,m_x+m_dx,m_y+m_dy,color,lineThickness);
+		DrawLine(m_x+m_dx,m_y+m_dy,m_x,m_y+m_dy,color,lineThickness);
+		DrawLine(m_x,m_y+m_dy,m_x,m_y,color,lineThickness);
+	}
 }
 
 void MouseButtonUI::GetButtonInfo(int *x,int *y,int *dx,int *dy)const{
@@ -636,4 +661,13 @@ void MouseButtonUI::GetButtonInfo(int *x,int *y,int *dx,int *dy)const{
 	if(dy!=nullptr){
 		*dy=m_dy;
 	}
+}
+
+void MouseButtonUI::WarpTo(int x,int y){
+	m_x=x;
+	m_y=y;
+}
+
+MouseButtonUI MouseButtonUI::CreateWithCenter(int x,int y,int dx,int dy,int graphic){
+	return MouseButtonUI(x-dx/2,y-dy/2,dx,dy,graphic);
 }

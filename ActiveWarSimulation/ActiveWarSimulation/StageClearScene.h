@@ -17,7 +17,6 @@ private:
 
 	//定数
 protected:
-	static const int bonusFontSize;
 
 	//変数
 protected:
@@ -25,6 +24,8 @@ protected:
 	int m_frame;
 	InputSingleCharStringControler m_inputCharControler;//文字入力を管理するクラス
 	ProcessKind m_nowProcess;
+	Easing m_bonusStrDY;//デフォルトの文字描画開始位置からのズレ
+	int m_bonusStrMinDY;//m_bonusStrDYの最小値
 
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
@@ -38,12 +39,17 @@ protected:
 	const int m_resultBarPic;//勝った・負けたのバーの描画ハンドル
 	const int m_scoreBarPic;//合計スコア描画領域のハンドル
 
+	//名前入力後に出てくるボタン類
+	const MouseButtonUI m_tweetButton;//ツイートするボタン
+	const MouseButtonUI m_backToStageSelectButton;//次に進むボタン
+
 	//フォント系
 	const int m_bonusFont;//ボーナス項目表示のフォント
 
 	//関数
 protected:
-	void ResisterScoreSave();
+	void ResisterScoreSave();//スコアの記録
+	void ResisterClearSave();//クリアデータの記録
 	
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了

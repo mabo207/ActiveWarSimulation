@@ -4,13 +4,13 @@
 #include"Edge.h"
 #include<algorithm>
 #include"GraphicControl.h"
-#include"ToolsLib.h"
 #include"FileRead.h"
 #include"GameScene.h"
 #include"CommonConstParameter.h"
 #include"StringBuilder.h"
 #include"FilePath.h"
 #include<optional>
+#include"StageInfoReader.h"
 
 //----------------------BattleSceneData----------------------
 const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::mapSizeX,(float)CommonConstParameter::mapSizeY);
@@ -28,11 +28,12 @@ BattleSceneData::BattleSceneData(const std::string &stageDirName,const std::stri
 	,m_stageDirName(stageDirName)
 	,m_stageTitleName(titleName)
 	,m_stageLevel(level)
+	,m_gotoCredit(false)
 	,m_turnTimerPic(LoadGraphEX(FilePath::graphicDir+"turnTimer.png"))
 	,m_orderFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
 	,m_playMode(playMode)
-	,m_mapPic(LoadGraphEX((FilePath::stageDir+std::string(stageDirName)+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
-	,m_mapBGM(LoadBGMMem(FilePath::bgmDir+"/nonfree/wild-road_loop/"))
+	,m_mapPic(LoadGraphEX((FilePath::stageDir+stageDirName+"/nonfree/map.png").c_str())),m_drawObjectShapeFlag(false)
+	,m_mapBGM(Resource::BGM::Load(StageInfoReader(stageDirName).GetBgmInfoFileName()))
 	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
 	,m_attackSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/damage.ogg").c_str()))
 	,m_healSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/recover.ogg").c_str()))
@@ -87,8 +88,7 @@ BattleSceneData::~BattleSceneData(){
 		DeleteGraphEX(m_drawOrderHelp[i]);
 	}
 	//サウンド開放
-	StopSoundMem(m_mapBGM);
-	DeleteSoundMem(m_mapBGM);
+	m_mapBGM.Delete();
 	DeleteSoundMem(m_aimchangeSound);
 	DeleteSoundMem(m_attackSound);
 	DeleteSoundMem(m_healSound);
@@ -246,8 +246,8 @@ int BattleSceneData::CalculateTurn()const{
 	return (int)(m_totalOP/Unit::BattleStatus::maxOP)+1;
 }
 
-std::shared_ptr<LatticeBattleField> BattleSceneData::CalculateLatticeBattleField()const{
-	return LatticeBattleField::Create(*this,this->m_operateUnit);
+std::shared_ptr<LatticeBattleField> BattleSceneData::CalculateLatticeBattleField(bool unitExist)const{
+	return LatticeBattleField::Create(*this,this->m_operateUnit,unitExist);
 }
 
 void BattleSceneData::ResisterSceneEndProcess(const std::function<void(void)> &func){
@@ -300,7 +300,7 @@ void BattleSceneData::DrawUnit(bool infoDrawFlag,const std::set<const Unit *> &n
 			//ウインドウに入っていない物は描画しない
 			//退却したユニット(m_fixがe_ignore)は描画しない
 			//描画しないもの(notDrawに格納されているもの)は描画しない
-			obj->DrawUnit(obj->getPos(),Vector2D(),m_fpsMesuring.GetFrame(),false,infoDrawFlag);
+			obj->DrawUnit(obj->getPos(),Vector2D(),m_fpsMesuring.GetFrame(),false,infoDrawFlag,false);
 		}
 	}
 }
@@ -418,7 +418,7 @@ void BattleSceneData::DrawOrder(const std::set<const BattleObject *> &lineDraw)c
 		}
 		//区間が見つからなかったら一番後ろということ
 		if(!flag){
-			arrowPos[j]=calDrawPoint(listsize);
+			arrowPos[j]=calDrawPoint(listsize)-Vector2D(Unit::unitCircleSize*1.5f,0.0f);//最後のものより後ろなのがわかれば良いので、少し左にズラしてよい
 			arrowPos[j].x+=(float)(j*8);//ズレさせてあげることで2矢印が完全に被る事を防ぐ
 		}
 	}

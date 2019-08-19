@@ -1,4 +1,3 @@
-{(explain),(/nonfree/tutorialOrder.png)}
 {(explain),(/nonfree/tutorialSenshi.png)}
 {(blank),(1)}
 {(explain),(/nonfree/tutorialArcher.png)}
@@ -9,3 +8,8 @@
 {(blank),(1)}
 {(explain),(/nonfree/tutorialHealer.png)}
 {(blank),(1)}
+{(explain),(/nonfree/tutorialOrder.png)}
+{(blank),(1)}
+{(explain),(/nonfree/tutorialPointing1.png)}
+{(blank),(1)}
+{(explain),(/nonfree/tutorialPointing2.png)}

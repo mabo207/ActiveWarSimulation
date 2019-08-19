@@ -1,1 +1,1 @@
-(title,—Ñ‚ÌŒP—ûê‚P),(pos,156,938)
+(title,n‚Ü‚è‚ÌX),(pos,360,859),(bgm,battle1.txt)

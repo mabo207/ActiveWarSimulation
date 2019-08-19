@@ -39,7 +39,11 @@ UnitFactory::~UnitFactory(){}
 
 std::shared_ptr<BattleObject> UnitFactory::CreateObject(Vector2D point)const{
 	//ひとまずプレイヤー側・Lv1・突撃AI・基本装備のユニットを作成する
-	return std::shared_ptr<BattleObject>(Unit::CreateMobUnit("mob",m_profession,1,point,Unit::Team::e_player,Unit::AIType::e_assult,0,{}));
+	//基本装備の決定
+	const Weapon::Kind weaponKind=EditActionSettings::ProfessionToWeaponKind(m_profession);
+	const std::string weaponName=Weapon::GetKindVecSorted(weaponKind).front()->GetResisterName();
+	//ユニットを返す(該当weaponを作成しているので二度手間な気はするけど、気にしない)
+	return std::shared_ptr<BattleObject>(Unit::CreateMobUnit("mob",m_profession,1,weaponName,point,Unit::Team::e_player,Unit::AIType::e_assult,0,{}));
 }
 
 EditPut::PosSetKind UnitFactory::VPutAction(EditPut::PosSetKind pskind,Vector2D point,EditActionSettings &settings){

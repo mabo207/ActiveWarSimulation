@@ -8,6 +8,7 @@
 #include"GeneralPurposeResource.h"
 #include"CommonConstParameter.h"
 #include"FilePath.h"
+#include"BGMManager.h"
 
 #include"StageSelectScene.h"
 #include"BattleScene.h"
@@ -25,8 +26,6 @@ std::string TitleScene::SelectItem::GetString(const Kind kind){
 		return "TUTORIAL";
 	case(e_tutorial_2):
 		return "TUTORIAL2";
-	case(e_demo):
-		return "DEMO PLAY";
 	case(e_gameFinish):
 		return "EXIT GAME";
 	}
@@ -60,36 +59,42 @@ std::shared_ptr<Shape> TitleScene::MakeHexagon(const Vector2D center,const float
 }
 
 const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={
-	Vector2D(1450.0f,790.0f)
-	,Vector2D(1530.0f,920.0f)
-	,Vector2D(1610.0f,790.0f)
-	,Vector2D(1690.0f,920.0f)
-	,Vector2D(1770.0f,790.0f)
+	Vector2D(600.0f,580.0f)
+	,Vector2D(600.0f,930.0f)
+	,Vector2D(1320.0f,580.0f)
+	,Vector2D(1320.0f,930.0f)
 };
 
 TitleScene::TitleScene()
 	:GameScene()
 	,m_backPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleScene.png"))
-	,m_itemFont(CreateFontToHandleEX("メイリオ",16,1,-1))
-	,m_bgm(LoadBGMMem(FilePath::bgmDir+"nonfree/title/"))
+	,m_itemPic(LoadGraphEX(FilePath::graphicDir+"nonfree/titleItem.png"))
+	,m_startFont(LoadFontDataToHandleEX(FilePath::fontDir+"LargePopFont.dft",3))
+	,m_bgm(Resource::BGM::Load("title.txt"))
 	,m_aimchangeSound(LoadSoundMem((FilePath::effectSoundDir+"nonfree/aimchange.ogg").c_str()))
 	,m_mousePosJustBefore(GetMousePointVector2D())
 	,m_selectItem(SelectItem::e_stageSelect)
 	,m_frame(0)
+	,m_selectLocked(true)
+	,m_gotoDemo(false)
 {
-	//当たり判定図形の用意
+	m_itemAlpha=Easing(0,60,Easing::TYPE_IN,Easing::FUNCTION_LINER,0.0);
+	m_itemAlpha.SetTarget(255,true);
+	//当たり判定図形等の用意
 	for(size_t i=0;i<SelectItem::COUNTER;i++){
 		m_hitJudgeShapeVec[i]=MakeHexagon(strPos[i],80.0f);
+		m_itemPosVec[i]=PositionControl(960,750,60,Easing::TYPE_OUT,Easing::FUNCTION_QUAD,2.0);
+		m_itemPosVec[i].SetTarget((int)strPos[i].x,(int)strPos[i].y,true);
 	}
 }
 
 TitleScene::~TitleScene(){
 	//グラフィック解放
 	DeleteGraphEX(m_backPic);
-	DeleteFontToHandleEX(m_itemFont);
+	DeleteGraphEX(m_itemPic);
+	DeleteFontToHandleEX(m_startFont);
 	//サウンド解放
-	StopSoundMem(m_bgm);
-	DeleteSoundMem(m_bgm);
+	m_bgm.Delete();
 	DeleteSoundMem(m_aimchangeSound);
 }
 
@@ -99,7 +104,10 @@ void TitleScene::InitCompletely(){
 
 void TitleScene::Activate(){
 	//bgm再生
-	PlaySoundMem(m_bgm,DX_PLAYTYPE_LOOP,TRUE);
+	if(BGMManager::s_instance.has_value()){
+		BGMManager::s_instance->PlayWithCopy(m_bgm);
+	}
+	//m_bgm.SetAndPlay(DX_PLAYTYPE_LOOP,TRUE);
 }
 
 int TitleScene::thisCalculate(){
@@ -110,64 +118,83 @@ int TitleScene::thisCalculate(){
 	const Vector2D mousePos=GetMousePointVector2D();//マウス位置
 	const Vector2D stickInput=analogjoypad_get(DX_INPUT_PAD1);//アナログスティックの傾き
 
-	//選択項目の更新
-	const size_t beforeSelectItem=m_selectItem;//効果音を鳴らすかの判定に用いる
-	if((m_mousePosJustBefore-mousePos).sqSize()>4.0f){
-		//マウスが大きく動いたら、マウスの位置をもとに更新
+	if(m_selectLocked){
+		//クリックするまで待つ場合
+		if(keyboard_get(KEY_INPUT_Z)==1	|| mouse_get(MOUSE_INPUT_LEFT)==1){
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
+			m_selectLocked=false;
+		} else if(m_frame>1800){
+			//30秒放置していると、デモ画面に進む
+			m_gotoDemo=true;
+		}
+	}else{
+		//項目選択ができる時
+		//選択項目の描画透明度を更新
+		m_itemAlpha.Update();
+		//描画位置の更新
 		for(size_t i=0;i<SelectItem::COUNTER;i++){
-			if(m_hitJudgeShapeVec[i]->VJudgePointInsideShape(mousePos)){
-				//図形全てに点の内部判定を行い、内部にあった図形に対応する項目に変更する。
-				//どの図形にも対応しなかったら変更はしない
-				m_selectItem=static_cast<SelectItem::Kind>(i);//変更
-				break;
+			m_itemPosVec[i].Update();
+		}
+		//選択項目の更新
+		const size_t beforeSelectItem=m_selectItem;//効果音を鳴らすかの判定に用いる
+		if((m_mousePosJustBefore-mousePos).sqSize()>4.0f){
+			//マウスが大きく動いたら、マウスの位置をもとに更新
+			for(size_t i=0;i<SelectItem::COUNTER;i++){
+				if(m_hitJudgeShapeVec[i]->VJudgePointInsideShape(mousePos)){
+					//図形全てに点の内部判定を行い、内部にあった図形に対応する項目に変更する。
+					//どの図形にも対応しなかったら変更はしない
+					m_selectItem=static_cast<SelectItem::Kind>(i);//変更
+					break;
+				}
+			}
+		} else{
+			//そうでない場合は、キー入力で行う
+			if(keyboard_get(KEY_INPUT_UP)==1 || keyboard_get(KEY_INPUT_DOWN)==1){
+				switch(m_selectItem){
+				case(SelectItem::e_stageSelect):
+					m_selectItem=SelectItem::e_tutorial;
+					break;
+				case(SelectItem::e_tutorial):
+					m_selectItem=SelectItem::e_stageSelect;
+					break;
+				case(SelectItem::e_tutorial_2):
+					m_selectItem=SelectItem::e_gameFinish;
+					break;
+				case(SelectItem::e_gameFinish):
+					m_selectItem=SelectItem::e_tutorial_2;
+					break;
+				}
+			} else if(keyboard_get(KEY_INPUT_LEFT)==1 || keyboard_get(KEY_INPUT_RIGHT)==1){
+				switch(m_selectItem){
+				case(SelectItem::e_stageSelect):
+					m_selectItem=SelectItem::e_tutorial_2;
+					break;
+				case(SelectItem::e_tutorial):
+					m_selectItem=SelectItem::e_gameFinish;
+					break;
+				case(SelectItem::e_tutorial_2):
+					m_selectItem=SelectItem::e_stageSelect;
+					break;
+				case(SelectItem::e_gameFinish):
+					m_selectItem=SelectItem::e_tutorial;
+					break;
+				}
 			}
 		}
-	}
-/*	else if(stickInput!=Vector2D()){
-		//アナログスティックを動かしていれば、その向きをもとに更新(やめた、不安定すぎる)
-		Vector2D backVec,nextVec;//項目がもどる・すすむ入力方向
-		if(m_selectItem==0){
-			//先頭項目の時は、先頭項目と終端項目を結ぶベクトルの逆方向をbackVecとする
-			backVec=-(m_hitJudgeShapeVec[(m_selectItem+SelectItem::COUNTER-1)%SelectItem::COUNTER]->GetPosition()-m_hitJudgeShapeVec[m_selectItem]->GetPosition());
-		} else{
-			backVec=m_hitJudgeShapeVec[(m_selectItem+SelectItem::COUNTER-1)%SelectItem::COUNTER]->GetPosition()-m_hitJudgeShapeVec[m_selectItem]->GetPosition();
+		if(beforeSelectItem!=m_selectItem){
+			//選択項目の変更が起きているならば効果音再生
+			PlaySoundMem(m_aimchangeSound,DX_PLAYTYPE_BACK,TRUE);
 		}
-		if(m_selectItem+1==SelectItem::COUNTER){
-			//終端項目の時は、終端項目と先端項目を結ぶベクトルの逆方向をnextVecとする
-			nextVec=-(m_hitJudgeShapeVec[(m_selectItem+1)%SelectItem::COUNTER]->GetPosition()-m_hitJudgeShapeVec[m_selectItem]->GetPosition());
-		} else{
-			nextVec=m_hitJudgeShapeVec[(m_selectItem+1)%SelectItem::COUNTER]->GetPosition()-m_hitJudgeShapeVec[m_selectItem]->GetPosition();
-		}
-		//入力方向がbackVec,nextVecに近い方向かどうかで入力を決める
-		//許容差は60度
-		if(stickInput.dot(backVec)/stickInput.size()/backVec.size()>(float)std::cos(M_PI/3)){
-			m_selectItem=static_cast<SelectItem::Kind>((m_selectItem+SelectItem::COUNTER-1)%SelectItem::COUNTER);
-		} else if(stickInput.dot(nextVec)/stickInput.size()/nextVec.size()>(float)std::cos(M_PI/3)){
-			m_selectItem=static_cast<SelectItem::Kind>((m_selectItem+1)%SelectItem::COUNTER);
-		}
-	}
-//*/
-	else{
-		//そうでない場合は、キー入力で行う
-		if(keyboard_get(KEY_INPUT_UP)==1 || keyboard_get(KEY_INPUT_LEFT)==1){
-			m_selectItem=static_cast<SelectItem::Kind>((m_selectItem+SelectItem::COUNTER-1)%SelectItem::COUNTER);
-		} else if(keyboard_get(KEY_INPUT_DOWN)==1 || keyboard_get(KEY_INPUT_RIGHT)==1){
-			m_selectItem=static_cast<SelectItem::Kind>((m_selectItem+1)%SelectItem::COUNTER);
-		}
-	}
-	if(beforeSelectItem!=m_selectItem){
-		//選択項目の変更が起きているならば効果音再生
-		PlaySoundMem(m_aimchangeSound,DX_PLAYTYPE_BACK,TRUE);
-	}
 
-	//遷移入力処理
-	if(keyboard_get(KEY_INPUT_Z)==1
-		|| (mouse_get(MOUSE_INPUT_LEFT)==1 && m_hitJudgeShapeVec[m_selectItem]->VJudgePointInsideShape(mousePos))
-		)
-	{
-		//決定キー入力か、ボタンの上で左クリック
-		PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
-		return m_selectItem;
+		//遷移入力処理
+		if(keyboard_get(KEY_INPUT_Z)==1
+			|| (mouse_get(MOUSE_INPUT_LEFT)==1 && m_hitJudgeShapeVec[m_selectItem]->VJudgePointInsideShape(mousePos))
+			)
+		{
+			//決定キー入力か、ボタンの上で左クリック
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
+			return m_selectItem;
+		}
 	}
 
 	//マウス位置の更新
@@ -188,10 +215,6 @@ int TitleScene::Calculate(){
 		//m_nextScene=std::shared_ptr<GameScene>(new StageSelectScene(m_sharedData));
 		//break;
 		return 1;
-	case(SelectItem::e_demo):
-		//デモ画面へ
-		return 1;
-		break;
 	case(SelectItem::e_tutorial):
 		//チュートリアル画面へ
 		return 1;
@@ -201,7 +224,10 @@ int TitleScene::Calculate(){
 		return 1;
 		break;
 	case(SelectItem::COUNTER):
-		//現状維持
+		//基本的に現状維持
+		if(m_gotoDemo){
+			return 1;//m_gotoDemoがtrueになった場合だけ特殊な遷移
+		}
 		break;
 	default:
 		break;
@@ -213,37 +239,46 @@ void TitleScene::Draw()const{
 	//背景の描画
 	DrawGraph(0,0,m_backPic,TRUE);
 	//バージョン情報
-	const std::string VERSION_STRING="- GAME^3 9th Trial Edition -";
-	const int verX=CommonConstParameter::gameResolutionX-GetDrawStringWidthToHandle(VERSION_STRING.c_str(),VERSION_STRING.size(),m_itemFont);
-	const int verY=CommonConstParameter::gameResolutionY-GetFontSizeToHandle(m_itemFont);
-	DrawStringToHandle(verX,verY,VERSION_STRING.c_str(),GetColor(0,0,0),m_itemFont);
-	//項目の描画
-	for(size_t i=0;i<SelectItem::COUNTER;i++){
-		unsigned int inColor,frameColor,fontColor;
-		int strDy=0;
-		if(i!=m_selectItem){
-			inColor=GetColor(224,224,224);
-			frameColor=GetColor(32,32,32);
-			fontColor=GetColor(0,0,0);
-		} else{
-			inColor=GetColor(32,32,32);
-			frameColor=GetColor(224,224,224);
-			fontColor=GetColor(255,255,255);
-			strDy=std::abs((int)(std::cos(M_PI*2*m_frame/120)*5.0));
+	const std::string VERSION_STRING="- ver 1.0 -";
+	const int verX=CommonConstParameter::gameResolutionX-GetDrawStringWidthToHandle(VERSION_STRING.c_str(),VERSION_STRING.size(),GeneralPurposeResource::gothicMiddleFont);
+	const int verY=CommonConstParameter::gameResolutionY-GetFontSizeToHandle(GeneralPurposeResource::gothicMiddleFont);
+	DrawStringToHandle(verX,verY,VERSION_STRING.c_str(),GetColor(0,0,0),GeneralPurposeResource::gothicMiddleFont);
+	if(m_selectLocked){
+		//文字の描画
+		int mode,pal;
+		GetDrawBlendMode(&mode,&pal);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,120+(int)(135*std::cos(M_PI*2*m_frame/120)));
+		DrawStringCenterBaseToHandle(960,800,"CLICK OR PRESS TO START",GetColor(255,255,255),m_startFont,true,GetColor(0,0,0));
+		SetDrawBlendMode(mode,pal);
+	}else{
+		//項目の描画
+		int mode,pal;
+		GetDrawBlendMode(&mode,&pal);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,m_itemAlpha.GetX());
+		for(size_t i=0;i<SelectItem::COUNTER;i++){
+			const unsigned int fontColor=GetColor(0,0,0);
+			double rotate=0.0;
+			int strDy=0;
+			double exRate=1.0;
+			if(i==m_selectItem){
+				rotate=M_PI*2*m_frame/120;
+				exRate=1.1;
+				strDy=(int)(std::cos(rotate)*5.0);
+			}
+			DrawRotaGraph(m_itemPosVec[i].GetX(),m_itemPosVec[i].GetY(),exRate,rotate,m_itemPic,TRUE);
+			DrawStringCenterBaseToHandle(m_itemPosVec[i].GetX(),m_itemPosVec[i].GetY()+strDy,SelectItem::GetString(static_cast<SelectItem::Kind>(i)).c_str(),fontColor,GeneralPurposeResource::gothicMiddleFont,true);
 		}
-		m_hitJudgeShapeVec[i]->Draw(Vector2D(),inColor,TRUE);
-		m_hitJudgeShapeVec[i]->Draw(Vector2D(),frameColor,FALSE,3.0f);
-		DrawStringCenterBaseToHandle((int)strPos[i].x,(int)strPos[i].y+strDy,SelectItem::GetString(static_cast<SelectItem::Kind>(i)).c_str(),fontColor,m_itemFont,true);
+		SetDrawBlendMode(mode,pal);
 	}
 }
 
 std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
-	if(m_selectItem==SelectItem::e_stageSelect){
-		const auto stageselect=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
-		return CreateFadeOutInSceneCompletely(thisSharedPtr,stageselect,15,15);
-	} else if(m_selectItem==SelectItem::e_demo){
+	if(m_gotoDemo){
 		const auto demo=std::make_shared<DemoScene::DemoSceneFactory>();
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,demo,15,15);
+	} else if(m_selectItem==SelectItem::e_stageSelect){
+		const auto stageselect=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,stageselect,15,15);
 	} else if(m_selectItem==SelectItem::e_tutorial){
 		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,tutorial,15,15);

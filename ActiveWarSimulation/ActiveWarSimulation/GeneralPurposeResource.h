@@ -13,6 +13,7 @@ public:
 
 	//ƒtƒHƒ“ƒg
 	static int popLargeFont;
+	static int gothicMiddleFont;
 
 	//‰¹
 	static int decideSound;

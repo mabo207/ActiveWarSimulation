@@ -116,6 +116,8 @@ std::string Unit::AIType::GetName(Kind type){
 		return "intercept";
 	case(e_linkageIntercept):
 		return "linkintercept";
+	case(e_wait):
+		return "wait";
 	}
 	return "";
 }
@@ -129,15 +131,14 @@ const float Unit::rivalInpenetratableCircleSize=Unit::unitCircleSize*2.0f;
 const float Unit::reduceStartActionCost=50.0f;//定数値なのでヘッダー内初期化と同じ順番になり、ここで初期化してもUnit::BattleStatus::maxOPの初期化より先に処理が行われることになる。
 const float Unit::attackCost=50.0f;
 
-const int Unit::hpFontSize=20;
+const int Unit::hpFontSize=24;
 
 Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D position,int gHandle,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(position,unitCircleSize,Shape::Fix::e_static)),gHandle)
 	,m_baseStatus(baseStatus)
 	,m_battleStatus(100,Unit::BattleStatus::maxOP,team,aitype,aiGroup,aiLinkage,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
-//	,m_hpFont(CreateFontToHandleEX("04かんじゅくゴシック",hpFontSize,2,DX_FONTTYPE_EDGE,-1,2))
-	,m_hpFont(LoadFontDataToHandleEX(FilePath::fontDir+"UnitHPFont.dft",2))
+	,m_hpFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
 {
 	//テスト用のコンストラクタ
 	m_battleStatus.HP=m_baseStatus.maxHP;
@@ -227,7 +228,9 @@ void Unit::DrawMoveInfo(Vector2D adjust)const{
 }
 
 void Unit::DrawMoveInfo(Vector2D point,Vector2D adjust)const{
-	DrawMoveInfo(GetMoveDistance(),point,adjust,GetColor(0,255,255),GetColor(64,192,192));
+	const unsigned int inColor=m_battleStatus.team==Team::e_player?GetColor(51,251,255):GetColor(255,150,231);
+	const unsigned int outColor=m_battleStatus.team==Team::e_player?GetColor(41,192,192):inColor;
+	DrawMoveInfo(GetMoveDistance(),point,adjust,inColor,outColor);
 }
 
 void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned int inColor,unsigned int outColor)const{
@@ -235,15 +238,9 @@ void Unit::DrawMoveInfo(float distance,Vector2D point,Vector2D adjust,unsigned i
 	GetDrawArea(&rect);
 	SetDrawArea(0,0,CommonConstParameter::mapSizeX,CommonConstParameter::mapSizeY);
 	Vector2D pos=point-adjust;
-	//ユニットの移動限界距離を水色に描画
+	//ユニットの移動限界距離をinColor,outColorの円弧で描画
 	DrawCircleAA(pos.x,pos.y,distance,100,outColor,FALSE,3.0f);//枠
 	DrawCircleAA(pos.x,pos.y,distance,100,inColor,FALSE,1.0f);//枠
-	/*(仕様消滅のためコメントアウト)
-	//ユニットの攻撃可能な移動限界距離を水色で描画(攻撃可能な場合のみ)
-	if((ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))>=0.0f){
-	DrawCircleAA(pos.x,pos.y,(ConsumeOPVirtualByCost(m_battleStatus.weapon->GetCost()))*m_baseStatus.move,100,DxLib::GetColor(0,255,255),FALSE);//枠
-	}
-	//*/
 	//描画範囲を元に戻す
 	SetDrawArea(rect.left,rect.top,rect.right,rect.bottom);
 }
@@ -253,7 +250,7 @@ void Unit::DrawMaxMoveInfo(Vector2D adjust)const{
 }
 
 void Unit::DrawMaxMoveInfo(Vector2D point,Vector2D adjust)const{
-	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost)),point,adjust,GetColor(0,128,255),GetColor(64,128,192));
+	DrawMoveInfo(GetMoveDistance(BattleStatus::maxOP-CalculateConsumeOP(reduceStartActionCost)),point,adjust,Unit::Team::GetColor(m_battleStatus.team,128,255,255,255),Unit::Team::GetColor(m_battleStatus.team,128,220,220,220));//キャラの中の色で塗る
 }
 
 void Unit::DrawHPGage(Vector2D adjust)const{
@@ -336,23 +333,41 @@ void Unit::DrawFacePic(Vector2D point)const{
 	DrawCircle(x,y,r,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//背景の枠の描画(黒を25%混ぜる)
 }
 
-void Unit::DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const{
-	DrawUnit(getPos(),adjust,frame,animationFlag,infoDrawFlag);
+void Unit::DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const{
+	DrawUnit(getPos(),adjust,frame,animationFlag,infoDrawFlag,actionRangeDraw);
 }
 
-void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag)const{
+void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const{
 	Vector2D pos=point+adjust;//描画位置
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
+	//UIの表示領域の設定
+	RECT rect;
+	GetDrawArea(&rect);
+	SetDrawArea(0,0,CommonConstParameter::mapSizeX,CommonConstParameter::mapSizeY);
+	//UIの表示
 	if(infoDrawFlag){
 		//アクションの効果範囲を半透明(弱)で描画
 		//ひとまず短射程で描画本来は武器クラスのDraw関数を使うのが望ましい。
-		if(GetFix()==Shape::Fix::e_dynamic){
-			//dynamicなキャラのみアクション範囲を表示。恐らく移動しているキャラのみ
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
-			DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),TRUE);//面
-			SetDrawBlendMode(mode,pal);
-			DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,Team::GetColor(m_battleStatus.team),FALSE);//枠
+		if(actionRangeDraw){
+			if(animationFlag){
+				//操作キャラの攻撃範囲は枠をつけてユニットチーム色で表現
+				const unsigned int color=Team::GetColor(m_battleStatus.team);
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
+				DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,color,TRUE);//面
+				SetDrawBlendMode(mode,pal);
+				DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,color,FALSE);//枠
+			} else{
+				//操作していないけども攻撃範囲を表示したい時は黄色点滅で表現
+				//const unsigned int color=Team::GetColor(m_battleStatus.team);
+				const unsigned int color=GetColor(128,128,64);
+				const int alpha=(int)((std::sin(frame*0.05)+1.0)*0.5*64);
+				//const int alpha=32;
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA,alpha);
+				DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,color,TRUE);//面
+				SetDrawBlendMode(mode,pal);
+				//DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,color,FALSE);//枠
+			}
 		}
 		//ユニットの当たり判定図形を描画
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
@@ -360,7 +375,6 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 		SetDrawBlendMode(mode,pal);
 		GetHitJudgeShape()->Draw(point,adjust,Team::GetColor(m_battleStatus.team),FALSE);//枠
 		//ユニット自身の当たり判定の描画
-//		SetDrawBlendMode(DX_BLENDMODE_ALPHA,64);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,255);
 		m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//面
 		m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//枠(黒を25%混ぜる)
@@ -373,6 +387,8 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 		}
 		SetDrawBlendMode(mode,pal);
 	}
+	//描画範囲を元に戻す
+	SetDrawArea(rect.left,rect.top,rect.right,rect.bottom);
 	//アニメーションパラメータの設定
 	int ux=(int)(pos.x),uy=(int)(pos.y);
 	int cx,cy;
@@ -427,7 +443,7 @@ Shape::Fix::Kind Unit::SetFix(Shape::Fix::Kind fix)const{
 }
 
 void Unit::VDraw(Vector2D point,Vector2D adjust)const{
-	DrawUnit(point,adjust,0,false,true);
+	DrawUnit(point,adjust,0,false,true,false);
 }
 
 void Unit::VHitProcess(const BattleObject *potherobj){
@@ -438,35 +454,50 @@ std::shared_ptr<BattleObject> Unit::VCopy()const{
 	return std::shared_ptr<BattleObject>(new Unit(*this));
 }
 
-Unit *Unit::CreateMobUnit(std::string name,Profession::Kind profession,int lv,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage){
+Unit *Unit::CreateMobUnit(const std::string &name,Profession::Kind profession,int lv,const std::string &weaponName,Vector2D position,Team::Kind team,AIType::Kind aitype,int aiGroup,std::set<int> aiLinkage){
 	BaseStatus baseStatus;
-	std::shared_ptr<Weapon> weapon;
+	std::shared_ptr<Weapon> weapon=Weapon::GetWeapon(weaponName);
 	int gHandle=-1;
 	switch(profession){
 	case(Profession::e_soldier):
-		baseStatus=BaseStatus(name,profession,lv,20+(int)(lv*0.8),6+(int)(lv*0.5),5+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),5+(int)(lv*0.5),6);
-		weapon=Weapon::GetWeapon("鉄の剣");
-		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/soldier.png");
+		baseStatus=BaseStatus(name,profession,lv,21+(int)(lv*0.8),7+(int)(lv*0.5),6+(int)(lv*0.45),2+(int)(lv*0.1),4+(int)(lv*0.4),6);
+		if(team==Team::e_player){
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/soldier_1P.png");
+		} else{
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/soldier_2P.png");
+		}
 		break;
 	case(Profession::e_archer):
-		baseStatus=BaseStatus(name,profession,lv,18+(int)(lv*0.75),5+(int)(lv*0.45),4+(int)(lv*0.4),2+(int)(lv*0.1),4+(int)(lv*0.4),3+(int)(lv*0.3),6);
-		weapon=Weapon::GetWeapon("鉄の弓");
-		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/archer.png");
+		baseStatus=BaseStatus(name,profession,lv,19+(int)(lv*0.75),6+(int)(lv*0.45),5+(int)(lv*0.4),2+(int)(lv*0.1),5+(int)(lv*0.45),6);
+		if(team==Team::e_player){
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/archer_1P.png");
+		} else{
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/archer_2P.png");
+		}
 		break;
 	case(Profession::e_armer):
-		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),7+(int)(lv*0.6),7+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),1+(int)(lv*0.2),3);
-		weapon=Weapon::GetWeapon("鉄の槍");
-		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/armerknight.png");
+		baseStatus=BaseStatus(name,profession,lv,25+(int)(lv*0.9),8+(int)(lv*0.6),8+(int)(lv*0.6),0+(int)(lv*0.1),0+(int)(lv*0.2),3);
+		if(team==Team::e_player){
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/armerknight_1P.png");
+		} else{
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/armerknight_2P.png");
+		}
 		break;
 	case(Profession::e_mage):
-		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),6+(int)(lv*0.45),5+(int)(lv*0.5),4);
-		weapon=Weapon::GetWeapon("ファイアーの書");
-		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/mage.png");
+		baseStatus=BaseStatus(name,profession,lv,16+(int)(lv*0.6),1+(int)(lv*0.1),2+(int)(lv*0.3),7+(int)(lv*0.6),6+(int)(lv*0.5),4);
+		if(team==Team::e_player){
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/mage_1P.png");
+		} else{
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/mage_2P.png");
+		}
 		break;
 	case(Profession::e_healer):
-		baseStatus=BaseStatus(name,profession,lv,13+(int)(lv*0.5),0+(int)(lv*0.1),1+(int)(lv*0.2),6+(int)(lv*0.5),7+(int)(lv*0.5),4+(int)(lv*0.4),6);
-		weapon=Weapon::GetWeapon("ヒールの杖");
-		gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/healer.png");
+		baseStatus=BaseStatus(name,profession,lv,14+(int)(lv*0.5),0+(int)(lv*0.1),2+(int)(lv*0.3),6+(int)(lv*0.5),9+(int)(lv*0.65),6);
+		if(team==Team::e_player){
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/healer_1P.png");
+		} else{
+			gHandle=LoadGraphEX(FilePath::graphicDir+"nonfree/healer_2P.png");
+		}
 		break;
 	}
 	return new Unit(baseStatus,weapon,position,gHandle,team,aitype,aiGroup,aiLinkage);
@@ -495,6 +526,7 @@ Unit *Unit::CreateUnitFromBuilder(StringBuilder &unitdata){
 		std::optional<Vector2D> pos;
 		std::optional<int> lv;
 		std::optional<Unit::Profession::Kind> prof;
+		std::optional<std::string> weaponName;
 		std::optional<Unit::Team::Kind> team;
 		std::optional<Unit::AIType::Kind> aitype;
 		std::optional<int> aiGroup;
@@ -513,6 +545,8 @@ Unit *Unit::CreateUnitFromBuilder(StringBuilder &unitdata){
 						prof=Unit::Profession::link(std::stoi(sb.m_vec[1].GetString().c_str()));
 					} else if(sb.m_vec[0].GetString()=="lv" && sb.m_vec.size()>=2){
 						lv=std::stoi(sb.m_vec[1].GetString().c_str());
+					} else if(sb.m_vec[0].GetString()=="weapon" && sb.m_vec.size()>=2){
+						weaponName=sb.m_vec[1].GetString();
 					} else if(sb.m_vec[0].GetString()=="pos" && sb.m_vec.size()>=3){
 						pos=Vector2D((float)std::stoi(sb.m_vec[1].GetString().c_str()),(float)std::stoi(sb.m_vec[2].GetString().c_str()));
 					} else if(sb.m_vec[0].GetString()=="team" && sb.m_vec.size()>=2){
@@ -538,9 +572,9 @@ Unit *Unit::CreateUnitFromBuilder(StringBuilder &unitdata){
 			}
 		}
 		//各値からユニットを格納
-		if(name && prof && lv && pos && team && aiGroup && aitype){
+		if(name && prof && lv && weaponName && pos && team && aiGroup && aitype){
 			//設定必須である項目が設定されているか
-			Unit * const pu=Unit::CreateMobUnit(name.value(),prof.value(),lv.value(),pos.value(),team.value(),aitype.value(),aiGroup.value(),aiLinkage);
+			Unit * const pu=Unit::CreateMobUnit(name.value(),prof.value(),lv.value(),weaponName.value(),pos.value(),team.value(),aitype.value(),aiGroup.value(),aiLinkage);
 			//設定任意である項目の設定
 			if(initHP && initHP.value()>0 && initHP.value()<pu->GetBattleStatus().HP){
 				//HPが0以下だったり最大HPより大きくなったりしないようにする
