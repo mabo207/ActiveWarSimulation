@@ -9,6 +9,8 @@
 #include"FinishLog.h"
 #include"InitLog.h"
 
+#include"ArcherAttackDistance.h"
+
 //--------------ScoreObserver::Bonus-----------------
 ScoreObserver::Bonus::Bonus(const std::string &explain,int score)
 	:m_score(score)
@@ -767,7 +769,7 @@ ScoreObserver::ScoreObserver()
 	,m_cancelCount(0)
 	,m_logList()
 	,m_latticeBonusData()
-	,m_submission()
+	,m_submission(std::shared_ptr<SubmissionRuleBase>(new ArcherAttackDistance()))
 {}
 
 ScoreObserver::~ScoreObserver(){}
