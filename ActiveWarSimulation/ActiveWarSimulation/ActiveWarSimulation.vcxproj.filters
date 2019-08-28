@@ -354,6 +354,9 @@
     <ClCompile Include="ArcherAttackDistance.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\Rule</Filter>
     </ClCompile>
+    <ClCompile Include="MageAttackingOpponent.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\Rule</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -552,6 +555,9 @@
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission</Filter>
     </ClInclude>
     <ClInclude Include="ArcherAttackDistance.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\Rule</Filter>
+    </ClInclude>
+    <ClInclude Include="MageAttackingOpponent.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\Rule</Filter>
     </ClInclude>
   </ItemGroup>
