@@ -2,8 +2,13 @@
 #define DEF_SUBMISSIONRULEBASE_H
 
 #include<string>
+#include<memory>
+#include<vector>
+
+#include"LogElement.h"
 
 struct BattleSceneData;
+class Unit;
 
 //サブミッション評価時のルールを表現するための基底クラス
 class SubmissionRuleBase{
@@ -18,6 +23,8 @@ public:
 
 protected:
 	SubmissionRuleBase()=default;
+	//よく評価に用いられる情報を計算する関数
+	float CalculateRouteDistance(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const Unit *operatedUnit,const Unit *aimedUnit)const;//operatedUnitからaimedUnitまでの経路距離を計算する
 };
 
 #endif // !DEF_SUBMISSIONRULEBASE_H

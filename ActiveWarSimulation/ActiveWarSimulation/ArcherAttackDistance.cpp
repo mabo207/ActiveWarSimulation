@@ -21,17 +21,9 @@ int ArcherAttackDistance::RubricEvaluate(const BattleSceneData * const battleDat
 		//直線距離を求める
 		const float directDistance=(attackLog->GetOperateUnitData().pos-attackLog->GetAimedUnitData().pos).size();
 		//被弾ユニット→行動ユニットへのルート距離を求める
-		std::shared_ptr<LatticeBattleField> latticeField=battleData->CalculateLatticeBattleField(false);
 		const Unit *operatedUnit=attackLog->GetOperateUnitData().punit;
 		const Unit *aimedUnit=attackLog->GetAimedUnit();
-		for(const LogElement::UnitLogData &logData:attackLog->m_unitDataList){
-			//ユニットの格子点追加(被弾ユニットが動く事を想定している)
-			if(logData.punit!=operatedUnit && logData.punit!=aimedUnit){
-				latticeField->BecomeImpassibleLattice(logData.punit,aimedUnit->GetBattleStatus().team);
-			}
-		}
-		std::vector<float> distVec=latticeField->CalculateRouteDistance(aimedUnit->getPos(),{operatedUnit->getPos()});
-		const float routeDistance=distVec.front();
+		const float routeDistance=CalculateRouteDistance(battleData,attackLog->m_unitDataList,operatedUnit,aimedUnit);
 		//評価(高い方から判定していく)
 		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance()){
 			evaluate=3;
