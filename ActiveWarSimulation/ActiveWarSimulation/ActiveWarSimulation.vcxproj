@@ -156,6 +156,7 @@
     <ClCompile Include="..\StageEditor\BattleObject.cpp" />
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
     <ClCompile Include="ArcherAttackDistance.cpp" />
+    <ClCompile Include="ArmerPosition.cpp" />
     <ClCompile Include="AttackLog.cpp" />
     <ClCompile Include="BGM.cpp" />
     <ClCompile Include="BGMManager.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="..\StageEditor\BattleObject.h" />
     <ClInclude Include="..\StageEditor\Terrain.h" />
     <ClInclude Include="ArcherAttackDistance.h" />
+    <ClInclude Include="ArmerPosition.h" />
     <ClInclude Include="AttackLog.h" />
     <ClInclude Include="BGM.h" />
     <ClInclude Include="BGMManager.h" />

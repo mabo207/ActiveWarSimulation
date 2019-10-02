@@ -11,6 +11,7 @@
 
 #include"ArcherAttackDistance.h"
 #include"MageAttackingOpponent.h"
+#include"ArmerPosition.h"
 
 //--------------ScoreObserver::Bonus-----------------
 ScoreObserver::Bonus::Bonus(const std::string &explain,int score)
@@ -770,7 +771,7 @@ ScoreObserver::ScoreObserver()
 	,m_cancelCount(0)
 	,m_logList()
 	,m_latticeBonusData()
-	,m_submission(std::shared_ptr<SubmissionRuleBase>(new MageAttackingOpponent()))
+	,m_submission(std::shared_ptr<SubmissionRuleBase>(new ArmerPosition()))
 {}
 
 ScoreObserver::~ScoreObserver(){}

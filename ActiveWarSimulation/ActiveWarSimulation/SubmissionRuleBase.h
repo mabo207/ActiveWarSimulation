@@ -25,6 +25,7 @@ protected:
 	SubmissionRuleBase()=default;
 	//‚æ‚­•]‰¿‚É—p‚¢‚ç‚ê‚éî•ñ‚ğŒvZ‚·‚éŠÖ”
 	float CalculateRouteDistance(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const Unit *operatedUnit,const Unit *aimedUnit)const;//operatedUnit‚©‚çaimedUnit‚Ü‚Å‚ÌŒo˜H‹——£‚ğŒvZ‚·‚é
+	bool JudgeAttackable(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const Unit * operatedUnit,const Unit *aimedUnit)const;//operatedUnit‚ªaimedUnit‚ğŸ‚Ìs“®‚ÅUŒ‚‚Å‚«‚é‚©‚Ç‚¤‚©”»’è‚·‚é
 };
 
 #endif // !DEF_SUBMISSIONRULEBASE_H
