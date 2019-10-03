@@ -24,8 +24,8 @@ bool SubmissionRuleBase::JudgeAttackable(const BattleSceneData * const battleDat
 	//格子点の侵入可否情報の計算、ユニットは情報に影響を与えない設定なので、battleData->m_operatedUnitは誰でも問題ない
 	std::shared_ptr<LatticeBattleField> latticeField=battleData->CalculateLatticeBattleField(false);
 	for(const LogElement::UnitLogData &logData:unitDataList){
-		//ユニットによる格子点侵入不可情報を追加(被弾ユニットが動く事を想定している)
-		if(logData.punit!=operatedUnit && logData.punit!=aimedUnit){
+		//ユニットによる格子点侵入不可情報を追加
+		if(logData.punit!=operatedUnit){
 			latticeField->BecomeImpassibleLattice(logData.punit,operatedUnit->GetBattleStatus().team);
 		}
 	}
