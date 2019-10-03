@@ -6,6 +6,7 @@
 #include<vector>
 
 #include"LogElement.h"
+#include"LatticeBattleField.h"
 
 struct BattleSceneData;
 class Unit;
@@ -26,6 +27,8 @@ protected:
 	//‚æ‚­•]‰¿‚É—p‚¢‚ç‚ê‚éî•ñ‚ğŒvZ‚·‚éŠÖ”
 	float CalculateRouteDistance(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const Unit *operatedUnit,const Unit *aimedUnit)const;//operatedUnit‚©‚çaimedUnit‚Ü‚Å‚ÌŒo˜H‹——£‚ğŒvZ‚·‚é
 	bool JudgeAttackable(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const Unit * operatedUnit,const Unit *aimedUnit)const;//operatedUnit‚ªaimedUnit‚ğŸ‚Ìs“®‚ÅUŒ‚‚Å‚«‚é‚©‚Ç‚¤‚©”»’è‚·‚é
+	std::vector<bool> JudgeAttackableList(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const Unit * operatedUnit,const std::vector<const Unit *> &aimedUnitList)const;//aimedUnit‚ª•¡”‚É‚µ‚½Šg’£”Å
+	std::vector<bool> JudgeAttackableList(const std::shared_ptr<LatticeBattleField> &latticeField,const Unit * operatedUnit,const std::vector<const Unit *> &aimedUnitList)const;//Šiq“_‚ÌN“ü‰Â”Ûî•ñ‚¾‚¯ŒÄ‚Ño‚µ‘¤‚Å©—R‚ÉŒˆ‚ß‚ç‚ê‚éBbattleData‚à“n‚·•K—v‚ª‚È‚­‚È‚éB
 };
 
 #endif // !DEF_SUBMISSIONRULEBASE_H
