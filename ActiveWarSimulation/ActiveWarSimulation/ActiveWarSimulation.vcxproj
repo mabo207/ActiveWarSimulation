@@ -169,6 +169,7 @@
     <ClCompile Include="FilePath.cpp" />
     <ClCompile Include="FinishLog.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="HealerPosition.cpp" />
     <ClCompile Include="InitLog.cpp" />
     <ClCompile Include="LatticeBattleField.cpp" />
     <ClCompile Include="LevelSelectUIInStageSelect.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FinishLog.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="HealerPosition.h" />
     <ClInclude Include="LatticeBattleField.h" />
     <ClInclude Include="LevelSelectUIInStageSelect.h" />
     <ClInclude Include="LoadingScene.h" />
