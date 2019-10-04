@@ -17,29 +17,30 @@ int ProtectFriend::RubricEvaluate(const BattleSceneData * const battleData)const
 	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(battleData->m_scoreObserver->GetLatestLog());
 	const std::shared_ptr<const WaitLog> waitLog=std::dynamic_pointer_cast<const WaitLog>(battleData->m_scoreObserver->GetLatestLog());
 	const std::vector<LogElement::UnitLogData> *pUnitLogDataList=nullptr;
-	const Unit *operatedUnit=nullptr;
+	std::function<LogElement::UnitLogData()> getOperatedUnitData;
 	if(attackLog){
 		pUnitLogDataList=&attackLog->m_unitDataList;
-		operatedUnit=attackLog->GetOperateUnitData().punit;
+		getOperatedUnitData=[attackLog](){return attackLog->GetOperateUnitData();};
 	} else if(waitLog){
 		pUnitLogDataList=&waitLog->m_unitDataList;
-		operatedUnit=waitLog->GetOperateUnitData().punit;
+		getOperatedUnitData=[waitLog](){return waitLog->GetOperateUnitData();};
 	}
 	int evaluate;
-	if(pUnitLogDataList==nullptr || operatedUnit==nullptr){
+	if(pUnitLogDataList==nullptr){
 		//ここに来ることはないはずだが、一応エラー処理
 		evaluate=-1;
 	} else{
 		//全ての敵に対して、味方後衛ユニットへの攻撃可否判定をする
+		LogElement::UnitLogData operatedUnit=getOperatedUnitData();
 		//後衛ユニット一覧の構築
-		std::vector<const Unit *> friendBackUnit;
+		std::vector<LogElement::UnitLogData> friendBackUnit;
 		for(const LogElement::UnitLogData &logData:*pUnitLogDataList){
 			if(logData.punit->GetBattleStatus().team==Unit::Team::e_player){
 				switch(logData.punit->GetBaseStatus().profession){
 				case(Unit::Profession::e_archer):
 				case(Unit::Profession::e_mage):
 				case(Unit::Profession::e_healer):
-					friendBackUnit.push_back(logData.punit);
+					friendBackUnit.push_back(logData);
 					break;
 				}
 			}
@@ -54,16 +55,18 @@ int ProtectFriend::RubricEvaluate(const BattleSceneData * const battleData)const
 				std::shared_ptr<LatticeBattleField> latticeField=battleData->CalculateLatticeBattleField(false);
 				for(const LogElement::UnitLogData &logData:*pUnitLogDataList){
 					//ユニットによる格子点侵入不可情報を追加、ただし操作していたユニットは除く
-					if(logData.punit!=attackerData.punit && logData.punit!=operatedUnit){
+					if(logData.punit!=attackerData.punit && logData.punit!=operatedUnit.punit){
 						latticeField->BecomeImpassibleLattice(logData.punit,attackerData.punit->GetBattleStatus().team);
 					}
 				}
 				//操作ユニットがいない時の後衛ユニットの被弾リスト作成
-				const std::vector<bool> notExistJudge=JudgeAttackableList(latticeField,attackerData.punit,friendBackUnit);
+				const std::vector<bool> notExistJudge=JudgeAttackableList(latticeField,attackerData,friendBackUnit);
 				//行動範囲に操作ユニットの影響を与える
-				latticeField->BecomeImpassibleLattice(operatedUnit,attackerData.punit->GetBattleStatus().team);
+				Unit virtualUnit=*operatedUnit.punit;
+				virtualUnit.Warp(operatedUnit.pos);
+				latticeField->BecomeImpassibleLattice(&virtualUnit,attackerData.punit->GetBattleStatus().team);
 				//操作ユニットがいる時の後衛ユニットの被弾リスト作成
-				const std::vector<bool> existJudge=JudgeAttackableList(latticeField,attackerData.punit,friendBackUnit);
+				const std::vector<bool> existJudge=JudgeAttackableList(latticeField,attackerData,friendBackUnit);
 				//judgeMatrixへの格納
 				std::vector<std::pair<bool,bool>> attackerJudgeList(friendBackUnitCount,std::make_pair(false,false));
 				for(size_t i=0;i<friendBackUnitCount;i++){
