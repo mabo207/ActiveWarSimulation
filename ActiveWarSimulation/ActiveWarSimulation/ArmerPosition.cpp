@@ -14,16 +14,16 @@ int ArmerPosition::RubricEvaluate(const BattleSceneData * const battleData)const
 	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(battleData->m_scoreObserver->GetLatestLog());
 	const std::shared_ptr<const WaitLog> waitLog=std::dynamic_pointer_cast<const WaitLog>(battleData->m_scoreObserver->GetLatestLog());
 	const std::vector<LogElement::UnitLogData> *pUnitLogDataList=nullptr;
-	const Unit *aimedUnit=nullptr;
+	std::function<LogElement::UnitLogData()> getAimedUnitFunc;
 	if(attackLog){
 		pUnitLogDataList=&attackLog->m_unitDataList;
-		aimedUnit=attackLog->GetOperateUnitData().punit;
+		getAimedUnitFunc=[attackLog](){return attackLog->GetOperateUnitData();};
 	} else if(waitLog){
 		pUnitLogDataList=&waitLog->m_unitDataList;
-		aimedUnit=waitLog->GetOperateUnitData().punit;
+		getAimedUnitFunc=[waitLog](){return waitLog->GetOperateUnitData();};
 	}
 	int evaluate;
-	if(pUnitLogDataList==nullptr || aimedUnit==nullptr){
+	if(pUnitLogDataList==nullptr){
 		//‚±‚±‚É—ˆ‚é‚±‚Æ‚Í‚È‚¢‚Í‚¸‚¾‚ªAˆê‰žƒGƒ‰[ˆ—
 		evaluate=-1;
 	} else{
@@ -31,7 +31,7 @@ int ArmerPosition::RubricEvaluate(const BattleSceneData * const battleData)const
 		size_t attackableEnemyMageCount=0;
 		for(const LogElement::UnitLogData &unitData:*pUnitLogDataList){
 			if(unitData.punit->GetBaseStatus().profession==Unit::Profession::e_mage && unitData.punit->GetBattleStatus().team==Unit::Team::e_enemy){
-				if(JudgeAttackable(battleData,*pUnitLogDataList,unitData.punit,aimedUnit)){
+				if(JudgeAttackable(battleData,*pUnitLogDataList,unitData,getAimedUnitFunc())){
 					attackableEnemyMageCount++;
 				}
 			}

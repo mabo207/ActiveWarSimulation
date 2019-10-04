@@ -16,16 +16,16 @@ int HealerPosition::RubricEvaluate(const BattleSceneData * const battleData)cons
 	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(battleData->m_scoreObserver->GetLatestLog());
 	const std::shared_ptr<const WaitLog> waitLog=std::dynamic_pointer_cast<const WaitLog>(battleData->m_scoreObserver->GetLatestLog());
 	const std::vector<LogElement::UnitLogData> *pUnitLogDataList=nullptr;
-	const Unit *aimedUnit=nullptr;
+	std::function<LogElement::UnitLogData()> getAimedUnitData;
 	if(attackLog){
 		pUnitLogDataList=&attackLog->m_unitDataList;
-		aimedUnit=attackLog->GetOperateUnitData().punit;
+		getAimedUnitData=[attackLog](){return attackLog->GetOperateUnitData();};
 	} else if(waitLog){
 		pUnitLogDataList=&waitLog->m_unitDataList;
-		aimedUnit=waitLog->GetOperateUnitData().punit;
+		getAimedUnitData=[waitLog](){return waitLog->GetOperateUnitData();};
 	}
 	int evaluate;
-	if(pUnitLogDataList==nullptr || aimedUnit==nullptr){
+	if(pUnitLogDataList==nullptr){
 		//ここに来ることはないはずだが、一応エラー処理
 		evaluate=-1;
 	} else{
@@ -48,7 +48,7 @@ int HealerPosition::RubricEvaluate(const BattleSceneData * const battleData)cons
 					continue;
 				}
 				//攻撃可否判定とカウント加算
-				if(JudgeAttackable(battleData,*pUnitLogDataList,unitData.punit,aimedUnit)){
+				if(JudgeAttackable(battleData,*pUnitLogDataList,unitData,getAimedUnitData())){
 					addFunc();
 				}
 			}

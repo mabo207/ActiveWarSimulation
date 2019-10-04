@@ -21,8 +21,8 @@ int ArcherAttackDistance::RubricEvaluate(const BattleSceneData * const battleDat
 		//直線距離を求める
 		const float directDistance=(attackLog->GetOperateUnitData().pos-attackLog->GetAimedUnitData().pos).size();
 		//被弾ユニット→行動ユニットへのルート距離を求める
-		const Unit *operatedUnit=attackLog->GetOperateUnitData().punit;
-		const Unit *aimedUnit=attackLog->GetAimedUnit();
+		const LogElement::UnitLogData operatedUnit=attackLog->GetOperateUnitData();
+		const LogElement::UnitLogData aimedUnit=attackLog->GetAimedUnitData();
 		const float routeDistance=CalculateRouteDistance(battleData,attackLog->m_unitDataList,operatedUnit,aimedUnit);
 		//評価(高い方から判定していく)
 		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance()){
