@@ -146,6 +146,7 @@ std::vector<float> LatticeBattleField::CalculateRouteDistance(const Vector2D sta
 	//各格子点に対して距離を求める
 	std::vector<float> retPal;
 	const auto CalcMinDistance=[&distanceInfoVec,this](size_t x,size_t y,float minDistance){
+		//(x,y)の格子点までの距離と引数minDistanceを比較し、短い方を返す
 		if(x>=0 && x<m_xLatticeNum && y>=0 && y<m_yLatticeNum){
 			const float dist=distanceInfoVec[x+y*m_xLatticeNum].dist;
 			if(minDistance<0.0f || dist<minDistance){

@@ -9,6 +9,13 @@
 #include"FinishLog.h"
 #include"InitLog.h"
 
+#include"ArcherAttackDistance.h"
+#include"MageAttackingOpponent.h"
+#include"ArmerPosition.h"
+#include"HealerPosition.h"
+#include"ProtectFriend.h"
+#include"IntensiveAttack.h"
+
 //--------------ScoreObserver::Bonus-----------------
 ScoreObserver::Bonus::Bonus(const std::string &explain,int score)
 	:m_score(score)
@@ -767,7 +774,7 @@ ScoreObserver::ScoreObserver()
 	,m_cancelCount(0)
 	,m_logList()
 	,m_latticeBonusData()
-	,m_submission()
+	,m_submission(std::shared_ptr<SubmissionRuleBase>(new IntensiveAttack()))
 {}
 
 ScoreObserver::~ScoreObserver(){}

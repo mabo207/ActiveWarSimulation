@@ -155,6 +155,8 @@
     <ClCompile Include="..\FieldBase\ShapeHaving.cpp" />
     <ClCompile Include="..\StageEditor\BattleObject.cpp" />
     <ClCompile Include="..\StageEditor\Terrain.cpp" />
+    <ClCompile Include="ArcherAttackDistance.cpp" />
+    <ClCompile Include="ArmerPosition.cpp" />
     <ClCompile Include="AttackLog.cpp" />
     <ClCompile Include="BGM.cpp" />
     <ClCompile Include="BGMManager.cpp" />
@@ -167,7 +169,9 @@
     <ClCompile Include="FilePath.cpp" />
     <ClCompile Include="FinishLog.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="HealerPosition.cpp" />
     <ClCompile Include="InitLog.cpp" />
+    <ClCompile Include="IntensiveAttack.cpp" />
     <ClCompile Include="LatticeBattleField.cpp" />
     <ClCompile Include="LevelSelectUIInStageSelect.cpp" />
     <ClCompile Include="LoadingScene.cpp" />
@@ -187,9 +191,11 @@
     <ClCompile Include="GraphicProgramming.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="GameMain.cpp" />
+    <ClCompile Include="MageAttackingOpponent.cpp" />
     <ClCompile Include="MoveScene.cpp" />
     <ClCompile Include="PlayerMoveScene.cpp" />
     <ClCompile Include="MyPolygon.cpp" />
+    <ClCompile Include="ProtectFriend.cpp" />
     <ClCompile Include="ResearchScene.cpp" />
     <ClCompile Include="ScoreObserver.cpp" />
     <ClCompile Include="ScoreRankingData.cpp" />
@@ -202,6 +208,7 @@
     <ClCompile Include="StageSelectScene.cpp" />
     <ClCompile Include="StageSelectUIInStageSelect.cpp" />
     <ClCompile Include="StringBuilder.cpp" />
+    <ClCompile Include="SubmissionRuleBase.cpp" />
     <ClCompile Include="SwitchUnitScene.cpp" />
     <ClCompile Include="SystemMenu.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -222,6 +229,8 @@
     <ClInclude Include="..\FieldBase\ShapeHaving.h" />
     <ClInclude Include="..\StageEditor\BattleObject.h" />
     <ClInclude Include="..\StageEditor\Terrain.h" />
+    <ClInclude Include="ArcherAttackDistance.h" />
+    <ClInclude Include="ArmerPosition.h" />
     <ClInclude Include="AttackLog.h" />
     <ClInclude Include="BGM.h" />
     <ClInclude Include="BGMManager.h" />
@@ -234,6 +243,8 @@
     <ClInclude Include="FilePath.h" />
     <ClInclude Include="FinishLog.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="HealerPosition.h" />
+    <ClInclude Include="IntensiveAttack.h" />
     <ClInclude Include="LatticeBattleField.h" />
     <ClInclude Include="LevelSelectUIInStageSelect.h" />
     <ClInclude Include="LoadingScene.h" />
@@ -251,6 +262,8 @@
     <ClInclude Include="GeneralPurposeResource.h" />
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
+    <ClInclude Include="MageAttackingOpponent.h" />
+    <ClInclude Include="ProtectFriend.h" />
     <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="ScoreRankingData.h" />
     <ClInclude Include="SelfDecideSubmission.h" />
@@ -263,6 +276,7 @@
     <ClInclude Include="InitLog.h" />
     <ClInclude Include="StageSelectUIInStageSelect.h" />
     <ClInclude Include="StringBuilder.h" />
+    <ClInclude Include="SubmissionRuleBase.h" />
     <ClInclude Include="SystemMenu.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="input.h" />

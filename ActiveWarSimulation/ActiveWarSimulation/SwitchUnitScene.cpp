@@ -56,6 +56,7 @@ int SwitchUnitScene::thisCalculate(){
 		//勝負がついていない
 		//一定時間経ったらユニット移動へ
 		if(m_battleSceneData->m_fpsMesuring.GetProcessedTime()>1.0f){
+//		if(keyboard_get(KEY_INPUT_Z)==1 || mouse_get(MOUSE_INPUT_LEFT)==1){
 			//ユニット移行処理へ
 			m_battleSceneData->m_fpsMesuring.RecordTime();//タイマー初期化
 			return SceneKind::e_move;

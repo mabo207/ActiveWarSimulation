@@ -4,6 +4,7 @@
 #include<memory>
 #include<vector>
 #include<string>
+#include"SubmissionRuleBase.h"
 
 struct BattleSceneData;
 
@@ -11,7 +12,7 @@ struct BattleSceneData;
 //ひとまず「安全地帯から弓で攻撃する」をここに実装する、汎用化・拡張は後で行う
 class SelfDecideSubmission{
 public:
-	SelfDecideSubmission();
+	SelfDecideSubmission(const std::shared_ptr<SubmissionRuleBase> &rule);
 	~SelfDecideSubmission();
 	//観察条件
 	bool JudgeEvaluatedOrder(const BattleSceneData * const battleData)const;
@@ -31,6 +32,7 @@ public:
 	static const int s_submissionHeight;
 
 private:
+	const std::shared_ptr<SubmissionRuleBase> m_rule;//ルーブリック評価のルール
 	std::vector<int> m_rubricList;//ルーブリック評価一覧
 	std::string m_wholeComment;//総括的振り返りにおけるコメント
 
