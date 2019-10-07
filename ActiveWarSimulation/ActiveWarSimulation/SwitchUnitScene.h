@@ -26,8 +26,10 @@ protected:
 	//ゲームの進行データ
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
 
-	//ルーブリック評価描画位置
-	PositionControl m_rubricWordPosition;
+	//ルーブリック評価描画
+	PositionControl m_rubricWordPosition;//評価の描画位置
+	PositionControl m_rubricReasonPosition;//評価理由の描画位置
+	bool m_rubricPopupExiting;//理由のポップアップが画面外に出る処理中である
 
 	//フォント
 	const int m_turnFont;
@@ -36,6 +38,9 @@ protected:
 protected:
 	int CalculateTurn()const;
 	std::shared_ptr<BattleSceneElement> GetPlayerMoveScene()const;
+	bool JudgeTimeProcessed()const;//規定時間経ったかどうか
+	bool JudgeGoToMoveScene()const;//移動シーンに行くかどうか
+	bool JudgeDrawRubric()const;//ルーブリック評価を描画するかどうか
 
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了

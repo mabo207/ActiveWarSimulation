@@ -5,6 +5,7 @@
 #include<vector>
 #include<string>
 #include"SubmissionRuleBase.h"
+#include<map>
 
 struct BattleSceneData;
 
@@ -16,6 +17,8 @@ public:
 	~SelfDecideSubmission();
 	//観察条件
 	bool JudgeEvaluatedOrder(const BattleSceneData * const battleData)const;
+	//ルーブリック描画条件
+	bool JudgeDrawRubric()const;
 	//ルーブリック評価を行い蓄積する
 	void RubricEvaluate(const BattleSceneData * const battleData);
 	//総括的振り返りをする
@@ -24,17 +27,25 @@ public:
 	void DrawSubmission(int x,int y)const;
 	//トップのルーブリック評価の結果を描画する
 	void DrawRubric(int centerX,int centerY)const;
+	//トップのルーブリック評価について、結果の理由を描画する
+	void DrawReason(int x,int y)const;
 	//総括的振り返りの内容を描画する
 	void DrawWholeLookBack(int x,int y)const;
 
 	//サブミッション描画の領域の大きさ
 	static const int s_submissionWidth;
 	static const int s_submissionHeight;
+	//評価理由描画の領域の大きさ
+	static const int s_reasonWidth;
+	static const int s_reasonHeight;
 
 private:
 	const std::shared_ptr<SubmissionRuleBase> m_rule;//ルーブリック評価のルール
 	std::vector<int> m_rubricList;//ルーブリック評価一覧
 	std::string m_wholeComment;//総括的振り返りにおけるコメント
+	std::map<int,size_t> m_rubricFrequencyMap;//戦闘終了時にルーブリック評価の回数の一覧を格納する
+
+	const std::map<int,std::string> m_rubricStrMap;//ルーブリック評価の名前一覧(good,greatなど)
 
 	const int m_sentenceFont;//文章を描画するためのフォント
 	const int m_rubricFont;//ルーブリック評価を描画するためのフォント

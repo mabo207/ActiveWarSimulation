@@ -15,11 +15,15 @@ namespace{
 //--------------SelfDecideSubmission---------------
 const int SelfDecideSubmission::s_submissionWidth=500;
 const int SelfDecideSubmission::s_submissionHeight=60;
+const int SelfDecideSubmission::s_reasonWidth=600;
+const int SelfDecideSubmission::s_reasonHeight=100;
 
 SelfDecideSubmission::SelfDecideSubmission(const std::shared_ptr<SubmissionRuleBase> &rule)
 	:m_rule(rule)
 	,m_rubricList()
 	,m_wholeComment()
+	,m_rubricStrMap{std::make_pair(0,"Worst"),std::make_pair(1,"Bad"),std::make_pair(2,"Not good"),std::make_pair(3,"Good")}
+	,m_rubricFrequencyMap()
 	,m_sentenceFont(CreateFontToHandleEX("ƒƒCƒŠƒI",24,2,DX_FONTTYPE_NORMAL))
 	,m_rubricFont(CreateFontToHandleEX("ƒƒCƒŠƒI",20,2,DX_FONTTYPE_EDGE,-1,2))
 {}
@@ -31,6 +35,14 @@ SelfDecideSubmission::~SelfDecideSubmission(){
 
 bool SelfDecideSubmission::JudgeEvaluatedOrder(const BattleSceneData * const battleData)const{
 	return m_rule->JudgeEvaluateOrder(battleData);
+}
+
+bool SelfDecideSubmission::JudgeDrawRubric()const{
+	if(!m_rubricList.empty()){
+		const int evaluate=m_rubricList.back();
+		return evaluate>=0;
+	}
+	return false;
 }
 
 void SelfDecideSubmission::RubricEvaluate(const BattleSceneData * const battleData){
@@ -46,19 +58,18 @@ void SelfDecideSubmission::WholeLookBack(){
 		return;
 	}
 	//Å•p’l‚ğ‹‚ß‚é
-	std::map<int,size_t> frequencyMap;
 	for(const int &rubric:m_rubricList){
-		std::map<int,size_t>::iterator it=frequencyMap.find(rubric);
-		if(it==frequencyMap.end()){
-			//‚Ü‚¾rubric‚ª1‰ñ‚à¶‚¶‚Ä‚¢‚È‚¢ê‡‚ÍAfrequencyMap‚É’Ç‰Á
-			frequencyMap.insert(std::make_pair(rubric,1));
+		std::map<int,size_t>::iterator it=m_rubricFrequencyMap.find(rubric);
+		if(it==m_rubricFrequencyMap.end()){
+			//‚Ü‚¾rubric‚ª1‰ñ‚à¶‚¶‚Ä‚¢‚È‚¢ê‡‚ÍAm_rubricFrequencyMap‚É’Ç‰Á
+			m_rubricFrequencyMap.insert(std::make_pair(rubric,1));
 		} else{
 			//Šù‚ÉŒ©‚Â‚©‚Á‚Ä‚¢‚éê‡‚ÍA‰ñ”‚ğ1‘‚â‚·
 			it->second++;
 		}
 	}
-	std::pair<int,size_t> mostFrequent=*frequencyMap.begin();
-	for(const std::pair<int,size_t> &pair:frequencyMap){
+	std::pair<int,size_t> mostFrequent=*m_rubricFrequencyMap.begin();
+	for(const std::pair<int,size_t> &pair:m_rubricFrequencyMap){
 		if(mostFrequent.first==-1){
 			//mostFrequent‚ªuUŒ‚‚µ‚Ä‚¢‚È‚¢v‚Å‚ ‚éê‡‚ÍA•K‚¸ã‘‚«‚·‚é
 			mostFrequent=pair;
@@ -90,8 +101,51 @@ void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 	}
 }
 
+void SelfDecideSubmission::DrawReason(int x,int y)const{
+	if(!m_rubricList.empty()){
+		//•`‰æ“à—e‚ÌŒˆ’è
+		const int evaluate=m_rubricList.back();
+		std::string str;
+		switch(evaluate){
+		case(-1):
+			//•`‰æ‚ğs‚í‚È‚¢
+			return;
+		case(0):
+			str="“G‚ª‚»‚Ìê‚ÅUŒ‚‚Å‚«‚é‚­‚ç‚¢‚É‹ß‚­‚ÅUŒ‚‚µ‚¿‚á‚Á‚Ä‚é‚æI";
+			break;
+		case(1):
+			str="áŠQ•¨‚ªü‚è‚É‚È‚¢‚©‚çUŒ‚‚µ‚½“G‚Ì”½Œ‚‚É‡‚¢‚â‚·‚»‚¤‚¶‚á‚È‚¢H";
+			break;
+		case(2):
+			str="áŠQ•¨‰z‚µ‚ÉUŒ‚‚Å‚«‚Ä‚é‚¯‚ÇAˆÄŠO“G‚Í‰ñ‚è‚ñ‚ÅUŒ‚‚Å‚«‚»‚¤B";
+			break;
+		case(3):
+			str="ˆÀ‘S’n‘Ñ‚©‚ç‚ÌUŒ‚A‚Æ‚Á‚Ä‚à—Ç‚¢Š´‚¶II";
+			break;
+		}
+		//‰º’n
+		DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(64,128,192),TRUE);
+		DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(128,192,255),FALSE);
+		//“à—e‚Ì•`‰æ
+		DrawStringNewLineToHandle(x+5,y+5,s_reasonWidth-10,s_reasonHeight-10,str.c_str(),GetColor(255,255,255),m_sentenceFont,2);
+	}
+}
+
 void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{
+	//‰º’n
 	DrawBox(x,y,x+wholeCommentWidth,y+wholeCommentHeight,GetColor(64,128,192),TRUE);
 	DrawBox(x,y,x+wholeCommentWidth,y+wholeCommentHeight,GetColor(128,192,255),FALSE);
-	DrawStringNewLineToHandle(x+5,y+5,wholeCommentWidth-10,wholeCommentHeight-10,m_wholeComment.c_str(),GetColor(255,255,255),m_sentenceFont,2);
+	//•]‰¿‚Ìˆê——‚ğ•`‰æ
+	int strY=y+5;
+	const int fontSize=GetFontSizeToHandle(m_sentenceFont);
+	for(const auto &pair:m_rubricFrequencyMap){
+		const auto rubricStrIt=m_rubricStrMap.find(pair.first);
+		if(rubricStrIt!=m_rubricStrMap.end()){
+			DrawStringToHandle(x+5,strY,rubricStrIt->second.c_str(),GetColor(255,255,255),m_sentenceFont);//“ïˆÕ“x–¼
+			DrawStringToHandle(x+wholeCommentWidth-150,strY,(":   ~"+to_string_0d(pair.second,2)).c_str(),GetColor(255,255,255),m_sentenceFont);//‰ñ”‚Ì•`‰æ
+			strY+=fontSize+2;
+		}
+	}
+	//•ïŠ‡“IƒRƒƒ“ƒg
+	DrawStringNewLineToHandle(x+5,strY+10,wholeCommentWidth-10,y+wholeCommentHeight-5-strY,m_wholeComment.c_str(),GetColor(255,255,255),m_sentenceFont,2);
 }
