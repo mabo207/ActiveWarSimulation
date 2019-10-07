@@ -14,56 +14,63 @@ int IntensiveAttack::RubricEvaluate(const BattleSceneData * const battleData)con
 	//	4. 攻撃相手よりHP割合の低いユニットがいない
 	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(battleData->m_scoreObserver->GetLatestLog());
 	int evaluate;
+	const int maxEvaluate=3;
 	if(!attackLog){
 		//ログがAttackLogでない場合は「攻撃をしなかった」と判断できる
 		evaluate=-1;
 	} else{
-		//全ての敵のHP割合を出す
-		std::vector<std::pair<const Unit *,int>> hpRateVec;
-		for(const LogElement::UnitLogData &unitData:attackLog->m_unitDataList){
-			if(unitData.punit->GetBattleStatus().team==Unit::Team::e_enemy){
-				//全ての敵について格納
-				hpRateVec.push_back(std::make_pair(unitData.punit,32768*unitData.hp/unitData.punit->GetBaseStatus().maxHP));//intで計算するので切り捨てが怖い、ある程度大きい数値をかけることで割合のソートが可能になる。
-			}
-		}
-		//HP割合の低い順にソートする
-		const auto sortFunc=[](const std::pair<const Unit *,int> left,const std::pair<const Unit *,int> right){
-			if(left.second<right.second){
-				return true;
-			} else if(left.second>right.second){
-				return false;
-			}
-			return left.first<right.first;
-		};
-		std::sort(hpRateVec.begin(),hpRateVec.end(),sortFunc);
-		//攻撃相手が何番目だったか測定、同率割合に注意
-		size_t order=0;//順位（自分よりHP割合の小さいキャラが何体いるか）を記録、同率を考慮する
-		const Unit *aimedUnit=attackLog->GetAimedUnit();
-		for(size_t i=0,vecSize=hpRateVec.size();i<vecSize;i++){
-			if(hpRateVec[i].first==aimedUnit){
-				//攻撃相手が見つかった
-				break;
-			} else{
-				//攻撃相手が見つからなかった場合、順位更新する
-				if(i+1<vecSize && hpRateVec[i].second!=hpRateVec[i+1].second){
-					//[i]のHP割合が[i+1]のHP割合に等しくないなら、[0]~[i]の要素は攻撃相手より順位が上
-					order=i+1;//順位更新([0]から数えるので+1する)
+		//撃破できるかの判定
+		const LogElement::UnitLogData aimedData=attackLog->GetAimedUnitData();
+		if(aimedData.hp<=attackLog->GetAttackInfo().damage){
+			//撃破していた場合は、残りHP割合の順序に関わらず最大評価を与える
+			evaluate=maxEvaluate;
+		} else{
+			//全ての敵のHP割合を出す
+			std::vector<std::pair<const Unit *,int>> hpRateVec;
+			for(const LogElement::UnitLogData &unitData:attackLog->m_unitDataList){
+				if(unitData.punit->GetBattleStatus().team==Unit::Team::e_enemy){
+					//全ての敵について格納
+					hpRateVec.push_back(std::make_pair(unitData.punit,32768*unitData.hp/unitData.punit->GetBaseStatus().maxHP));//intで計算するので切り捨てが怖い、ある程度大きい数値をかけることで割合のソートが可能になる。
 				}
 			}
-		}
-		//順番に基づき評価
-		if(order==0){
-			//攻撃相手よりHP割合の高いキャラがいない
-			evaluate=3;
-		} else if(order==1){
-			//攻撃相手よりHP割合の高いキャラが1体いる
-			evaluate=2;
-		} else if(order==2){
-			//2体いる
-			evaluate=1;
-		} else{
-			//3体以上
-			evaluate=0;
+			//HP割合の低い順にソートする
+			const auto sortFunc=[](const std::pair<const Unit *,int> left,const std::pair<const Unit *,int> right){
+				if(left.second<right.second){
+					return true;
+				} else if(left.second>right.second){
+					return false;
+				}
+				return left.first<right.first;
+			};
+			std::sort(hpRateVec.begin(),hpRateVec.end(),sortFunc);
+			//攻撃相手が何番目だったか測定、同率割合に注意
+			size_t order=0;//順位（自分よりHP割合の小さいキャラが何体いるか）を記録、同率を考慮する
+			for(size_t i=0,vecSize=hpRateVec.size();i<vecSize;i++){
+				if(hpRateVec[i].first==aimedData.punit){
+					//攻撃相手が見つかった
+					break;
+				} else{
+					//攻撃相手が見つからなかった場合、順位更新する
+					if(i+1<vecSize && hpRateVec[i].second!=hpRateVec[i+1].second){
+						//[i]のHP割合が[i+1]のHP割合に等しくないなら、[0]~[i]の要素は攻撃相手より順位が上
+						order=i+1;//順位更新([0]から数えるので+1する)
+					}
+				}
+			}
+			//順番に基づき評価
+			if(order==0){
+				//攻撃相手よりHP割合の高いキャラがいない
+				evaluate=maxEvaluate;
+			} else if(order==1){
+				//攻撃相手よりHP割合の高いキャラが1体いる
+				evaluate=2;
+			} else if(order==2){
+				//2体いる
+				evaluate=1;
+			} else{
+				//3体以上
+				evaluate=0;
+			}
 		}
 	}
 
