@@ -21,6 +21,7 @@ public:
 	virtual std::string GetWholeLookBackActionEmpty()const=0;//ルールに該当した行動が何もなかった時の総括的評価の文字列を返す
 	virtual std::string GetSubmissionExplanation()const=0;//サブミッションの説明文を返す
 	virtual bool JudgeEvaluateOrder(const BattleSceneData * const battleData)const=0;//評価を行うかどうか
+	virtual std::string GetReason(int rubric)const=0;//ルーブリック評価の理由の文章を返す
 
 protected:
 	SubmissionRuleBase()=default;

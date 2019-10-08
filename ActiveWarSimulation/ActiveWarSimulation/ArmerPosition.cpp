@@ -112,3 +112,17 @@ bool ArmerPosition::JudgeEvaluateOrder(const BattleSceneData * const battleData)
 		&& battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_armer);
 }
 
+std::string ArmerPosition::GetReason(int rubric)const{
+	switch(rubric){
+	case(-1):
+		//•`‰æ‚ğs‚í‚È‚¢
+		return "";
+	case(0):
+		return "‹ß‚­‚É–‚“¹m‚ª•¡”‚¢‚ÄŠë‚È‚¢ˆÊ’u‚¾I";
+	case(1):
+		return "Ÿ‚Ìè”Ô‚Å©•ª‚ğUŒ‚‚Å‚«‚»‚¤‚È“G–‚“¹m‚ª‚¢‚é‚İ‚½‚¢‚¾cc";
+	case(2):
+		return "–‚“¹m‚ÍUŒ‚‚Å‚«‚éˆÊ’u‚É‚Í‚¢‚È‚¢‚İ‚½‚¢I";
+	}
+	return "";
+}

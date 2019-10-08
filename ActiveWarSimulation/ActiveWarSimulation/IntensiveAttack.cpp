@@ -158,3 +158,20 @@ bool IntensiveAttack::JudgeEvaluateOrder(const BattleSceneData * const battleDat
 	return (battleData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player
 		&& battleData->m_operateUnit->GetBaseStatus().profession!=Unit::Profession::e_healer);
 }
+
+std::string IntensiveAttack::GetReason(int rubric)const{
+	switch(rubric){
+	case(-1):
+		//描画を行わない
+		return "";
+	case(0):
+		return "残りHPが少ない敵がほとんどだ、特定の敵を集中攻撃した方が良いんじゃない？";
+	case(1):
+		return "別々の敵を狙っていないか？集中攻撃が大事だ。";
+	case(2):
+		return "もっと手頃に倒せる敵がいるかもしれない、探してみよう。";
+	case(3):
+		return "残りHPが少ない敵を集中して攻撃できています！";
+	}
+	return "";
+}
