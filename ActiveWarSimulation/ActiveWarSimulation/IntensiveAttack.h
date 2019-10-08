@@ -14,6 +14,7 @@ public:
 	std::string GetWholeLookBackActionEmpty()const;//ルールに該当した行動が何もなかった時の総括的評価の文字列を返す
 	std::string GetSubmissionExplanation()const;//サブミッションの説明文を返す
 	bool JudgeEvaluateOrder(const BattleSceneData * const battleData)const;//評価を行うかどうか
+	std::string GetReason(int rubric)const;//ルーブリック評価の理由の説明文を返す
 };
 
 #endif // !DEF_INTENSIVEATTACK_H

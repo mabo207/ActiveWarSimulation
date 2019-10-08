@@ -97,3 +97,18 @@ bool MageAttackingOpponent::JudgeEvaluateOrder(const BattleSceneData * const bat
 	return (battleData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player
 		&& battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_mage);
 }
+
+std::string MageAttackingOpponent::GetReason(int rubric)const{
+	switch(rubric){
+	case(-1):
+		//描画を行わない
+		return "";
+	case(0):
+		return "魔道士や衛生兵には魔法攻撃は効果が薄いみたいだ。";
+	case(1):
+		return "兵士や射手を魔法で攻撃するのは、まあまあ効果的だ。";
+	case(2):
+		return "魔法が弱点の重装兵を攻撃できています！";
+	}
+	return "";
+}

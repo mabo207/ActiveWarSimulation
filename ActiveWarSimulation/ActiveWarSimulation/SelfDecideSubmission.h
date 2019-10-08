@@ -45,8 +45,6 @@ private:
 	std::string m_wholeComment;//総括的振り返りにおけるコメント
 	std::map<int,size_t> m_rubricFrequencyMap;//戦闘終了時にルーブリック評価の回数の一覧を格納する
 
-	const std::map<int,std::string> m_rubricStrMap;//ルーブリック評価の名前一覧(good,greatなど)
-
 	const int m_sentenceFont;//文章を描画するためのフォント
 	const int m_rubricFont;//ルーブリック評価を描画するためのフォント
 };

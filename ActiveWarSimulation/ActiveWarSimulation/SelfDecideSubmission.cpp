@@ -22,7 +22,6 @@ SelfDecideSubmission::SelfDecideSubmission(const std::shared_ptr<SubmissionRuleB
 	:m_rule(rule)
 	,m_rubricList()
 	,m_wholeComment()
-	,m_rubricStrMap{std::make_pair(0,"Worst"),std::make_pair(1,"Bad"),std::make_pair(2,"Not good"),std::make_pair(3,"Good")}
 	,m_rubricFrequencyMap()
 	,m_sentenceFont(CreateFontToHandleEX("ƒƒCƒŠƒI",24,2,DX_FONTTYPE_NORMAL))
 	,m_rubricFont(CreateFontToHandleEX("ƒƒCƒŠƒI",20,2,DX_FONTTYPE_EDGE,-1,2))
@@ -104,25 +103,7 @@ void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 void SelfDecideSubmission::DrawReason(int x,int y)const{
 	if(!m_rubricList.empty()){
 		//•`‰æ“à—e‚ÌŒˆ’è
-		const int evaluate=m_rubricList.back();
-		std::string str;
-		switch(evaluate){
-		case(-1):
-			//•`‰æ‚ğs‚í‚È‚¢
-			return;
-		case(0):
-			str="“G‚ª‚»‚Ìê‚ÅUŒ‚‚Å‚«‚é‚­‚ç‚¢‚É‹ß‚­‚ÅUŒ‚‚µ‚¿‚á‚Á‚Ä‚é‚æI";
-			break;
-		case(1):
-			str="áŠQ•¨‚ªü‚è‚É‚È‚¢‚©‚çUŒ‚‚µ‚½“G‚Ì”½Œ‚‚É‡‚¢‚â‚·‚»‚¤‚¶‚á‚È‚¢H";
-			break;
-		case(2):
-			str="áŠQ•¨‰z‚µ‚ÉUŒ‚‚Å‚«‚Ä‚é‚¯‚ÇAˆÄŠO“G‚Í‰ñ‚è‚ñ‚ÅUŒ‚‚Å‚«‚»‚¤B";
-			break;
-		case(3):
-			str="ˆÀ‘S’n‘Ñ‚©‚ç‚ÌUŒ‚A‚Æ‚Á‚Ä‚à—Ç‚¢Š´‚¶II";
-			break;
-		}
+		const std::string str=m_rule->GetReason(m_rubricList.back());
 		//‰º’n
 		DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(64,128,192),TRUE);
 		DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(128,192,255),FALSE);
@@ -139,9 +120,9 @@ void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{
 	int strY=y+5;
 	const int fontSize=GetFontSizeToHandle(m_sentenceFont);
 	for(const auto &pair:m_rubricFrequencyMap){
-		const auto rubricStrIt=m_rubricStrMap.find(pair.first);
-		if(rubricStrIt!=m_rubricStrMap.end()){
-			DrawStringToHandle(x+5,strY,rubricStrIt->second.c_str(),GetColor(255,255,255),m_sentenceFont);//“ïˆÕ“x–¼
+		const std::string rubricStr=m_rule->GetRubricStringInfo(pair.first).first;
+		if(!rubricStr.empty()){
+			DrawStringToHandle(x+5,strY,rubricStr.c_str(),GetColor(255,255,255),m_sentenceFont);//“ïˆÕ“x–¼
 			DrawStringToHandle(x+wholeCommentWidth-150,strY,(":   ~"+to_string_0d(pair.second,2)).c_str(),GetColor(255,255,255),m_sentenceFont);//‰ñ”‚Ì•`‰æ
 			strY+=fontSize+2;
 		}

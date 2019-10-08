@@ -112,3 +112,20 @@ bool ArcherAttackDistance::JudgeEvaluateOrder(const BattleSceneData * const batt
 	return (battleData->m_operateUnit->GetBattleStatus().team==Unit::Team::e_player
 		&& battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_archer);
 }
+
+std::string ArcherAttackDistance::GetReason(int rubric)const{
+	switch(rubric){
+	case(-1):
+		//•`‰æ‚ğs‚í‚È‚¢
+		return "";
+	case(0):
+		return "“G‚ª‚»‚Ìê‚ÅUŒ‚‚Å‚«‚é‚­‚ç‚¢‚É‹ß‚­‚ÅUŒ‚‚µ‚¿‚á‚Á‚Ä‚é‚æI";
+	case(1):
+		return "áŠQ•¨‚ªü‚è‚É‚È‚¢‚©‚çUŒ‚‚µ‚½“G‚Ì”½Œ‚‚É‡‚¢‚â‚·‚»‚¤‚¶‚á‚È‚¢H";
+	case(2):
+		return "áŠQ•¨‰z‚µ‚ÉUŒ‚‚Å‚«‚Ä‚é‚¯‚ÇAˆÄŠO“G‚Í‰ñ‚è‚ñ‚ÅUŒ‚‚Å‚«‚»‚¤B";
+	case(3):
+		return "ˆÀ‘S’n‘Ñ‚©‚ç‚ÌUŒ‚A‚Æ‚Á‚Ä‚à—Ç‚¢Š´‚¶II";
+	}
+	return "";
+}

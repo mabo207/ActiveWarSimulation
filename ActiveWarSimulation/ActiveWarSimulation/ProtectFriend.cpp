@@ -175,3 +175,17 @@ bool ProtectFriend::JudgeEvaluateOrder(const BattleSceneData * const battleData)
 			|| battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_soldier));
 }
 
+std::string ProtectFriend::GetReason(int rubric)const{
+	switch(rubric){
+	case(-1):
+		//描画を行わない
+		return "";
+	case(0):
+		return "後衛ユニットへの攻撃をどれも防ぐことができなさそうだ。";
+	case(1):
+		return "後衛ユニットへの攻撃を一部防げているよ！";
+	case(2):
+		return "後衛ユニットへの攻撃をすべてシャットアウトしたようだ！";
+	}
+	return "";
+}

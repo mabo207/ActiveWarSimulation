@@ -774,7 +774,7 @@ ScoreObserver::ScoreObserver()
 	,m_cancelCount(0)
 	,m_logList()
 	,m_latticeBonusData()
-	,m_submission(std::shared_ptr<SubmissionRuleBase>(new IntensiveAttack()))
+	,m_submission(std::shared_ptr<SubmissionRuleBase>(new ProtectFriend()))
 {}
 
 ScoreObserver::~ScoreObserver(){}

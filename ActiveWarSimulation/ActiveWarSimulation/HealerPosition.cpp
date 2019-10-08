@@ -151,3 +151,21 @@ bool HealerPosition::JudgeEvaluateOrder(const BattleSceneData * const battleData
 		&& battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_healer);
 }
 
+std::string HealerPosition::GetReason(int rubric)const{
+	switch(rubric){
+	case(-1):
+		//描画を行わない
+		return "";
+	case(0):
+		return "複数の敵が攻撃してきそうだ、危ない！";
+	case(1):
+		return "攻撃力の高い重装兵に狙われてしまう位置だ。";
+	case(2):
+		return "機動力のある兵士に目をつけられてしまったようだ……";
+	case(3):
+		return "射手に狙われている位置だから、油断はできなさそうだ。";
+	case(4):
+		return "敵が狙いづらい位置に移動できているね！";
+	}
+	return "";
+}
