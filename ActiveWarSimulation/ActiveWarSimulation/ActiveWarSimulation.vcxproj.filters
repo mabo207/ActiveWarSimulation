@@ -369,6 +369,9 @@
     <ClCompile Include="IntensiveAttack.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\Rule</Filter>
     </ClCompile>
+    <ClCompile Include="SelectSubmissionScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -583,6 +586,9 @@
     </ClInclude>
     <ClInclude Include="IntensiveAttack.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\Rule</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectSubmissionScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
