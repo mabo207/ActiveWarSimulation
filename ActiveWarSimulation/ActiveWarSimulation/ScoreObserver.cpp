@@ -774,7 +774,10 @@ ScoreObserver::ScoreObserver()
 	,m_cancelCount(0)
 	,m_logList()
 	,m_latticeBonusData()
-	,m_submission(std::shared_ptr<SubmissionRuleBase>(new ProtectFriend()))
-{}
+	,m_submission()
+{
+	//‚Ğ‚Æ‚Ü‚¸‚±‚±‚Å‰Šú‰»‚µ‚Ä‚¨‚­
+	m_submission.InitRubric(std::shared_ptr<SubmissionRuleBase>(new ProtectFriend()));
+}
 
 ScoreObserver::~ScoreObserver(){}

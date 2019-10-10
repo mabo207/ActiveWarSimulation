@@ -13,7 +13,7 @@ struct BattleSceneData;
 //ひとまず「安全地帯から弓で攻撃する」をここに実装する、汎用化・拡張は後で行う
 class SelfDecideSubmission{
 public:
-	SelfDecideSubmission(const std::shared_ptr<SubmissionRuleBase> &rule);
+	SelfDecideSubmission();
 	~SelfDecideSubmission();
 	//観察条件
 	bool JudgeEvaluatedOrder(const BattleSceneData * const battleData)const;
@@ -31,6 +31,8 @@ public:
 	void DrawReason(int x,int y)const;
 	//総括的振り返りの内容を描画する
 	void DrawWholeLookBack(int x,int y)const;
+	//ルール初期化
+	void InitRubric(const std::shared_ptr<SubmissionRuleBase> &rule);
 
 	//サブミッション描画の領域の大きさ
 	static const int s_submissionWidth;
@@ -40,7 +42,7 @@ public:
 	static const int s_reasonHeight;
 
 private:
-	const std::shared_ptr<SubmissionRuleBase> m_rule;//ルーブリック評価のルール
+	std::shared_ptr<SubmissionRuleBase> m_rule;//ルーブリック評価のルール
 	std::vector<int> m_rubricList;//ルーブリック評価一覧
 	std::string m_wholeComment;//総括的振り返りにおけるコメント
 	std::map<int,size_t> m_rubricFrequencyMap;//戦闘終了時にルーブリック評価の回数の一覧を格納する

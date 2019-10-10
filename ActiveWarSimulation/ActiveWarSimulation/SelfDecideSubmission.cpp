@@ -18,8 +18,8 @@ const int SelfDecideSubmission::s_submissionHeight=60;
 const int SelfDecideSubmission::s_reasonWidth=600;
 const int SelfDecideSubmission::s_reasonHeight=100;
 
-SelfDecideSubmission::SelfDecideSubmission(const std::shared_ptr<SubmissionRuleBase> &rule)
-	:m_rule(rule)
+SelfDecideSubmission::SelfDecideSubmission()
+	:m_rule(nullptr)
 	,m_rubricList()
 	,m_wholeComment()
 	,m_rubricFrequencyMap()
@@ -129,4 +129,8 @@ void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{
 	}
 	//•ïŠ‡“IƒRƒƒ“ƒg
 	DrawStringNewLineToHandle(x+5,strY+10,wholeCommentWidth-10,y+wholeCommentHeight-5-strY,m_wholeComment.c_str(),GetColor(255,255,255),m_sentenceFont,2);
+}
+
+void SelfDecideSubmission::InitRubric(const std::shared_ptr<SubmissionRuleBase> &rule){
+	m_rule=rule;
 }
