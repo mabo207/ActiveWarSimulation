@@ -4,8 +4,8 @@
 #include"CommonConstParameter.h"
 #include"BGMManager.h"
 
-#include"SwitchUnitScene.h"
-#include"SelectSubmissionScene.h"
+#include"SwitchUnitInitOrderScene.h"
+#include"SubmissionSwitchUnitScene.h"
 
 #include"StageSelectScene.h"
 #include"CreditScene.h"
@@ -62,8 +62,8 @@ void BattleScene::Activate(){
 
 std::shared_ptr<BattleSceneElement> BattleScene::VGetSwitchUnitScene()const{
 	//すごーい汚いけど、デモでない場合はここでサブミッション選択場面を生成する。
-	//return std::shared_ptr<BattleSceneElement>(new SwitchUnitScene(m_battleSceneData));
-	return std::shared_ptr<BattleSceneElement>(new SelectSubmissionScene(m_battleSceneData));
+	//return std::shared_ptr<BattleSceneElement>(new SwitchUnitInitOrderScene(m_battleSceneData));
+	return std::shared_ptr<BattleSceneElement>(new SubmissionSwitchUnitScene(m_battleSceneData));
 }
 
 void BattleScene::ResetGame(){

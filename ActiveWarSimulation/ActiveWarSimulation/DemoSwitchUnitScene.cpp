@@ -3,7 +3,7 @@
 
 //------------DemoSwitchUnitScene------------
 DemoSwitchUnitScene::DemoSwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneData)
-	:SwitchUnitScene(battleSceneData){}
+	:SwitchUnitInitOrderScene(battleSceneData){}
 
 DemoSwitchUnitScene::~DemoSwitchUnitScene(){}
 

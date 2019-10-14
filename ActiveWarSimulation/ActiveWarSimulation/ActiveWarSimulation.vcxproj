@@ -210,6 +210,8 @@
     <ClCompile Include="StageSelectUIInStageSelect.cpp" />
     <ClCompile Include="StringBuilder.cpp" />
     <ClCompile Include="SubmissionRuleBase.cpp" />
+    <ClCompile Include="SubmissionSwitchUnitScene.cpp" />
+    <ClCompile Include="SwitchUnitInitOrderScene.cpp" />
     <ClCompile Include="SwitchUnitScene.cpp" />
     <ClCompile Include="SystemMenu.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -279,6 +281,8 @@
     <ClInclude Include="StageSelectUIInStageSelect.h" />
     <ClInclude Include="StringBuilder.h" />
     <ClInclude Include="SubmissionRuleBase.h" />
+    <ClInclude Include="SubmissionSwitchUnitScene.h" />
+    <ClInclude Include="SwitchUnitInitOrderScene.h" />
     <ClInclude Include="SystemMenu.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="input.h" />

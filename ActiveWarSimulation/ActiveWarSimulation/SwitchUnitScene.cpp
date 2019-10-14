@@ -16,8 +16,6 @@ SwitchUnitScene::SwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneDat
 	,m_rubricWordPosition(-50,-50)
 	,m_turnFont(LoadFontDataToHandleEX(FilePath::fontDir+"TurnFont.dft",3))
 {
-	//進行データを更新
-	ReturnProcess();
 	if(m_judgeEnd==JudgeEnd::e_notEnd){
 		//バトル開始直後はかならずe_notEndからe_notEnd_TurnChangeに切り替える
 		//しかし、プログラムの構造を変えてターン切り替えのたびにこのコンストラクタが呼ばれるようになると問題になってしまうので、実装を直したい。

@@ -50,8 +50,12 @@ int SelectSubmissionScene::thisCalculate(){
 		//決定ボタンを押した
 		if(submissionHitJudgeShape[m_selectIndex].VJudgePointInsideShape(mousePos)){
 			//マウスがちゃんと項目に入っている
-			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//決定音を鳴らす
-			return SceneKind::e_switch;//次のシーンへ
+			//決定音を鳴らす
+			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);
+			//サブミッション設定
+			m_battleSceneData->m_scoreObserver->SetSubmissionRule(m_submissionList[m_selectIndex]);
+			//SwitchUnitSceneに戻る
+			return 0;
 		}
 	}
 	return SceneKind::e_selectSubmission;
@@ -89,15 +93,7 @@ void SelectSubmissionScene::thisDraw()const{
 }
 
 int SelectSubmissionScene::UpdateNextScene(int index){
-	switch(index){
-	case(SceneKind::e_switch):
-		//ゲーム開始へ
-		//サブミッション設定
-		m_battleSceneData->m_scoreObserver->SetSubmissionRule(m_submissionList[m_selectIndex]);
-		//次シーン作成
-		m_nextScene=std::shared_ptr<BattleSceneElement>(new SwitchUnitScene(m_battleSceneData));
-		break;
-	}
+	//戻るだけなので何もしない
 	return index;
 }
 
