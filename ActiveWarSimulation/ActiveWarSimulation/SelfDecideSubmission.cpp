@@ -13,10 +13,10 @@ namespace{
 }
 
 //--------------SelfDecideSubmission---------------
-const int SelfDecideSubmission::s_submissionWidth=500;
-const int SelfDecideSubmission::s_submissionHeight=60;
-const int SelfDecideSubmission::s_reasonWidth=600;
-const int SelfDecideSubmission::s_reasonHeight=100;
+const int SelfDecideSubmission::s_submissionWidth=700;
+const int SelfDecideSubmission::s_submissionHeight=90;
+const int SelfDecideSubmission::s_reasonWidth=700;
+const int SelfDecideSubmission::s_reasonHeight=90;
 
 SelfDecideSubmission::SelfDecideSubmission(const std::shared_ptr<SubmissionRuleBase> &rule)
 	:m_rule(rule)
