@@ -106,7 +106,7 @@ std::string ArcherAttackDistance::GetWholeLookBackActionEmpty()const{
 }
 
 std::string ArcherAttackDistance::GetSubmissionExplanation()const{
-	return "地形や味方キャラの壁を利用して、\n安全地帯から攻撃してみよう！";
+	return "射程の長い射手は、\n地形や味方キャラの壁を利用して安全地帯から攻撃してみよう！";
 }
 
 bool ArcherAttackDistance::JudgeEvaluateOrder(const BattleSceneData * const battleData)const{
