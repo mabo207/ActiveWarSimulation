@@ -38,7 +38,7 @@ protected:
 	//関数
 protected:
 	int CalculateTurn()const;
-	std::shared_ptr<BattleSceneElement> GetPlayerMoveScene()const;
+	virtual std::shared_ptr<BattleSceneElement> GetPlayerMoveScene()const;//遷移先を変更する必要があれば更新しても良い
 	bool JudgeTimeProcessed()const;//規定時間経ったかどうか
 	bool JudgeGoToMoveScene()const;//移動シーンに行くかどうか
 	bool JudgeDrawRubric()const;//ルーブリック評価を描画するかどうか
