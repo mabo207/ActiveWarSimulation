@@ -12,6 +12,7 @@
 
 #include"BattleScene.h"
 #include"TitleScene.h"
+#include"SubmissionBattleScene.h"
 
 #include"StageSelectUIInStageSelect.h"
 #include"LevelSelectUIInStageSelect.h"
@@ -182,7 +183,12 @@ std::shared_ptr<GameScene> StageSelectScene::VGetNextScene(const std::shared_ptr
 		const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,titleFactory,15,15);
 	} else if(m_nextSceneName==NextSceneName::e_battle){
-		const std::shared_ptr<GameScene::SceneFactory> battleFactory=std::make_shared<BattleScene::BattleSceneFactory>(
+		//const std::shared_ptr<GameScene::SceneFactory> battleFactory=std::make_shared<BattleScene::BattleSceneFactory>(
+		//	m_stageInfoVec[m_uiControledData->stageIndex].m_dirName
+		//	,m_stageInfoVec[m_uiControledData->stageIndex].m_titleName
+		//	,m_uiControledData->selectLevel);
+		//return CreateFadeOutInSceneCompletely(thisSharedPtr,battleFactory,15,15);
+		const std::shared_ptr<GameScene::SceneFactory> battleFactory=std::make_shared<SubmissionBattleScene::SubmissionBattleSceneFactory>(
 			m_stageInfoVec[m_uiControledData->stageIndex].m_dirName
 			,m_stageInfoVec[m_uiControledData->stageIndex].m_titleName
 			,m_uiControledData->selectLevel);
