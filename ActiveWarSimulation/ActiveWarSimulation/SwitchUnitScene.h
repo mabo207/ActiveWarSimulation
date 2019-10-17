@@ -33,7 +33,7 @@ protected:
 	//関数
 protected:
 	int CalculateTurn()const;
-	std::shared_ptr<BattleSceneElement> GetPlayerMoveScene()const;
+	virtual std::shared_ptr<BattleSceneElement> GetPlayerMoveScene()const;//遷移先を変更する必要があれば更新しても良い
 
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
