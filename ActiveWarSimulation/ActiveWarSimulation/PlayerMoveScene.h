@@ -19,9 +19,6 @@ private:
 protected:
 	const MouseButtonUI m_waitButton,m_researchButton,m_menuButton;
 	Vector2D m_mousePosJustBefore;//直前フレームにおけるマウスの位置(これだけは継承先で変更しないといけないのでprotected)
-	size_t m_notOperateFrame;//何も操作していないフレーム時間
-	//サブミッション描画用
-	PositionControl m_submissionPosition;
 	//継承先でのみ変更されることを想定した変数
 	bool m_attackableOnlyChangeInherit;//攻撃行動が可能かどうか
 	bool m_moveableOnlyChangeInherit;//移動行動が可能かどうか
