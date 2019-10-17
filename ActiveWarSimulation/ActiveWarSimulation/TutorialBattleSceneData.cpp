@@ -184,12 +184,16 @@ TutorialBattleSceneData::TutorialBattleSceneData(const std::string &stageDirName
 {
 	//チュートリアルデータの読み込み
 	//オブジェクト群は{}で囲まれ\nで区切られているので、１階層だけ分割読み込みして、オブジェクトを生成する
-	StringBuilder sb(FileStrRead((FilePath::stageDir+m_stageDirName+"/tutorialList.txt").c_str()),'\n','{','}');
-	for(StringBuilder &ssb:sb.m_vec){
-		std::shared_ptr<TutorialBase> pt=TutorialBase::Create(ssb,*this);//sb,ssbは変更される
-		if(pt.get()!=nullptr){
-			m_tutorialData.push_back(pt);
+	try{
+		StringBuilder sb(FileStrRead((FilePath::stageDir+m_stageDirName+"/tutorialList.txt").c_str()),'\n','{','}');
+		for(StringBuilder &ssb:sb.m_vec){
+			std::shared_ptr<TutorialBase> pt=TutorialBase::Create(ssb,*this);//sb,ssbは変更される
+			if(pt.get()!=nullptr){
+				m_tutorialData.push_back(pt);
+			}
 		}
+	} catch(const FileOpenFailedException &){
+		//特に何もしない
 	}
 }
 
