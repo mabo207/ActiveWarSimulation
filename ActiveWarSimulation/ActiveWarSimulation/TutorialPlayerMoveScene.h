@@ -25,13 +25,13 @@ protected:
 	bool TutorialWaitProcess(int retIntPal);//待機チュートリアルの判定と処理、遷移処理を行うかどうかを返す
 	bool TutorialExplainProcess();//説明チュートリアルの判定と処理、遷移処理を行うかどうかを返す
 	bool TutorialBlankProcess(int retIntPal);//何もしないチュートリアルの判定と処理、遷移処理を行うかどうかを返す
+	//仮想関数のオーバーライド
+	virtual int thisCalculate();
+	virtual void thisDraw()const;
 
 public:
 	TutorialPlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData);
 	virtual ~TutorialPlayerMoveScene();
-	virtual int thisCalculate();
-	virtual void thisDraw()const;
-
 };
 
 #endif // !DEF_TUTORIALPLAYERMOVESCENE_H
