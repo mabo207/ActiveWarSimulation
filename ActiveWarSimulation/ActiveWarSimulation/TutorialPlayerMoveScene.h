@@ -28,9 +28,9 @@ protected:
 
 public:
 	TutorialPlayerMoveScene(std::shared_ptr<BattleSceneData> battleSceneData);
-	~TutorialPlayerMoveScene();
-	int thisCalculate();
-	void thisDraw()const;
+	virtual ~TutorialPlayerMoveScene();
+	virtual int thisCalculate();
+	virtual void thisDraw()const;
 
 };
 
