@@ -199,6 +199,7 @@
     <ClCompile Include="ResearchScene.cpp" />
     <ClCompile Include="ScoreObserver.cpp" />
     <ClCompile Include="ScoreRankingData.cpp" />
+    <ClCompile Include="SelectSubmissionScene.cpp" />
     <ClCompile Include="SelfDecideSubmission.cpp" />
     <ClCompile Include="StageClearScene.cpp" />
     <ClCompile Include="StageInfoInStageSelect.cpp" />
@@ -209,6 +210,8 @@
     <ClCompile Include="StageSelectUIInStageSelect.cpp" />
     <ClCompile Include="StringBuilder.cpp" />
     <ClCompile Include="SubmissionRuleBase.cpp" />
+    <ClCompile Include="SubmissionSwitchUnitScene.cpp" />
+    <ClCompile Include="SwitchUnitInitOrderScene.cpp" />
     <ClCompile Include="SwitchUnitScene.cpp" />
     <ClCompile Include="SystemMenu.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -266,6 +269,7 @@
     <ClInclude Include="ProtectFriend.h" />
     <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="ScoreRankingData.h" />
+    <ClInclude Include="SelectSubmissionScene.h" />
     <ClInclude Include="SelfDecideSubmission.h" />
     <ClInclude Include="StageClearScene.h" />
     <ClInclude Include="StageInfoInStageSelect.h" />
@@ -277,6 +281,8 @@
     <ClInclude Include="StageSelectUIInStageSelect.h" />
     <ClInclude Include="StringBuilder.h" />
     <ClInclude Include="SubmissionRuleBase.h" />
+    <ClInclude Include="SubmissionSwitchUnitScene.h" />
+    <ClInclude Include="SwitchUnitInitOrderScene.h" />
     <ClInclude Include="SystemMenu.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="input.h" />

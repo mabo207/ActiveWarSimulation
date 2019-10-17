@@ -1,9 +1,11 @@
 #include"BattleScene.h"
-#include"SwitchUnitScene.h"
 #include"input.h"
 #include"DxLib.h"
 #include"CommonConstParameter.h"
 #include"BGMManager.h"
+
+#include"SwitchUnitInitOrderScene.h"
+#include"SubmissionSwitchUnitScene.h"
 
 #include"StageSelectScene.h"
 #include"CreditScene.h"
@@ -59,7 +61,7 @@ void BattleScene::Activate(){
 }
 
 std::shared_ptr<BattleSceneElement> BattleScene::VGetSwitchUnitScene()const{
-	return std::shared_ptr<BattleSceneElement>(new SwitchUnitScene(m_battleSceneData));
+	return std::shared_ptr<BattleSceneElement>(new SwitchUnitInitOrderScene(m_battleSceneData));
 }
 
 void BattleScene::ResetGame(){

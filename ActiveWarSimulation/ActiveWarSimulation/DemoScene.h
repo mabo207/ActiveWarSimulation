@@ -3,7 +3,7 @@
 
 #include"BattleScene.h"
 
-//デモを行うクラス(コンストラクタでBattleScene.cppにてSwitchUnitSceneだったところを変えれば良いだけ)
+//デモを行うクラス(コンストラクタでBattleScene.cppにてSwitchUnitInitOrderSceneだったところを変えれば良いだけ)
 class DemoScene:public BattleScene{
 	//型・列挙体
 public:
@@ -35,7 +35,7 @@ public:
 	~DemoScene();
 	
 	//仮想関数のオーバーライド
-	std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitSceneかDemoSwitchUnitSceneのどっちを使うか
+	std::shared_ptr<BattleSceneElement> VGetSwitchUnitScene()const;//SwitchUnitInitOrderSceneかDemoSwitchUnitSceneのどっちを使うか
 	int Calculate();
 	void Draw()const;
 	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;

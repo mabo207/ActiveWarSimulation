@@ -72,6 +72,8 @@ public:
 	const SelfDecideSubmission &GetSubmission()const{
 		return m_submission;
 	}
+	//サブミッションのルールを設定
+	void SetSubmissionRule(const std::shared_ptr<SubmissionRuleBase> &rule);
 	//コンストラクタ等
 	ScoreObserver();
 	virtual ~ScoreObserver();

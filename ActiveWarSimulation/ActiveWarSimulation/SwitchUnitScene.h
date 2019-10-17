@@ -6,6 +6,7 @@
 #include"ToolsLib.h"
 
 //選択するユニットを切り替えるシーン
+//これを継承すると、ReturnProcess()を実行するまでコンストラクタでユニットの行動順の初期化がされない
 class SwitchUnitScene:public BattleSceneElement{
 	//型・列挙体
 protected:

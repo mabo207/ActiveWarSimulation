@@ -151,6 +151,12 @@
     <Filter Include="ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\Rule">
       <UniqueIdentifier>{fb8817c5-b6b4-4b39-8423-b449cef48d12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\BattleScene\SubmissionScene">
+      <UniqueIdentifier>{5b8ad059-928a-47fb-a08e-a51257e8652e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameScene\BattleScene\SubmissionScene">
+      <UniqueIdentifier>{3c22961c-438e-4feb-85f9-e2efc0443964}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -369,6 +375,15 @@
     <ClCompile Include="IntensiveAttack.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\Rule</Filter>
     </ClCompile>
+    <ClCompile Include="SelectSubmissionScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\SubmissionScene</Filter>
+    </ClCompile>
+    <ClCompile Include="SubmissionSwitchUnitScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\SubmissionScene</Filter>
+    </ClCompile>
+    <ClCompile Include="SwitchUnitInitOrderScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -583,6 +598,15 @@
     </ClInclude>
     <ClInclude Include="IntensiveAttack.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\Rule</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectSubmissionScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\SubmissionScene</Filter>
+    </ClInclude>
+    <ClInclude Include="SubmissionSwitchUnitScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\SubmissionScene</Filter>
+    </ClInclude>
+    <ClInclude Include="SwitchUnitInitOrderScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

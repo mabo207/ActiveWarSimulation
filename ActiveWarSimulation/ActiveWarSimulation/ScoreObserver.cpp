@@ -769,12 +769,16 @@ std::shared_ptr<const LogElement> ScoreObserver::GetLatestLog()const{
 	}
 }
 
+void ScoreObserver::SetSubmissionRule(const std::shared_ptr<SubmissionRuleBase> &rule){
+	m_submission.InitRubric(rule);
+}
+
 ScoreObserver::ScoreObserver()
 	:m_researchCount(0)
 	,m_cancelCount(0)
 	,m_logList()
 	,m_latticeBonusData()
-	,m_submission(std::shared_ptr<SubmissionRuleBase>(new ProtectFriend()))
+	,m_submission()
 {}
 
 ScoreObserver::~ScoreObserver(){}
