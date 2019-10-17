@@ -57,6 +57,9 @@ int SelectSubmissionScene::thisCalculate(){
 			//SwitchUnitScene‚É–ß‚é
 			return 0;
 		}
+	} else if(keyboard_get(KEY_INPUT_X)==1){
+		//–ß‚éƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ÍA‰½‚àİ’è‚¹‚¸‚É–ß‚é
+		return 0;
 	}
 	return SceneKind::e_selectSubmission;
 }
