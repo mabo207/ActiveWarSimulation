@@ -10,6 +10,9 @@ class SubmissionSwitchUnitScene:public SwitchUnitScene{
 public:
 	SubmissionSwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneData);
 	~SubmissionSwitchUnitScene();
+
+protected:
+	std::shared_ptr<BattleSceneElement> GetPlayerMoveScene()const;
 };
 
 #endif // !DEF_SUBMISSIONSWITCHUNITSCENE_H
