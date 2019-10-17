@@ -4,9 +4,9 @@
 //サブミッションを設定する必要がある場合のトップに設置するSwitchUnitScene
 //インスタンス作成時に、m_nextSceneにSelectSubmissionSceneを生成するだけで、他の機能は変わらない。
 
-#include"SwitchUnitScene.h"
+#include"SwitchUnitInitOrderScene.h"
 
-class SubmissionSwitchUnitScene:public SwitchUnitScene{
+class SubmissionSwitchUnitScene:public SwitchUnitInitOrderScene{
 public:
 	SubmissionSwitchUnitScene(std::shared_ptr<BattleSceneData> battleSceneData);
 	~SubmissionSwitchUnitScene();
