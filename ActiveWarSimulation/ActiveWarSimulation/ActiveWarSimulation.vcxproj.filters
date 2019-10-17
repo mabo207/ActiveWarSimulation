@@ -333,6 +333,9 @@
     <ClCompile Include="CreditScene.cpp">
       <Filter>ソース ファイル\GameScene\CreditScene</Filter>
     </ClCompile>
+    <ClCompile Include="SwitchUnitInitOrderScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -523,6 +526,9 @@
     </ClInclude>
     <ClInclude Include="CreditScene.h">
       <Filter>ヘッダー ファイル\GameScene\CreditScene</Filter>
+    </ClInclude>
+    <ClInclude Include="SwitchUnitInitOrderScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
