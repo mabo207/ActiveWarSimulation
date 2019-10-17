@@ -4,7 +4,7 @@
 SwitchUnitInitOrderScene::SwitchUnitInitOrderScene(std::shared_ptr<BattleSceneData> battleSceneData)
 	:SwitchUnitScene(battleSceneData)
 {
-	//進行データを更新
+	//オーダーの初期化を行う
 	ReturnProcess();
 }
 
