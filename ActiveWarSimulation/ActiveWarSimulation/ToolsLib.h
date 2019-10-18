@@ -133,6 +133,9 @@ int GetStringHeightNewLineToHandle(const int maxDX,const int font,const std::str
 //Šg‘å•`‰æBˆÊ’uw’è‚Å‚Í‚È‚­‘å‚«‚³w’è‚ÅŠg‘å—¦‚ğw’èB
 int DrawExtendGraphSizeAssign(int x,int y,int dx,int dy,int GrHandle,int TransFlag);
 
+//Šg‘å•`‰æBxy—¼•û‚É“™‚µ‚¢Šg‘å—¦‚ğw’èB
+int DrawExtendGraphExRateAssign(float x,float y,float exRate,int grHandle,int transFlag);
+
 //’†‰›‚Ì•`‰æˆÊ’u‚ğw’è‚µ‚½•¶š—ñ•`‰æ
 int DrawStringCenterBaseToHandle(const int centerx,const int centery,const char *str,unsigned int color,int fonthandle,bool yposcenterbaseflag,unsigned int EdgeColor=0U,int VerticalFlag=0);
 

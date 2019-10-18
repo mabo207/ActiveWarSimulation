@@ -240,6 +240,15 @@ int DrawExtendGraphSizeAssign(int x,int y,int dx,int dy,int GrHandle,int TransFl
 	return DrawExtendGraph(x,y,x+dx,y+dy,GrHandle,TransFlag);
 }
 
+//Šg‘å•`‰æBxy—¼•û‚É“™‚µ‚¢Šg‘å—¦‚ğw’èB
+int DrawExtendGraphExRateAssign(float x,float y,float exRate,int grHandle,int transFlag){
+	float width,height;
+	GetGraphSizeF(grHandle,&width,&height);
+	width*=exRate;
+	height*=exRate;
+	return DrawExtendGraphF(x,y,x+width,y+height,grHandle,transFlag);
+}
+
 //’†‰›‘µ‚¦‚Ì•¶š—ñ•`‰æ
 int DrawStringCenterBaseToHandle(const int centerx,const int centery,const char *str,unsigned int color,int fonthandle,bool yposcenterbaseflag,unsigned int EdgeColor,int VerticalFlag){
 	if(yposcenterbaseflag){
