@@ -264,11 +264,11 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 void Unit::DrawHPGage(Vector2D point,Vector2D adjust,float exRate)const{
 	//HPゲージとHPの表示。ゲージは非AAで描画したほうが綺麗に見える
 	const Vector2D centerDrawPos=point*exRate+adjust;
-	const int gageX=(int)(centerDrawPos.x-unitCircleSize)
-		,gageY=(int)(centerDrawPos.y+unitCircleSize)-hpFontSize/2
-		,unitCircleSizeInteger=(int)(unitCircleSize)
+	const int gageX=(int)(centerDrawPos.x-unitCircleSize*exRate)
+		,gageY=(int)(centerDrawPos.y+unitCircleSize*exRate)-hpFontSize/2
+		,unitCircleSizeInteger=(int)(unitCircleSize*exRate)
 		,margin=2;
-	const int gageMaxLength=(int)((unitCircleSizeInteger-margin)*2*exRate);
+	const int gageMaxLength=(int)((unitCircleSizeInteger-margin)*2);
 	const int gageLength=gageMaxLength*m_battleStatus.HP/m_baseStatus.maxHP;
 	//ゲージの色
 	unsigned int color;
