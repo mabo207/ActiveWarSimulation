@@ -54,6 +54,7 @@ void SelfDecideSubmission::RubricEvaluate(const BattleSceneData * const battleDa
 	//•]‰¿‚Ì’~Ï
 	if(m_rule){
 		m_rubricList.push_back(m_rule->RubricEvaluate(battleData));
+		m_reflectionLog=battleData->m_scoreObserver->GetLatestLog();//Žb’è
 	}
 }
 
