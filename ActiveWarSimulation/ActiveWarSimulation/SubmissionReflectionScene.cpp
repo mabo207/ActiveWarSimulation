@@ -2,6 +2,8 @@
 #include"input.h"
 #include"SubmissionReflectionScene.h"
 #include"StageClearScene.h"
+#include"ToolsLib.h"
+#include"CommonConstParameter.h"
 
 //---------------SubmissionReflectionScene-----------------
 SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<BattleSceneData> &battleSceneData,const std::shared_ptr<BattleSceneElement> &clearScene)
@@ -12,6 +14,32 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 
 SubmissionReflectionScene::~SubmissionReflectionScene(){}
 
+void SubmissionReflectionScene::DrawResizedMap(float exRate,Vector2D startPos)const{
+	//BattleSceneData‚Ì•`‰æŠÖ”‚ÍŠg‘åk¬•`‰æ‚É‘Î‰ž‚µ‚Ä‚¢‚È‚¢‚Ì‚ÅA“ÆŽ©‚ÉŽÀ‘•‚·‚é
+	//”wŒi•`‰æ
+	DrawExtendGraphExRateAssign(startPos.x,startPos.y,exRate,m_battleSceneData->m_mapPic,TRUE);
+	//ƒ†ƒjƒbƒg‚Ì•`‰æ
+	for(const Unit * const pUnit:m_battleSceneData->m_unitList){
+		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(pUnit)
+			&& pUnit->GetFix()!=Shape::Fix::e_ignore)
+		{
+			//ƒEƒCƒ“ƒhƒE‚É“ü‚Á‚Ä‚¢‚È‚¢•¨‚Í•`‰æ‚µ‚È‚¢
+			//‘Þ‹p‚µ‚½ƒ†ƒjƒbƒg(m_fix‚ªe_ignore)‚Í•`‰æ‚µ‚È‚¢
+			pUnit->DrawUnit(pUnit->getPos(),startPos,exRate,0,false,true,false);
+		}
+	}
+	//ƒ†ƒjƒbƒg‚ÌHPƒQ[ƒW‚Ì•`‰æ
+	for(const Unit * const pUnit:m_battleSceneData->m_unitList){
+		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(pUnit)
+			&& pUnit->GetFix()!=Shape::Fix::e_ignore)
+		{
+			//ƒEƒCƒ“ƒhƒE‚É“ü‚Á‚Ä‚¢‚È‚¢•¨‚Í•`‰æ‚µ‚È‚¢
+			//‘Þ‹p‚µ‚½ƒ†ƒjƒbƒg(m_fix‚ªe_ignore)‚Í•`‰æ‚µ‚È‚¢
+			pUnit->DrawHPGage(pUnit->getPos(),startPos,exRate);
+		}
+	}
+}
+
 int SubmissionReflectionScene::thisCalculate(){
 	if(keyboard_get(KEY_INPUT_Z)==1 || mouse_get(MOUSE_INPUT_LEFT)==1){
 		return SceneKind::e_clear;
@@ -21,7 +49,12 @@ int SubmissionReflectionScene::thisCalculate(){
 }
 
 void SubmissionReflectionScene::thisDraw()const{
-
+	const int lineWidth=5;
+	const int x1=10,y1=40,x2=900,y2=500;
+	DrawBox(x1-lineWidth,y1-lineWidth,x1+CommonConstParameter::mapSizeX/2+lineWidth,y1+CommonConstParameter::mapSizeY/2+lineWidth,GetColor(128,128,255),TRUE);
+	DrawResizedMap(0.5,Vector2D((float)x1,(float)y1));
+	DrawBox(x2-lineWidth,y2-lineWidth,x2+CommonConstParameter::mapSizeX/2+lineWidth,y2+CommonConstParameter::mapSizeY/2+lineWidth,GetColor(128,128,255),TRUE);
+	DrawResizedMap(0.5,Vector2D((float)x2,(float)y2));
 }
 
 int SubmissionReflectionScene::UpdateNextScene(int index){
