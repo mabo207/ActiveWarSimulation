@@ -4,6 +4,7 @@
 #include"StageClearScene.h"
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
+#include"LogElement.h"
 
 namespace {
 	const int lineWidth=5;
@@ -22,7 +23,7 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 
 SubmissionReflectionScene::~SubmissionReflectionScene(){}
 
-void SubmissionReflectionScene::DrawResizedMap(int x,int y)const{
+void SubmissionReflectionScene::DrawResizedMap(int x,int y,const std::vector<Unit> &unitList)const{
 	//マージンの描画
 	DrawBox(x-lineWidth,y-lineWidth,x+minimapWidth+lineWidth,y+minimapHeight+lineWidth,merginColor,TRUE);
 	const Vector2D startPos((float)x,(float)y);
@@ -30,23 +31,23 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y)const{
 	//背景描画
 	DrawExtendGraphExRateAssign(startPos.x,startPos.y,minimapRate,m_battleSceneData->m_mapPic,TRUE);
 	//ユニットの描画
-	for(const Unit * const pUnit:m_battleSceneData->m_unitList){
-		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(pUnit)
-			&& pUnit->GetFix()!=Shape::Fix::e_ignore)
+	for(const Unit unit:unitList){
+		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(&unit)
+			&& unit.GetFix()!=Shape::Fix::e_ignore)
 		{
 			//ウインドウに入っていない物は描画しない
 			//退却したユニット(m_fixがe_ignore)は描画しない
-			pUnit->DrawUnit(pUnit->getPos(),startPos,minimapRate,0,false,true,false);
+			unit.DrawUnit(unit.getPos(),startPos,minimapRate,0,false,true,false);
 		}
 	}
 	//ユニットのHPゲージの描画
-	for(const Unit * const pUnit:m_battleSceneData->m_unitList){
-		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(pUnit)
-			&& pUnit->GetFix()!=Shape::Fix::e_ignore)
+	for(const Unit unit:unitList){
+		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(&unit)
+			&& unit.GetFix()!=Shape::Fix::e_ignore)
 		{
 			//ウインドウに入っていない物は描画しない
 			//退却したユニット(m_fixがe_ignore)は描画しない
-			pUnit->DrawHPGage(pUnit->getPos(),startPos,minimapRate);
+			unit.DrawHPGage(unit.getPos(),startPos,minimapRate);
 		}
 	}
 }
@@ -60,8 +61,22 @@ int SubmissionReflectionScene::thisCalculate(){
 }
 
 void SubmissionReflectionScene::thisDraw()const{
-	DrawResizedMap(40,40);
-	DrawResizedMap(900,500);
+	std::shared_ptr<const LogElement> reflectionLog=m_battleSceneData->m_scoreObserver->GetSubmission().GetReflectionLog();
+
+	if(reflectionLog){
+		std::vector<Unit> unitList;
+		for(const LogElement::UnitLogData &logData:reflectionLog->m_unitDataList){
+			//その時の状態のユニットの作成
+			Unit u=*logData.punit;
+			u.Warp(logData.pos);
+			u.AddHP(logData.hp-u.GetBattleStatus().HP);
+			u.SetOP(logData.op);
+			//格納
+			unitList.push_back(u);
+		}
+		DrawResizedMap(40,40,unitList);
+		DrawResizedMap(900,500,unitList);
+	}
 }
 
 int SubmissionReflectionScene::UpdateNextScene(int index){
