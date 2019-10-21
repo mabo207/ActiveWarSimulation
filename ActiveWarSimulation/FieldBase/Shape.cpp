@@ -50,6 +50,10 @@ void Shape::Draw(Vector2D adjust,unsigned int color,int fillFlag,float lineThick
 	Draw(m_position,adjust,color,fillFlag,lineThickness);
 }
 
+void Shape::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness)const{
+	Draw(point,adjust,1.0f,color,fillFlag,lineThickness);
+}
+
 std::shared_ptr<Shape> Shape::CreateShape(StringBuilder &info){
 	//「種類,位置,初期固定,図形情報」の順。それぞれの要素を抽出する。
 	//全て()が集合文字、,が区切り文字なので一括で分割する。
