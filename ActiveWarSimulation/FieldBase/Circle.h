@@ -27,7 +27,7 @@ public:
 	}
 	
 	//純粋仮想関数のオーバーライド
-	void Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness=1.0f)const;
+	void Draw(Vector2D point,Vector2D adjust,float exRate,unsigned int color,int fillFlag,float lineThickness=1.0f)const;
 	bool PushParentObj(const Shape *pShape,ShapeHaving *parentObj,float pushRate)const;//thisとpShapeが重なっているか判定し、重なっている場合はparentObjを移動させtrueを返す。
 	bool JudgeInShape(const Shape *pShape)const;//this内にpShapeがあるかどうかの判定
 	Vector2D GetLeftTop()const;//左上の座標を求める

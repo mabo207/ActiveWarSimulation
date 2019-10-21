@@ -129,7 +129,7 @@ void MyPolygon::CalculateAllPointPosition(std::vector<Vector2D> *vertexPos)const
 	}
 }
 
-void MyPolygon::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness)const{
+void MyPolygon::Draw(Vector2D point,Vector2D adjust,float exRate,unsigned int color,int fillFlag,float lineThickness)const{
 	//中を満たすかどうかで処理を変える。満たさない場合は三角形分割をしなくて良いので高速化できるため
 	if(fillFlag==TRUE){
 		//中を満たす場合
@@ -146,22 +146,22 @@ void MyPolygon::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillF
 		//c=VJudgePointInsideShape(GetMousePointVector2D())?GetColor(168,128,128):GetColor(128,168,128);
 		c=color;
 		for(size_t i=0,size=m_triangleSet.size();i<size;i++){
-			DrawTriangleAA(vertexVec[m_triangleSet[i][0]].x+adjust.x,vertexVec[m_triangleSet[i][0]].y+adjust.y,
-				vertexVec[m_triangleSet[i][1]].x+adjust.x,vertexVec[m_triangleSet[i][1]].y+adjust.y,
-				vertexVec[m_triangleSet[i][2]].x+adjust.x,vertexVec[m_triangleSet[i][2]].y+adjust.y,
+			DrawTriangleAA(vertexVec[m_triangleSet[i][0]].x*exRate+adjust.x,vertexVec[m_triangleSet[i][0]].y*exRate+adjust.y,
+				vertexVec[m_triangleSet[i][1]].x*exRate+adjust.x,vertexVec[m_triangleSet[i][1]].y*exRate+adjust.y,
+				vertexVec[m_triangleSet[i][2]].x*exRate+adjust.x,vertexVec[m_triangleSet[i][2]].y*exRate+adjust.y,
 				c,TRUE,lineThickness);
-			DrawTriangleAA(vertexVec[m_triangleSet[i][0]].x+adjust.x,vertexVec[m_triangleSet[i][0]].y+adjust.y,
-				vertexVec[m_triangleSet[i][1]].x+adjust.x,vertexVec[m_triangleSet[i][1]].y+adjust.y,
-				vertexVec[m_triangleSet[i][2]].x+adjust.x,vertexVec[m_triangleSet[i][2]].y+adjust.y,
+			DrawTriangleAA(vertexVec[m_triangleSet[i][0]].x*exRate+adjust.x,vertexVec[m_triangleSet[i][0]].y*exRate+adjust.y,
+				vertexVec[m_triangleSet[i][1]].x*exRate+adjust.x,vertexVec[m_triangleSet[i][1]].y*exRate+adjust.y,
+				vertexVec[m_triangleSet[i][2]].x*exRate+adjust.x,vertexVec[m_triangleSet[i][2]].y*exRate+adjust.y,
 				color,FALSE,lineThickness);
 		}
 
 	} else{
 		//辺のみ描画する場合
-		Vector2D pos=point+adjust,next;
+		Vector2D pos=point*exRate+adjust,next;
 		for(const Vector2D &edge:GetAllEdgeVecs()){
 			//始点からもう一度始点に戻るまでの全ての辺の描画
-			next=pos+edge;
+			next=pos+edge*exRate;
 			DrawLineAA(pos.x,pos.y,next.x,next.y,color,lineThickness);
 			pos=next;
 		}

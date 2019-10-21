@@ -263,7 +263,11 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 
 void Unit::DrawHPGage(Vector2D point,Vector2D adjust,float exRate)const{
 	//HPƒQ[ƒW‚ÆHP‚Ì•\¦BƒQ[ƒW‚Í”ñAA‚Å•`‰æ‚µ‚½‚Ù‚¤‚ªãY—í‚ÉŒ©‚¦‚é
-	const int gageX=(int)(getPos().x-unitCircleSize),gageY=(int)(getPos().y+unitCircleSize)-hpFontSize/2,unitCircleSizeInteger=(int)(unitCircleSize),margin=2;
+	const Vector2D centerDrawPos=point*exRate+adjust;
+	const int gageX=(int)(centerDrawPos.x-unitCircleSize)
+		,gageY=(int)(centerDrawPos.y+unitCircleSize)-hpFontSize/2
+		,unitCircleSizeInteger=(int)(unitCircleSize)
+		,margin=2;
 	const int gageMaxLength=(int)((unitCircleSizeInteger-margin)*2*exRate);
 	const int gageLength=gageMaxLength*m_battleStatus.HP/m_baseStatus.maxHP;
 	//ƒQ[ƒW‚ÌF
@@ -329,7 +333,7 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 }
 
 void Unit::DrawUnit(Vector2D point,Vector2D adjust,float exRate,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const{
-	Vector2D pos=point+adjust;//•`‰æˆÊ’u
+	Vector2D pos=point*exRate+adjust;//•`‰æˆÊ’u
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
 	//UI‚Ì•\¦—Ìˆæ‚Ìİ’è
@@ -362,19 +366,19 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,float exRate,size_t frame,boo
 		}
 		//ƒ†ƒjƒbƒg‚Ì“–‚½‚è”»’è}Œ`‚ğ•`‰æ
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
-		GetHitJudgeShape()->Draw(point,adjust,Team::GetColor(m_battleStatus.team),TRUE);//–Ê
+		GetHitJudgeShape()->Draw(point,adjust,exRate,Team::GetColor(m_battleStatus.team),TRUE,1.0f);//–Ê
 		SetDrawBlendMode(mode,pal);
-		GetHitJudgeShape()->Draw(point,adjust,Team::GetColor(m_battleStatus.team),FALSE);//˜g
+		GetHitJudgeShape()->Draw(point,adjust,exRate,Team::GetColor(m_battleStatus.team),FALSE,1.0f);//˜g
 		//ƒ†ƒjƒbƒg©g‚Ì“–‚½‚è”»’è‚Ì•`‰æ
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,255);
-		m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//–Ê
-		m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//˜g(•‚ğ25%¬‚º‚é)
+		m_hitJudgeShape->Draw(point,adjust,exRate,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE,1.0f);//–Ê
+		m_hitJudgeShape->Draw(point,adjust,exRate,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3.0f);//˜g(•‚ğ25%¬‚º‚é)
 		//‘I‘ğƒ†ƒjƒbƒg‚Ì“–‚½‚è”»’è•”•ª‚Ì‹P“x‰ÁZ
 		if(animationFlag){
 			const int addMax=120;
 			SetDrawBlendMode(DX_BLENDMODE_ADD,(frame%60)*(60-frame%60)*addMax/900);
-			m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE);//–Ê
-			m_hitJudgeShape->Draw(point,adjust,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3);//˜g(•‚ğ25%¬‚º‚é)
+			m_hitJudgeShape->Draw(point,adjust,exRate,Team::GetColor(m_battleStatus.team,128,255,255,255),TRUE,1.0f);//–Ê
+			m_hitJudgeShape->Draw(point,adjust,exRate,Team::GetColor(m_battleStatus.team,192,0,0,0),FALSE,3.0f);//˜g(•‚ğ25%¬‚º‚é)
 		}
 		SetDrawBlendMode(mode,pal);
 	}
