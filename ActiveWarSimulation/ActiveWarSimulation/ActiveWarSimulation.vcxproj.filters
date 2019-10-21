@@ -390,6 +390,9 @@
     <ClCompile Include="SubmissionPlayerMoveScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\SubmissionScene</Filter>
     </ClCompile>
+    <ClCompile Include="SubmissionReflectionScene.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\SubmissionScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -618,6 +621,9 @@
       <Filter>ヘッダー ファイル\GameScene\BattleScene\SubmissionScene</Filter>
     </ClInclude>
     <ClInclude Include="SubmissionPlayerMoveScene.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\SubmissionScene</Filter>
+    </ClInclude>
+    <ClInclude Include="SubmissionReflectionScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\SubmissionScene</Filter>
     </ClInclude>
   </ItemGroup>

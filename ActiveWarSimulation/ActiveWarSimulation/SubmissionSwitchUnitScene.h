@@ -12,6 +12,7 @@ public:
 	~SubmissionSwitchUnitScene();
 
 protected:
+	int UpdateNextScene(int index);//次場面の設定。indexに戻りたいが、実際に戻れるかは不明なので実際の戻り場所を示すint値を返し直す。基本的に返り値はindexに等しくなる。
 	std::shared_ptr<BattleSceneElement> GetPlayerMoveScene()const;
 };
 
