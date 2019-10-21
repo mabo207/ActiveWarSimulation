@@ -5,6 +5,14 @@
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
 
+namespace {
+	const int lineWidth=5;
+	const unsigned int merginColor=GetColor(128,128,255);
+	const float minimapRate=0.5f;
+	const int minimapWidth=(int)(CommonConstParameter::mapSizeX*minimapRate);
+	const int minimapHeight=(int)(CommonConstParameter::mapSizeY*minimapRate);
+}
+
 //---------------SubmissionReflectionScene-----------------
 SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<BattleSceneData> &battleSceneData,const std::shared_ptr<BattleSceneElement> &clearScene)
 	:BattleSceneElement(SceneKind::e_submissionReflection)
@@ -14,10 +22,13 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 
 SubmissionReflectionScene::~SubmissionReflectionScene(){}
 
-void SubmissionReflectionScene::DrawResizedMap(float exRate,Vector2D startPos)const{
+void SubmissionReflectionScene::DrawResizedMap(int x,int y)const{
+	//ƒ}[ƒWƒ“‚Ì•`‰æ
+	DrawBox(x-lineWidth,y-lineWidth,x+minimapWidth+lineWidth,y+minimapHeight+lineWidth,merginColor,TRUE);
+	const Vector2D startPos((float)x,(float)y);
 	//BattleSceneData‚Ì•`‰æŠÖ”‚ÍŠg‘åk¬•`‰æ‚É‘Î‰ž‚µ‚Ä‚¢‚È‚¢‚Ì‚ÅA“ÆŽ©‚ÉŽÀ‘•‚·‚é
 	//”wŒi•`‰æ
-	DrawExtendGraphExRateAssign(startPos.x,startPos.y,exRate,m_battleSceneData->m_mapPic,TRUE);
+	DrawExtendGraphExRateAssign(startPos.x,startPos.y,minimapRate,m_battleSceneData->m_mapPic,TRUE);
 	//ƒ†ƒjƒbƒg‚Ì•`‰æ
 	for(const Unit * const pUnit:m_battleSceneData->m_unitList){
 		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(pUnit)
@@ -25,7 +36,7 @@ void SubmissionReflectionScene::DrawResizedMap(float exRate,Vector2D startPos)co
 		{
 			//ƒEƒCƒ“ƒhƒE‚É“ü‚Á‚Ä‚¢‚È‚¢•¨‚Í•`‰æ‚µ‚È‚¢
 			//‘Þ‹p‚µ‚½ƒ†ƒjƒbƒg(m_fix‚ªe_ignore)‚Í•`‰æ‚µ‚È‚¢
-			pUnit->DrawUnit(pUnit->getPos(),startPos,exRate,0,false,true,false);
+			pUnit->DrawUnit(pUnit->getPos(),startPos,minimapRate,0,false,true,false);
 		}
 	}
 	//ƒ†ƒjƒbƒg‚ÌHPƒQ[ƒW‚Ì•`‰æ
@@ -35,7 +46,7 @@ void SubmissionReflectionScene::DrawResizedMap(float exRate,Vector2D startPos)co
 		{
 			//ƒEƒCƒ“ƒhƒE‚É“ü‚Á‚Ä‚¢‚È‚¢•¨‚Í•`‰æ‚µ‚È‚¢
 			//‘Þ‹p‚µ‚½ƒ†ƒjƒbƒg(m_fix‚ªe_ignore)‚Í•`‰æ‚µ‚È‚¢
-			pUnit->DrawHPGage(pUnit->getPos(),startPos,exRate);
+			pUnit->DrawHPGage(pUnit->getPos(),startPos,minimapRate);
 		}
 	}
 }
@@ -49,12 +60,8 @@ int SubmissionReflectionScene::thisCalculate(){
 }
 
 void SubmissionReflectionScene::thisDraw()const{
-	const int lineWidth=5;
-	const int x1=10,y1=40,x2=900,y2=500;
-	DrawBox(x1-lineWidth,y1-lineWidth,x1+CommonConstParameter::mapSizeX/2+lineWidth,y1+CommonConstParameter::mapSizeY/2+lineWidth,GetColor(128,128,255),TRUE);
-	DrawResizedMap(0.5,Vector2D((float)x1,(float)y1));
-	DrawBox(x2-lineWidth,y2-lineWidth,x2+CommonConstParameter::mapSizeX/2+lineWidth,y2+CommonConstParameter::mapSizeY/2+lineWidth,GetColor(128,128,255),TRUE);
-	DrawResizedMap(0.5,Vector2D((float)x2,(float)y2));
+	DrawResizedMap(40,40);
+	DrawResizedMap(900,500);
 }
 
 int SubmissionReflectionScene::UpdateNextScene(int index){

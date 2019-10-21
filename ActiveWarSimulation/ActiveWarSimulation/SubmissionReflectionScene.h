@@ -12,7 +12,7 @@ public:
 
 private:
 	//関数
-	void DrawResizedMap(float exRate,Vector2D startPos)const;//簡易拡大縮小マップを描画する
+	void DrawResizedMap(int x,int y)const;//簡易拡大縮小マップを描画する
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
 	void thisDraw()const;
