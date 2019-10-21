@@ -21,10 +21,10 @@ Vector2D Edge::CalculateParpendicularVec(Vector2D point)const{
 	return parpendicularPoint-point;
 }
 
-void Edge::Draw(Vector2D point,Vector2D adjust,unsigned int color,int fillFlag,float lineThickness)const{
-	Vector2D begin=point+adjust;
-	Vector2D end=begin+m_vec;
-	DrawLineAA(begin.x,begin.y,end.x,end.y,color,lineThickness);
+void Edge::Draw(Vector2D point,Vector2D adjust,float exRate,unsigned int color,int fillFlag,float lineThickness)const{
+	Vector2D begin=point*exRate+adjust;
+	Vector2D end=begin*exRate+m_vec;
+	DrawLineAA(begin.x,begin.y,end.x,end.y,color,lineThickness*exRate);
 }
 
 Vector2D Edge::CalculatePushVec(const Shape *pShape)const{
