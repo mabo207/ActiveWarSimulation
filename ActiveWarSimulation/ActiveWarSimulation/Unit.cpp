@@ -258,28 +258,16 @@ void Unit::DrawHPGage(Vector2D adjust)const{
 }
 
 void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
+	DrawHPGage(point,adjust,1.0f);
+}
+
+void Unit::DrawHPGage(Vector2D point,Vector2D adjust,float exRate)const{
 	//HPゲージとHPの表示。ゲージは非AAで描画したほうが綺麗に見える
 	const int gageX=(int)(getPos().x-unitCircleSize),gageY=(int)(getPos().y+unitCircleSize)-hpFontSize/2,unitCircleSizeInteger=(int)(unitCircleSize),margin=2;
-	const int gageMaxLength=(unitCircleSizeInteger-margin)*2;
+	const int gageMaxLength=(int)((unitCircleSizeInteger-margin)*2*exRate);
 	const int gageLength=gageMaxLength*m_battleStatus.HP/m_baseStatus.maxHP;
 	//ゲージの色
 	unsigned int color;
-/*
-	//HPの割合で色を決める
-	if(gageLength>gageMaxLength*3/4){
-		//HPが全体の3/4以上なら水色
-		color=GetColor(0,196,255);
-	} else if(gageLength>gageMaxLength*2/4){
-		//HPが全体の1/2以上なら黄緑色
-		color=GetColor(32,196,0);
-	} else if(gageLength>gageMaxLength*1/4){
-		//HPが全体の1/4以上なら黄色
-		color=GetColor(196,196,0);
-	} else{
-		//HPが全体の1/4以下なら赤色
-		color=GetColor(255,64,0);
-	}
-//*/
 	//HPの値で色を決める
 	const int interval=5;
 	if(m_battleStatus.HP<=interval*1){
@@ -322,7 +310,6 @@ void Unit::DrawHPGage(Vector2D point,Vector2D adjust)const{
 	DrawBoxGradation(gageX+margin,gageY+margin,gageX+margin+gageLength,gageY+hpFontSize-margin,leftColor,color,true);
 	//HPの文字列の描画
 	DrawStringRightJustifiedToHandle(gageX,gageY,std::to_string(m_battleStatus.HP),GetColor(255,255,255),m_hpFont,GetColor(0,0,0));
-
 }
 
 void Unit::DrawFacePic(Vector2D point)const{
@@ -338,6 +325,10 @@ void Unit::DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDra
 }
 
 void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const{
+	DrawUnit(point,adjust,1.0f,frame,animationFlag,infoDrawFlag,actionRangeDraw);
+}
+
+void Unit::DrawUnit(Vector2D point,Vector2D adjust,float exRate,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const{
 	Vector2D pos=point+adjust;//描画位置
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
@@ -396,7 +387,7 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFl
 	cx/=2;
 	cy/=2;
 	double angle=0.0;
-	const double defaultRate=1.2;//デフォの画像拡大率(画像がちゃんと揃ったら1.0にする)
+	const double defaultRate=1.2*exRate;//デフォの画像拡大率(画像がちゃんと揃ったら係数を1.0にする)
 	double exRateX=defaultRate,exRateY=defaultRate;
 	if(animationFlag){
 		//angle=std::cos(frame/60.0*M_PI)*M_PI/180.0*6.0;
