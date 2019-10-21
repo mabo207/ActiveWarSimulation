@@ -82,13 +82,13 @@ void SelectSubmissionScene::thisDraw()const{
 	for(size_t i=0;i<submissionCount;i++){
 		//‰º’n‚Ì•`‰æ
 		const Vector2D pos=submissionHitJudgeShape[i].GetPosition();
-		submissionHitJudgeShape[i].Draw(pos,Vector2D(),GetColor(64,192,64),TRUE,0.0f);
+		submissionHitJudgeShape[i].Shape::Draw(pos,Vector2D(),GetColor(64,192,64),TRUE,0.0f);
 		if(i==m_selectIndex){
 			//‘I‘ð‚µ‚Ä‚¢‚é€–Ú‚É‚ÍÔ˜gü
-			submissionHitJudgeShape[i].Draw(pos,Vector2D(),GetColor(196,128,128),FALSE,10.0f);
+			submissionHitJudgeShape[i].Shape::Draw(pos,Vector2D(),GetColor(196,128,128),FALSE,10.0f);
 		} else{
 			//‘I‘ð‚µ‚Ä‚¢‚È‚¢€–Ú‚É‚ÍŠD‰©F˜gü
-			submissionHitJudgeShape[i].Draw(pos,Vector2D(),GetColor(128,128,64),FALSE,10.0f);
+			submissionHitJudgeShape[i].Shape::Draw(pos,Vector2D(),GetColor(128,128,64),FALSE,10.0f);
 		}
 		//ƒTƒuƒ~ƒbƒVƒ‡ƒ“‚Ì“à—e‚Ì•`‰æ
 		DrawStringNewLineToHandle((int)pos.x,(int)pos.y,800,440,m_submissionList[i]->GetSubmissionExplanation().c_str(),GetColor(255,255,255),GeneralPurposeResource::popLargeFont,4);
