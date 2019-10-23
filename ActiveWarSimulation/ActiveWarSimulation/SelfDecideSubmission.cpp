@@ -44,7 +44,7 @@ bool SelfDecideSubmission::JudgeEvaluatedOrder(const BattleSceneData * const bat
 bool SelfDecideSubmission::JudgeDrawRubric()const{
 	if(!m_rubricList.empty() && m_rule){
 		//•]‰¿‚ª‘¶İ‚µ‚È‚¢‚Ü‚½‚Ím_rule‚ª‘¶İ‚µ‚È‚¢‚Í•`‰æ‚µ‚È‚¢
-		const int evaluate=m_rubricList.back();
+		const int evaluate=m_rubricList.back().first;
 		return evaluate>=0;
 	}
 	return false;
@@ -53,7 +53,7 @@ bool SelfDecideSubmission::JudgeDrawRubric()const{
 void SelfDecideSubmission::RubricEvaluate(const BattleSceneData * const battleData){
 	//•]‰¿‚Ì’~Ï
 	if(m_rule){
-		m_rubricList.push_back(m_rule->RubricEvaluate(battleData));
+		m_rubricList.push_back(std::make_pair(m_rule->RubricEvaluate(battleData),battleData->m_scoreObserver->GetLatestLog()));
 		m_reflectionLog=battleData->m_scoreObserver->GetLatestLog();//b’è
 	}
 }
@@ -67,7 +67,8 @@ void SelfDecideSubmission::WholeLookBack(){
 			return;
 		}
 		//Å•p’l‚ğ‹‚ß‚é
-		for(const int &rubric:m_rubricList){
+		for(const std::pair<int,std::shared_ptr<const LogElement>> &pair:m_rubricList){
+			const int rubric=pair.first;
 			std::map<int,size_t>::iterator it=m_rubricFrequencyMap.find(rubric);
 			if(it==m_rubricFrequencyMap.end()){
 				//‚Ü‚¾rubric‚ª1‰ñ‚à¶‚¶‚Ä‚¢‚È‚¢ê‡‚ÍAm_rubricFrequencyMap‚É’Ç‰Á
@@ -105,7 +106,7 @@ void SelfDecideSubmission::DrawSubmission(int x,int y)const{
 void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 	if(!m_rubricList.empty() && m_rule){
 		//ƒ‹[ƒuƒŠƒbƒN•]‰¿‚Ì•¶Œ¾‚ğ’è‹`(Rule‚ÉˆÚ÷)
-		std::pair<std::string,unsigned int> pair=m_rule->GetRubricStringInfo(m_rubricList.back());
+		std::pair<std::string,unsigned int> pair=m_rule->GetRubricStringInfo(m_rubricList.back().first);
 		std::string rubricStr=pair.first;
 		unsigned int edgeColor=pair.second;
 		//•`‰æ
@@ -116,7 +117,7 @@ void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 void SelfDecideSubmission::DrawReason(int x,int y)const{
 	if(!m_rubricList.empty() && m_rule){
 		//•`‰æ“à—e‚ÌŒˆ’è
-		const std::string str=m_rule->GetReason(m_rubricList.back());
+		const std::string str=m_rule->GetReason(m_rubricList.back().first);
 		//‰º’n
 		DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(64,128,192),TRUE);
 		DrawBox(x,y,x+s_reasonWidth,y+s_reasonHeight,GetColor(128,192,255),FALSE);
