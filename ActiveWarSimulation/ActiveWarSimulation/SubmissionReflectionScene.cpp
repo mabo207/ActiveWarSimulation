@@ -71,6 +71,7 @@ void SubmissionReflectionScene::thisDraw()const{
 			u.Warp(logData.pos);
 			u.AddHP(logData.hp-u.GetBattleStatus().HP);
 			u.SetOP(logData.op);
+			u.SetPenetratable(Unit::Team::e_player);
 			//Ši”[
 			goodUnitList.push_back(u);
 		}
@@ -80,6 +81,7 @@ void SubmissionReflectionScene::thisDraw()const{
 			u.Warp(logData.pos);
 			u.AddHP(logData.hp-u.GetBattleStatus().HP);
 			u.SetOP(logData.op);
+			u.SetPenetratable(Unit::Team::e_player);
 			//Ši”[
 			badUnitList.push_back(u);
 		}
