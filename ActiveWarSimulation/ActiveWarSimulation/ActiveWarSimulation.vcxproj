@@ -227,6 +227,7 @@
     <ClCompile Include="AttackScene.cpp" />
     <ClCompile Include="WaitLog.cpp" />
     <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="WholeReflectionInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\FieldBase\Circle.h" />
@@ -306,6 +307,7 @@
     <ClInclude Include="AttackScene.h" />
     <ClInclude Include="WaitLog.h" />
     <ClInclude Include="Weapon.h" />
+    <ClInclude Include="WholeReflectionInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\Resource.rc" />
