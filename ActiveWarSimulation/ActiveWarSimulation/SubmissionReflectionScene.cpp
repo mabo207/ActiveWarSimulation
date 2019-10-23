@@ -31,23 +31,32 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y,const std::vector<Uni
 	//背景描画
 	DrawExtendGraphExRateAssign(startPos.x,startPos.y,minimapRate,m_battleSceneData->m_mapPic,TRUE);
 	//ユニットの描画
-	for(const Unit unit:unitList){
-		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(&unit)
-			&& unit.GetFix()!=Shape::Fix::e_ignore)
-		{
-			//ウインドウに入っていない物は描画しない
+	for(size_t i=1,siz=unitList.size();i<siz+1;i++){
+		const size_t index=i%siz;
+		//ウインドウに入っていない物は描画しない
+		//当たり判定図形のm_fix判定は行わない、そもそも死んでいるかどうかの判定なので、「実際のマップでは死んでいるが仮想マップでは生きているようにしたい」という要望には対応できないから
+		//先頭ユニットは最後に描画する
+		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(&unitList[index])){
+			//アクション範囲の描画フラグ
+			bool actionRangeDraw,animationFlag;
+			if(index==0){
+				//先頭ユニットのだけ描画フラグを立てる
+				actionRangeDraw=true;
+				animationFlag=true;
+			} else{
+				actionRangeDraw=false;
+				animationFlag=false;
+			}
 			//退却したユニット(m_fixがe_ignore)は描画しない
-			unit.DrawUnit(unit.getPos(),startPos,minimapRate,0,false,true,false);
+			unitList[index].DrawUnit(unitList[index].getPos(),startPos,minimapRate,0,animationFlag,true,actionRangeDraw);
 		}
 	}
 	//ユニットのHPゲージの描画
-	for(const Unit unit:unitList){
-		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(&unit)
-			&& unit.GetFix()!=Shape::Fix::e_ignore)
-		{
+	for(size_t i=1,siz=unitList.size();i<siz+1;i++){
+		const size_t index=i%siz;
+		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(&unitList[index])){
 			//ウインドウに入っていない物は描画しない
-			//退却したユニット(m_fixがe_ignore)は描画しない
-			unit.DrawHPGage(unit.getPos(),startPos,minimapRate);
+			unitList[index].DrawHPGage(unitList[index].getPos(),startPos,minimapRate);
 		}
 	}
 }
