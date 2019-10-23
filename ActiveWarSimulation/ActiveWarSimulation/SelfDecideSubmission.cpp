@@ -54,7 +54,6 @@ void SelfDecideSubmission::RubricEvaluate(const BattleSceneData * const battleDa
 	//•]‰¿‚Ì’~Ï
 	if(m_rule){
 		m_rubricList.push_back(std::make_pair(m_rule->RubricEvaluate(battleData),battleData->m_scoreObserver->GetLatestLog()));
-		m_reflectionLog=battleData->m_scoreObserver->GetLatestLog();//b’è
 	}
 }
 
@@ -149,4 +148,24 @@ void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{
 
 void SelfDecideSubmission::InitRubric(const std::shared_ptr<SubmissionRuleBase> &rule){
 	m_rule=rule;
+}
+
+WholeReflectionInfo SelfDecideSubmission::GetReflectionInfo()const{
+	std::pair<int,std::shared_ptr<const LogElement>> goodLog,badLog;
+	if(!m_rubricList.empty()){
+		//b’è“I‚É•]‰¿‚É-1‚ğŠi”[
+		goodLog.first=-1;
+		badLog.first=-1;
+		//’Tõ
+		for(const std::pair<int,std::shared_ptr<const LogElement>> &log:m_rubricList){
+			//•]‰¿‚ª—Ç‚¢‚à‚Ì‚Æˆ«‚¢‚à‚Ì‚ğ’T‚µ‚Ä‚¢‚­A-1•]‰¿‚Í•K‚¸XV‚·‚é
+			if((goodLog.first<log.first || badLog.first<0) && log.first>=0){
+				goodLog=log;
+			}
+			if((badLog.first>log.first || badLog.first<0) && log.first>=0){
+				badLog=log;
+			}
+		}
+	}
+	return WholeReflectionInfo(goodLog,badLog);
 }

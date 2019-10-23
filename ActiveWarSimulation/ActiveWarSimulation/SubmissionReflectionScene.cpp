@@ -61,21 +61,30 @@ int SubmissionReflectionScene::thisCalculate(){
 }
 
 void SubmissionReflectionScene::thisDraw()const{
-	std::shared_ptr<const LogElement> reflectionLog=m_battleSceneData->m_scoreObserver->GetSubmission().GetReflectionLog();
-
-	if(reflectionLog){
-		std::vector<Unit> unitList;
-		for(const LogElement::UnitLogData &logData:reflectionLog->m_unitDataList){
-			//その時の状態のユニットの作成
+	const WholeReflectionInfo reflectionInfo=m_battleSceneData->m_scoreObserver->GetSubmission().GetReflectionInfo();
+	
+	if(reflectionInfo.m_badLog.second && reflectionInfo.m_goodLog.second){
+		std::vector<Unit> goodUnitList,badUnitList;
+		for(const LogElement::UnitLogData &logData:reflectionInfo.m_goodLog.second->m_unitDataList){
+			//良いとされる盤面のユニットの作成
 			Unit u=*logData.punit;
 			u.Warp(logData.pos);
 			u.AddHP(logData.hp-u.GetBattleStatus().HP);
 			u.SetOP(logData.op);
 			//格納
-			unitList.push_back(u);
+			goodUnitList.push_back(u);
 		}
-		DrawResizedMap(40,40,unitList);
-		DrawResizedMap(900,500,unitList);
+		for(const LogElement::UnitLogData &logData:reflectionInfo.m_badLog.second->m_unitDataList){
+			//悪いとされる盤面のユニットの作成
+			Unit u=*logData.punit;
+			u.Warp(logData.pos);
+			u.AddHP(logData.hp-u.GetBattleStatus().HP);
+			u.SetOP(logData.op);
+			//格納
+			badUnitList.push_back(u);
+		}
+		DrawResizedMap(40,40,goodUnitList);
+		DrawResizedMap(900,500,badUnitList);
 	}
 }
 

@@ -6,6 +6,7 @@
 #include<string>
 #include"SubmissionRuleBase.h"
 #include<map>
+#include"WholeReflectionInfo.h"
 
 struct BattleSceneData;
 
@@ -33,10 +34,8 @@ public:
 	void DrawWholeLookBack(int x,int y)const;
 	//ルール初期化
 	void InitRubric(const std::shared_ptr<SubmissionRuleBase> &rule);
-	//リフレクションするログを取得する
-	std::shared_ptr<const LogElement> GetReflectionLog()const{
-		return m_reflectionLog;
-	}
+	//リフレクション情報を構築して取得する
+	WholeReflectionInfo GetReflectionInfo()const;
 
 	//サブミッション描画の領域の大きさ
 	static const int s_submissionWidth;
@@ -50,7 +49,6 @@ private:
 	std::vector<std::pair<int,std::shared_ptr<const LogElement>>> m_rubricList;//ルーブリック評価と参照したログのペアの一覧
 	std::string m_wholeComment;//総括的振り返りにおけるコメント
 	std::map<int,size_t> m_rubricFrequencyMap;//戦闘終了時にルーブリック評価の回数の一覧を格納する
-	std::shared_ptr<const LogElement> m_reflectionLog;//リフレクションを行う場面
 
 	const int m_sentenceFont;//文章を描画するためのフォント
 	const int m_rubricFont;//ルーブリック評価を描画するためのフォント
