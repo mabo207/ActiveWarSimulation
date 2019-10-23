@@ -139,6 +139,7 @@ Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D positio
 	,m_battleStatus(100,Unit::BattleStatus::maxOP,team,aitype,aiGroup,aiLinkage,weapon)
 	,m_rivalInpenetratableCircle(new Circle(position,rivalInpenetratableCircleSize,Shape::Fix::e_static))
 	,m_hpFont(LoadFontDataToHandleEX(FilePath::fontDir+"OrderPalFont.dft",2))
+	,m_penetratable(true)//暫定的
 {
 	//テスト用のコンストラクタ
 	m_battleStatus.HP=m_baseStatus.maxHP;
@@ -146,9 +147,11 @@ Unit::Unit(BaseStatus baseStatus,std::shared_ptr<Weapon> weapon,Vector2D positio
 
 Unit::Unit(const Unit &u)
 	:BattleObject(Type::e_unit,std::shared_ptr<Shape>(new Circle(u.m_hitJudgeShape->GetPosition(),unitCircleSize,Shape::Fix::e_static)),CopyGraph(u.m_gHandle))
-	,m_baseStatus(u.m_baseStatus),m_battleStatus(u.m_battleStatus)
+	,m_baseStatus(u.m_baseStatus)
+	,m_battleStatus(u.m_battleStatus)
 	,m_rivalInpenetratableCircle(u.m_rivalInpenetratableCircle->VCopy())
 	,m_hpFont(CopyFontToHandle(u.m_hpFont))
+	,m_penetratable(u.m_penetratable)
 {}
 
 Unit::~Unit(){
@@ -329,17 +332,20 @@ void Unit::DrawUnit(Vector2D adjust,size_t frame,bool animationFlag,bool infoDra
 }
 
 void Unit::DrawUnit(Vector2D point,Vector2D adjust,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const{
+	//表示領域の設定
+	RECT rect;
+	GetDrawArea(&rect);
+	SetDrawArea(0,0,CommonConstParameter::mapSizeX,CommonConstParameter::mapSizeY);
+	//描画
 	DrawUnit(point,adjust,1.0f,frame,animationFlag,infoDrawFlag,actionRangeDraw);
+	//描画範囲を元に戻す
+	SetDrawArea(rect.left,rect.top,rect.right,rect.bottom);
 }
 
 void Unit::DrawUnit(Vector2D point,Vector2D adjust,float exRate,size_t frame,bool animationFlag,bool infoDrawFlag,bool actionRangeDraw)const{
 	Vector2D pos=point*exRate+adjust;//描画位置
 	int mode,pal;
 	GetDrawBlendMode(&mode,&pal);
-	//UIの表示領域の設定
-	RECT rect;
-	GetDrawArea(&rect);
-	SetDrawArea(0,0,CommonConstParameter::mapSizeX,CommonConstParameter::mapSizeY);
 	//UIの表示
 	if(infoDrawFlag){
 		//アクションの効果範囲を半透明(弱)で描画
@@ -349,9 +355,9 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,float exRate,size_t frame,boo
 				//操作キャラの攻撃範囲は枠をつけてユニットチーム色で表現
 				const unsigned int color=Team::GetColor(m_battleStatus.team);
 				SetDrawBlendMode(DX_BLENDMODE_ALPHA,32);
-				DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,color,TRUE);//面
+				DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength()*exRate,100,color,TRUE);//面
 				SetDrawBlendMode(mode,pal);
-				DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,color,FALSE);//枠
+				DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength()*exRate,100,color,FALSE);//枠
 			} else{
 				//操作していないけども攻撃範囲を表示したい時は黄色点滅で表現
 				//const unsigned int color=Team::GetColor(m_battleStatus.team);
@@ -359,9 +365,9 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,float exRate,size_t frame,boo
 				const int alpha=(int)((std::sin(frame*0.05)+1.0)*0.5*64);
 				//const int alpha=32;
 				SetDrawBlendMode(DX_BLENDMODE_ALPHA,alpha);
-				DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,color,TRUE);//面
+				DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength()*exRate,100,color,TRUE);//面
 				SetDrawBlendMode(mode,pal);
-				//DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength(),100,color,FALSE);//枠
+				//DrawCircleAA(pos.x,pos.y,m_battleStatus.weapon->GetLength()*exRate,100,color,FALSE);//枠
 			}
 		}
 		//ユニットの当たり判定図形を描画
@@ -382,8 +388,6 @@ void Unit::DrawUnit(Vector2D point,Vector2D adjust,float exRate,size_t frame,boo
 		}
 		SetDrawBlendMode(mode,pal);
 	}
-	//描画範囲を元に戻す
-	SetDrawArea(rect.left,rect.top,rect.right,rect.bottom);
 	//アニメーションパラメータの設定
 	int ux=(int)(pos.x),uy=(int)(pos.y);
 	int cx,cy;
