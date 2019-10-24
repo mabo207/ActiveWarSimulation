@@ -130,8 +130,8 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo
 	if(minimapInfo.pOperateUnit!=nullptr){
 		float dx,dy;
 		GetGraphSizeF(m_operateCursor,&dx,&dy);
-		const Vector2D pos=(minimapInfo.pOperateUnit->getPos()+Vector2D(-dx/2.0f,-Unit::unitCircleSize-dy+10.0f))*minimapRate+startPos;
-		DrawExtendGraphExRateAssign(pos.x,pos.y,minimapRate,m_operateCursor,TRUE);
+		const Vector2D pos=(minimapInfo.pOperateUnit->getPos()+Vector2D(0.0f,-Unit::unitCircleSize+10.0f))*minimapRate+startPos-Vector2D(dx/2.0f,dy);
+		DrawGraph((int)pos.x,(int)pos.y,m_operateCursor,TRUE);
 	}
 	//ダメージの表示
 	if(minimapInfo.pOperateUnit!=nullptr && minimapInfo.pAttackedUnit!=nullptr){
