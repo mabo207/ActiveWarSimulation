@@ -12,7 +12,7 @@ public:
 
 private:
 	//関数
-	void DrawResizedMap(int x,int y,const std::vector<Unit> &unitList)const;//簡易拡大縮小マップを描画する
+	void DrawResizedMap(int x,int y,const std::vector<Unit> &unitList,const std::shared_ptr<const LogElement> &log)const;//簡易拡大縮小マップを描画する
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
 	void thisDraw()const;
@@ -22,6 +22,8 @@ private:
 	//変数
 	const std::shared_ptr<BattleSceneData> m_battleSceneData;
 	std::shared_ptr<BattleSceneElement> m_clearScene;//前クラスで作成したClearSceneを一時的に保存するための変数
+
+	const int m_operateCursor;//操作ユニットを指し示すためのマーカー
 };
 
 #endif // !DEF_SUBMISSIONREFLECTIONSCENE_H

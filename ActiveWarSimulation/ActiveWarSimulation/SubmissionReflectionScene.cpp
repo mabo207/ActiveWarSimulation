@@ -6,6 +6,9 @@
 #include"CommonConstParameter.h"
 #include"LogElement.h"
 #include"GeneralPurposeResource.h"
+#include"GraphicControl.h"
+#include"FilePath.h"
+#include"AttackLog.h"
 
 namespace {
 	const int lineWidth=5;
@@ -20,11 +23,14 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 	:BattleSceneElement(SceneKind::e_submissionReflection)
 	,m_battleSceneData(battleSceneData)
 	,m_clearScene(clearScene)
+	,m_operateCursor(LoadGraphEX(FilePath::graphicDir+"operatedCursor.png"))
 {}
 
-SubmissionReflectionScene::~SubmissionReflectionScene(){}
+SubmissionReflectionScene::~SubmissionReflectionScene(){
+	DeleteGraphEX(m_operateCursor);
+}
 
-void SubmissionReflectionScene::DrawResizedMap(int x,int y,const std::vector<Unit> &unitList)const{
+void SubmissionReflectionScene::DrawResizedMap(int x,int y,const std::vector<Unit> &unitList,const std::shared_ptr<const LogElement> &log)const{
 	//マージンの描画
 	DrawBox(x-lineWidth,y-lineWidth,x+minimapWidth+lineWidth,y+minimapHeight+lineWidth,merginColor,TRUE);
 	const Vector2D startPos((float)x,(float)y);
@@ -58,6 +64,23 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y,const std::vector<Uni
 		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(&unitList[index])){
 			//ウインドウに入っていない物は描画しない
 			unitList[index].DrawHPGage(unitList[index].getPos(),startPos,minimapRate);
+		}
+	}
+	//操作ユニットのマーカーを表示
+	if(!unitList.empty()){
+		float dx,dy;
+		GetGraphSizeF(m_operateCursor,&dx,&dy);
+		const Vector2D pos=(unitList.begin()->getPos()+Vector2D(-dx/2.0f,-Unit::unitCircleSize-dy+10.0f))*minimapRate+startPos;
+		DrawExtendGraphExRateAssign(pos.x,pos.y,minimapRate,m_operateCursor,TRUE);
+	}
+	//ダメージの表示
+	if(log->GetLogKind()==LogElement::LogKind::e_attack){
+		const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(log);
+		if(attackLog){
+			//攻撃時は、攻撃相手の上にダメージを表示
+			const LogElement::UnitLogData attackedUnitData=attackLog->GetAimedUnitData();
+			const Vector2D pos=attackedUnitData.pos*minimapRate+startPos;
+			
 		}
 	}
 }
@@ -97,8 +120,8 @@ void SubmissionReflectionScene::thisDraw()const{
 			//格納
 			badUnitList.push_back(u);
 		}
-		DrawResizedMap(20,300,goodUnitList);
-		DrawResizedMap(980,300,badUnitList);
+		DrawResizedMap(20,300,goodUnitList,reflectionInfo.m_goodLog.second);
+		DrawResizedMap(980,300,badUnitList,reflectionInfo.m_badLog.second);
 	}
 }
 
