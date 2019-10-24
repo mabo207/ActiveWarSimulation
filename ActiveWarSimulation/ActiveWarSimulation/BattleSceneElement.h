@@ -19,6 +19,7 @@ public:
 			e_systemMenu,
 			e_turnStartDamage,
 			e_selectSubmission,
+			e_submissionReflection,
 			e_gameReset,//これだけクラスがなく、BattleScene内で処理を行う
 			END
 		};
