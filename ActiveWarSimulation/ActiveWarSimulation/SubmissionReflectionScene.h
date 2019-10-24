@@ -40,6 +40,8 @@ private:
 	std::optional<MinimapDrawInfo> m_goodLogInfo,m_badLogInfo;//初期化をコンストラクタの{}内で行いたいので遅延の必要がある
 
 	const int m_operateCursor;//操作ユニットを指し示すためのマーカー
+	const int m_predictNumberFont;
+	const int m_predictExplainFont;
 };
 
 #endif // !DEF_SUBMISSIONREFLECTIONSCENE_H

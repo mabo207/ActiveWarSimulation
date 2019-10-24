@@ -75,6 +75,8 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 	,m_battleSceneData(battleSceneData)
 	,m_clearScene(clearScene)
 	,m_operateCursor(LoadGraphEX(FilePath::graphicDir+"operatedCursor.png"))
+	,m_predictNumberFont(CreateFontToHandleEX("メイリオ",28,8,DX_FONTTYPE_EDGE))
+	,m_predictExplainFont(CreateFontToHandleEX("メイリオ",10,2,DX_FONTTYPE_EDGE))
 {
 	//m_goodLogInfo,m_badLogInfoの初期化
 	const WholeReflectionInfo reflectionInfo=m_battleSceneData->m_scoreObserver->GetSubmission().GetReflectionInfo();
@@ -84,6 +86,8 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 
 SubmissionReflectionScene::~SubmissionReflectionScene(){
 	DeleteGraphEX(m_operateCursor);
+	DeleteFontToHandleEX(m_predictNumberFont);
+	DeleteFontToHandleEX(m_predictExplainFont);
 }
 
 void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo &minimapInfo)const{
@@ -133,7 +137,7 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo
 	if(minimapInfo.pOperateUnit!=nullptr && minimapInfo.pAttackedUnit!=nullptr){
 		//攻撃時は、攻撃相手の上にダメージを表示
 		const Vector2D pos=minimapInfo.pAttackedUnit->getPos()*minimapRate+startPos;
-		minimapInfo.pOperateUnit->GetBattleStatus().weapon->DrawPredict((int)pos.x,(int)pos.y,-1,-1,minimapInfo.pOperateUnit,minimapInfo.pAttackedUnit);
+		minimapInfo.pOperateUnit->GetBattleStatus().weapon->DrawPredict((int)pos.x,(int)pos.y,m_predictExplainFont,m_predictNumberFont,minimapInfo.pOperateUnit,minimapInfo.pAttackedUnit);
 	}
 }
 
