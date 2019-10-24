@@ -5,6 +5,7 @@
 #include"ToolsLib.h"
 #include"CommonConstParameter.h"
 #include"LogElement.h"
+#include"GeneralPurposeResource.h"
 
 namespace {
 	const int lineWidth=5;
@@ -70,8 +71,10 @@ int SubmissionReflectionScene::thisCalculate(){
 }
 
 void SubmissionReflectionScene::thisDraw()const{
+	//•¶Í‚Ì•`‰æ
+	DrawStringToHandle(30,30,"‚Ç‚¿‚ç‚Ì•û‚ª—Ç‚¢‚Æ‚³‚ê‚és“®‚Å‚µ‚å‚¤‚©H",GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
+	//”äŠrƒ}ƒbƒv‚Ì•`‰æ
 	const WholeReflectionInfo reflectionInfo=m_battleSceneData->m_scoreObserver->GetSubmission().GetReflectionInfo();
-	
 	if(reflectionInfo.m_badLog.second && reflectionInfo.m_goodLog.second){
 		std::vector<Unit> goodUnitList,badUnitList;
 		for(const LogElement::UnitLogData &logData:reflectionInfo.m_goodLog.second->m_unitDataList){
@@ -94,8 +97,8 @@ void SubmissionReflectionScene::thisDraw()const{
 			//Ši”[
 			badUnitList.push_back(u);
 		}
-		DrawResizedMap(40,40,goodUnitList);
-		DrawResizedMap(900,500,badUnitList);
+		DrawResizedMap(20,300,goodUnitList);
+		DrawResizedMap(980,300,badUnitList);
 	}
 }
 
