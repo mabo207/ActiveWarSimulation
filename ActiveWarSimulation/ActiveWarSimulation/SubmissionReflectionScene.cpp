@@ -142,8 +142,19 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo
 }
 
 int SubmissionReflectionScene::thisCalculate(){
-	if(keyboard_get(KEY_INPUT_Z)==1 || mouse_get(MOUSE_INPUT_LEFT)==1){
-		return SceneKind::e_clear;
+	if(m_reflectionWork){
+		//ワーク入力処理
+		m_reflectionWork->Update();
+		//ワーク切り替え処理
+		if(m_reflectionWork->WorkClear()){
+			//ワークをクリアしたら
+			
+		}
+	} else{
+		//ワークが設定されていない時に、遷移処理を行う
+		if(keyboard_get(KEY_INPUT_Z)==1 || mouse_get(MOUSE_INPUT_LEFT)==1){
+			return SceneKind::e_clear;
+		}
 	}
 
 	return SceneKind::e_submissionReflection;

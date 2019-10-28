@@ -4,6 +4,7 @@
 #include"BattleSceneElement.h"
 #include"BattleSceneData.h"
 #include<optional>
+#include"ReflectionWorkBase.h"
 
 //サブミッション設定時、リザルト画面の前に振り返りを行う場面
 class SubmissionReflectionScene:public BattleSceneElement{
@@ -38,6 +39,7 @@ private:
 	const std::shared_ptr<BattleSceneData> m_battleSceneData;
 	std::shared_ptr<BattleSceneElement> m_clearScene;//前クラスで作成したClearSceneを一時的に保存するための変数
 	std::optional<MinimapDrawInfo> m_goodLogInfo,m_badLogInfo;//初期化をコンストラクタの{}内で行いたいので遅延の必要がある
+	std::shared_ptr<ReflectionWork::Base> m_reflectionWork;//現在行っているリフレクションワーク
 
 	const int m_operateCursor;//操作ユニットを指し示すためのマーカー
 	const int m_predictNumberFont;

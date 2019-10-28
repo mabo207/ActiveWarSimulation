@@ -157,6 +157,12 @@
     <Filter Include="ソース ファイル\GameScene\BattleScene\SubmissionScene">
       <UniqueIdentifier>{3c22961c-438e-4feb-85f9-e2efc0443964}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\ReflectionWork">
+      <UniqueIdentifier>{68e7654e-03b0-4222-9978-ec51bca87909}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork">
+      <UniqueIdentifier>{8aabdb48-e340-4eaf-9e1d-0a93f5651208}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -396,6 +402,9 @@
     <ClCompile Include="WholeReflectionInfo.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson</Filter>
     </ClCompile>
+    <ClCompile Include="LineDraw.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\ReflectionWork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -631,6 +640,12 @@
     </ClInclude>
     <ClInclude Include="WholeReflectionInfo.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission</Filter>
+    </ClInclude>
+    <ClInclude Include="LineDraw.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionWorkBase.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

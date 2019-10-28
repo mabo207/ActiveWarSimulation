@@ -174,6 +174,7 @@
     <ClCompile Include="IntensiveAttack.cpp" />
     <ClCompile Include="LatticeBattleField.cpp" />
     <ClCompile Include="LevelSelectUIInStageSelect.cpp" />
+    <ClCompile Include="LineDraw.cpp" />
     <ClCompile Include="LoadingScene.cpp" />
     <ClCompile Include="LogElement.cpp" />
     <ClCompile Include="BattleScene.cpp" />
@@ -254,6 +255,7 @@
     <ClInclude Include="IntensiveAttack.h" />
     <ClInclude Include="LatticeBattleField.h" />
     <ClInclude Include="LevelSelectUIInStageSelect.h" />
+    <ClInclude Include="LineDraw.h" />
     <ClInclude Include="LoadingScene.h" />
     <ClInclude Include="LogElement.h" />
     <ClInclude Include="BattleScene.h" />
@@ -271,6 +273,7 @@
     <ClInclude Include="GraphicProgramming.h" />
     <ClInclude Include="MageAttackingOpponent.h" />
     <ClInclude Include="ProtectFriend.h" />
+    <ClInclude Include="ReflectionWorkBase.h" />
     <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="ScoreRankingData.h" />
     <ClInclude Include="SelectSubmissionScene.h" />
