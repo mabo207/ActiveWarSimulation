@@ -387,6 +387,30 @@ void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsig
 	DrawPolygon2D(vertexArray,polygonNum,DX_NONE_GRAPH,FALSE);//テクスチャは描画しない
 }
 
+//破線を描画する
+void DrawBrokenLineAA(float x1,float y1,float x2,float y2,unsigned int color,float lineThickness,float drawSize,float eraseSize){
+	const Vector2D p1(x1,y1),p2(x2,y2);
+	DrawBrokenLineAA(p1,p2,color,lineThickness,drawSize,eraseSize);
+}
+
+void DrawBrokenLineAA(Vector2D p1,Vector2D p2,unsigned int color,float lineThickness,float drawSize,float eraseSize){
+	const Vector2D vecNorm=(p2-p1).norm();
+	const float lineSqSize=(p2-p1).sqSize();
+	const float loopSize=drawSize+eraseSize;
+	const Vector2D loopVec=vecNorm*loopSize;//破線は(小さな描画直線)+(小さな描画しない直線)のループなので、そのループの単位の直線を定義
+	Vector2D begin=p1,end=p1+vecNorm*drawSize;
+	float totalSize=loopSize;
+	while(totalSize*totalSize<lineSqSize){
+		//線の描画
+		DrawLineAA(begin.x,begin.y,end.x,end.y,color,lineThickness);
+		//線の更新
+		begin+=loopVec;
+		end+=loopVec;
+		//長さの更新
+		totalSize+=loopSize;
+	}
+}
+
 //数値変化を様々な式で管理するクラス
 //---Easing---
 Easing::Easing(int i_x,int i_endx,int i_maxframe,TYPE i_type,FUNCTION i_function,double i_degree)
