@@ -168,6 +168,11 @@ void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsig
 
 void DrawBoxGradation(int x1,int y1,int x2,int y2,unsigned int leftUpColor,unsigned int leftDownColor,unsigned int rightUpColor,unsigned int rightDownColor);
 
+//破線を描画する
+void DrawBrokenLineAA(float x1,float y1,float x2,float y2,unsigned int color,float lineThickness,float drawSize=8.0f,float eraseSize=8.0f);
+
+void DrawBrokenLineAA(Vector2D p1,Vector2D p2,unsigned int color,float lineThickness,float drawSize=8.0f,float eraseSize=8.0f);
+
 //継承クラスのポインタのポインタを基底クラスのポインタのポインタにキャストする関数。継承先ポインタで作った配列を基底クラスのポインタで作った配列に変えたい時に使う
 template<typename T,typename FROM> std::enable_if_t<std::is_base_of_v<T,FROM>,T**> pointer_array_cast(FROM **arr){
 	//TがFROMを継承していないとコンパイルエラーになる。
