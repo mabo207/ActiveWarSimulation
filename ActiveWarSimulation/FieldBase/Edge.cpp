@@ -3,6 +3,7 @@
 #include"MyPolygon.h"
 #include"DxLib.h"
 #include<cassert>
+#include"ToolsLib.h"
 
 //--------------------Edge--------------------
 Edge::Edge(Vector2D begin,Vector2D vec,Fix::Kind fix)
@@ -23,7 +24,7 @@ Vector2D Edge::CalculateParpendicularVec(Vector2D point)const{
 
 void Edge::Draw(Vector2D point,Vector2D adjust,float exRate,unsigned int color,int fillFlag,float lineThickness)const{
 	Vector2D begin=point*exRate+adjust;
-	Vector2D end=begin*exRate+m_vec;
+	Vector2D end=begin+m_vec*exRate;
 	DrawLineAA(begin.x,begin.y,end.x,end.y,color,lineThickness*exRate);
 }
 
@@ -94,6 +95,20 @@ Vector2D Edge::CalculatePushVec(const Shape *pShape)const{
 		break;
 	}
 	return ret;
+}
+
+void Edge::BrokenDraw(Vector2D adjust,unsigned int color,float lineThickness,float drawSize,float eraseSize)const{
+	BrokenDraw(GetPosition(),adjust,1.0f,color,lineThickness,drawSize,eraseSize);
+}
+
+void Edge::BrokenDraw(Vector2D point,Vector2D adjust,float exRate,unsigned int color,float lineThickness,float drawSize,float eraseSize)const{
+	Vector2D begin=point*exRate+adjust;
+	Vector2D end=begin+m_vec*exRate;
+	float thickness=lineThickness*exRate;
+	if(thickness<1.0f){
+		thickness=1.0f;
+	}
+	DrawBrokenLineAA(begin,end,color,thickness,drawSize,eraseSize);
 }
 
 bool Edge::PushParentObj(const Shape *pShape,ShapeHaving *parentObj,float pushRate)const{
