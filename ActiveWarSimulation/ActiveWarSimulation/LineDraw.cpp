@@ -90,7 +90,7 @@ void ReflectionWork::LineDraw::WorkDraw()const{
 			info.edge.Shape::Draw(Vector2D(),GetColor(255,128,128),TRUE,5.0f);
 		} else{
 			//‚Ü‚¾“ü—Í‚µ‚Ä‚¢‚È‚¢’¼ü‚Í”jü‚Å
-
+			info.edge.BrokenDraw(Vector2D(),GetColor(255,128,128),5.0f,8.0f,8.0f);
 		}
 	}
 }
