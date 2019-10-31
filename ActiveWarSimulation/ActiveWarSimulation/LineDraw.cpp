@@ -4,7 +4,7 @@
 #include"ToolsLib.h"
 
 namespace {
-	const float acceptableDistance=5.0f;
+	const float acceptableDistance=10.0f;
 	const float sqAcceptableDistance=acceptableDistance*acceptableDistance;
 }
 
@@ -85,12 +85,28 @@ bool ReflectionWork::LineDraw::WorkClear()const{
 
 void ReflectionWork::LineDraw::WorkDraw()const{
 	for(const LineDrawInfo &info:m_lineList){
+		const unsigned int lineColor=GetColor(255,128,128);
 		if(info.drawInfo){
 			//Šù‚É“ü—ÍÏ‚İ‚Ì’¼ü‚ÍÀü‚Å
-			info.edge.Shape::Draw(Vector2D(),GetColor(255,128,128),TRUE,5.0f);
+			info.edge.Shape::Draw(Vector2D(),lineColor,TRUE,5.0f);
 		} else{
 			//‚Ü‚¾“ü—Í‚µ‚Ä‚¢‚È‚¢’¼ü‚Í”jü‚Å
-			info.edge.BrokenDraw(Vector2D(),GetColor(255,128,128),5.0f,8.0f,8.0f);
+			info.edge.BrokenDraw(Vector2D(),lineColor,5.0f,8.0f,8.0f);
 		}
+		//’[“_‚ğ‹­’²
+		const Vector2D start=info.edge.GetBeginPoint(),end=info.edge.GetEndPoint();
+		DrawCircleAA(start.x,start.y,acceptableDistance,16,lineColor,TRUE);
+		DrawCircleAA(end.x,end.y,acceptableDistance,16,lineColor,TRUE);
+	}
+	//“ü—Í’†‚Ì’¼ü‚Ì•`‰æ
+	if(m_inputing){
+		const Vector2D mouse=GetMousePointVector2D();
+		Vector2D start;
+		if(m_inputStart){
+			start=m_lineList[m_inputIndex].edge.GetBeginPoint();
+		} else{
+			start=m_lineList[m_inputIndex].edge.GetEndPoint();
+		}
+		DrawLineAA(mouse.x,mouse.y,start.x,start.y,GetColor(128,128,255),4.0f);
 	}
 }

@@ -11,6 +11,8 @@
 #include"WaitLog.h"
 #include"AttackLog.h"
 
+#include"LineDraw.h"
+
 namespace {
 	const int lineWidth=5;
 	const unsigned int merginColor=GetColor(128,128,255);
@@ -82,6 +84,8 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 	const WholeReflectionInfo reflectionInfo=m_battleSceneData->m_scoreObserver->GetSubmission().GetReflectionInfo();
 	m_goodLogInfo.emplace(reflectionInfo.m_goodLog.second);
 	m_badLogInfo.emplace(reflectionInfo.m_badLog.second);
+	//m_reflectionWorkの初期化（暫定）
+	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw({Edge(Vector2D(30.0f,30.0f),Vector2D(230.0f,330.0f),Shape::Fix::e_ignore),Edge(Vector2D(740.0f,730.0f),Vector2D(430.0f,-430.0f),Shape::Fix::e_ignore)}));
 }
 
 SubmissionReflectionScene::~SubmissionReflectionScene(){
@@ -148,7 +152,7 @@ int SubmissionReflectionScene::thisCalculate(){
 		//ワーク切り替え処理
 		if(m_reflectionWork->WorkClear()){
 			//ワークをクリアしたら
-			
+			m_reflectionWork.reset();
 		}
 	} else{
 		//ワークが設定されていない時に、遷移処理を行う
@@ -169,6 +173,10 @@ void SubmissionReflectionScene::thisDraw()const{
 	}
 	if(m_badLogInfo.has_value()){
 		DrawResizedMap(980,300,m_badLogInfo.value());
+	}
+	//ワークについての描画
+	if(m_reflectionWork){
+		m_reflectionWork->WorkDraw();
 	}
 }
 
