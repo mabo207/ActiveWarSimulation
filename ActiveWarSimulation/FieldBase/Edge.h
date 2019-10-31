@@ -29,6 +29,8 @@ public:
 		return m_position+m_vec;
 	}
 	Vector2D CalculatePushVec(const Shape *pShape)const;//pShapeとthisが重なっているか判定し、押し出すベクトルを返す。重なっていない場合はVector2D(0,0)が返される。
+	void BrokenDraw(Vector2D adjust,unsigned int color,float lineThickness,float drawSize,float eraseSize)const;//破線描画
+	void BrokenDraw(Vector2D point,Vector2D adjust,float exRate,unsigned int color,float lineThickness,float drawSize,float eraseSize)const;//破線描画
 
 	//純粋仮想関数のオーバーライド
 	void Draw(Vector2D point,Vector2D adjust,float exRate,unsigned int color,int fillFlag,float lineThickness)const;
