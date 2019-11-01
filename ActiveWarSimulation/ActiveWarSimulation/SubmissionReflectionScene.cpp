@@ -19,6 +19,9 @@ namespace {
 	const float minimapRate=0.5f;
 	const int minimapWidth=(int)(CommonConstParameter::mapSizeX*minimapRate);
 	const int minimapHeight=(int)(CommonConstParameter::mapSizeY*minimapRate);
+	const Vector2D minimapPos[2]={Vector2D(20.0f,300.0f),Vector2D(980.0f,300.0f)};
+	const int minimapX[2]={(int)minimapPos[0].x,(int)minimapPos[1].x};
+	const int minimapY[2]={(int)minimapPos[0].y,(int)minimapPos[1].y};
 }
 //---------------SubmissionReflectionScene::MinimapDrawInfo-----------------
 SubmissionReflectionScene::MinimapDrawInfo::MinimapDrawInfo(const std::shared_ptr<const LogElement> &log)
@@ -85,7 +88,14 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 	m_goodLogInfo.emplace(reflectionInfo.m_goodLog.second);
 	m_badLogInfo.emplace(reflectionInfo.m_badLog.second);
 	//m_reflectionWorkの初期化（暫定）
-	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw({Edge(Vector2D(30.0f,30.0f),Vector2D(230.0f,330.0f),Shape::Fix::e_ignore),Edge(Vector2D(740.0f,730.0f),Vector2D(430.0f,-430.0f),Shape::Fix::e_ignore)}));
+	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
+	const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate;
+	const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
+	const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate;
+	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw(
+		{Edge(goodLogStart,goodLogEnd-goodLogStart,Shape::Fix::e_ignore)
+		,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
+	));
 }
 
 SubmissionReflectionScene::~SubmissionReflectionScene(){
@@ -169,10 +179,10 @@ void SubmissionReflectionScene::thisDraw()const{
 	DrawStringToHandle(30,30,"どちらの方が良いとされる行動でしょうか？",GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
 	//比較マップの描画
 	if(m_goodLogInfo.has_value()){
-		DrawResizedMap(20,300,m_goodLogInfo.value());
+		DrawResizedMap(minimapX[0],minimapY[0],m_goodLogInfo.value());
 	}
 	if(m_badLogInfo.has_value()){
-		DrawResizedMap(980,300,m_badLogInfo.value());
+		DrawResizedMap(minimapX[1],minimapY[1],m_badLogInfo.value());
 	}
 	//ワークについての描画
 	if(m_reflectionWork){
