@@ -10,7 +10,7 @@
 #include"FilePath.h"
 #include"WaitLog.h"
 #include"AttackLog.h"
-
+//リフレクション活動一覧
 #include"LineDraw.h"
 
 namespace {
@@ -87,15 +87,8 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 	const WholeReflectionInfo reflectionInfo=m_battleSceneData->m_scoreObserver->GetSubmission().GetReflectionInfo();
 	m_goodLogInfo.emplace(reflectionInfo.m_goodLog.second);
 	m_badLogInfo.emplace(reflectionInfo.m_badLog.second);
-	//m_reflectionWorkの初期化（暫定）
-	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
-	const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate;
-	const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
-	const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate;
-	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw(
-		{Edge(goodLogStart,goodLogEnd-goodLogStart,Shape::Fix::e_ignore)
-		,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
-	));
+	//m_reflectionWorkの初期化
+	InitReflectionWork();
 }
 
 SubmissionReflectionScene::~SubmissionReflectionScene(){
@@ -202,4 +195,17 @@ int SubmissionReflectionScene::UpdateNextScene(int index){
 
 void SubmissionReflectionScene::ReturnProcess(){
 	//特に何もしない
+}
+
+void SubmissionReflectionScene::InitReflectionWork(){
+	//ワークの初期化（暫定）
+	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
+	const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate;
+	const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
+	const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate;
+	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw(
+		{Edge(goodLogStart,goodLogEnd-goodLogStart,Shape::Fix::e_ignore)
+		,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
+	));
+
 }

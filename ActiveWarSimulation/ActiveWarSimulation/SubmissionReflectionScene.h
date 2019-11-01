@@ -29,6 +29,7 @@ private:
 
 	//関数
 	void DrawResizedMap(int x,int y,const MinimapDrawInfo &minimapInfo)const;//簡易拡大縮小マップを描画する
+	void InitReflectionWork();//リフレクションワークを作成する処理(描画位置の調整のための情報がこのクラス内に存在するので、WholeReflectionInfoクラスでなくこのクラス内に処理を記述する)
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
 	void thisDraw()const;
