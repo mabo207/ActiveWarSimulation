@@ -1,5 +1,5 @@
-#ifndef DEF_LINEDRAW_H
-#define DEF_LINEDRAW_H
+#ifndef DEF_REFLECTIONWORK_LINEDRAW_H
+#define DEF_REFLECTIONWORK_LINEDRAW_H
 
 #include"ReflectionWorkBase.h"
 #include"Edge.h"
@@ -33,4 +33,4 @@ namespace ReflectionWork{
 	};
 }
 
-#endif // !DEF_LINEDRAW_H
+#endif // !DEF_REFLECTIONWORK_LINEDRAW_H
