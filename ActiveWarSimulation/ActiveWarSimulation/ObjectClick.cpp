@@ -6,7 +6,11 @@
 //--------------ReflectionWork::ObjectClick---------------
 ReflectionWork::ObjectClick::ObjectClick(const std::vector<std::shared_ptr<const Shape>> &shapeList)
 	:Base(Kind::e_clickObject)
-{}
+{
+	for(const std::shared_ptr<const Shape> &shape:shapeList){
+		m_objectList.push_back(ObjectInfo(shape));
+	}
+}
 
 ReflectionWork::ObjectClick::~ObjectClick(){}
 
@@ -40,7 +44,7 @@ void ReflectionWork::ObjectClick::WorkDraw()const{
 			int mode,pal;
 			GetDrawBlendMode(&mode,&pal);
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
-			info.shape->Draw(Vector2D(),GetColor(255,128,128),TRUE,1.0f);
+			info.shape->Draw(Vector2D(),GetColor(255,128,128),TRUE,0.0f);
 			SetDrawBlendMode(mode,pal);
 		} else{
 			//クリックされていないオブジェクトは枠線のみ描画

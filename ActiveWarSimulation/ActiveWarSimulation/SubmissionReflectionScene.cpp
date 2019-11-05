@@ -12,6 +12,7 @@
 #include"AttackLog.h"
 //リフレクション活動一覧
 #include"LineDraw.h"
+#include"ObjectClick.h"
 
 namespace {
 	const int lineWidth=5;
@@ -199,7 +200,7 @@ void SubmissionReflectionScene::ReturnProcess(){
 
 void SubmissionReflectionScene::InitReflectionWork(){
 	//ワークの初期化（暫定）
-	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
+	/*const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
 	const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate;
 	const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
 	const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate;
@@ -207,5 +208,17 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		{Edge(goodLogStart,goodLogEnd-goodLogStart,Shape::Fix::e_ignore)
 		,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
 	));
-
+*/
+	std::vector<std::shared_ptr<const Shape>> shapeList;
+	for(const BattleObject *object:m_battleSceneData->m_field){
+		//当たり判定図形の引き出し
+		std::shared_ptr<Shape> shape=object->GetHitJudgeShape()->VCopy();
+		//地図に合うように加工
+		const Vector2D pos=shape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
+		shape->Move(minimapPos[0]+pos*minimapRate-pos);
+		shape->Resize(shape->GetRetResize()*minimapRate);
+		//追加
+		shapeList.push_back(shape);
+	}
+	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList));
 }
