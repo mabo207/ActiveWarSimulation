@@ -194,6 +194,7 @@
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="MageAttackingOpponent.cpp" />
     <ClCompile Include="MoveScene.cpp" />
+    <ClCompile Include="ObjectClick.cpp" />
     <ClCompile Include="PlayerMoveScene.cpp" />
     <ClCompile Include="MyPolygon.cpp" />
     <ClCompile Include="ProtectFriend.cpp" />
@@ -272,6 +273,7 @@
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
     <ClInclude Include="MageAttackingOpponent.h" />
+    <ClInclude Include="ObjectClick.h" />
     <ClInclude Include="ProtectFriend.h" />
     <ClInclude Include="ReflectionWorkBase.h" />
     <ClInclude Include="ScoreObserver.h" />

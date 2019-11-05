@@ -7,7 +7,7 @@ namespace ReflectionWork{
 	public:
 		enum class Kind{
 			e_lineDraw
-			,e_findObject
+			,e_clickObject
 		};
 
 		virtual void Update()=0;
