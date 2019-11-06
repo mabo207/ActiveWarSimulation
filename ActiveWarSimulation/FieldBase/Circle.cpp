@@ -109,6 +109,28 @@ bool Circle::JudgeInShape(const Shape *pShape)const{
 	return CalculatePushVec(pShape)!=Vector2D();
 }
 
+bool Circle::JudgeCross(const Shape *pShape)const{
+	const Type::Kind kind=pShape->GetType();
+	if(kind==Type::e_circle){
+		const Circle *pCircle=dynamic_cast<const Circle *>(pShape);
+		if(pCircle!=nullptr){
+			//円の場合は、2中心間の距離Lを用いて判定
+			//|this->m_r-pCircle->m_r|<=L<=this->m_r+pCircle->m_rであれば交差、そうでない場合は非交差
+			const float sqL=(this->m_position-pCircle->m_position).sqSize();
+			const float sub=this->m_r-pCircle->m_r;
+			const float sum=this->m_r+pCircle->m_r;
+			return (sub*sub<=sqL) && (sqL<=sum*sum);
+		}
+	} else if(kind==Type::e_edge){
+		//Edge側に処理を任せる
+		pShape->JudgeCross(this);
+	} else if(kind==Type::e_polygon){
+		//Polygon側に処理を任せる
+		pShape->JudgeCross(this);
+	}
+	return false;
+}
+
 bool Circle::VJudgePointInsideShape(Vector2D point)const{
 	//中心とpointまでの距離とm_rを調べれば良い
 	return (m_position-point).sqSize()<m_r*m_r;

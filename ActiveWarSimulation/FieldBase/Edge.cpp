@@ -153,6 +153,80 @@ bool Edge::JudgeInShape(const Shape *pShape)const{
 	return CalculatePushVec(pShape)!=Vector2D();
 }
 
+bool Edge::JudgeCross(const Shape *pShape)const{
+	const Type::Kind kind=pShape->GetType();
+	if(kind==Type::e_circle){
+		const Circle *pCircle=dynamic_cast<const Circle *>(pShape);
+		if(pCircle!=nullptr){
+			//直線と円の交差判定は、円の中心から直線上の点の距離が円の半径Rより大きい・小さいが切り替わるかどうかで判定できる
+			//円の中心から線分への最近傍点がどこかで場合分けする
+			const Vector2D center=pCircle->GetPosition();
+			const float dot=m_vec.dot(center-GetBeginPoint());//垂線の位置はm_position+Norm()*dot/Size()となる
+			float sqR=pCircle->GetR();
+			sqR*=sqR;
+			if(dot<0.0f){
+				//線分外に垂線の足があり、最近傍点がm_positionになる
+				//2端点と円の中心の距離の関係を求めれば良い
+				const float nearestSqLength=(GetBeginPoint()-center).sqSize();
+				const float farestSqLength=(GetEndPoint()-center).sqSize();
+				return (nearestSqLength-sqR)*(farestSqLength-sqR)<=0.0f;
+			} else if(dot<=m_vec.sqSize()){
+				//線分内に垂線の足がある場合。
+				//「垂線の足と1つの端点の距離関係」と「垂線の足ともう1つの端点の距離関係」の２つを調べれば良い
+				const float beginSqLength=(GetBeginPoint()-center).sqSize();
+				const float vecSqSize=m_vec.sqSize();
+				const float nearestSqLength=(vecSqSize*beginSqLength-dot*dot)/vecSqSize;
+				const float endSqLength=(GetEndPoint()-center).sqSize();
+				return ((nearestSqLength-sqR)*(beginSqLength-sqR)<=0.0f || (nearestSqLength-sqR)*(endSqLength-sqR)<=0.0f);
+			} else{
+				//線分外に垂線の足があり、最近傍点がm_position+m_vecになる
+				//2端点と円の中心の距離の関係を求めれば良い
+				const float farestSqLength=(GetBeginPoint()-center).sqSize();
+				const float nearestSqLength=(GetEndPoint()-center).sqSize();
+				return (nearestSqLength-sqR)*(farestSqLength-sqR)<=0.0f;
+			}
+		}
+	} else if(kind==Type::e_edge){
+		const Edge *pEdge=dynamic_cast<const Edge *>(pShape);
+		if(pEdge!=nullptr){
+			//this->m_position=(x1,y1),this->m_vec=(x2,y2),pEdge->m_position=(x3,y3),pEdge->m_vec=(x4,y4)と置く。
+			//(x2*y4-x4*y2)==0の時傾きが0なので平行である、この値は後で用いる
+			const float inclination=this->m_vec.x*pEdge->m_vec.y-pEdge->m_vec.x*this->m_vec.y;
+			if(inclination==0.0f){
+				//平行の場合
+				//同一直線上に存在するかの判定をする(2つのposition同士を結んだ直線とthisが平行かどうかで判定すればよい)
+				//p1=this->GetBeginPoint(),p2=this->GetEndPoint(),q1=pEdge->GetBeginPoint(),q2=pEdge->GetEndPoint()である
+				const Vector2D p1p2=pEdge->GetBeginPoint()-this->GetBeginPoint();
+				if(m_vec.x*p1p2.y==p1p2.x*m_vec.y){
+					//同一直線上にあった場合、内積を用いて判定
+					const Vector2D p1q2=pEdge->GetEndPoint()-this->GetBeginPoint();
+					const Vector2D q1p2=pEdge->GetBeginPoint()-this->GetEndPoint();
+					const Vector2D q1q2=pEdge->GetEndPoint()-this->GetEndPoint();
+					if(p1p2.dot(m_vec)<0.0f && p1q2.dot(m_vec)<0.0f){
+						//pEdgeの両端点がthisのbeginよりm_vecと逆側にある時
+						return true;
+					} else if(q1p2.dot(m_vec)>0.0f && q1q2.dot(m_vec)>0.0f){
+						//pEdgeの両端点がthisのendよりm_vecと同じ側にある時
+						return true;
+					}
+				}
+			} else{
+				//平行でない場合、直線の交点を求めてそれらが線分上に存在するかを求める
+				//交点の座標は(x,y)=(x1,y1)+m*(x2,y2)=(x3,y3)+n*(x4,y4) (m,nはfloat)となる
+				//0<=m,n<=1であれば交点が両線分上に存在することになる
+				//方程式を解くと、m*(x2*y4-x4*y2)=y4*(x3-x1)-x4(y3-y1),n*(x2*y4-x4*y2)=y2*(x3-x1)-x2*(y3-y1)となる。
+				const float m=(pEdge->m_vec.y*(pEdge->m_position.x-this->m_position.x)-pEdge->m_vec.x*(pEdge->m_position.y-this->m_position.y))/inclination;
+				const float n=(this->m_vec.y*(pEdge->m_position.x-this->m_position.x)-this->m_vec.x*(pEdge->m_position.y-this->m_position.y))/inclination;
+				return m>=0.0f && m<=1.0f && n>=0.0f && n<=1.0f;
+			}
+		}
+	} else if(kind==Type::e_polygon){
+		//Polygon側に処理を任せる
+		pShape->JudgeCross(this);
+	}
+	return false;
+}
+
 bool Edge::VJudgePointInsideShape(Vector2D point)const{
 	//pointへのEdge上の最近傍点を求める
 	float dot=m_vec.dot(point-GetBeginPoint());//垂線の位置はm_position+Norm()*dot/Size()となる

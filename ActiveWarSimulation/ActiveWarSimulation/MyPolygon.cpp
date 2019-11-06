@@ -218,6 +218,23 @@ bool MyPolygon::JudgeInShape(const Shape *pShape)const{
 	return false;
 }
 
+bool MyPolygon::JudgeCross(const Shape *pShape)const{
+	//線分に分割して処理をする
+	Vector2D begin=this->m_position;
+	for(const Vector2D edgeVec:this->GetAllEdgeVecs()){
+		//Edgeの構築
+		const Edge edge(begin,edgeVec,this->m_fix);
+		//判定
+		if(edge.JudgeCross(pShape)){
+			//1つの辺さえ交われば交差を認める
+			return true;
+		}
+		//beginの更新
+		begin+=edgeVec;
+	}
+	return false;//どの辺も交わらなかったら交差を認めない
+}
+
 Vector2D MyPolygon::GetLeftTop()const{
 	Vector2D leftTop=m_position,point=m_position;
 	for(const Vector2D &edge:m_edgeVecs){
