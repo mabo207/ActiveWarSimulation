@@ -46,11 +46,18 @@ SubmissionReflectionScene::MinimapDrawInfo::MinimapDrawInfo(const std::shared_pt
 		const size_t maxSize=log->m_unitDataList.size();
 		size_t operateIndex=maxSize,attackedIndex=maxSize,index=0;//pOperateUnitとpAttackedUnitの探索に用いる
 		for(const LogElement::UnitLogData &logData:log->m_unitDataList){
+			//ユニットデータのコピー（加工をするため）
 			Unit u=*logData.punit;
+			//ユニットデータの加工
 			u.Warp(logData.pos);
 			u.AddHP(logData.hp-u.GetBattleStatus().HP);
 			u.SetOP(logData.op);
-			u.SetPenetratable(Unit::Team::e_player);
+			//侵入不可範囲については、敵も味方も広がった状態にする
+			if(u.GetBattleStatus().team==Unit::Team::e_player){
+				u.SetPenetratable(Unit::Team::e_enemy);
+			} else{
+				u.SetPenetratable(Unit::Team::e_player);
+			}
 			//格納
 			unitList.push_back(u);
 			//operateIndex,attackedIndexの探索、関数が存在するかどうか気をつける
@@ -200,7 +207,9 @@ void SubmissionReflectionScene::ReturnProcess(){
 
 void SubmissionReflectionScene::InitReflectionWork(){
 	//ワークの初期化（暫定）
-	/*const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
+/*
+	//攻撃ユニットと被攻撃ユニットを結ぶ線を引くワーク
+	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
 	const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate;
 	const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
 	const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate;
@@ -208,7 +217,7 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		{Edge(goodLogStart,goodLogEnd-goodLogStart,Shape::Fix::e_ignore)
 		,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
 	));
-*/
+//*/
 	std::vector<std::shared_ptr<const Shape>> shapeList;
 	for(const BattleObject *object:m_battleSceneData->m_field){
 		//当たり判定図形の引き出し
