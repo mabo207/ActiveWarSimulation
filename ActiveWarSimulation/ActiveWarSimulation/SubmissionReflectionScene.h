@@ -16,7 +16,7 @@ private:
 	//型
 	struct MinimapDrawInfo{
 		//ミニマップ描画に必要な情報群
-		explicit MinimapDrawInfo(const std::shared_ptr<const LogElement> &log);
+		MinimapDrawInfo(const std::shared_ptr<const LogElement> &log,Unit::Team::Kind phase);
 		~MinimapDrawInfo();
 		const std::vector<Unit>& GetUnitList()const{ return unitList; };//unitListのgetter
 		//unitListの中身のどれかを指すポインタ

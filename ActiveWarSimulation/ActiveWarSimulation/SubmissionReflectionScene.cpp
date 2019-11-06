@@ -25,7 +25,7 @@ namespace {
 	const int minimapY[2]={(int)minimapPos[0].y,(int)minimapPos[1].y};
 }
 //---------------SubmissionReflectionScene::MinimapDrawInfo-----------------
-SubmissionReflectionScene::MinimapDrawInfo::MinimapDrawInfo(const std::shared_ptr<const LogElement> &log)
+SubmissionReflectionScene::MinimapDrawInfo::MinimapDrawInfo(const std::shared_ptr<const LogElement> &log,Unit::Team::Kind phase)
 	:pOperateUnit(nullptr),pAttackedUnit(nullptr)
 {
 	if(log){
@@ -52,21 +52,17 @@ SubmissionReflectionScene::MinimapDrawInfo::MinimapDrawInfo(const std::shared_pt
 			u.Warp(logData.pos);
 			u.AddHP(logData.hp-u.GetBattleStatus().HP);
 			u.SetOP(logData.op);
-			//侵入不可範囲については、敵も味方も広がった状態にする
-			if(u.GetBattleStatus().team==Unit::Team::e_player){
-				u.SetPenetratable(Unit::Team::e_enemy);
-			} else{
-				u.SetPenetratable(Unit::Team::e_player);
-			}
-			//格納
-			unitList.push_back(u);
+			u.SetPenetratable(phase);
 			//operateIndex,attackedIndexの探索、関数が存在するかどうか気をつける
 			if(getOperateUnit && logData.punit==getOperateUnit()){
 				operateIndex=index;
+				u.SetPenetratable(u.GetBattleStatus().team);//行動ユニットについては、侵入不可範囲を常に広げない状態にする（見づらいため）
 			}
 			if(getAttackedUnit && logData.punit==getAttackedUnit()){
 				attackedIndex=index;
 			}
+			//格納
+			unitList.push_back(u);
 			//探索用indexの更新
 			index++;
 		}
@@ -93,8 +89,10 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 {
 	//m_goodLogInfo,m_badLogInfoの初期化
 	const WholeReflectionInfo reflectionInfo=m_battleSceneData->m_scoreObserver->GetSubmission().GetReflectionInfo();
-	m_goodLogInfo.emplace(reflectionInfo.m_goodLog.second);
-	m_badLogInfo.emplace(reflectionInfo.m_badLog.second);
+	//射手の安全地帯についてのワークなので、敵フェーズの侵入不可範囲設定にする
+	const Unit::Team::Kind phaseSetting=Unit::Team::e_enemy;//サブミッションによってここのフェーズ設定が決められる
+	m_goodLogInfo.emplace(reflectionInfo.m_goodLog.second,phaseSetting);
+	m_badLogInfo.emplace(reflectionInfo.m_badLog.second,phaseSetting);
 	//m_reflectionWorkの初期化
 	InitReflectionWork();
 }
@@ -220,29 +218,41 @@ void SubmissionReflectionScene::InitReflectionWork(){
 //*/
 	//攻撃ユニットと被攻撃ユニットを結ぶ線上の障害物をクリックするワーク
 	std::vector<std::shared_ptr<const Shape>> shapeList;
+	const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const std::shared_ptr<Shape> &conditionShape){
+		//地図に合うように加工
+		const Vector2D pos=addShape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
+		addShape->Move(minimapPosition+pos*minimapRate-pos);
+		addShape->Resize(addShape->GetRetResize()*minimapRate);
+		//条件付き追加
+		if(true){
+			//なんか条件を書く、実装はまだ（developから派生させて書きたいため）
+			shapeList.push_back(addShape);
+		}
+	};
+	const auto addMinimapObject0=[&addFunc,this](std::shared_ptr<Shape> &shape){
+		const Vector2D p0=m_goodLogInfo->pAttackedUnit->getPos(),p1=m_goodLogInfo->pOperateUnit->getPos();
+		addFunc(shape,minimapPos[0],std::shared_ptr<Shape>(new Edge(p0,p1-p0,Shape::Fix::e_dynamic)));
+	};
+	const auto addMinimapObject1=[&addFunc,this](std::shared_ptr<Shape> &shape){
+		const Vector2D p0=m_badLogInfo->pAttackedUnit->getPos(),p1=m_badLogInfo->pOperateUnit->getPos();
+		addFunc(shape,minimapPos[1],std::shared_ptr<Shape>(new Edge(p0,p1-p0,Shape::Fix::e_dynamic)));
+	};
 	//ユニットデータ以外の障害物の格納
 	for(const BattleObject *object:m_battleSceneData->m_field){
 		if(object->GetType()!=BattleObject::Type::e_unit){
-			//当たり判定図形の引き出し
-			std::shared_ptr<Shape> shape=object->GetHitJudgeShape()->VCopy();
-			//地図に合うように加工
-			const Vector2D pos=shape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
-			shape->Move(minimapPos[0]+pos*minimapRate-pos);
-			shape->Resize(shape->GetRetResize()*minimapRate);
-			//追加
-			shapeList.push_back(shape);
+			//当たり判定図形を引き出して追加
+			addMinimapObject0(object->GetHitJudgeShape()->VCopy());
+			addMinimapObject1(object->GetHitJudgeShape()->VCopy());
 		}
 	}
 	//ユニットデータの格納
 	for(const Unit &unit:m_goodLogInfo->GetUnitList()){
-		//当たり判定図形の引き出し
-		std::shared_ptr<Shape> shape=unit.GetHitJudgeShape()->VCopy();
-		//地図に合うように加工
-		const Vector2D pos=shape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
-		shape->Move(minimapPos[0]+pos*minimapRate-pos);
-		shape->Resize(shape->GetRetResize()*minimapRate);
-		//追加
-		shapeList.push_back(shape);
+		//当たり判定図形を引き出して追加
+		addMinimapObject0(unit.GetHitJudgeShape()->VCopy());
+	}
+	for(const Unit &unit:m_badLogInfo->GetUnitList()){
+		//当たり判定図形を引き出して追加
+		addMinimapObject1(unit.GetHitJudgeShape()->VCopy());
 	}
 	//ワークの作成
 	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList));
