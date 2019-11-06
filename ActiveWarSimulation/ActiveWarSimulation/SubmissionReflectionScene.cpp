@@ -218,10 +218,25 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
 	));
 //*/
+	//攻撃ユニットと被攻撃ユニットを結ぶ線上の障害物をクリックするワーク
 	std::vector<std::shared_ptr<const Shape>> shapeList;
+	//ユニットデータ以外の障害物の格納
 	for(const BattleObject *object:m_battleSceneData->m_field){
+		if(object->GetType()!=BattleObject::Type::e_unit){
+			//当たり判定図形の引き出し
+			std::shared_ptr<Shape> shape=object->GetHitJudgeShape()->VCopy();
+			//地図に合うように加工
+			const Vector2D pos=shape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
+			shape->Move(minimapPos[0]+pos*minimapRate-pos);
+			shape->Resize(shape->GetRetResize()*minimapRate);
+			//追加
+			shapeList.push_back(shape);
+		}
+	}
+	//ユニットデータの格納
+	for(const Unit &unit:m_goodLogInfo->GetUnitList()){
 		//当たり判定図形の引き出し
-		std::shared_ptr<Shape> shape=object->GetHitJudgeShape()->VCopy();
+		std::shared_ptr<Shape> shape=unit.GetHitJudgeShape()->VCopy();
 		//地図に合うように加工
 		const Vector2D pos=shape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
 		shape->Move(minimapPos[0]+pos*minimapRate-pos);
@@ -229,5 +244,6 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		//追加
 		shapeList.push_back(shape);
 	}
+	//ワークの作成
 	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList));
 }
