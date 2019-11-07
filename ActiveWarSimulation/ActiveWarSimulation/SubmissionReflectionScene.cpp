@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include"DxLib.h"
 #include"input.h"
 #include"SubmissionReflectionScene.h"
@@ -13,6 +14,10 @@
 //リフレクション活動一覧
 #include"LineDraw.h"
 #include"ObjectClick.h"
+//仮想図形構築のために必要なもの
+#include"Edge.h"
+#include"MyPolygon.h"
+#include<cmath>
 
 namespace {
 	const int lineWidth=5;
@@ -230,14 +235,27 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		}
 	};
 	const auto addMinimapObject0=[&addFunc,this](std::shared_ptr<Shape> &shape){
+		//ユニット同士を結ぶ線分の端点
 		const Vector2D p0=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate
 			,p1=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
-		addFunc(shape,minimapPos[0],&Edge(p0,p1-p0,Shape::Fix::e_dynamic));
+		//p0p1に垂直なベクトルで、p0p1の中点からhだけ進んだ所にある点をp2とすると|p0p2|+|p1p2|がpAttackedUnitの移動距離になるようなベクトル
+		Vector2D h=(p1-p0).turn(M_PI_4);
+		const float unitMoveDistance=m_goodLogInfo->pAttackedUnit->GetMaxMoveDistance();
+		h=h.norm()*std::powf(unitMoveDistance*unitMoveDistance-h.sqSize(),0.5f)*0.5f;
+		//図形を作成して条件次第でshapeをリストに追加
+		addFunc(shape,minimapPos[0],&MyPolygon(p0-h,{p0+h,p1+h,p1-h},Shape::Fix::e_dynamic));
 	};
 	const auto addMinimapObject1=[&addFunc,this](std::shared_ptr<Shape> &shape){
+		//ユニット同士を結ぶ線分の端点
 		const Vector2D p0=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate
 			,p1=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
-		addFunc(shape,minimapPos[1],&Edge(p0,p1-p0,Shape::Fix::e_dynamic));
+		//p0p1に垂直なベクトルで、p0p1の中点からhだけ進んだ所にある点をp2とすると|p0p2|+|p1p2|がpAttackedUnitの移動距離になるようなベクトル
+		Vector2D h=(p1-p0).turn(M_PI_4);
+		const float unitMoveDistance=m_badLogInfo->pAttackedUnit->GetMaxMoveDistance();
+		h=h.norm()*std::powf(unitMoveDistance*unitMoveDistance-h.sqSize(),0.5f)*0.5f;
+		//図形を作成して条件次第でshapeをリストに追加
+		addFunc(shape,minimapPos[1],&MyPolygon(p0-h,{p0+h,p1+h,p1-h},Shape::Fix::e_dynamic));
+//		addFunc(shape,minimapPos[1],&Edge(p0,p1-p0,Shape::Fix::e_dynamic));
 	};
 	//ユニットデータ以外の障害物の格納
 	for(const BattleObject *object:m_battleSceneData->m_field){
