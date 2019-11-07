@@ -123,10 +123,10 @@ bool Circle::JudgeCross(const Shape *pShape)const{
 		}
 	} else if(kind==Type::e_edge){
 		//Edge‘¤‚Éˆ—‚ð”C‚¹‚é
-		pShape->JudgeCross(this);
+		return pShape->JudgeCross(this);
 	} else if(kind==Type::e_polygon){
 		//Polygon‘¤‚Éˆ—‚ð”C‚¹‚é
-		pShape->JudgeCross(this);
+		return pShape->JudgeCross(this);
 	}
 	return false;
 }
