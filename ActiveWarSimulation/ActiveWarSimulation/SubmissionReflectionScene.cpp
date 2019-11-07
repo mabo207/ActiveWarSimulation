@@ -229,8 +229,8 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		addShape->Move(minimapPosition+pos*minimapRate-pos);
 		addShape->Resize(addShape->GetRetResize()*minimapRate);
 		//条件付き追加
-		if(addShape->JudgeCross(conditionShape)){
-			//なんか条件を書く、実装はまだ（developから派生させて書きたいため）
+		if(conditionShape->JudgeCross(addShape.get()) || conditionShape->JudgeInShape(addShape.get())){
+			//「addShapeがconditionShape内に完全に入っている」もしくは「交点を持つ」場合のみクリック図形リストに追加
 			shapeList.push_back(addShape);
 		}
 	};
@@ -239,7 +239,7 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		const Vector2D p0=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate
 			,p1=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
 		//p0p1に垂直なベクトルで、p0p1の中点からhだけ進んだ所にある点をp2とすると|p0p2|+|p1p2|がpAttackedUnitの移動距離になるようなベクトル
-		Vector2D h=(p1-p0).turn(M_PI_4);
+		Vector2D h=(p1-p0).turn((float)M_PI_4);
 		const float unitMoveDistance=m_goodLogInfo->pAttackedUnit->GetMaxMoveDistance();
 		h=h.norm()*std::powf(unitMoveDistance*unitMoveDistance-h.sqSize(),0.5f)*0.5f;
 		//図形を作成して条件次第でshapeをリストに追加
@@ -250,7 +250,7 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		const Vector2D p0=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate
 			,p1=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
 		//p0p1に垂直なベクトルで、p0p1の中点からhだけ進んだ所にある点をp2とすると|p0p2|+|p1p2|がpAttackedUnitの移動距離になるようなベクトル
-		Vector2D h=(p1-p0).turn(M_PI_4);
+		Vector2D h=(p1-p0).turn((float)M_PI_4);
 		const float unitMoveDistance=m_badLogInfo->pAttackedUnit->GetMaxMoveDistance();
 		h=h.norm()*std::powf(unitMoveDistance*unitMoveDistance-h.sqSize(),0.5f)*0.5f;
 		//図形を作成して条件次第でshapeをリストに追加
