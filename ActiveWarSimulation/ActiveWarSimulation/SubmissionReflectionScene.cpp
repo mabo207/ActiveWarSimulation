@@ -248,13 +248,17 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		}
 	}
 	//ユニットデータの格納
-	for(const Unit &unit:m_goodLogInfo->GetUnitList()){
+	for(size_t i=0,siz=m_goodLogInfo->GetUnitList().size();i<siz;i++){
 		//当たり判定図形を引き出して追加
-		addMinimapObject0(unit.GetHitJudgeShape()->VCopy());
+		if(&m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->pOperateUnit && &m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->pAttackedUnit){
+			addMinimapObject0(m_goodLogInfo->GetUnitList()[i].GetHitJudgeShape()->VCopy());
+		}
 	}
-	for(const Unit &unit:m_badLogInfo->GetUnitList()){
+	for(size_t i=0,siz=m_badLogInfo->GetUnitList().size();i<siz;i++){
 		//当たり判定図形を引き出して追加
-		addMinimapObject1(unit.GetHitJudgeShape()->VCopy());
+		if(&m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->pOperateUnit && &m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->pAttackedUnit){
+			addMinimapObject1(m_badLogInfo->GetUnitList()[i].GetHitJudgeShape()->VCopy());
+		}
 	}
 	//ワークの作成
 	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList));
