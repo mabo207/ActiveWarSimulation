@@ -218,24 +218,26 @@ void SubmissionReflectionScene::InitReflectionWork(){
 //*/
 	//攻撃ユニットと被攻撃ユニットを結ぶ線上の障害物をクリックするワーク
 	std::vector<std::shared_ptr<const Shape>> shapeList;
-	const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const std::shared_ptr<Shape> &conditionShape){
+	const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const Shape *conditionShape){
 		//地図に合うように加工
 		const Vector2D pos=addShape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
 		addShape->Move(minimapPosition+pos*minimapRate-pos);
 		addShape->Resize(addShape->GetRetResize()*minimapRate);
 		//条件付き追加
-		if(true){
+		if(addShape->JudgeCross(conditionShape)){
 			//なんか条件を書く、実装はまだ（developから派生させて書きたいため）
 			shapeList.push_back(addShape);
 		}
 	};
 	const auto addMinimapObject0=[&addFunc,this](std::shared_ptr<Shape> &shape){
-		const Vector2D p0=m_goodLogInfo->pAttackedUnit->getPos(),p1=m_goodLogInfo->pOperateUnit->getPos();
-		addFunc(shape,minimapPos[0],std::shared_ptr<Shape>(new Edge(p0,p1-p0,Shape::Fix::e_dynamic)));
+		const Vector2D p0=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate
+			,p1=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
+		addFunc(shape,minimapPos[0],&Edge(p0,p1-p0,Shape::Fix::e_dynamic));
 	};
 	const auto addMinimapObject1=[&addFunc,this](std::shared_ptr<Shape> &shape){
-		const Vector2D p0=m_badLogInfo->pAttackedUnit->getPos(),p1=m_badLogInfo->pOperateUnit->getPos();
-		addFunc(shape,minimapPos[1],std::shared_ptr<Shape>(new Edge(p0,p1-p0,Shape::Fix::e_dynamic)));
+		const Vector2D p0=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate
+			,p1=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
+		addFunc(shape,minimapPos[1],&Edge(p0,p1-p0,Shape::Fix::e_dynamic));
 	};
 	//ユニットデータ以外の障害物の格納
 	for(const BattleObject *object:m_battleSceneData->m_field){
