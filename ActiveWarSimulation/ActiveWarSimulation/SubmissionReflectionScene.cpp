@@ -210,74 +210,89 @@ void SubmissionReflectionScene::ReturnProcess(){
 
 void SubmissionReflectionScene::InitReflectionWork(){
 	//ワークの初期化（暫定）
-/*
-	//攻撃ユニットと被攻撃ユニットを結ぶ線を引くワーク
-	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
-	const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate;
-	const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
-	const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate;
-	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw(
-		{Edge(goodLogStart,goodLogEnd-goodLogStart,Shape::Fix::e_ignore)
-		,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
-	));
-//*/
-	//攻撃ユニットと被攻撃ユニットを結ぶ線上の障害物をクリックするワーク
-	std::vector<std::shared_ptr<const Shape>> shapeList;
-	const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const Shape *conditionShape){
-		//地図に合うように加工
-		const Vector2D pos=addShape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
-		addShape->Move(minimapPosition+pos*minimapRate-pos);
-		addShape->Resize(addShape->GetRetResize()*minimapRate);
-		//条件付き追加
-		if(conditionShape->JudgeCross(addShape.get()) || conditionShape->JudgeInShape(addShape.get())){
-			//「addShapeがconditionShape内に完全に入っている」もしくは「交点を持つ」場合のみクリック図形リストに追加
-			shapeList.push_back(addShape);
+	const auto CreateDrawLineWork=[this](){
+		//攻撃ユニットと被攻撃ユニットを結ぶ線を引くワーク
+		const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
+		const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate;
+		const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
+		const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate;
+		return std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw(
+			{Edge(goodLogStart,goodLogEnd-goodLogStart,Shape::Fix::e_ignore)
+			,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
+		));
+	};
+	const auto CreateClickWork=[this](const std::function<std::shared_ptr<const Shape>(Vector2D p1,Vector2D p2)> &conditionShapeFunc){
+		std::vector<std::shared_ptr<const Shape>> shapeList;
+		const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,std::shared_ptr<const Shape> &conditionShape){
+			//地図に合うように加工
+			const Vector2D pos=addShape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
+			addShape->Move(minimapPosition+pos*minimapRate-pos);
+			addShape->Resize(addShape->GetRetResize()*minimapRate);
+			//条件付き追加
+			if(conditionShape->JudgeCross(addShape.get()) || conditionShape->JudgeInShape(addShape.get())){
+				//「addShapeがconditionShape内に完全に入っている」もしくは「交点を持つ」場合のみクリック図形リストに追加
+				shapeList.push_back(addShape);
+			}
+		};
+		const auto addMinimapObject0=[&conditionShapeFunc,&addFunc,this](std::shared_ptr<Shape> &shape){
+			//ユニット同士を結ぶ線分の端点
+			const Vector2D p0=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate
+				,p1=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
+			//図形を作成して条件次第でshapeをリストに追加
+			addFunc(shape,minimapPos[0],conditionShapeFunc(p0,p1));
+		};
+		const auto addMinimapObject1=[&conditionShapeFunc,&addFunc,this](std::shared_ptr<Shape> &shape){
+			//ユニット同士を結ぶ線分の端点
+			const Vector2D p0=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate
+				,p1=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
+			//図形を作成して条件次第でshapeをリストに追加
+			addFunc(shape,minimapPos[1],conditionShapeFunc(p0,p1));
+		};
+		//ユニットデータ以外の障害物の格納
+		for(const BattleObject *object:m_battleSceneData->m_field){
+			if(object->GetType()!=BattleObject::Type::e_unit){
+				//当たり判定図形を引き出して追加
+				addMinimapObject0(object->GetHitJudgeShape()->VCopy());
+				addMinimapObject1(object->GetHitJudgeShape()->VCopy());
+			}
 		}
-	};
-	const auto addMinimapObject0=[&addFunc,this](std::shared_ptr<Shape> &shape){
-		//ユニット同士を結ぶ線分の端点
-		const Vector2D p0=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate
-			,p1=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
-		//p0p1に垂直なベクトルで、p0p1の中点からhだけ進んだ所にある点をp2とすると|p0p2|+|p1p2|がpAttackedUnitの移動距離になるようなベクトル
-		Vector2D h=(p1-p0).turn((float)M_PI_4);
-		const float unitMoveDistance=m_goodLogInfo->pAttackedUnit->GetMaxMoveDistance();
-		h=h.norm()*std::powf(unitMoveDistance*unitMoveDistance-h.sqSize(),0.5f)*0.5f;
-		//図形を作成して条件次第でshapeをリストに追加
-		addFunc(shape,minimapPos[0],&MyPolygon(p0-h,{p0+h,p1+h,p1-h},Shape::Fix::e_dynamic));
-	};
-	const auto addMinimapObject1=[&addFunc,this](std::shared_ptr<Shape> &shape){
-		//ユニット同士を結ぶ線分の端点
-		const Vector2D p0=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate
-			,p1=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
-		//p0p1に垂直なベクトルで、p0p1の中点からhだけ進んだ所にある点をp2とすると|p0p2|+|p1p2|がpAttackedUnitの移動距離になるようなベクトル
-		Vector2D h=(p1-p0).turn((float)M_PI_4);
-		const float unitMoveDistance=m_badLogInfo->pAttackedUnit->GetMaxMoveDistance();
-		h=h.norm()*std::powf(unitMoveDistance*unitMoveDistance-h.sqSize(),0.5f)*0.5f;
-		//図形を作成して条件次第でshapeをリストに追加
-		addFunc(shape,minimapPos[1],&MyPolygon(p0-h,{p0+h,p1+h,p1-h},Shape::Fix::e_dynamic));
-//		addFunc(shape,minimapPos[1],&Edge(p0,p1-p0,Shape::Fix::e_dynamic));
-	};
-	//ユニットデータ以外の障害物の格納
-	for(const BattleObject *object:m_battleSceneData->m_field){
-		if(object->GetType()!=BattleObject::Type::e_unit){
+		//ユニットデータの格納
+		for(size_t i=0,siz=m_goodLogInfo->GetUnitList().size();i<siz;i++){
 			//当たり判定図形を引き出して追加
-			addMinimapObject0(object->GetHitJudgeShape()->VCopy());
-			addMinimapObject1(object->GetHitJudgeShape()->VCopy());
+			if(&m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->pOperateUnit && &m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->pAttackedUnit){
+				addMinimapObject0(m_goodLogInfo->GetUnitList()[i].GetHitJudgeShape()->VCopy());
+			}
 		}
-	}
-	//ユニットデータの格納
-	for(size_t i=0,siz=m_goodLogInfo->GetUnitList().size();i<siz;i++){
-		//当たり判定図形を引き出して追加
-		if(&m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->pOperateUnit && &m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->pAttackedUnit){
-			addMinimapObject0(m_goodLogInfo->GetUnitList()[i].GetHitJudgeShape()->VCopy());
+		for(size_t i=0,siz=m_badLogInfo->GetUnitList().size();i<siz;i++){
+			//当たり判定図形を引き出して追加
+			if(&m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->pOperateUnit && &m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->pAttackedUnit){
+				addMinimapObject1(m_badLogInfo->GetUnitList()[i].GetHitJudgeShape()->VCopy());
+			}
 		}
-	}
-	for(size_t i=0,siz=m_badLogInfo->GetUnitList().size();i<siz;i++){
-		//当たり判定図形を引き出して追加
-		if(&m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->pOperateUnit && &m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->pAttackedUnit){
-			addMinimapObject1(m_badLogInfo->GetUnitList()[i].GetHitJudgeShape()->VCopy());
-		}
-	}
-	//ワークの作成
-	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList));
+		//ワークの作成
+		return std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList));
+	};
+	const auto CreateLineClickWork=[&CreateClickWork,this](){
+		//攻撃ユニットと被攻撃ユニットを結ぶ線上の障害物をクリックするワーク
+		//図形作成関数の作成
+		const auto createFunc=[](Vector2D p0,Vector2D p1){
+			return std::shared_ptr<Shape>(new Edge(p0,p1-p0,Shape::Fix::e_dynamic));
+		};
+		//ワーク作成
+		return CreateClickWork(createFunc);
+	};
+	const auto CreateAreaClickWork=[&CreateClickWork,this](){
+		//攻撃ユニットと被攻撃ユニットを結ぶ線分を対角線とした菱形領域の障害物をクリックするワーク
+		//図形作成関数の作成
+		const auto createFunc=[this](Vector2D p0,Vector2D p1){
+			//p0p1に垂直なベクトルで、p0p1の中点からhだけ進んだ所にある点をp2とすると|p0p2|+|p1p2|がpAttackedUnitの移動距離になるようなベクトル
+			Vector2D h=(p1-p0).turn((float)M_PI_4);
+			const float unitMoveDistance=m_goodLogInfo->pAttackedUnit->GetMaxMoveDistance();
+			h=h.norm()*std::powf(unitMoveDistance*unitMoveDistance-h.sqSize(),0.5f)*0.5f;
+			return std::shared_ptr<Shape>(new MyPolygon(p0-h,{p0+h,p1+h,p1-h},Shape::Fix::e_dynamic));
+		};
+		//ワーク作成
+		return CreateClickWork(createFunc);
+	};
+	m_reflectionWork=CreateAreaClickWork();
 }
