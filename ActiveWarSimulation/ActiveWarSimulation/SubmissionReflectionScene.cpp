@@ -14,6 +14,7 @@
 //リフレクション活動一覧
 #include"LineDraw.h"
 #include"ObjectClick.h"
+#include"SelectOne.h"
 //仮想図形構築のために必要なもの
 #include"Edge.h"
 #include"MyPolygon.h"
@@ -213,9 +214,10 @@ void SubmissionReflectionScene::ReturnProcess(){
 }
 
 void SubmissionReflectionScene::InitReflectionWork(){
-	m_reflectionWork=CreateAreaClickWork();
+	m_reflectionWork=CreateSelectOneWork();
 }
 
+//ワーク作成関数
 std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateDrawLineWork()const{
 	//攻撃ユニットと被攻撃ユニットを結ぶ線を引くワーク
 	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
@@ -316,4 +318,10 @@ std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateAreaClick
 	};
 	//ワーク作成
 	return CreateClickWork(createFunc);
+}
+
+std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateSelectOneWork()const{
+	const std::shared_ptr<Shape> correct(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[0],Vector2D(minimapWidth,minimapHeight),Shape::Fix::e_static)));
+	const std::shared_ptr<Shape> incorrect(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[1],Vector2D(minimapWidth,minimapHeight),Shape::Fix::e_static)));
+	return std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::SelectOne(correct,{incorrect},"どちらの方が適した行動でしょうか？"));
 }

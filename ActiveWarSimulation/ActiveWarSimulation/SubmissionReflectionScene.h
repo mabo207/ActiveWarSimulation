@@ -40,6 +40,7 @@ private:
 	std::shared_ptr<ReflectionWork::Base> CreateClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc)const;
 	std::shared_ptr<ReflectionWork::Base> CreateLineClickWork()const;
 	std::shared_ptr<ReflectionWork::Base> CreateAreaClickWork()const;
+	std::shared_ptr<ReflectionWork::Base> CreateSelectOneWork()const;
 
 	//•Ï”
 	const std::shared_ptr<BattleSceneData> m_battleSceneData;
