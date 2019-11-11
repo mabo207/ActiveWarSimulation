@@ -408,6 +408,9 @@
     <ClCompile Include="ObjectClick.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\ReflectionWork</Filter>
     </ClCompile>
+    <ClCompile Include="SelectOne.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\ReflectionWork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -651,6 +654,9 @@
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
     </ClInclude>
     <ClInclude Include="ObjectClick.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectOne.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
     </ClInclude>
   </ItemGroup>

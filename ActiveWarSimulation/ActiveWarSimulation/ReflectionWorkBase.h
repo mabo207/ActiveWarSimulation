@@ -10,6 +10,7 @@ namespace ReflectionWork{
 		enum class Kind{
 			e_lineDraw
 			,e_clickObject
+			,e_selectOne
 		};
 
 		virtual void Update()=0;
