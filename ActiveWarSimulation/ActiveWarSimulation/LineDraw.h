@@ -9,7 +9,7 @@ namespace ReflectionWork{
 	//指定された線を引くワーク
 	class LineDraw:public Base{
 	public:
-		LineDraw(const std::vector<Edge> &edgeList);
+		LineDraw(const std::vector<Edge> &edgeList,const std::string &question);
 		~LineDraw();
 
 		//仮想関数のオーバーライド

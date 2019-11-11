@@ -9,7 +9,7 @@ namespace ReflectionWork{
 	//指定されたオブジェクトをクリックするワーク
 	class ObjectClick:public Base{
 	public:
-		ObjectClick(const std::vector<std::shared_ptr<const Shape>> &shapeList);
+		ObjectClick(const std::vector<std::shared_ptr<const Shape>> &shapeList,const std::string &question);
 		~ObjectClick();
 
 		//仮想関数のオーバーライド

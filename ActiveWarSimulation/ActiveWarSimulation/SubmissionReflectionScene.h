@@ -35,6 +35,11 @@ private:
 	void thisDraw()const;
 	int UpdateNextScene(int index);//次場面の設定。indexに戻りたいが、実際に戻れるかは不明なので実際の戻り場所を示すint値を返し直す。基本的に返り値はindexに等しくなる。
 	void ReturnProcess();//この場面に戻ってきた時の処理
+	//ワーク作成関数
+	std::shared_ptr<ReflectionWork::Base> CreateDrawLineWork()const;
+	std::shared_ptr<ReflectionWork::Base> CreateClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc)const;
+	std::shared_ptr<ReflectionWork::Base> CreateLineClickWork()const;
+	std::shared_ptr<ReflectionWork::Base> CreateAreaClickWork()const;
 
 	//変数
 	const std::shared_ptr<BattleSceneData> m_battleSceneData;

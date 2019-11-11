@@ -4,8 +4,8 @@
 #include"input.h"
 
 //--------------ReflectionWork::ObjectClick---------------
-ReflectionWork::ObjectClick::ObjectClick(const std::vector<std::shared_ptr<const Shape>> &shapeList)
-	:Base(Kind::e_clickObject)
+ReflectionWork::ObjectClick::ObjectClick(const std::vector<std::shared_ptr<const Shape>> &shapeList,const std::string &question)
+	:Base(Kind::e_clickObject,question)
 {
 	for(const std::shared_ptr<const Shape> &shape:shapeList){
 		m_objectList.push_back(ObjectInfo(shape));

@@ -9,8 +9,8 @@ namespace {
 }
 
 //---------------ReflectionWork::LineDraw--------------
-ReflectionWork::LineDraw::LineDraw(const std::vector<Edge> &edgeList)
-	:Base(Base::Kind::e_lineDraw)
+ReflectionWork::LineDraw::LineDraw(const std::vector<Edge> &edgeList,const std::string &question)
+	:Base(Base::Kind::e_lineDraw,question)
 	,m_inputing(false)
 	,m_inputIndex(0)//テキトーで良い
 	,m_inputStart(true)//テキトーで良い

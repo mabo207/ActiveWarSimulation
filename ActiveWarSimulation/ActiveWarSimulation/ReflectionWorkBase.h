@@ -1,6 +1,8 @@
 #ifndef DEF_REFLECTIONWORKBASE_H
 #define DEF_REFLECTIONWORKBASE_H
 
+#include<string>
+
 //リフレクション活動の際のワークを定義する
 namespace ReflectionWork{
 	class Base{
@@ -17,11 +19,15 @@ namespace ReflectionWork{
 		Kind GetKind()const{
 			return m_kind;
 		}
+		const std::string GetQuestion()const{
+			return m_question;
+		}
 
 	protected:
-		explicit Base(Kind kind):m_kind(kind){}
+		explicit Base(Kind kind,const std::string &question):m_kind(kind),m_question(question){}
 
 		const Kind m_kind;
+		const std::string m_question;
 	};
 }
 
