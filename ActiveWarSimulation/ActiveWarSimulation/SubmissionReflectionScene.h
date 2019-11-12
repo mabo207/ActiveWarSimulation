@@ -19,12 +19,14 @@ private:
 		MinimapDrawInfo(const std::shared_ptr<const LogElement> &log,Unit::Team::Kind phase);
 		~MinimapDrawInfo();
 		const std::vector<Unit>& GetUnitList()const{ return unitList; };//unitListのgetter
+		const std::vector<RouteInfo>& GetRoute()const{ return route; };
 		//unitListの中身のどれかを指すポインタ
 		const Unit *pOperateUnit;
 		const Unit *pAttackedUnit;//nullptrならアクション情報の描画を行わない
 		//描画するユニットの一覧
 	private:
 		std::vector<Unit> unitList;//pOperateUnitとpAttackedUnitがこの要素を指している都合上、外部からの変更を防ぎたいのでprivate
+		std::vector<RouteInfo> route;//pOperateUnitの移動経路
 	};
 
 	//関数

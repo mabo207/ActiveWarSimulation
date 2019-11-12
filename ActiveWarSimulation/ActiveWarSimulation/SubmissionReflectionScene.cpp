@@ -40,13 +40,16 @@ SubmissionReflectionScene::MinimapDrawInfo::MinimapDrawInfo(const std::shared_pt
 		const std::shared_ptr<const WaitLog> waitLog=std::dynamic_pointer_cast<const WaitLog>(log);
 		const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(log);
 		std::function<const Unit *()> getOperateUnit,getAttackedUnit;
+		std::function<const std::vector<RouteInfo>()> getRoute;
 		if(log->GetLogKind()==LogElement::LogKind::e_wait && waitLog){
 			//待機ログの場合
 			getOperateUnit=[&waitLog](){return waitLog->GetOperateUnitData().punit;};
+			getRoute=[&waitLog](){return waitLog->GetRoute();};
 		} else if(log->GetLogKind()==LogElement::LogKind::e_attack && attackLog){
 			//攻撃ログの場合
 			getOperateUnit=[&attackLog](){return attackLog->GetOperateUnitData().punit;};
 			getAttackedUnit=[&attackLog](){return attackLog->GetAimedUnit();};
+			getRoute=[&attackLog](){return attackLog->GetRoute();};
 		}
 		//盤面のユニット一覧の作成
 		const size_t maxSize=log->m_unitDataList.size();
@@ -78,6 +81,12 @@ SubmissionReflectionScene::MinimapDrawInfo::MinimapDrawInfo(const std::shared_pt
 		}
 		if(attackedIndex<maxSize){
 			pAttackedUnit=&unitList[attackedIndex];
+		}
+		//移動経路の作成
+		if(getRoute){
+			for(const RouteInfo &r:getRoute()){
+				route.push_back(r);
+			}
 		}
 	}
 }
@@ -116,6 +125,17 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo
 	//BattleSceneDataの描画関数は拡大縮小描画に対応していないので、独自に実装する
 	//背景描画
 	DrawExtendGraphExRateAssign(startPos.x,startPos.y,minimapRate,m_battleSceneData->m_mapPic,TRUE);
+	//ルートの描画
+	for(size_t i=0,siz=minimapInfo.GetRoute().size();i+1<siz;i++){
+		//経路の線分の座標を取得
+		Vector2D pos[2]={minimapInfo.GetRoute()[i].pos,minimapInfo.GetRoute()[i+1].pos};
+		//ミニマップ用に位置を加工
+		for(Vector2D &p:pos){
+			p=startPos+p*minimapRate;
+		}
+		//線分を描画
+		DrawLineAA(pos[0].x,pos[0].y,pos[1].x,pos[1].y,GetColor(255,255,0),2.0f);
+	}
 	//ユニットの描画
 	for(size_t i=1,siz=minimapInfo.GetUnitList().size();i<siz+1;i++){
 		const size_t index=i%siz;
@@ -214,7 +234,7 @@ void SubmissionReflectionScene::ReturnProcess(){
 }
 
 void SubmissionReflectionScene::InitReflectionWork(){
-	m_reflectionWork=CreateSelectOneWork();
+	m_reflectionWork=CreateAreaClickWork();
 }
 
 //ワーク作成関数
@@ -321,7 +341,7 @@ std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateAreaClick
 }
 
 std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateSelectOneWork()const{
-	const std::shared_ptr<Shape> correct(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[0],Vector2D(minimapWidth,minimapHeight),Shape::Fix::e_static)));
-	const std::shared_ptr<Shape> incorrect(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[1],Vector2D(minimapWidth,minimapHeight),Shape::Fix::e_static)));
+	const std::shared_ptr<Shape> correct(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[0],Vector2D((float)minimapWidth,(float)minimapHeight),Shape::Fix::e_static)));
+	const std::shared_ptr<Shape> incorrect(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[1],Vector2D((float)minimapWidth,(float)minimapHeight),Shape::Fix::e_static)));
 	return std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::SelectOne(correct,{incorrect},"どちらの方が適した行動でしょうか？"));
 }
