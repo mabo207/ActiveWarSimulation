@@ -118,20 +118,20 @@ SubmissionReflectionScene::~SubmissionReflectionScene(){
 	DeleteFontToHandleEX(m_predictExplainFont);
 }
 
-void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo &minimapInfo)const{
+void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo &minimapInfo,const float rate)const{
 	//マージンの描画
 	DrawBox(x-lineWidth,y-lineWidth,x+minimapWidth+lineWidth,y+minimapHeight+lineWidth,merginColor,TRUE);
 	const Vector2D startPos((float)x,(float)y);
 	//BattleSceneDataの描画関数は拡大縮小描画に対応していないので、独自に実装する
 	//背景描画
-	DrawExtendGraphExRateAssign(startPos.x,startPos.y,minimapRate,m_battleSceneData->m_mapPic,TRUE);
+	DrawExtendGraphExRateAssign(startPos.x,startPos.y,rate,m_battleSceneData->m_mapPic,TRUE);
 	//ルートの描画
 	for(size_t i=0,siz=minimapInfo.GetRoute().size();i+1<siz;i++){
 		//経路の線分の座標を取得
 		Vector2D pos[2]={minimapInfo.GetRoute()[i].pos,minimapInfo.GetRoute()[i+1].pos};
 		//ミニマップ用に位置を加工
 		for(Vector2D &p:pos){
-			p=startPos+p*minimapRate;
+			p=startPos+p*rate;
 		}
 		//線分を描画
 		DrawLineAA(pos[0].x,pos[0].y,pos[1].x,pos[1].y,GetColor(255,255,0),2.0f);
@@ -154,7 +154,7 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo
 				animationFlag=false;
 			}
 			//退却したユニット(m_fixがe_ignore)は描画しない
-			minimapInfo.GetUnitList()[index].DrawUnit(minimapInfo.GetUnitList()[index].getPos(),startPos,minimapRate,0,animationFlag,true,actionRangeDraw);
+			minimapInfo.GetUnitList()[index].DrawUnit(minimapInfo.GetUnitList()[index].getPos(),startPos,rate,0,animationFlag,true,actionRangeDraw);
 		}
 	}
 	//ユニットのHPゲージの描画
@@ -162,20 +162,20 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo
 		const size_t index=i%siz;
 		if(m_battleSceneData->m_mapRange->JudgeInShapeRect(&minimapInfo.GetUnitList()[index])){
 			//ウインドウに入っていない物は描画しない
-			minimapInfo.GetUnitList()[index].DrawHPGage(minimapInfo.GetUnitList()[index].getPos(),startPos,minimapRate);
+			minimapInfo.GetUnitList()[index].DrawHPGage(minimapInfo.GetUnitList()[index].getPos(),startPos,rate);
 		}
 	}
 	//操作ユニットのマーカーを表示
 	if(minimapInfo.pOperateUnit!=nullptr){
 		float dx,dy;
 		GetGraphSizeF(m_operateCursor,&dx,&dy);
-		const Vector2D pos=(minimapInfo.pOperateUnit->getPos()+Vector2D(0.0f,-Unit::unitCircleSize+10.0f))*minimapRate+startPos-Vector2D(dx/2.0f,dy);
+		const Vector2D pos=(minimapInfo.pOperateUnit->getPos()+Vector2D(0.0f,-Unit::unitCircleSize+10.0f))*rate+startPos-Vector2D(dx/2.0f,dy);
 		DrawGraph((int)pos.x,(int)pos.y,m_operateCursor,TRUE);
 	}
 	//ダメージの表示
 	if(minimapInfo.pOperateUnit!=nullptr && minimapInfo.pAttackedUnit!=nullptr){
 		//攻撃時は、攻撃相手の上にダメージを表示
-		const Vector2D pos=minimapInfo.pAttackedUnit->getPos()*minimapRate+startPos;
+		const Vector2D pos=minimapInfo.pAttackedUnit->getPos()*rate+startPos;
 		minimapInfo.pOperateUnit->GetBattleStatus().weapon->DrawPredict((int)pos.x,(int)pos.y,m_predictExplainFont,m_predictNumberFont,minimapInfo.pOperateUnit,minimapInfo.pAttackedUnit);
 	}
 }
@@ -208,10 +208,10 @@ void SubmissionReflectionScene::thisDraw()const{
 	}
 	//比較マップの描画
 	if(m_goodLogInfo.has_value()){
-		DrawResizedMap(minimapX[0],minimapY[0],m_goodLogInfo.value());
+		DrawResizedMap(minimapX[0],minimapY[0],m_goodLogInfo.value(),minimapRate);
 	}
 	if(m_badLogInfo.has_value()){
-		DrawResizedMap(minimapX[1],minimapY[1],m_badLogInfo.value());
+		DrawResizedMap(minimapX[1],minimapY[1],m_badLogInfo.value(),minimapRate);
 	}
 	//ワークについての描画
 	if(m_reflectionWork){

@@ -23,14 +23,14 @@ private:
 		//unitListの中身のどれかを指すポインタ
 		const Unit *pOperateUnit;
 		const Unit *pAttackedUnit;//nullptrならアクション情報の描画を行わない
-		//描画するユニットの一覧
 	private:
+		//情報群(これらの位置情報は、基準位置調整や拡大率の影響を受けていない、ログそのままの情報である)
 		std::vector<Unit> unitList;//pOperateUnitとpAttackedUnitがこの要素を指している都合上、外部からの変更を防ぎたいのでprivate
 		std::vector<RouteInfo> route;//pOperateUnitの移動経路
 	};
 
 	//関数
-	void DrawResizedMap(int x,int y,const MinimapDrawInfo &minimapInfo)const;//簡易拡大縮小マップを描画する
+	void DrawResizedMap(int x,int y,const MinimapDrawInfo &minimapInfo,const float rate)const;//簡易拡大縮小マップを描画する
 	void InitReflectionWork();//リフレクションワークを作成する処理(描画位置の調整のための情報がこのクラス内に存在するので、WholeReflectionInfoクラスでなくこのクラス内に処理を記述する)
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了

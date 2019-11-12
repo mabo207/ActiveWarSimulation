@@ -25,7 +25,7 @@ namespace ReflectionWork{
 		}
 
 	protected:
-		explicit Base(Kind kind,const std::string &question):m_kind(kind),m_question(question){}
+		Base(Kind kind,const std::string &question):m_kind(kind),m_question(question){}
 
 		const Kind m_kind;
 		const std::string m_question;
