@@ -93,6 +93,11 @@ SubmissionReflectionScene::MinimapDrawInfo::MinimapDrawInfo(const std::shared_pt
 
 SubmissionReflectionScene::MinimapDrawInfo::~MinimapDrawInfo(){}
 
+//---------------SubmissionReflectionScene::ExtendDraw------------------
+void SubmissionReflectionScene::ExtendDraw::DrawMinimap()const{
+	m_drawFunc(m_startPos.GetX(),m_startPos.GetY(),(float)(1.0*m_width.GetX()/CommonConstParameter::mapSizeX));
+}
+
 //---------------SubmissionReflectionScene-----------------
 SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<BattleSceneData> &battleSceneData,const std::shared_ptr<BattleSceneElement> &clearScene)
 	:BattleSceneElement(SceneKind::e_submissionReflection)
@@ -180,6 +185,15 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo
 	}
 }
 
+void SubmissionReflectionScene::DrawTwoMinimap()const{
+	if(m_goodLogInfo.has_value()){
+		DrawResizedMap(minimapX[0],minimapY[0],m_goodLogInfo.value(),minimapRate);
+	}
+	if(m_badLogInfo.has_value()){
+		DrawResizedMap(minimapX[1],minimapY[1],m_badLogInfo.value(),minimapRate);
+	}
+}
+
 int SubmissionReflectionScene::thisCalculate(){
 	if(m_reflectionWork){
 		//ワーク入力処理
@@ -207,11 +221,8 @@ void SubmissionReflectionScene::thisDraw()const{
 		DrawStringToHandle(30,30,"どちらの方が良いとされる行動でしょうか？",GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
 	}
 	//比較マップの描画
-	if(m_goodLogInfo.has_value()){
-		DrawResizedMap(minimapX[0],minimapY[0],m_goodLogInfo.value(),minimapRate);
-	}
-	if(m_badLogInfo.has_value()){
-		DrawResizedMap(minimapX[1],minimapY[1],m_badLogInfo.value(),minimapRate);
+	if(m_layoutInfo){
+		m_layoutInfo->DrawMinimap();
 	}
 	//ワークについての描画
 	if(m_reflectionWork){
@@ -234,24 +245,29 @@ void SubmissionReflectionScene::ReturnProcess(){
 }
 
 void SubmissionReflectionScene::InitReflectionWork(){
-	m_reflectionWork=CreateAreaClickWork();
+	SetAreaClickWork();
 }
 
 //ワーク作成関数
-std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateDrawLineWork()const{
+void SubmissionReflectionScene::SetDrawLineWork(){
 	//攻撃ユニットと被攻撃ユニットを結ぶ線を引くワーク
 	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
 	const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate;
 	const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
 	const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate;
-	return std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw(
+	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw(
 		{Edge(goodLogStart,goodLogEnd-goodLogStart,Shape::Fix::e_ignore)
 		,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
 		,"攻撃したキャラと敵との距離を線を引いて確認してみよう！"
 	));
+	//マップの描画の仕方を設定
+	const auto drawFunc=[this](){
+		DrawTwoMinimap();
+	};
+	m_layoutInfo=std::shared_ptr<MinimapLayoutBase>(new NormalDraw(drawFunc));
 }
 
-std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc)const{
+void SubmissionReflectionScene::SetClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc){
 	std::vector<std::shared_ptr<const Shape>> shapeList;
 	const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const std::shared_ptr<const Shape> &conditionShape,const std::shared_ptr<const Shape> &attackedUnitShape){
 		//地図に合うように加工
@@ -313,20 +329,25 @@ std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateClickWork
 		}
 	}
 	//ワークの作成
-	return std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList,"攻撃した敵の移動を邪魔している障害物をクリックしてみよう！"));
+	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList,"攻撃した敵の移動を邪魔している障害物をクリックしてみよう！"));
+	//マップの描画の仕方を設定
+	const auto drawFunc=[this](){
+		DrawTwoMinimap();
+	};
+	m_layoutInfo=std::shared_ptr<MinimapLayoutBase>(new NormalDraw(drawFunc));
 }
 
-std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateLineClickWork()const{
+void SubmissionReflectionScene::SetLineClickWork(){
 	//攻撃ユニットと被攻撃ユニットを結ぶ線上の障害物をクリックするワーク
 	//図形作成関数の作成
 	const auto createFunc=[](Vector2D p0,Vector2D p1){
 		return std::shared_ptr<Shape>(new Edge(p0,p1-p0,Shape::Fix::e_dynamic));
 	};
 	//ワーク作成
-	return CreateClickWork(createFunc);
+	SetClickWork(createFunc);
 }
 
-std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateAreaClickWork()const{
+void SubmissionReflectionScene::SetAreaClickWork(){
 	//攻撃ユニットと被攻撃ユニットを結ぶ線分を対角線とした菱形領域の障害物をクリックするワーク
 	//図形作成関数の作成
 	const auto createFunc=[this](Vector2D p0,Vector2D p1){
@@ -337,11 +358,17 @@ std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateAreaClick
 		return std::shared_ptr<Shape>(new MyPolygon(p0-h,{p0+h,p1+h,p1-h},Shape::Fix::e_dynamic));
 	};
 	//ワーク作成
-	return CreateClickWork(createFunc);
+	SetClickWork(createFunc);
 }
 
-std::shared_ptr<ReflectionWork::Base> SubmissionReflectionScene::CreateSelectOneWork()const{
+void SubmissionReflectionScene::SetSelectOneWork(){
+	//ワークの作成
 	const std::shared_ptr<Shape> correct(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[0],Vector2D((float)minimapWidth,(float)minimapHeight),Shape::Fix::e_static)));
 	const std::shared_ptr<Shape> incorrect(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[1],Vector2D((float)minimapWidth,(float)minimapHeight),Shape::Fix::e_static)));
-	return std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::SelectOne(correct,{incorrect},"どちらの方が適した行動でしょうか？"));
+	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::SelectOne(correct,{incorrect},"どちらの方が適した行動でしょうか？"));
+	//マップの描画の仕方を設定
+	const auto drawFunc=[this](){
+		DrawTwoMinimap();
+	};
+	m_layoutInfo=std::shared_ptr<MinimapLayoutBase>(new NormalDraw(drawFunc));
 }
