@@ -1,9 +1,10 @@
 #include"AttackLog.h"
 #include"BattleSceneData.h"
 
-AttackLog::AttackLog(const BattleSceneData * const battleData,const Unit * const aimedUnit)
+AttackLog::AttackLog(const BattleSceneData * const battleData,const Unit * const aimedUnit,const std::vector<RouteInfo> &route)
 	:LogElement(LogKind::e_attack,battleData)
 	,m_aimedUnit(aimedUnit)
+	,m_route(route)
 {}
 
 LogElement::UnitLogData AttackLog::GetAimedUnitData()const{
