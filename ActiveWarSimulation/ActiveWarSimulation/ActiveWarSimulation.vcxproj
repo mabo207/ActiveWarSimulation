@@ -271,6 +271,7 @@
     <ClInclude Include="GraphicProgramming.h" />
     <ClInclude Include="MageAttackingOpponent.h" />
     <ClInclude Include="ProtectFriend.h" />
+    <ClInclude Include="RouteInfo.h" />
     <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="ScoreRankingData.h" />
     <ClInclude Include="SelectSubmissionScene.h" />
