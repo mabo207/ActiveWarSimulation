@@ -251,6 +251,7 @@
     <ClInclude Include="GeneralPurposeResource.h" />
     <ClInclude Include="GraphicControl.h" />
     <ClInclude Include="GraphicProgramming.h" />
+    <ClInclude Include="RouteInfo.h" />
     <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="ScoreRankingData.h" />
     <ClInclude Include="StageClearScene.h" />

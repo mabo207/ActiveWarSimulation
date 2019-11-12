@@ -6,6 +6,7 @@
 #include<set>
 #include"LogElement.h"
 #include"StageLevel.h"
+#include"RouteInfo.h"
 
 //"BattleSceneData.h"と"ScoreSystem.h"は循環参照になってしまうので宣言
 struct BattleSceneData;
@@ -59,9 +60,9 @@ public:
 	//各場面に応じたスコアの更新処理
 	void InitUpdate(const BattleSceneData * const battleData);
 	void FinishUpdate(const BattleSceneData * const battleData);
-	void AttackUpdate(const BattleSceneData * const battleData,const Unit * const aimedUnit);
+	void AttackUpdate(const BattleSceneData * const battleData,const Unit * const aimedUnit,const std::vector<RouteInfo> &route);
 	void ResearchUpdate();
-	void WaitUpdate(const BattleSceneData * const battleData);
+	void WaitUpdate(const BattleSceneData * const battleData,const std::vector<RouteInfo> &route);
 	void CancelUpdate();
 	//スコアの結果出力処理
 	std::shared_ptr<ScoreExpression> GetScoreExpression(bool winFlag)const;

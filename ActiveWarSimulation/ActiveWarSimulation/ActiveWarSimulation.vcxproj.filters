@@ -530,6 +530,9 @@
     <ClInclude Include="SwitchUnitInitOrderScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
+    <ClInclude Include="RouteInfo.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\Resource.rc">

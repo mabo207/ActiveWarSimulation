@@ -108,8 +108,8 @@ void ScoreObserver::FinishUpdate(const BattleSceneData * const battleData){
 	m_stageLevel=battleData->m_stageLevel;
 }
 
-void ScoreObserver::AttackUpdate(const BattleSceneData * const battleData,const Unit * const aimedUnit){
-	const std::shared_ptr<LogElement> logData=std::make_shared<AttackLog>(battleData,aimedUnit);
+void ScoreObserver::AttackUpdate(const BattleSceneData * const battleData,const Unit * const aimedUnit,const std::vector<RouteInfo> &route){
+	const std::shared_ptr<LogElement> logData=std::make_shared<AttackLog>(battleData,aimedUnit,route);
 	m_latticeBonusData.InputData(battleData,logData->GetOperateUnitData());
 	m_logList.push_back(logData);
 }
@@ -118,8 +118,8 @@ void ScoreObserver::ResearchUpdate(){
 	m_researchCount++;
 }
 
-void ScoreObserver::WaitUpdate(const BattleSceneData * const battleData){
-	const std::shared_ptr<LogElement> logData=std::make_shared<WaitLog>(battleData);
+void ScoreObserver::WaitUpdate(const BattleSceneData * const battleData,const std::vector<RouteInfo> &route){
+	const std::shared_ptr<LogElement> logData=std::make_shared<WaitLog>(battleData,route);
 	m_latticeBonusData.InputData(battleData,logData->GetOperateUnitData());
 	m_logList.push_back(logData);
 }
