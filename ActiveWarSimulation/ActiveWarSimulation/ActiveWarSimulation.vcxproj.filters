@@ -658,6 +658,9 @@
     </ClInclude>
     <ClInclude Include="SelectOne.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
+	</ClInclude>
+    <ClInclude Include="RouteInfo.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

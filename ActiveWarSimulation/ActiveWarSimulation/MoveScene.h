@@ -4,17 +4,13 @@
 #include"BattleSceneData.h"
 #include"BattleSceneElement.h"
 #include"Unit.h"
+#include"RouteInfo.h"
 
 //バトルの移動場面についての記述
 //COMによる移動はこいつを継承して作ればラクそう
 class MoveScene:public BattleSceneElement{
 	//型・列挙体
 public:
-	struct RouteInfo{
-		const Vector2D pos;
-		const float OP;
-		RouteInfo(Vector2D i_pos,float i_OP):pos(i_pos),OP(i_OP){}
-	};
 	
 	//定数
 protected:
