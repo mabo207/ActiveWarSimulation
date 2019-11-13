@@ -4,6 +4,10 @@
 #include"Circle.h"
 
 //-----------------SubmissionRuleBase-------------------
+int SubmissionRuleBase::RubricEvaluate(const BattleSceneData * const battleData)const{
+	return RubricEvaluate(battleData->m_field,battleData->m_stageSize,battleData->m_scoreObserver->GetLatestLog());
+}
+
 float SubmissionRuleBase::CalculateRouteDistance(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const{
 	//ŠiŽq“_‚ÌN“ü‰Â”Ûî•ñ‚ÌŒvŽZAƒ†ƒjƒbƒg‚Íî•ñ‚É‰e‹¿‚ð—^‚¦‚È‚¢Ý’è‚È‚Ì‚ÅAbattleData->m_operatedUnit‚Í’N‚Å‚à–â‘è‚È‚¢
 	std::shared_ptr<LatticeBattleField> latticeField=battleData->CalculateLatticeBattleField(false);

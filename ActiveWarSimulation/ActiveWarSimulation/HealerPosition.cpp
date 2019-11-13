@@ -4,7 +4,7 @@
 #include"AttackLog.h"
 #include"WaitLog.h"
 
-int HealerPosition::RubricEvaluate(const BattleSceneData * const battleData)const{
+int HealerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- 例外処理
 	//	- （なし）
 	//- 評価
@@ -13,8 +13,8 @@ int HealerPosition::RubricEvaluate(const BattleSceneData * const battleData)cons
 	//	3.敵兵士が1体以上、操作ユニットを次の行動で攻撃可能である
 	//	4.敵射手が1体以上、操作ユニットを次の行動で攻撃可能である
 	//	5.どの敵物理兵も、操作ユニットを次の行動で攻撃できない
-	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(battleData->m_scoreObserver->GetLatestLog());
-	const std::shared_ptr<const WaitLog> waitLog=std::dynamic_pointer_cast<const WaitLog>(battleData->m_scoreObserver->GetLatestLog());
+	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(evaluateLog);
+	const std::shared_ptr<const WaitLog> waitLog=std::dynamic_pointer_cast<const WaitLog>(evaluateLog);
 	const std::vector<LogElement::UnitLogData> *pUnitLogDataList=nullptr;
 	std::function<LogElement::UnitLogData()> getAimedUnitData;
 	if(attackLog){
@@ -48,7 +48,7 @@ int HealerPosition::RubricEvaluate(const BattleSceneData * const battleData)cons
 					continue;
 				}
 				//攻撃可否判定とカウント加算
-				if(JudgeAttackable(battleData,*pUnitLogDataList,unitData,getAimedUnitData())){
+				if(JudgeAttackable(field,stageSize,*pUnitLogDataList,unitData,getAimedUnitData())){
 					addFunc();
 				}
 			}

@@ -3,7 +3,7 @@
 #include"BattleSceneData.h"
 #include"AttackLog.h"
 
-int ArcherAttackDistance::RubricEvaluate(const BattleSceneData * const battleData)const{
+int ArcherAttackDistance::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- 例外処理
 	//	- 攻撃しない(-1)
 	//- 評価
@@ -11,7 +11,7 @@ int ArcherAttackDistance::RubricEvaluate(const BattleSceneData * const battleDat
 	//	1. ルート距離が、自ユニット攻撃射程以下
 	//	2. ルート距離が、敵の移動距離以下
 	//	3. 2以上の評価
-	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(battleData->m_scoreObserver->GetLatestLog());
+	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(evaluateLog);
 	int evaluate;
 	if(!attackLog){
 		//ログがAttackLogでない場合は「攻撃をしなかった」と判断できる
@@ -23,7 +23,7 @@ int ArcherAttackDistance::RubricEvaluate(const BattleSceneData * const battleDat
 		//被弾ユニット→行動ユニットへのルート距離を求める
 		const LogElement::UnitLogData operatedUnit=attackLog->GetOperateUnitData();
 		const LogElement::UnitLogData aimedUnit=attackLog->GetAimedUnitData();
-		const float routeDistance=CalculateRouteDistance(battleData,attackLog->m_unitDataList,operatedUnit,aimedUnit);
+		const float routeDistance=CalculateRouteDistance(field,stageSize,attackLog->m_unitDataList,operatedUnit,aimedUnit);
 		//評価(高い方から判定していく)
 		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance() || routeDistance<0.0f){
 			//routeDistance<0.0fの時は、到達経路が存在しないということなので、ルート距離が敵の移動距離より長いのと同じ扱いになる。

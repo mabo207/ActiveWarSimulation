@@ -3,14 +3,14 @@
 #include"BattleSceneData.h"
 #include"AttackLog.h"
 
-int MageAttackingOpponent::RubricEvaluate(const BattleSceneData * const battleData)const{
+int MageAttackingOpponent::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- —áŠOˆ—
 	//	- UŒ‚‚µ‚È‚¢(-1)
 	//- •]‰¿
 	//	0. “G‚ª–‚“¹mE‰q¶•º‚Å‚ ‚é
 	//	1. “G‚ª•ºmEËè‚Å‚ ‚é
 	//	2. “G‚ªd‘••º‚Å‚ ‚é
-	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(battleData->m_scoreObserver->GetLatestLog());
+	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(evaluateLog);
 	int evaluate;
 	if(!attackLog){
 		//ƒƒO‚ªAttackLog‚Å‚È‚¢ê‡‚ÍuUŒ‚‚ğ‚µ‚È‚©‚Á‚½v‚Æ”»’f‚Å‚«‚é

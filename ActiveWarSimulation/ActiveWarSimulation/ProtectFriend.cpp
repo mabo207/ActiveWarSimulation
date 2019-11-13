@@ -4,7 +4,7 @@
 #include"AttackLog.h"
 #include"WaitLog.h"
 
-int ProtectFriend::RubricEvaluate(const BattleSceneData * const battleData)const{
+int ProtectFriend::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- 評価に用いるデータ
 	//	- いずれかの敵ユニットの次の行動で攻撃可能となる味方後衛ユニットの数(a)
 	//	- 操作ユニットをマップから消した時の上記のデータ(b)
@@ -14,8 +14,8 @@ int ProtectFriend::RubricEvaluate(const BattleSceneData * const battleData)const
 	//	1. (b-a)/b==0(誰も守れていない)
 	//	2. (b-a)/b<1(誰か守れている)
 	//	3. (b-a)/b==1(全ての味方を守れている)
-	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(battleData->m_scoreObserver->GetLatestLog());
-	const std::shared_ptr<const WaitLog> waitLog=std::dynamic_pointer_cast<const WaitLog>(battleData->m_scoreObserver->GetLatestLog());
+	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(evaluateLog);
+	const std::shared_ptr<const WaitLog> waitLog=std::dynamic_pointer_cast<const WaitLog>(evaluateLog);
 	const std::vector<LogElement::UnitLogData> *pUnitLogDataList=nullptr;
 	std::function<LogElement::UnitLogData()> getOperatedUnitData;
 	if(attackLog){
@@ -52,7 +52,7 @@ int ProtectFriend::RubricEvaluate(const BattleSceneData * const battleData)const
 			//敵の攻撃できるキャラ全てについて探索する
 			if(attackerData.punit->GetBattleStatus().team==Unit::Team::e_enemy && attackerData.punit->GetBaseStatus().profession!=Unit::Profession::e_healer){
 				//行動できる範囲を求める
-				std::shared_ptr<LatticeBattleField> latticeField=battleData->CalculateLatticeBattleField(false);
+				std::shared_ptr<LatticeBattleField> latticeField=LatticeBattleField::Create(field,stageSize,operatedUnit.punit,false);
 				for(const LogElement::UnitLogData &logData:*pUnitLogDataList){
 					//ユニットによる格子点侵入不可情報を追加、ただし操作していたユニットは除く
 					if(logData.punit!=attackerData.punit && logData.punit!=operatedUnit.punit){
