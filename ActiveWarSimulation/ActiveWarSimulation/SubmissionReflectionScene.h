@@ -83,6 +83,7 @@ private:
 	void SetLineClickWork();
 	void SetAreaClickWork();
 	void SetSelectOneWork();
+	void SetMoveSimulationWork();
 
 	//•Ï”
 	const std::shared_ptr<BattleSceneData> m_battleSceneData;

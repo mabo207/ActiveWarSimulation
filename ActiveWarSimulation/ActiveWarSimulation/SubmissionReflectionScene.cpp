@@ -15,6 +15,7 @@
 #include"LineDraw.h"
 #include"ObjectClick.h"
 #include"SelectOne.h"
+#include"MoveSimulation.h"
 //仮想図形構築のために必要なもの
 #include"Edge.h"
 #include"MyPolygon.h"
@@ -209,6 +210,10 @@ int SubmissionReflectionScene::thisCalculate(){
 			return SceneKind::e_clear;
 		}
 	}
+	if(m_layoutInfo){
+		//マップ描画処理の更新
+		m_layoutInfo->Update();
+	}
 
 	return SceneKind::e_submissionReflection;
 }
@@ -371,4 +376,45 @@ void SubmissionReflectionScene::SetSelectOneWork(){
 		DrawTwoMinimap();
 	};
 	m_layoutInfo=std::shared_ptr<MinimapLayoutBase>(new NormalDraw(drawFunc));
+}
+
+void SubmissionReflectionScene::SetMoveSimulationWork(){
+	//攻撃キャラの位置を変えてみて評価がどうなるかをシミュレーション学習してみるワーク
+	if(m_badLogInfo.has_value()){
+		//フィールドの作成
+		std::vector<const BattleObject *> field;
+		for(BattleObject *obj:m_battleSceneData->m_field){
+			//全ての障害物を追加
+			if(obj->GetType()==BattleObject::Type::e_terrain){
+				field.push_back(obj);
+			}
+		}
+		for(const Unit &unit:m_badLogInfo.value().GetUnitList()){
+			field.push_back(&unit);
+		}
+		//ワークの設定
+		const float mapRate=0.8f;
+		m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new
+			ReflectionWork::MoveSimulation(field
+				,m_badLogInfo->pOperateUnit
+				,m_battleSceneData->m_stageSize
+				,m_badLogInfo->pAttackedUnit
+				,minimapPos[0]
+				,mapRate
+				,m_battleSceneData->m_scoreObserver->GetSubmission().GetRule()
+				,"シミュレーション学習"));
+		//マップの描画の仕方を設定
+		const Easing::TYPE type=Easing::TYPE_IN;
+		const Easing::FUNCTION function=Easing::FUNCTION_QUAD;
+		const double degree=4.0;
+		const int maxFrame=30;
+		const auto drawFunc=[this](int x,int y,float rate){
+			if(m_badLogInfo.has_value()){
+				DrawResizedMap(x,y,m_badLogInfo.value(),rate);
+			}
+		};
+		m_layoutInfo=std::shared_ptr<MinimapLayoutBase>(new ExtendDraw(drawFunc
+			,PositionControl(minimapPos[1],minimapPos[0],maxFrame,type,function,degree)
+			,Easing(minimapWidth,(int)(CommonConstParameter::mapSizeX*mapRate),maxFrame,type,function,degree)));
+	}
 }
