@@ -7,6 +7,12 @@ AttackLog::AttackLog(const BattleSceneData * const battleData,const Unit * const
 	,m_route(route)
 {}
 
+AttackLog::AttackLog(const std::vector<Unit *> &unitList,const Unit * const aimedUnit,const std::vector<RouteInfo> &route)
+	:LogElement(LogKind::e_attack,unitList)
+	,m_aimedUnit(aimedUnit)
+	,m_route(route)
+{}
+
 LogElement::UnitLogData AttackLog::GetAimedUnitData()const{
 	for(const UnitLogData &logData:m_unitDataList){
 		if(logData.punit==m_aimedUnit){
