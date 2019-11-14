@@ -24,9 +24,8 @@
 namespace {
 	const int lineWidth=5;
 	const unsigned int merginColor=GetColor(128,128,255);
-	const float minimapRate=0.5f;
-	const int minimapWidth=(int)(CommonConstParameter::mapSizeX*minimapRate);
-	const int minimapHeight=(int)(CommonConstParameter::mapSizeY*minimapRate);
+	const float twoMinimapRate=0.5f;
+	const float oneMinimapRate=0.8f;
 	const Vector2D minimapPos[2]={Vector2D(20.0f,300.0f),Vector2D(980.0f,300.0f)};
 	const int minimapX[2]={(int)minimapPos[0].x,(int)minimapPos[1].x};
 	const int minimapY[2]={(int)minimapPos[0].y,(int)minimapPos[1].y};
@@ -126,6 +125,8 @@ SubmissionReflectionScene::~SubmissionReflectionScene(){
 
 void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo &minimapInfo,const float rate)const{
 	//マージンの描画
+	const int minimapWidth=(int)(CommonConstParameter::mapSizeX*rate);
+	const int minimapHeight=(int)(CommonConstParameter::mapSizeY*rate);
 	DrawBox(x-lineWidth,y-lineWidth,x+minimapWidth+lineWidth,y+minimapHeight+lineWidth,merginColor,TRUE);
 	const Vector2D startPos((float)x,(float)y);
 	//BattleSceneDataの描画関数は拡大縮小描画に対応していないので、独自に実装する
@@ -188,10 +189,10 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo
 
 void SubmissionReflectionScene::DrawTwoMinimap()const{
 	if(m_goodLogInfo.has_value()){
-		DrawResizedMap(minimapX[0],minimapY[0],m_goodLogInfo.value(),minimapRate);
+		DrawResizedMap(minimapX[0],minimapY[0],m_goodLogInfo.value(),twoMinimapRate);
 	}
 	if(m_badLogInfo.has_value()){
-		DrawResizedMap(minimapX[1],minimapY[1],m_badLogInfo.value(),minimapRate);
+		DrawResizedMap(minimapX[1],minimapY[1],m_badLogInfo.value(),twoMinimapRate);
 	}
 }
 
@@ -256,10 +257,10 @@ void SubmissionReflectionScene::InitReflectionWork(){
 //ワーク作成関数
 void SubmissionReflectionScene::SetDrawLineWork(){
 	//攻撃ユニットと被攻撃ユニットを結ぶ線を引くワーク
-	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->GetOperateUnit()->getPos()*minimapRate;
-	const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->GetAttackedUnit()->getPos()*minimapRate;
-	const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->GetOperateUnit()->getPos()*minimapRate;
-	const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->GetAttackedUnit()->getPos()*minimapRate;
+	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->GetOperateUnit()->getPos()*twoMinimapRate;
+	const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->GetAttackedUnit()->getPos()*twoMinimapRate;
+	const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->GetOperateUnit()->getPos()*twoMinimapRate;
+	const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->GetAttackedUnit()->getPos()*twoMinimapRate;
 	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw(
 		{Edge(goodLogStart,goodLogEnd-goodLogStart,Shape::Fix::e_ignore)
 		,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
@@ -277,8 +278,8 @@ void SubmissionReflectionScene::SetClickWork(const std::function<std::shared_ptr
 	const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const std::shared_ptr<const Shape> &conditionShape,const std::shared_ptr<const Shape> &attackedUnitShape){
 		//地図に合うように加工
 		const Vector2D pos=addShape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
-		addShape->Move(minimapPosition+pos*minimapRate-pos);
-		addShape->Resize(addShape->GetRetResize()*minimapRate);
+		addShape->Move(minimapPosition+pos*twoMinimapRate-pos);
+		addShape->Resize(addShape->GetRetResize()*twoMinimapRate);
 		//条件付き追加
 		if(conditionShape->JudgeCross(addShape.get()) || conditionShape->JudgeInShape(addShape.get())){
 			//「addShapeがconditionShape内に完全に入っている」もしくは「交点を持つ」場合のみクリック図形リストに追加
@@ -290,25 +291,25 @@ void SubmissionReflectionScene::SetClickWork(const std::function<std::shared_ptr
 	};
 	const auto addMinimapObject0=[&conditionShapeFunc,&addFunc,this](std::shared_ptr<Shape> &shape){
 		//ユニット同士を結ぶ線分の端点
-		const Vector2D p0=minimapPos[0]+m_goodLogInfo->GetAttackedUnit()->getPos()*minimapRate
-			,p1=minimapPos[0]+m_goodLogInfo->GetOperateUnit()->getPos()*minimapRate;
+		const Vector2D p0=minimapPos[0]+m_goodLogInfo->GetAttackedUnit()->getPos()*twoMinimapRate
+			,p1=minimapPos[0]+m_goodLogInfo->GetOperateUnit()->getPos()*twoMinimapRate;
 		//攻撃されたユニットの当たり判定図形の作成
 		std::shared_ptr<Shape> attackedUnitShape=m_goodLogInfo->GetOperateUnit()->GetHitJudgeShape()->VCopy();
 		const Vector2D pos=attackedUnitShape->GetPosition();
-		attackedUnitShape->Move(minimapPos[0]+pos*minimapRate-pos);
-		attackedUnitShape->Resize(attackedUnitShape->GetRetResize()*minimapRate);
+		attackedUnitShape->Move(minimapPos[0]+pos*twoMinimapRate-pos);
+		attackedUnitShape->Resize(attackedUnitShape->GetRetResize()*twoMinimapRate);
 		//図形を作成して条件次第でshapeをリストに追加
 		addFunc(shape,minimapPos[0],conditionShapeFunc(p0,p1),attackedUnitShape);
 	};
 	const auto addMinimapObject1=[&conditionShapeFunc,&addFunc,this](std::shared_ptr<Shape> &shape){
 		//ユニット同士を結ぶ線分の端点
-		const Vector2D p0=minimapPos[1]+m_badLogInfo->GetAttackedUnit()->getPos()*minimapRate
-			,p1=minimapPos[1]+m_badLogInfo->GetOperateUnit()->getPos()*minimapRate;
+		const Vector2D p0=minimapPos[1]+m_badLogInfo->GetAttackedUnit()->getPos()*twoMinimapRate
+			,p1=minimapPos[1]+m_badLogInfo->GetOperateUnit()->getPos()*twoMinimapRate;
 		//攻撃されたユニットの当たり判定図形の作成
 		std::shared_ptr<Shape> attackedUnitShape=m_badLogInfo->GetOperateUnit()->GetHitJudgeShape()->VCopy();
 		const Vector2D pos=attackedUnitShape->GetPosition();
-		attackedUnitShape->Move(minimapPos[1]+pos*minimapRate-pos);
-		attackedUnitShape->Resize(attackedUnitShape->GetRetResize()*minimapRate);
+		attackedUnitShape->Move(minimapPos[1]+pos*twoMinimapRate-pos);
+		attackedUnitShape->Resize(attackedUnitShape->GetRetResize()*twoMinimapRate);
 		//図形を作成して条件次第でshapeをリストに追加
 		addFunc(shape,minimapPos[1],conditionShapeFunc(p0,p1),attackedUnitShape);
 	};
@@ -368,8 +369,10 @@ void SubmissionReflectionScene::SetAreaClickWork(){
 
 void SubmissionReflectionScene::SetSelectOneWork(){
 	//ワークの作成
-	const std::shared_ptr<Shape> correct(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[0],Vector2D((float)minimapWidth,(float)minimapHeight),Shape::Fix::e_static)));
-	const std::shared_ptr<Shape> incorrect(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[1],Vector2D((float)minimapWidth,(float)minimapHeight),Shape::Fix::e_static)));
+	const float minimapWidth=(float)CommonConstParameter::mapSizeX*twoMinimapRate;
+	const float minimapHeight=(float)CommonConstParameter::mapSizeY*twoMinimapRate;
+	const std::shared_ptr<Shape> correct(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[0],Vector2D(minimapWidth,minimapHeight),Shape::Fix::e_static)));
+	const std::shared_ptr<Shape> incorrect(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[1],Vector2D(minimapWidth,minimapHeight),Shape::Fix::e_static)));
 	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::SelectOne(correct,{incorrect},"どちらの方が適した行動でしょうか？"));
 	//マップの描画の仕方を設定
 	const auto drawFunc=[this](){
@@ -393,14 +396,13 @@ void SubmissionReflectionScene::SetMoveSimulationWork(){
 			field.push_back(m_badLogInfo->GetUnitListPtr(i));
 		}
 		//ワークの設定
-		const float mapRate=0.8f;
 		m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new
 			ReflectionWork::MoveSimulation(field
 				,m_badLogInfo->GetOperateUnit()
 				,m_battleSceneData->m_stageSize
 				,m_badLogInfo->GetAttackedUnit()
 				,minimapPos[0]
-				,mapRate
+				,oneMinimapRate
 				,m_battleSceneData->m_scoreObserver->GetSubmission().GetRule()
 				,"シミュレーション学習"));
 		//マップの描画の仕方を設定
@@ -415,6 +417,6 @@ void SubmissionReflectionScene::SetMoveSimulationWork(){
 		};
 		m_layoutInfo=std::shared_ptr<MinimapLayoutBase>(new ExtendDraw(drawFunc
 			,PositionControl(minimapPos[1],minimapPos[0],maxFrame,type,function,degree)
-			,Easing(minimapWidth,(int)(CommonConstParameter::mapSizeX*mapRate),maxFrame,type,function,degree)));
+			,Easing((int)(CommonConstParameter::mapSizeX*twoMinimapRate),(int)(CommonConstParameter::mapSizeX*oneMinimapRate),maxFrame,type,function,degree)));
 	}
 }
