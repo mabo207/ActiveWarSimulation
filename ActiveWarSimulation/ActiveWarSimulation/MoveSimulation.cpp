@@ -34,6 +34,9 @@ void ReflectionWork::MoveSimulation::Update(){
 	const Vector2D mouse=GetMousePointVector2D();
 	const Vector2D newPosition=(mouse-m_startPos)/m_mapRate;
 	m_operateUnit->Warp(newPosition);
+	//•]‰¿‚ÌXV
+	const int evaluate=m_rule->RubricEvaluate(m_field,m_stageSize,CreateLog());
+	m_evaluateInfo=m_rule->GetRubricStringInfo(evaluate);
 }
 
 bool ReflectionWork::MoveSimulation::WorkClear()const{
@@ -41,12 +44,9 @@ bool ReflectionWork::MoveSimulation::WorkClear()const{
 }
 
 void ReflectionWork::MoveSimulation::WorkDraw()const{
-	//•]‰¿
-	const int evaluate=m_rule->RubricEvaluate(m_field,m_stageSize,CreateLog());
-	const auto info=m_rule->GetRubricStringInfo(evaluate);
 	//•]‰¿‚Ì•`‰æ
 	const Vector2D pos=m_operateUnit->getPos()*m_mapRate+m_startPos+Vector2D(0.0f,-Unit::unitCircleSize);
-	DrawStringCenterBaseToHandle((int)pos.x,(int)pos.y,info.first.c_str(),GetColor(255,255,255),m_font,true,info.second);
+	DrawStringCenterBaseToHandle((int)pos.x,(int)pos.y,m_evaluateInfo.first.c_str(),GetColor(255,255,255),m_font,true,m_evaluateInfo.second);
 }
 
 std::shared_ptr<LogElement> ReflectionWork::MoveSimulation::CreateLog()const{
