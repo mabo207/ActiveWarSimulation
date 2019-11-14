@@ -11,6 +11,7 @@ namespace ReflectionWork{
 			e_lineDraw
 			,e_clickObject
 			,e_selectOne
+			,e_moveSimulation
 		};
 
 		virtual void Update()=0;
