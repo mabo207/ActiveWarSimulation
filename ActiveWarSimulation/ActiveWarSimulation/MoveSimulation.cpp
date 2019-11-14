@@ -24,7 +24,7 @@ ReflectionWork::MoveSimulation::MoveSimulation(const std::vector<BattleObject *>
 	,m_attackedUnit(attackedUnit)
 	,m_rule(rule)
 	,m_clear(false)
-	,m_font(CreateFontToHandleEX("メイリオ",24,3,DX_FONTTYPE_EDGE))
+	,m_font(CreateFontToHandleEX("メイリオ",24,3,DX_FONTTYPE_EDGE,-1,2))
 {}
 
 ReflectionWork::MoveSimulation::~MoveSimulation(){}

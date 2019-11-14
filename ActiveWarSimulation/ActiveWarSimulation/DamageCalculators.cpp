@@ -20,6 +20,24 @@ void DamageCalculator::VDrawPredict(const int centerX,const int centerY,const in
 	DrawStringCenterBaseToHandle(centerX,centerY+dy,std::to_string(VCalculateDamage(attacker,defender)).c_str(),GetColor(240,68,48),numberFont,false,GetColor(0,0,0));
 }
 
+void DamageCalculator::VDrawExtendPredict(const int centerX,const int centerY,const double exRate,const int explainFont,const int numberFont,const Unit *attacker,const Unit *defender)const{
+	//1行目に"DAMAGE"、2行目にダメージ量を描画する
+	const int fontsize[2]={(int)(GetFontSizeToHandle(explainFont)*exRate),(int)(GetFontSizeToHandle(numberFont)*exRate)};
+	const std::string str[2]={"DAMAGE",std::to_string(VCalculateDamage(attacker,defender))};
+	const int font[2]={explainFont,numberFont};
+	const unsigned int color[2]={GetColor(255,255,255),GetColor(240,68,48)};
+	int wholeHeight=0;
+	for(size_t i=0;i<2;i++){
+		wholeHeight+=fontsize[i];
+	}
+	int dy=-wholeHeight/2;
+	for(size_t i=0;i<2;i++){
+		const int width=(int)(GetDrawStringWidthToHandle(str[i].c_str(),str[i].size(),font[i])*exRate);
+		DrawExtendStringToHandle(centerX-width/2,centerY+dy,exRate,exRate,str[i].c_str(),color[i],font[i],GetColor(0,0,0));
+		dy+=fontsize[i];
+	}
+}
+
 //---------------PhysicalCalculator-----------------
 PhysicalCalculator::PhysicalCalculator(double powerRate,double defRate,double weaponRate)
 	:DamageCalculator(Kind::e_physicalAttack),m_powerRate(powerRate),m_defRate(defRate),m_weaponRate(weaponRate){}
@@ -110,5 +128,23 @@ void RecoverCalculator::VDrawPredict(const int centerX,const int centerY,const i
 	DrawStringCenterBaseToHandle(centerX,centerY+dy,"RECOVER",GetColor(255,255,255),explainFont,false,GetColor(0,0,0));
 	dy+=fontsize[0];
 	DrawStringCenterBaseToHandle(centerX,centerY+dy,std::to_string(-VCalculateDamage(attacker,defender)).c_str(),GetColor(64,192,64),numberFont,false,GetColor(0,0,0));
+}
+
+void RecoverCalculator::VDrawExtendPredict(const int centerX,const int centerY,const double exRate,const int explainFont,const int numberFont,const Unit *attacker,const Unit *defender)const{
+	//1行目に"DAMAGE"、2行目にダメージ量を描画する
+	const int fontsize[2]={(int)(GetFontSizeToHandle(explainFont)*exRate),(int)(GetFontSizeToHandle(numberFont)*exRate)};
+	const std::string str[2]={"RECOVER",std::to_string(-VCalculateDamage(attacker,defender))};
+	const int font[2]={explainFont,numberFont};
+	const unsigned int color[2]={GetColor(255,255,255),GetColor(64,192,64)};
+	int wholeHeight=0;
+	for(size_t i=0;i<2;i++){
+		wholeHeight+=fontsize[i];
+	}
+	int dy=-wholeHeight/2;
+	for(size_t i=0;i<2;i++){
+		const int width=(int)(GetDrawStringWidthToHandle(str[i].c_str(),str[i].size(),font[i])*exRate);
+		DrawExtendStringToHandle(centerX-width/2,centerY+dy,exRate,exRate,str[i].c_str(),color[i],font[i],GetColor(0,0,0));
+		dy+=fontsize[i];
+	}
 }
 
