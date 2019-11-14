@@ -410,7 +410,7 @@ void SubmissionReflectionScene::SetMoveSimulationWork(){
 		const Easing::TYPE type=Easing::TYPE_IN;
 		const Easing::FUNCTION function=Easing::FUNCTION_QUAD;
 		const double degree=4.0;
-		const int maxFrame=30;
+		const int maxFrame=10;
 		const auto drawFunc=[this](int x,int y,float rate){
 			if(m_badLogInfo.has_value()){
 				DrawResizedMap(x,y,m_badLogInfo.value(),rate);
