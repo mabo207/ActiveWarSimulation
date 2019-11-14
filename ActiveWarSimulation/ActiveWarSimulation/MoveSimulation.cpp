@@ -21,6 +21,7 @@ ReflectionWork::MoveSimulation::MoveSimulation(const std::vector<BattleObject *>
 	,m_operateUnit(operateUnit)
 	,m_startPos(startPos)
 	,m_mapRate(mapRate)
+	,m_attackedUnit(attackedUnit)
 	,m_rule(rule)
 	,m_clear(false)
 	,m_font(CreateFontToHandleEX("メイリオ",24,3,DX_FONTTYPE_EDGE))
@@ -60,7 +61,7 @@ std::shared_ptr<LogElement> ReflectionWork::MoveSimulation::CreateLog()const{
 		}
 	}
 	//ログの構成
-	if(m_operateUnit->JudgeAttackable(m_attackedUnit)){
+	if(m_attackedUnit!=nullptr && m_operateUnit->JudgeAttackable(m_attackedUnit)){
 		//攻撃可能な場合(未完成)
 		return std::shared_ptr<LogElement>(new AttackLog(unitList,m_attackedUnit,{}));
 	} else{

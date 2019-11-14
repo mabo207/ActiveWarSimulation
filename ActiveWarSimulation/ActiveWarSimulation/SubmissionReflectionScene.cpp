@@ -250,7 +250,7 @@ void SubmissionReflectionScene::ReturnProcess(){
 }
 
 void SubmissionReflectionScene::InitReflectionWork(){
-	SetAreaClickWork();
+	SetMoveSimulationWork();
 }
 
 //ワーク作成関数
@@ -382,15 +382,15 @@ void SubmissionReflectionScene::SetMoveSimulationWork(){
 	//攻撃キャラの位置を変えてみて評価がどうなるかをシミュレーション学習してみるワーク
 	if(m_badLogInfo.has_value()){
 		//フィールドの作成
-		std::vector<const BattleObject *> field;
+		std::vector<BattleObject *> field;
 		for(BattleObject *obj:m_battleSceneData->m_field){
 			//全ての障害物を追加
 			if(obj->GetType()==BattleObject::Type::e_terrain){
 				field.push_back(obj);
 			}
 		}
-		for(const Unit &unit:m_badLogInfo.value().GetUnitList()){
-			field.push_back(&unit);
+		for(size_t i=0;i<m_badLogInfo->GetUnitList().size();i++){
+			field.push_back(m_badLogInfo->GetUnitListPtr(i));
 		}
 		//ワークの設定
 		const float mapRate=0.8f;
