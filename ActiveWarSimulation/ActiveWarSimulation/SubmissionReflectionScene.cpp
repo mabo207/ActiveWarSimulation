@@ -172,17 +172,17 @@ void SubmissionReflectionScene::DrawResizedMap(int x,int y,const MinimapDrawInfo
 		}
 	}
 	//操作ユニットのマーカーを表示
-	if(minimapInfo.pOperateUnit!=nullptr){
+	if(minimapInfo.GetOperateUnit()!=nullptr){
 		float dx,dy;
 		GetGraphSizeF(m_operateCursor,&dx,&dy);
-		const Vector2D pos=(minimapInfo.pOperateUnit->getPos()+Vector2D(0.0f,-Unit::unitCircleSize+10.0f))*rate+startPos-Vector2D(dx/2.0f,dy);
+		const Vector2D pos=(minimapInfo.GetOperateUnit()->getPos()+Vector2D(0.0f,-Unit::unitCircleSize+10.0f))*rate+startPos-Vector2D(dx/2.0f,dy);
 		DrawGraph((int)pos.x,(int)pos.y,m_operateCursor,TRUE);
 	}
 	//ダメージの表示
-	if(minimapInfo.pOperateUnit!=nullptr && minimapInfo.pAttackedUnit!=nullptr){
+	if(minimapInfo.GetOperateUnit()!=nullptr && minimapInfo.GetAttackedUnit()!=nullptr){
 		//攻撃時は、攻撃相手の上にダメージを表示
-		const Vector2D pos=minimapInfo.pAttackedUnit->getPos()*rate+startPos;
-		minimapInfo.pOperateUnit->GetBattleStatus().weapon->DrawPredict((int)pos.x,(int)pos.y,m_predictExplainFont,m_predictNumberFont,minimapInfo.pOperateUnit,minimapInfo.pAttackedUnit);
+		const Vector2D pos=minimapInfo.GetAttackedUnit()->getPos()*rate+startPos;
+		minimapInfo.GetOperateUnit()->GetBattleStatus().weapon->DrawPredict((int)pos.x,(int)pos.y,m_predictExplainFont,m_predictNumberFont,minimapInfo.GetOperateUnit(),minimapInfo.GetAttackedUnit());
 	}
 }
 
@@ -256,10 +256,10 @@ void SubmissionReflectionScene::InitReflectionWork(){
 //ワーク作成関数
 void SubmissionReflectionScene::SetDrawLineWork(){
 	//攻撃ユニットと被攻撃ユニットを結ぶ線を引くワーク
-	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
-	const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate;
-	const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
-	const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate;
+	const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->GetOperateUnit()->getPos()*minimapRate;
+	const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->GetAttackedUnit()->getPos()*minimapRate;
+	const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->GetOperateUnit()->getPos()*minimapRate;
+	const Vector2D badLogEnd=minimapPos[1]+m_badLogInfo->GetAttackedUnit()->getPos()*minimapRate;
 	m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw(
 		{Edge(goodLogStart,goodLogEnd-goodLogStart,Shape::Fix::e_ignore)
 		,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
@@ -290,10 +290,10 @@ void SubmissionReflectionScene::SetClickWork(const std::function<std::shared_ptr
 	};
 	const auto addMinimapObject0=[&conditionShapeFunc,&addFunc,this](std::shared_ptr<Shape> &shape){
 		//ユニット同士を結ぶ線分の端点
-		const Vector2D p0=minimapPos[0]+m_goodLogInfo->pAttackedUnit->getPos()*minimapRate
-			,p1=minimapPos[0]+m_goodLogInfo->pOperateUnit->getPos()*minimapRate;
+		const Vector2D p0=minimapPos[0]+m_goodLogInfo->GetAttackedUnit()->getPos()*minimapRate
+			,p1=minimapPos[0]+m_goodLogInfo->GetOperateUnit()->getPos()*minimapRate;
 		//攻撃されたユニットの当たり判定図形の作成
-		std::shared_ptr<Shape> attackedUnitShape=m_goodLogInfo->pOperateUnit->GetHitJudgeShape()->VCopy();
+		std::shared_ptr<Shape> attackedUnitShape=m_goodLogInfo->GetOperateUnit()->GetHitJudgeShape()->VCopy();
 		const Vector2D pos=attackedUnitShape->GetPosition();
 		attackedUnitShape->Move(minimapPos[0]+pos*minimapRate-pos);
 		attackedUnitShape->Resize(attackedUnitShape->GetRetResize()*minimapRate);
@@ -302,10 +302,10 @@ void SubmissionReflectionScene::SetClickWork(const std::function<std::shared_ptr
 	};
 	const auto addMinimapObject1=[&conditionShapeFunc,&addFunc,this](std::shared_ptr<Shape> &shape){
 		//ユニット同士を結ぶ線分の端点
-		const Vector2D p0=minimapPos[1]+m_badLogInfo->pAttackedUnit->getPos()*minimapRate
-			,p1=minimapPos[1]+m_badLogInfo->pOperateUnit->getPos()*minimapRate;
+		const Vector2D p0=minimapPos[1]+m_badLogInfo->GetAttackedUnit()->getPos()*minimapRate
+			,p1=minimapPos[1]+m_badLogInfo->GetOperateUnit()->getPos()*minimapRate;
 		//攻撃されたユニットの当たり判定図形の作成
-		std::shared_ptr<Shape> attackedUnitShape=m_badLogInfo->pOperateUnit->GetHitJudgeShape()->VCopy();
+		std::shared_ptr<Shape> attackedUnitShape=m_badLogInfo->GetOperateUnit()->GetHitJudgeShape()->VCopy();
 		const Vector2D pos=attackedUnitShape->GetPosition();
 		attackedUnitShape->Move(minimapPos[1]+pos*minimapRate-pos);
 		attackedUnitShape->Resize(attackedUnitShape->GetRetResize()*minimapRate);
@@ -323,13 +323,13 @@ void SubmissionReflectionScene::SetClickWork(const std::function<std::shared_ptr
 	//ユニットデータの格納
 	for(size_t i=0,siz=m_goodLogInfo->GetUnitList().size();i<siz;i++){
 		//当たり判定図形を引き出して追加
-		if(&m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->pOperateUnit && &m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->pAttackedUnit){
+		if(&m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->GetOperateUnit() && &m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->GetAttackedUnit()){
 			addMinimapObject0(m_goodLogInfo->GetUnitList()[i].GetHitJudgeShape()->VCopy());
 		}
 	}
 	for(size_t i=0,siz=m_badLogInfo->GetUnitList().size();i<siz;i++){
 		//当たり判定図形を引き出して追加
-		if(&m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->pOperateUnit && &m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->pAttackedUnit){
+		if(&m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->GetOperateUnit() && &m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->GetAttackedUnit()){
 			addMinimapObject1(m_badLogInfo->GetUnitList()[i].GetHitJudgeShape()->VCopy());
 		}
 	}
@@ -358,7 +358,7 @@ void SubmissionReflectionScene::SetAreaClickWork(){
 	const auto createFunc=[this](Vector2D p0,Vector2D p1){
 		//p0p1に垂直なベクトルで、p0p1の中点からhだけ進んだ所にある点をp2とすると|p0p2|+|p1p2|がpAttackedUnitの移動距離になるようなベクトル
 		Vector2D h=(p1-p0).turn((float)M_PI_4);
-		const float unitMoveDistance=m_goodLogInfo->pAttackedUnit->GetMaxMoveDistance();
+		const float unitMoveDistance=m_goodLogInfo->GetAttackedUnit()->GetMaxMoveDistance();
 		h=h.norm()*std::powf(unitMoveDistance*unitMoveDistance-h.sqSize(),0.5f)*0.5f;
 		return std::shared_ptr<Shape>(new MyPolygon(p0-h,{p0+h,p1+h,p1-h},Shape::Fix::e_dynamic));
 	};
@@ -396,9 +396,9 @@ void SubmissionReflectionScene::SetMoveSimulationWork(){
 		const float mapRate=0.8f;
 		m_reflectionWork=std::shared_ptr<ReflectionWork::Base>(new
 			ReflectionWork::MoveSimulation(field
-				,m_badLogInfo->pOperateUnit
+				,m_badLogInfo->GetOperateUnit()
 				,m_battleSceneData->m_stageSize
-				,m_badLogInfo->pAttackedUnit
+				,m_badLogInfo->GetAttackedUnit()
 				,minimapPos[0]
 				,mapRate
 				,m_battleSceneData->m_scoreObserver->GetSubmission().GetRule()
