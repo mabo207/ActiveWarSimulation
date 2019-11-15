@@ -15,6 +15,7 @@ public:
 
 private:
 	//型
+	//ミニマップ描画のために必要な情報
 	struct MinimapDrawInfo{
 		//ミニマップ描画に必要な情報群
 		MinimapDrawInfo(const std::shared_ptr<const LogElement> &log,Unit::Team::Kind phase);
@@ -74,6 +75,16 @@ private:
 		PositionControl m_startPos;
 		Easing m_width;
 	};
+	//１つのワークの情報をまとめて管理する構造体
+	struct WorkInfo{
+		WorkInfo(const std::shared_ptr<ReflectionWork::Base> &i_reflection
+			,const std::shared_ptr<MinimapLayoutBase> &i_minimap)
+			:reflection(i_reflection)
+			,minimap(i_minimap)
+		{}
+		std::shared_ptr<ReflectionWork::Base> reflection;
+		std::shared_ptr<MinimapLayoutBase> minimap;
+	};
 
 	//関数
 	void DrawResizedMap(int x,int y,const MinimapDrawInfo &minimapInfo,const float rate)const;//簡易拡大縮小マップを描画する
@@ -85,19 +96,19 @@ private:
 	int UpdateNextScene(int index);//次場面の設定。indexに戻りたいが、実際に戻れるかは不明なので実際の戻り場所を示すint値を返し直す。基本的に返り値はindexに等しくなる。
 	void ReturnProcess();//この場面に戻ってきた時の処理
 	//ワーク作成関数
-	void SetDrawLineWork();
-	void SetClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc);
-	void SetLineClickWork();
-	void SetAreaClickWork();
-	void SetSelectOneWork();
-	void SetMoveSimulationWork();
+	void AddDrawLineWork();
+	void AddClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc);
+	void AddLineClickWork();
+	void AddAreaClickWork();
+	void AddSelectOneWork();
+	void AddMoveSimulationWork();
 
 	//変数
 	const std::shared_ptr<BattleSceneData> m_battleSceneData;
 	std::shared_ptr<BattleSceneElement> m_clearScene;//前クラスで作成したClearSceneを一時的に保存するための変数
 	std::optional<MinimapDrawInfo> m_goodLogInfo,m_badLogInfo;//初期化をコンストラクタの{}内で行いたいので遅延の必要がある
-	std::shared_ptr<ReflectionWork::Base> m_reflectionWork;//現在行っているリフレクションワーク
-	std::shared_ptr<MinimapLayoutBase> m_layoutInfo;//ミニマップをどう表示するか
+	std::vector<WorkInfo> m_reflectionWorkList;//現在行っているリフレクションワーク
+	std::vector<WorkInfo>::const_iterator m_nowWork;//どのワークに取り組んでいるか
 
 	const int m_operateCursor;//操作ユニットを指し示すためのマーカー
 	const int m_predictNumberFont;
