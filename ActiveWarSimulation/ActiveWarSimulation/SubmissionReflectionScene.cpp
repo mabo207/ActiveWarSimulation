@@ -388,7 +388,7 @@ void SubmissionReflectionScene::AddAreaClickWork(){
 	//図形作成関数の作成
 	const auto createFunc=[this](Vector2D p0,Vector2D p1){
 		//p0p1に垂直なベクトルで、p0p1の中点からhだけ進んだ所にある点をp2とすると|p0p2|+|p1p2|がpAttackedUnitの移動距離になるようなベクトル
-		Vector2D h=(p1-p0).turn((float)M_PI_4);
+		Vector2D h=(p1-p0).turn((float)M_PI_2);
 		const float unitMoveDistance=m_goodLogInfo->GetAttackedUnit()->GetMaxMoveDistance();
 		h=h.norm()*std::powf(unitMoveDistance*unitMoveDistance-h.sqSize(),0.5f)*0.5f;
 		return std::shared_ptr<Shape>(new MyPolygon(p0-h,{p0+h,p1+h,p1-h},Shape::Fix::e_dynamic));
@@ -437,7 +437,7 @@ void SubmissionReflectionScene::AddMoveSimulationWork(){
 				,m_battleSceneData->m_scoreObserver->GetSubmission().GetRule()
 				,"シミュレーション学習"));
 		//マップの描画の仕方を設定
-		const Easing::TYPE type=Easing::TYPE_IN;
+		const Easing::TYPE type=Easing::TYPE_OUT;
 		const Easing::FUNCTION function=Easing::FUNCTION_QUAD;
 		const double degree=4.0;
 		const int maxFrame=10;
