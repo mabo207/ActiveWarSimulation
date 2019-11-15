@@ -15,7 +15,7 @@ void ReflectionWork::ReadExplanation::WorkDraw()const{
 	//直前ワークの様子を描画
 	m_beforeWork->WorkDraw();
 	//図形一覧を描画
-	for(const std::pair<const Shape *,unsigned int> &info:m_assistShapeList){
+	for(const std::pair<std::shared_ptr<const Shape>,unsigned int> &info:m_assistShapeList){
 		info.first->Draw(Vector2D(),info.second,TRUE,2.0f);
 	}
 }
