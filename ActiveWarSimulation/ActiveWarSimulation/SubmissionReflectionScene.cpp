@@ -287,7 +287,18 @@ void SubmissionReflectionScene::AddDrawLineWork(){
 }
 
 void SubmissionReflectionScene::AddClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc){
+	//準備
 	std::vector<std::shared_ptr<const Shape>> shapeList;
+	const Vector2D leftConditionPoint[2]={
+		minimapPos[0]+m_goodLogInfo->GetAttackedUnit()->getPos()*twoMinimapRate
+		,minimapPos[0]+m_goodLogInfo->GetOperateUnit()->getPos()*twoMinimapRate
+	};
+	const Vector2D rightConditionPoint[2]={
+		minimapPos[1]+m_badLogInfo->GetAttackedUnit()->getPos()*twoMinimapRate
+		,minimapPos[1]+m_badLogInfo->GetOperateUnit()->getPos()*twoMinimapRate
+	};
+	const std::shared_ptr<const Shape> conditionShape[2]={conditionShapeFunc(leftConditionPoint[0],leftConditionPoint[1]),conditionShapeFunc(rightConditionPoint[0],rightConditionPoint[1])};
+	//関数の作成
 	const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const std::shared_ptr<const Shape> &conditionShape,const std::shared_ptr<const Shape> &attackedUnitShape){
 		//地図に合うように加工
 		const Vector2D pos=addShape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
@@ -302,29 +313,27 @@ void SubmissionReflectionScene::AddClickWork(const std::function<std::shared_ptr
 			}
 		}
 	};
-	const auto addMinimapObject0=[&conditionShapeFunc,&addFunc,this](std::shared_ptr<Shape> &shape){
+	const auto addMinimapObject0=[conditionShape,leftConditionPoint,&addFunc,this](std::shared_ptr<Shape> &shape){
 		//ユニット同士を結ぶ線分の端点
-		const Vector2D p0=minimapPos[0]+m_goodLogInfo->GetAttackedUnit()->getPos()*twoMinimapRate
-			,p1=minimapPos[0]+m_goodLogInfo->GetOperateUnit()->getPos()*twoMinimapRate;
+		const Vector2D p0=leftConditionPoint[0],p1=leftConditionPoint[1];
 		//攻撃されたユニットの当たり判定図形の作成
 		std::shared_ptr<Shape> attackedUnitShape=m_goodLogInfo->GetOperateUnit()->GetHitJudgeShape()->VCopy();
 		const Vector2D pos=attackedUnitShape->GetPosition();
 		attackedUnitShape->Move(minimapPos[0]+pos*twoMinimapRate-pos);
 		attackedUnitShape->Resize(attackedUnitShape->GetRetResize()*twoMinimapRate);
 		//図形を作成して条件次第でshapeをリストに追加
-		addFunc(shape,minimapPos[0],conditionShapeFunc(p0,p1),attackedUnitShape);
+		addFunc(shape,minimapPos[0],conditionShape[0],attackedUnitShape);
 	};
-	const auto addMinimapObject1=[&conditionShapeFunc,&addFunc,this](std::shared_ptr<Shape> &shape){
+	const auto addMinimapObject1=[conditionShape,rightConditionPoint,&addFunc,this](std::shared_ptr<Shape> &shape){
 		//ユニット同士を結ぶ線分の端点
-		const Vector2D p0=minimapPos[1]+m_badLogInfo->GetAttackedUnit()->getPos()*twoMinimapRate
-			,p1=minimapPos[1]+m_badLogInfo->GetOperateUnit()->getPos()*twoMinimapRate;
+		const Vector2D p0=rightConditionPoint[0],p1=rightConditionPoint[1];
 		//攻撃されたユニットの当たり判定図形の作成
 		std::shared_ptr<Shape> attackedUnitShape=m_badLogInfo->GetOperateUnit()->GetHitJudgeShape()->VCopy();
 		const Vector2D pos=attackedUnitShape->GetPosition();
 		attackedUnitShape->Move(minimapPos[1]+pos*twoMinimapRate-pos);
 		attackedUnitShape->Resize(attackedUnitShape->GetRetResize()*twoMinimapRate);
 		//図形を作成して条件次第でshapeをリストに追加
-		addFunc(shape,minimapPos[1],conditionShapeFunc(p0,p1),attackedUnitShape);
+		addFunc(shape,minimapPos[1],conditionShape[1],attackedUnitShape);
 	};
 	//ユニットデータ以外の障害物の格納
 	for(const BattleObject *object:m_battleSceneData->m_field){
@@ -356,7 +365,11 @@ void SubmissionReflectionScene::AddClickWork(const std::function<std::shared_ptr
 	const std::shared_ptr<MinimapLayoutBase> minimap=std::shared_ptr<MinimapLayoutBase>(new NormalDraw(drawFunc));
 	m_reflectionWorkList.push_back(WorkInfo(clickWork,minimap));
 	//解説ワークの作成
-	const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation({},clickWork,"大きく空いている隙間を縫って敵は弓兵に近づいてきます。"));
+	const std::vector<std::pair<std::shared_ptr<const Shape>,unsigned int>> assistList{
+		std::make_pair(conditionShape[0],GetColor(255,0,0))
+		,std::make_pair(conditionShape[1],GetColor(255,0,0))
+	};
+	const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation(assistList,clickWork,"大きく空いている隙間を縫って敵は弓兵に近づいてきます。"));
 	m_reflectionWorkList.push_back(WorkInfo(explanationWork,minimap));
 }
 
