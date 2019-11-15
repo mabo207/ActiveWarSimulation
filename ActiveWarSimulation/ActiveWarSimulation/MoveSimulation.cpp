@@ -37,6 +37,14 @@ void ReflectionWork::MoveSimulation::Update(){
 	//評価の更新
 	const int evaluate=m_rule->RubricEvaluate(m_field,m_stageSize,CreateLog());
 	m_evaluateInfo=m_rule->GetRubricStringInfo(evaluate);
+	//終了更新
+	if(mouse_get(MOUSE_INPUT_LEFT)==1 || keyboard_get(KEY_INPUT_Z)==1){
+		//決定ボタンをクリックしていて
+		if(m_attackedUnit==nullptr || m_operateUnit->JudgeAttackable(m_attackedUnit)){
+			//行動可能な場合（元々行動しない場合は無条件で）
+			m_clear=true;
+		}
+	}
 }
 
 bool ReflectionWork::MoveSimulation::WorkClear()const{
