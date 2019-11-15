@@ -199,6 +199,7 @@
     <ClCompile Include="PlayerMoveScene.cpp" />
     <ClCompile Include="MyPolygon.cpp" />
     <ClCompile Include="ProtectFriend.cpp" />
+    <ClCompile Include="ReadExplanation.cpp" />
     <ClCompile Include="ResearchScene.cpp" />
     <ClCompile Include="ScoreObserver.cpp" />
     <ClCompile Include="ScoreRankingData.cpp" />
@@ -278,6 +279,7 @@
     <ClInclude Include="MoveSimulation.h" />
     <ClInclude Include="ObjectClick.h" />
     <ClInclude Include="ProtectFriend.h" />
+    <ClInclude Include="ReadExplanation.h" />
     <ClInclude Include="ReflectionWorkBase.h" />
     <ClInclude Include="RouteInfo.h" />
     <ClInclude Include="ScoreObserver.h" />

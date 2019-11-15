@@ -16,6 +16,7 @@
 #include"ObjectClick.h"
 #include"SelectOne.h"
 #include"MoveSimulation.h"
+#include"ReadExplanation.h"
 //仮想図形構築のために必要なもの
 #include"Edge.h"
 #include"MyPolygon.h"
@@ -347,13 +348,16 @@ void SubmissionReflectionScene::AddClickWork(const std::function<std::shared_ptr
 		}
 	}
 	//ワークの作成
-	const std::shared_ptr<ReflectionWork::Base> work=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList,"攻撃した敵の移動を邪魔している障害物をクリックしてみよう！"));
+	const std::shared_ptr<ReflectionWork::Base> clickWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList,"攻撃した敵の移動を邪魔している障害物をクリックしてみよう！"));
 	//マップの描画の仕方を設定
 	const auto drawFunc=[this](){
 		DrawTwoMinimap();
 	};
 	const std::shared_ptr<MinimapLayoutBase> minimap=std::shared_ptr<MinimapLayoutBase>(new NormalDraw(drawFunc));
-	m_reflectionWorkList.push_back(WorkInfo(work,minimap));
+	m_reflectionWorkList.push_back(WorkInfo(clickWork,minimap));
+	//解説ワークの作成
+	const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation({},clickWork,"大きく空いている隙間を縫って敵は弓兵に近づいてきます。"));
+	m_reflectionWorkList.push_back(WorkInfo(explanationWork,minimap));
 }
 
 void SubmissionReflectionScene::AddLineClickWork(){
