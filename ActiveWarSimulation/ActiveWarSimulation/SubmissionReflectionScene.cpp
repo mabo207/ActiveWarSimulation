@@ -20,6 +20,7 @@
 //仮想図形構築のために必要なもの
 #include"Edge.h"
 #include"MyPolygon.h"
+#include"Circle.h"
 #include<cmath>
 
 namespace {
@@ -365,11 +366,70 @@ void SubmissionReflectionScene::AddClickWork(const std::function<std::shared_ptr
 	const std::shared_ptr<MinimapLayoutBase> minimap=std::shared_ptr<MinimapLayoutBase>(new NormalDraw(drawFunc));
 	m_reflectionWorkList.push_back(WorkInfo(clickWork,minimap));
 	//解説ワークの作成
-	const std::vector<std::pair<std::shared_ptr<const Shape>,unsigned int>> assistList{
-		std::make_pair(conditionShape[0],GetColor(255,0,0))
-		,std::make_pair(conditionShape[1],GetColor(255,0,0))
-	};
-	const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation(assistList,clickWork,"大きく空いている隙間を縫って敵は弓兵に近づいてきます。"));
+	std::vector<std::pair<std::shared_ptr<const Shape>,unsigned int>> assistList;
+	//敵の移動範囲に入っている格子点を全て補助関数に加える
+	std::vector<BattleObject *> field;
+	std::shared_ptr<LatticeBattleField> lField;
+	std::vector<LatticeBattleField::LatticeDistanceInfo> dField;
+	float moveDistance;
+	const unsigned int pointColor=GetColor(0,128,64);
+	//m_goodLogInfoについて
+	//フィールドの作成
+	for(BattleObject *obj:m_battleSceneData->m_field){
+		//全ての障害物を追加
+		if(obj->GetType()==BattleObject::Type::e_terrain){
+			field.push_back(obj);
+		}
+	}
+	for(size_t i=0;i<m_goodLogInfo->GetUnitList().size();i++){
+		Unit *pu=m_goodLogInfo->GetUnitListPtr(i);
+		if(pu!=m_goodLogInfo->GetAttackedUnit() && pu!=m_goodLogInfo->GetOperateUnit()){
+			field.push_back(pu);
+		}
+	}
+	//格子点マップの作成
+	lField=LatticeBattleField::Create(field,m_battleSceneData->m_stageSize,m_goodLogInfo->GetOperateUnit(),true);
+	//距離マップの作成
+	lField->CalculateLatticeDistanceInfo(dField,m_goodLogInfo->GetAttackedUnit()->getPos());
+	//格子点の追加
+	moveDistance=m_goodLogInfo->GetOperateUnit()->GetMaxMoveDistance();
+	for(const LatticeBattleField::LatticeDistanceInfo &info:dField){
+		if(info.dist<moveDistance){
+			const Vector2D pos=lField->CalculateLatticePointPos(info.index)*twoMinimapRate+minimapPos[0];
+			assistList.push_back(std::make_pair(std::shared_ptr<const Shape>(new Circle(pos,2.0f,Shape::Fix::e_ignore)),pointColor));
+		}
+	}
+	//m_badLogInfoについて
+	field.clear();
+	lField.reset();
+	dField.clear();
+	//フィールドの作成
+	for(BattleObject *obj:m_battleSceneData->m_field){
+		//全ての障害物を追加
+		if(obj->GetType()==BattleObject::Type::e_terrain){
+			field.push_back(obj);
+		}
+	}
+	for(size_t i=0;i<m_badLogInfo->GetUnitList().size();i++){
+		Unit *pu=m_badLogInfo->GetUnitListPtr(i);
+		if(pu!=m_badLogInfo->GetAttackedUnit() && pu!=m_badLogInfo->GetOperateUnit()){
+			field.push_back(pu);
+		}
+	}
+	//格子点マップの作成
+	lField=LatticeBattleField::Create(field,m_battleSceneData->m_stageSize,m_badLogInfo->GetOperateUnit(),true);
+	//距離マップの作成
+	lField->CalculateLatticeDistanceInfo(dField,m_badLogInfo->GetAttackedUnit()->getPos());
+	//格子点の追加
+	moveDistance=m_badLogInfo->GetOperateUnit()->GetMaxMoveDistance();
+	for(const LatticeBattleField::LatticeDistanceInfo &info:dField){
+		if(info.dist<moveDistance){
+			const Vector2D pos=lField->CalculateLatticePointPos(info.index)*twoMinimapRate+minimapPos[1];
+			assistList.push_back(std::make_pair(std::shared_ptr<const Shape>(new Circle(pos,2.0f,Shape::Fix::e_ignore)),pointColor));
+		}
+	}
+	//ワーク作成
+	const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation(assistList,clickWork,"点で表現された敵の動く範囲を見てみると、\n大きく空いている隙間を縫って敵は弓兵に近づいてくる事がわかります。"));
 	m_reflectionWorkList.push_back(WorkInfo(explanationWork,minimap));
 }
 
