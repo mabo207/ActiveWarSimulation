@@ -105,7 +105,7 @@ private:
 	void ReturnProcess();//この場面に戻ってきた時の処理
 	//ワーク作成関数
 	void AddDrawLineWork();
-	void AddShapeClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc,std::vector<ShapeClickWorkInfo> &minimapInfo);
+	void AddShapeClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> conditionShapeFunc,std::vector<ShapeClickWorkInfo> minimapInfo);
 	void AddLineClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo);
 	void AddAreaClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo);
 	void AddSelectOneWork();
@@ -115,8 +115,9 @@ private:
 	const std::shared_ptr<BattleSceneData> m_battleSceneData;
 	std::shared_ptr<BattleSceneElement> m_clearScene;//前クラスで作成したClearSceneを一時的に保存するための変数
 	std::optional<MinimapDrawInfo> m_goodLogInfo,m_badLogInfo;//初期化をコンストラクタの{}内で行いたいので遅延の必要がある
-	std::vector<WorkInfo> m_reflectionWorkList;//現在行っているリフレクションワーク
-	std::vector<WorkInfo>::const_iterator m_nowWork;//どのワークに取り組んでいるか
+	std::vector<std::function<WorkInfo()>> m_workMethodList;//ワークのつくり方のリスト
+	std::vector<std::function<WorkInfo()>>::const_iterator m_nextWorkMethod;//次のワークのつくり方
+	WorkInfo m_nowWork;//現在のワーク
 
 	const int m_operateCursor;//操作ユニットを指し示すためのマーカー
 	const int m_predictNumberFont;
