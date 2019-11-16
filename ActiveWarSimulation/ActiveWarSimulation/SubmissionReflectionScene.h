@@ -105,9 +105,11 @@ private:
 	void ReturnProcess();//‚±‚Ìê–Ê‚É–ß‚Á‚Ä‚«‚½‚Ìˆ—
 	//ƒ[ƒNì¬ŠÖ”
 	void AddDrawLineWork();
-	void AddShapeClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> conditionShapeFunc,std::vector<ShapeClickWorkInfo> minimapInfo);
-	void AddLineClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo);
-	void AddAreaClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo);
+	void AddShapeClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> conditionShapeFunc
+		,std::vector<ShapeClickWorkInfo> minimapInfo
+		,const std::shared_ptr<MinimapLayoutBase> minimapLayout);
+	void AddLineClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo,const std::shared_ptr<MinimapLayoutBase> &minimapLayout);
+	void AddAreaClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo,const std::shared_ptr<MinimapLayoutBase> &minimapLayout);
 	void AddSelectOneWork();
 	void AddMoveSimulationWork();
 

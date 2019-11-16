@@ -258,9 +258,17 @@ void SubmissionReflectionScene::ReturnProcess(){
 
 void SubmissionReflectionScene::InitReflectionWork(){
 	//ワーク一覧の作成
-	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_goodLogInfo,minimapPos[0],twoMinimapRate),ShapeClickWorkInfo(&m_badLogInfo,minimapPos[1],twoMinimapRate)});
+	const auto twoMinimapDrawFunc=[this](){
+		DrawTwoMinimap();
+	};
+	const auto oneMinimapDrawFunc=[this](){
+		if(m_badLogInfo.has_value()){
+			DrawResizedMap(minimapX[0],minimapY[0],m_badLogInfo.value(),oneMinimapRate);
+		}
+	};
+	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_goodLogInfo,minimapPos[0],twoMinimapRate),ShapeClickWorkInfo(&m_badLogInfo,minimapPos[1],twoMinimapRate)},std::shared_ptr<MinimapLayoutBase>(new NormalDraw(twoMinimapDrawFunc)));
 	AddMoveSimulationWork();
-	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_badLogInfo,minimapPos[0],oneMinimapRate)});
+	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_badLogInfo,minimapPos[0],oneMinimapRate)},std::shared_ptr<MinimapLayoutBase>(new NormalDraw(oneMinimapDrawFunc)));
 	//ワーク設定
 	m_nextWorkMethod=m_workMethodList.begin();
 	m_nowWork=(*m_nextWorkMethod)();
@@ -290,8 +298,11 @@ void SubmissionReflectionScene::AddDrawLineWork(){
 	m_workMethodList.push_back(lineWorkMethod);
 }
 
-void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> conditionShapeFunc,std::vector<ShapeClickWorkInfo> minimapInfo){
-	const auto clickWorkMethod=[minimapInfo,conditionShapeFunc,this](){
+void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> conditionShapeFunc
+	,std::vector<ShapeClickWorkInfo> minimapInfo
+	,const std::shared_ptr<MinimapLayoutBase> minimapLayout)
+{
+	const auto clickWorkMethod=[minimapInfo,conditionShapeFunc,minimapLayout,this](){
 		//準備
 		std::vector<std::shared_ptr<const Shape>> shapeList;
 		//関数の作成
@@ -343,16 +354,11 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 		}
 		//ワークの作成
 		const std::shared_ptr<ReflectionWork::Base> clickWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList,"攻撃した敵の移動を邪魔している障害物をクリックしてみよう！"));
-		//マップの描画の仕方を設定
-		const auto drawFunc=[this](){
-			DrawTwoMinimap();
-		};
-		const std::shared_ptr<MinimapLayoutBase> minimap=std::shared_ptr<MinimapLayoutBase>(new NormalDraw(drawFunc));
-		return WorkInfo(clickWork,minimap);
+		return WorkInfo(clickWork,minimapLayout);
 	};
 	m_workMethodList.push_back(clickWorkMethod);
 	//解説ワークの作成
-	const auto explanationWorkMethod=[minimapInfo,this](){
+	const auto explanationWorkMethod=[minimapInfo,minimapLayout,this](){
 		std::vector<std::pair<std::shared_ptr<const Shape>,unsigned int>> assistList;
 		//敵の移動範囲に入っている格子点を全て補助関数に加える
 		minimapInfo[0].drawInfo->value().GetUnitListPtr(0);
@@ -390,27 +396,22 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 		}
 		//ワーク作成
 		const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation(assistList,m_nowWork.reflection,"点で表現された敵の動く範囲を見てみると、\n大きく空いている隙間を縫って射手に近づいてくる事がわかります。"));
-		//マップの描画の仕方を設定
-		const auto drawFunc=[this](){
-			DrawTwoMinimap();
-		};
-		const std::shared_ptr<MinimapLayoutBase> minimap=std::shared_ptr<MinimapLayoutBase>(new NormalDraw(drawFunc));
-		return WorkInfo(explanationWork,minimap);
+		return WorkInfo(explanationWork,minimapLayout);
 	};
 	m_workMethodList.push_back(explanationWorkMethod);
 }
 
-void SubmissionReflectionScene::AddLineClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo){
+void SubmissionReflectionScene::AddLineClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo,const std::shared_ptr<MinimapLayoutBase> &minimapLayout){
 	//攻撃ユニットと被攻撃ユニットを結ぶ線上の障害物をクリックするワーク
 	//図形作成関数の作成
 	const auto createFunc=[](Vector2D p0,Vector2D p1){
 		return std::shared_ptr<Shape>(new Edge(p0,p1-p0,Shape::Fix::e_dynamic));
 	};
 	//ワーク作成
-	AddShapeClickWork(createFunc,minimapInfo);
+	AddShapeClickWork(createFunc,minimapInfo,minimapLayout);
 }
 
-void SubmissionReflectionScene::AddAreaClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo){
+void SubmissionReflectionScene::AddAreaClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo,const std::shared_ptr<MinimapLayoutBase> &minimapLayout){
 	//攻撃ユニットと被攻撃ユニットを結ぶ線分を対角線とした菱形領域の障害物をクリックするワーク
 	//図形作成関数の作成
 	const auto createFunc=[this](Vector2D p0,Vector2D p1){
@@ -421,7 +422,7 @@ void SubmissionReflectionScene::AddAreaClickWork(std::vector<ShapeClickWorkInfo>
 		return std::shared_ptr<Shape>(new MyPolygon(p0-h,{p0+h,p1+h,p1-h},Shape::Fix::e_dynamic));
 	};
 	//ワーク作成
-	AddShapeClickWork(createFunc,minimapInfo);
+	AddShapeClickWork(createFunc,minimapInfo,minimapLayout);
 }
 
 void SubmissionReflectionScene::AddSelectOneWork(){
