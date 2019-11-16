@@ -262,7 +262,7 @@ void SubmissionReflectionScene::ReturnProcess(){
 }
 
 void SubmissionReflectionScene::InitReflectionWork(){
-	AddAreaClickWork();
+	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_goodLogInfo,minimapPos[0],twoMinimapRate),ShapeClickWorkInfo(&m_badLogInfo,minimapPos[1],twoMinimapRate)});
 	AddMoveSimulationWork();
 	m_nowWork=m_reflectionWorkList.begin();
 }
@@ -287,24 +287,15 @@ void SubmissionReflectionScene::AddDrawLineWork(){
 	m_reflectionWorkList.push_back(WorkInfo(work,minimap));
 }
 
-void SubmissionReflectionScene::AddClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc){
+void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc,std::vector<ShapeClickWorkInfo> &minimapInfo){
 	//準備
 	std::vector<std::shared_ptr<const Shape>> shapeList;
-	const Vector2D leftConditionPoint[2]={
-		minimapPos[0]+m_goodLogInfo->GetAttackedUnit()->getPos()*twoMinimapRate
-		,minimapPos[0]+m_goodLogInfo->GetOperateUnit()->getPos()*twoMinimapRate
-	};
-	const Vector2D rightConditionPoint[2]={
-		minimapPos[1]+m_badLogInfo->GetAttackedUnit()->getPos()*twoMinimapRate
-		,minimapPos[1]+m_badLogInfo->GetOperateUnit()->getPos()*twoMinimapRate
-	};
-	const std::shared_ptr<const Shape> conditionShape[2]={conditionShapeFunc(leftConditionPoint[0],leftConditionPoint[1]),conditionShapeFunc(rightConditionPoint[0],rightConditionPoint[1])};
 	//関数の作成
-	const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const std::shared_ptr<const Shape> &conditionShape,const std::shared_ptr<const Shape> &attackedUnitShape){
+	const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const std::shared_ptr<const Shape> &conditionShape,const std::shared_ptr<const Shape> &attackedUnitShape,float rate){
 		//地図に合うように加工
 		const Vector2D pos=addShape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
-		addShape->Move(minimapPosition+pos*twoMinimapRate-pos);
-		addShape->Resize(addShape->GetRetResize()*twoMinimapRate);
+		addShape->Move(minimapPosition+pos*rate-pos);
+		addShape->Resize(addShape->GetRetResize()*rate);
 		//条件付き追加
 		if(conditionShape->JudgeCross(addShape.get()) || conditionShape->JudgeInShape(addShape.get())){
 			//「addShapeがconditionShape内に完全に入っている」もしくは「交点を持つ」場合のみクリック図形リストに追加
@@ -314,47 +305,36 @@ void SubmissionReflectionScene::AddClickWork(const std::function<std::shared_ptr
 			}
 		}
 	};
-	const auto addMinimapObject0=[conditionShape,leftConditionPoint,&addFunc,this](std::shared_ptr<Shape> &shape){
+	const auto addMinimapObject=[&addFunc,&conditionShapeFunc](std::shared_ptr<Shape> &shape,const ShapeClickWorkInfo &minimapInfo){
 		//ユニット同士を結ぶ線分の端点
-		const Vector2D p0=leftConditionPoint[0],p1=leftConditionPoint[1];
+		const Vector2D p0=minimapInfo.startPos+minimapInfo.drawInfo->value().GetAttackedUnit()->getPos()*minimapInfo.rate,
+			p1=minimapInfo.startPos+minimapInfo.drawInfo->value().GetOperateUnit()->getPos()*minimapInfo.rate;
+		//条件図形の作成
+		const std::shared_ptr<const Shape> conditionShape=conditionShapeFunc(p0,p1);
 		//攻撃されたユニットの当たり判定図形の作成
-		std::shared_ptr<Shape> attackedUnitShape=m_goodLogInfo->GetOperateUnit()->GetHitJudgeShape()->VCopy();
+		std::shared_ptr<Shape> attackedUnitShape=minimapInfo.drawInfo->value().GetOperateUnit()->GetHitJudgeShape()->VCopy();
 		const Vector2D pos=attackedUnitShape->GetPosition();
-		attackedUnitShape->Move(minimapPos[0]+pos*twoMinimapRate-pos);
-		attackedUnitShape->Resize(attackedUnitShape->GetRetResize()*twoMinimapRate);
+		attackedUnitShape->Move(minimapInfo.startPos+pos*minimapInfo.rate-pos);
+		attackedUnitShape->Resize(attackedUnitShape->GetRetResize()*minimapInfo.rate);
 		//図形を作成して条件次第でshapeをリストに追加
-		addFunc(shape,minimapPos[0],conditionShape[0],attackedUnitShape);
-	};
-	const auto addMinimapObject1=[conditionShape,rightConditionPoint,&addFunc,this](std::shared_ptr<Shape> &shape){
-		//ユニット同士を結ぶ線分の端点
-		const Vector2D p0=rightConditionPoint[0],p1=rightConditionPoint[1];
-		//攻撃されたユニットの当たり判定図形の作成
-		std::shared_ptr<Shape> attackedUnitShape=m_badLogInfo->GetOperateUnit()->GetHitJudgeShape()->VCopy();
-		const Vector2D pos=attackedUnitShape->GetPosition();
-		attackedUnitShape->Move(minimapPos[1]+pos*twoMinimapRate-pos);
-		attackedUnitShape->Resize(attackedUnitShape->GetRetResize()*twoMinimapRate);
-		//図形を作成して条件次第でshapeをリストに追加
-		addFunc(shape,minimapPos[1],conditionShape[1],attackedUnitShape);
+		addFunc(shape,minimapInfo.startPos,conditionShape,attackedUnitShape,minimapInfo.rate);
 	};
 	//ユニットデータ以外の障害物の格納
 	for(const BattleObject *object:m_battleSceneData->m_field){
 		if(object->GetType()!=BattleObject::Type::e_unit){
 			//当たり判定図形を引き出して追加
-			addMinimapObject0(object->GetHitJudgeShape()->VCopy());
-			addMinimapObject1(object->GetHitJudgeShape()->VCopy());
+			for(const ShapeClickWorkInfo &info:minimapInfo){
+				addMinimapObject(object->GetHitJudgeShape()->VCopy(),info);
+			}
 		}
 	}
 	//ユニットデータの格納
-	for(size_t i=0,siz=m_goodLogInfo->GetUnitList().size();i<siz;i++){
-		//当たり判定図形を引き出して追加
-		if(&m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->GetOperateUnit() && &m_goodLogInfo->GetUnitList()[i]!=m_goodLogInfo->GetAttackedUnit()){
-			addMinimapObject0(m_goodLogInfo->GetUnitList()[i].GetHitJudgeShape()->VCopy());
-		}
-	}
-	for(size_t i=0,siz=m_badLogInfo->GetUnitList().size();i<siz;i++){
-		//当たり判定図形を引き出して追加
-		if(&m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->GetOperateUnit() && &m_badLogInfo->GetUnitList()[i]!=m_badLogInfo->GetAttackedUnit()){
-			addMinimapObject1(m_badLogInfo->GetUnitList()[i].GetHitJudgeShape()->VCopy());
+	for(const ShapeClickWorkInfo &info:minimapInfo){
+		for(size_t i=0,siz=info.drawInfo->value().GetUnitList().size();i<siz;i++){
+			//当たり判定図形を引き出して追加
+			if(&info.drawInfo->value().GetUnitList()[i]!=info.drawInfo->value().GetOperateUnit() && &info.drawInfo->value().GetUnitList()[i]!=info.drawInfo->value().GetAttackedUnit()){
+				addMinimapObject(info.drawInfo->value().GetUnitList()[i].GetHitJudgeShape()->VCopy(),info);
+			}
 		}
 	}
 	//ワークの作成
@@ -368,7 +348,7 @@ void SubmissionReflectionScene::AddClickWork(const std::function<std::shared_ptr
 	//解説ワークの作成
 	std::vector<std::pair<std::shared_ptr<const Shape>,unsigned int>> assistList;
 	//敵の移動範囲に入っている格子点を全て補助関数に加える
-	const auto addAssistList=[&assistList,this](MinimapDrawInfo &drawInfo,const Vector2D startPos){
+	for(ShapeClickWorkInfo &mapinfo:minimapInfo){
 		std::vector<BattleObject *> field;
 		std::shared_ptr<LatticeBattleField> lField;
 		std::vector<LatticeBattleField::LatticeDistanceInfo> dField;
@@ -381,49 +361,41 @@ void SubmissionReflectionScene::AddClickWork(const std::function<std::shared_ptr
 				field.push_back(obj);
 			}
 		}
-		for(size_t i=0;i<drawInfo.GetUnitList().size();i++){
-			Unit *pu=drawInfo.GetUnitListPtr(i);
-			if(pu!=drawInfo.GetAttackedUnit() && pu!=drawInfo.GetOperateUnit()){
+		for(size_t i=0;i<mapinfo.drawInfo->value().GetUnitList().size();i++){
+			Unit *pu=mapinfo.drawInfo->value().GetUnitListPtr(i);
+			if(pu!=mapinfo.drawInfo->value().GetAttackedUnit() && pu!=mapinfo.drawInfo->value().GetOperateUnit()){
 				field.push_back(pu);
 			}
 		}
 		//格子点マップの作成
-		lField=LatticeBattleField::Create(field,m_battleSceneData->m_stageSize,drawInfo.GetOperateUnit(),true);
+		lField=LatticeBattleField::Create(field,m_battleSceneData->m_stageSize,mapinfo.drawInfo->value().GetOperateUnit(),true);
 		//距離マップの作成
-		lField->CalculateLatticeDistanceInfo(dField,drawInfo.GetAttackedUnit()->getPos());
+		lField->CalculateLatticeDistanceInfo(dField,mapinfo.drawInfo->value().GetAttackedUnit()->getPos());
 		//格子点の追加
-		moveDistance=drawInfo.GetOperateUnit()->GetMaxMoveDistance();
+		moveDistance=mapinfo.drawInfo->value().GetOperateUnit()->GetMaxMoveDistance();
 		for(const LatticeBattleField::LatticeDistanceInfo &info:dField){
 			if(info.dist<moveDistance){
-				const Vector2D pos=lField->CalculateLatticePointPos(info.index)*twoMinimapRate+startPos;
+				const Vector2D pos=lField->CalculateLatticePointPos(info.index)*mapinfo.rate+mapinfo.startPos;
 				assistList.push_back(std::make_pair(std::shared_ptr<const Shape>(new Circle(pos,2.0f,Shape::Fix::e_ignore)),pointColor));
 			}
 		}
-	};
-	//m_goodLogInfoについて
-	if(m_goodLogInfo.has_value()){
-		addAssistList(m_goodLogInfo.value(),minimapPos[0]);
-	}
-	//m_badLogInfoについて
-	if(m_badLogInfo.has_value()){
-		addAssistList(m_badLogInfo.value(),minimapPos[1]);
 	}
 	//ワーク作成
-	const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation(assistList,clickWork,"点で表現された敵の動く範囲を見てみると、\n大きく空いている隙間を縫って敵は弓兵に近づいてくる事がわかります。"));
+	const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation(assistList,clickWork,"点で表現された敵の動く範囲を見てみると、\n大きく空いている隙間を縫って射手に近づいてくる事がわかります。"));
 	m_reflectionWorkList.push_back(WorkInfo(explanationWork,minimap));
 }
 
-void SubmissionReflectionScene::AddLineClickWork(){
+void SubmissionReflectionScene::AddLineClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo){
 	//攻撃ユニットと被攻撃ユニットを結ぶ線上の障害物をクリックするワーク
 	//図形作成関数の作成
 	const auto createFunc=[](Vector2D p0,Vector2D p1){
 		return std::shared_ptr<Shape>(new Edge(p0,p1-p0,Shape::Fix::e_dynamic));
 	};
 	//ワーク作成
-	AddClickWork(createFunc);
+	AddShapeClickWork(createFunc,minimapInfo);
 }
 
-void SubmissionReflectionScene::AddAreaClickWork(){
+void SubmissionReflectionScene::AddAreaClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo){
 	//攻撃ユニットと被攻撃ユニットを結ぶ線分を対角線とした菱形領域の障害物をクリックするワーク
 	//図形作成関数の作成
 	const auto createFunc=[this](Vector2D p0,Vector2D p1){
@@ -434,7 +406,7 @@ void SubmissionReflectionScene::AddAreaClickWork(){
 		return std::shared_ptr<Shape>(new MyPolygon(p0-h,{p0+h,p1+h,p1-h},Shape::Fix::e_dynamic));
 	};
 	//ワーク作成
-	AddClickWork(createFunc);
+	AddShapeClickWork(createFunc,minimapInfo);
 }
 
 void SubmissionReflectionScene::AddSelectOneWork(){

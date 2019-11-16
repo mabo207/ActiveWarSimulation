@@ -85,6 +85,14 @@ private:
 		std::shared_ptr<ReflectionWork::Base> reflection;
 		std::shared_ptr<MinimapLayoutBase> minimap;
 	};
+	//AddShapeClickWork()‚É‚¨‚¢‚ÄA‚P‚Â‚ÌMinimapDrawInfo‚Ìî•ñ‚ğŠi”[‚·‚é‚Ì‚É•K—v‚Èî•ñŒQ
+	struct ShapeClickWorkInfo{
+		ShapeClickWorkInfo(std::optional<MinimapDrawInfo> * const i_drawInfo,const Vector2D &i_startPos,const float i_rate)
+			:drawInfo(i_drawInfo),startPos(i_startPos),rate(i_rate){}
+		std::optional<MinimapDrawInfo> *drawInfo;
+		Vector2D startPos;
+		float rate;
+	};
 
 	//ŠÖ”
 	void DrawResizedMap(int x,int y,const MinimapDrawInfo &minimapInfo,const float rate)const;//ŠÈˆÕŠg‘åk¬ƒ}ƒbƒv‚ğ•`‰æ‚·‚é
@@ -97,9 +105,9 @@ private:
 	void ReturnProcess();//‚±‚Ìê–Ê‚É–ß‚Á‚Ä‚«‚½‚Ìˆ—
 	//ƒ[ƒNì¬ŠÖ”
 	void AddDrawLineWork();
-	void AddClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc);
-	void AddLineClickWork();
-	void AddAreaClickWork();
+	void AddShapeClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc,std::vector<ShapeClickWorkInfo> &minimapInfo);
+	void AddLineClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo);
+	void AddAreaClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo);
 	void AddSelectOneWork();
 	void AddMoveSimulationWork();
 
