@@ -1,0 +1,1 @@
+(title,–À‚¢‚ÌX),(pos,1200,560),(bgm,battle4.txt)
