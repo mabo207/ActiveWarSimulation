@@ -19,6 +19,11 @@ private:
 			e_stageSelect
 			,e_tutorial
 			,e_tutorial_2
+			,e_test_1
+			,e_practice_1
+			,e_practice_2
+			,e_practice_3
+			,e_test_2
 			,e_gameFinish
 			,COUNTER
 		};

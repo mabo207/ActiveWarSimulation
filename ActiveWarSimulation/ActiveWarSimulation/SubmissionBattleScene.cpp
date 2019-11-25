@@ -6,8 +6,7 @@
 
 #include"SubmissionSwitchUnitScene.h"
 
-#include"StageSelectScene.h"
-#include"CreditScene.h"
+#include"TitleScene.h"
 
 //サブミッション一覧
 #include"ArcherAttackDistance.h"
@@ -90,13 +89,7 @@ std::shared_ptr<BattleSceneElement> SubmissionBattleScene::VGetSwitchUnitScene()
 }
 
 std::shared_ptr<GameScene> SubmissionBattleScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
-	//ゲームプレイが終わった時は、基本的にはステージセレクト画面へ
-	if(!m_battleSceneData->m_gotoCredit){
-		const auto stageSelectFactory=std::make_shared<StageSelectScene::StageSelectSceneFactory>();
-		return CreateFadeOutInSceneCompletely(thisSharedPtr,stageSelectFactory,15,15);
-	} else{
-		//最終ステージクリア時のみ、クレジットへ
-		const auto creditFactory=std::make_shared<CreditScene::CreditSceneFactory>();
-		return CreateFadeOutInSceneCompletely(thisSharedPtr,creditFactory,15,15);
-	}
+	//ゲームプレイが終わった時は、タイトル画面へ
+	const auto titleFactory=std::make_shared<TitleScene::TitleSceneFactory>();
+	return CreateFadeOutInSceneCompletely(thisSharedPtr,titleFactory,15,15);
 }

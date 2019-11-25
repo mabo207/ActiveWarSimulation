@@ -1,0 +1,9 @@
+{(definition,mob),(name,アインス),(profession,0),(lv,4),(weapon,sword_bronze),(pos,519,657),(team,0),(ai,0,0)}
+{(definition,mob),(name,フィーア),(profession,2),(lv,4),(weapon,lance_bronze),(pos,828,731),(team,0),(ai,0,0)}
+{(definition,mob),(name,ツヴァイ),(profession,1),(lv,4),(weapon,bow_bronze),(pos,295,625),(team,0),(ai,0,0)}
+{(definition,mob),(name,ドライ),(profession,3),(lv,4),(weapon,book_fire),(pos,389,830),(team,0),(ai,0,0)}
+{(definition,mob),(name,フンフ),(profession,4),(lv,4),(weapon,rod_heal),(pos,100,773),(team,0),(ai,0,0)}
+{(definition,mob),(name,敵兵),(profession,2),(lv,3),(weapon,lance_bronze),(pos,1649,401),(team,1),(ai,0,0)}
+{(definition,mob),(name,敵兵),(profession,0),(lv,3),(weapon,sword_bronze),(pos,1130,111),(team,1),(ai,0,0)}
+{(definition,mob),(name,敵兵),(profession,3),(lv,3),(weapon,book_fire),(pos,1333,102),(team,1),(ai,0,0)}
+{(definition,mob),(name,敵兵),(profession,1),(lv,3),(weapon,bow_bronze),(pos,1618,224),(team,1),(ai,0,0)}

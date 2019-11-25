@@ -16,6 +16,8 @@
 #include"TutorialScene.h"
 #include"FadeInScene.h"
 #include"FadeOutScene.h"
+#include"SubmissionBattleScene.h"
+#include"ExperimentBattleScene.h"
 
 //-------------------TitleScene::SelectItem-------------------
 std::string TitleScene::SelectItem::GetString(const Kind kind){
@@ -26,6 +28,16 @@ std::string TitleScene::SelectItem::GetString(const Kind kind){
 		return "TUTORIAL";
 	case(e_tutorial_2):
 		return "TUTORIAL2";
+	case(e_test_1):
+		return "STAGE1";
+	case(e_practice_1):
+		return "STAGE2";
+	case(e_practice_2):
+		return "STAGE3";
+	case(e_practice_3):
+		return "STAGE4";
+	case(e_test_2):
+		return "STAGE5";
 	case(e_gameFinish):
 		return "EXIT GAME";
 	}
@@ -60,9 +72,14 @@ std::shared_ptr<Shape> TitleScene::MakeHexagon(const Vector2D center,const float
 
 const Vector2D TitleScene::strPos[TitleScene::SelectItem::COUNTER]={
 	Vector2D(600.0f,580.0f)
-	,Vector2D(600.0f,930.0f)
+	,Vector2D(200.0f,930.0f)
+	,Vector2D(450.0f,930.0f)
+	,Vector2D(700.0f,930.0f)
+	,Vector2D(950.0f,930.0f)
+	,Vector2D(1200.0f,930.0f)
+	,Vector2D(1450.0f,930.0f)
+	,Vector2D(1700.0f,930.0f)
 	,Vector2D(1320.0f,580.0f)
-	,Vector2D(1320.0f,930.0f)
 };
 
 TitleScene::TitleScene()
@@ -223,6 +240,26 @@ int TitleScene::Calculate(){
 		//チュートリアル画面2へ
 		return 1;
 		break;
+	case(SelectItem::e_test_1):
+		//バトル画面へ
+		return 1;
+		break;
+	case(SelectItem::e_test_2):
+		//バトル画面へ
+		return 1;
+		break;
+	case(SelectItem::e_practice_1):
+		//バトル画面へ
+		return 1;
+		break;
+	case(SelectItem::e_practice_2):
+		//バトル画面へ
+		return 1;
+		break;
+	case(SelectItem::e_practice_3):
+		//バトル画面へ
+		return 1;
+		break;
 	case(SelectItem::COUNTER):
 		//基本的に現状維持
 		if(m_gotoDemo){
@@ -285,6 +322,21 @@ std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameS
 	} else if(m_selectItem==SelectItem::e_tutorial_2){
 		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial_2");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,tutorial,15,15);
+	} else if(m_selectItem==SelectItem::e_test_1){
+		const auto battle=std::make_shared<ExperimentBattleScene::ExperimentBattleSceneFactory>("test_1");
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
+	} else if(m_selectItem==SelectItem::e_test_2){
+		const auto battle=std::make_shared<ExperimentBattleScene::ExperimentBattleSceneFactory>("test_2");
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
+	} else if(m_selectItem==SelectItem::e_practice_1){
+		const auto battle=std::make_shared<SubmissionBattleScene::SubmissionBattleSceneFactory>("practice_1","",StageLevel::e_normal);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
+	} else if(m_selectItem==SelectItem::e_practice_2){
+		const auto battle=std::make_shared<SubmissionBattleScene::SubmissionBattleSceneFactory>("practice_2","",StageLevel::e_normal);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
+	} else if(m_selectItem==SelectItem::e_practice_3){
+		const auto battle=std::make_shared<SubmissionBattleScene::SubmissionBattleSceneFactory>("practice_3","",StageLevel::e_normal);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
 	}
 	return std::shared_ptr<GameScene>();
 }
