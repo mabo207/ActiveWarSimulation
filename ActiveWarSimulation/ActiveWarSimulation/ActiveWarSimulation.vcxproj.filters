@@ -163,6 +163,12 @@
     <Filter Include="ソース ファイル\GameScene\BattleScene\ExperimentScene">
       <UniqueIdentifier>{2d41f1e1-f51f-4afb-a0e4-0a42a64ca3e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\ReflectionWork">
+      <UniqueIdentifier>{68e7654e-03b0-4222-9978-ec51bca87909}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork">
+      <UniqueIdentifier>{8aabdb48-e340-4eaf-9e1d-0a93f5651208}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -405,6 +411,21 @@
     <ClCompile Include="ExperimentBattleScene.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\ExperimentScene</Filter>
     </ClCompile>
+    <ClCompile Include="LineDraw.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\ReflectionWork</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectClick.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\ReflectionWork</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectOne.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\ReflectionWork</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveSimulation.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\ReflectionWork</Filter>
+    </ClCompile>
+    <ClCompile Include="ReadExplanation.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\ReflectionWork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -641,11 +662,29 @@
     <ClInclude Include="WholeReflectionInfo.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission</Filter>
     </ClInclude>
+    <ClInclude Include="LineDraw.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionWorkBase.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectClick.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectOne.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
+    </ClInclude>
     <ClInclude Include="RouteInfo.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene</Filter>
     </ClInclude>
     <ClInclude Include="ExperimentBattleScene.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\ExperimentScene</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveSimulation.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadExplanation.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

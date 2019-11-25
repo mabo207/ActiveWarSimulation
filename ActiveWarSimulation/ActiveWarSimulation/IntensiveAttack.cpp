@@ -4,7 +4,7 @@
 #include"AttackLog.h"
 #include<algorithm>
 
-int IntensiveAttack::RubricEvaluate(const BattleSceneData * const battleData)const{
+int IntensiveAttack::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- 例外処理
 	//	- 攻撃しない(-1)
 	//	- 撃破時は必ず最大評価(4)
@@ -16,7 +16,7 @@ int IntensiveAttack::RubricEvaluate(const BattleSceneData * const battleData)con
 	//	3. 攻撃相手よりHP割合の低いユニットが1体いる
 	//	4. 攻撃相手よりHP割合の低いユニットがいない
 	//懸念点として、「そもそもの問題として、excellent評価が撃破時と初回攻撃時に出てしまうから下手でも最高評価をたたき出せてしまうのでは」説がある。
-	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(battleData->m_scoreObserver->GetLatestLog());
+	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(evaluateLog);
 	int evaluate;
 	const int maxEvaluate=3;
 	if(!attackLog){

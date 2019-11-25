@@ -37,6 +37,11 @@ void Weapon::DrawPredict(const int centerX,const int centerY,const int explainFo
 	m_calculator->VDrawPredict(centerX,centerY,explainFont,numberFont,attacker,defender);
 }
 
+void Weapon::DrawExtendPredict(const int centerX,const int centerY,const double exRate,const int explainFont,const int numberFont,const Unit *attacker,const Unit *defender)const{
+	//DamageCalculator‚É“Š‚°‚é
+	m_calculator->VDrawExtendPredict(centerX,centerY,exRate,explainFont,numberFont,attacker,defender);
+}
+
 //ˆÈ‰ºÃ“I•Ï”
 const std::map<std::string,std::shared_ptr<Weapon>> Weapon::s_weaponMap=Weapon::InitWeaponMap();
 

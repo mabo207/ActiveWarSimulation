@@ -9,6 +9,7 @@
 class AttackLog:public LogElement{
 public:
 	AttackLog(const BattleSceneData * const battleData,const Unit * const aimedUnit,const std::vector<RouteInfo> &route);
+	AttackLog(const std::vector<Unit *> &unitList,const Unit * const aimedUnit,const std::vector<RouteInfo> &route);
 	virtual ~AttackLog(){}
 	const Unit *GetAimedUnit()const{
 		return m_aimedUnit;

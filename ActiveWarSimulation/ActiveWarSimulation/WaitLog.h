@@ -9,6 +9,8 @@ class WaitLog:public LogElement{
 public:
 	WaitLog(const BattleSceneData * const battleData,const std::vector<RouteInfo> &route)
 		:LogElement(LogKind::e_wait,battleData),m_route(route){}
+	WaitLog(const std::vector<Unit *> &unitList,const std::vector<RouteInfo> &route)
+		:LogElement(LogKind::e_wait,unitList),m_route(route){}
 	virtual ~WaitLog(){}
 	const std::vector<RouteInfo> GetRoute()const{
 		return m_route;

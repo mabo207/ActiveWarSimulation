@@ -1,5 +1,4 @@
 #include"LatticeBattleField.h"
-#include"BattleSceneData.h"
 #include"CommonConstParameter.h"
 
 //---------------LatticeBattleField::LatticeDistanceInfo------------------
@@ -20,8 +19,8 @@ bool LatticeBattleField::LatticeDistanceInfo::operator==(const LatticeDistanceIn
 //-----------------------LatticeBattleField-------------------------
 const size_t LatticeBattleField::latticeIntervalSize=CommonConstParameter::unitCircleSize;
 
-std::shared_ptr<LatticeBattleField> LatticeBattleField::Create(const BattleSceneData &battleData,const Unit * const punit,bool unitExist){
-	return std::shared_ptr<LatticeBattleField>(new LatticeBattleField(battleData,punit,unitExist));
+std::shared_ptr<LatticeBattleField> LatticeBattleField::Create(const std::vector<BattleObject *> &field,const Vector2D stageSize,const Unit * const punit,bool unitExist){
+	return std::shared_ptr<LatticeBattleField>(new LatticeBattleField(field,stageSize,punit,unitExist));
 }
 
 LatticeBattleField::~LatticeBattleField(){}
@@ -168,20 +167,20 @@ std::vector<float> LatticeBattleField::CalculateRouteDistance(const Vector2D sta
 	return retPal;
 }
 
-LatticeBattleField::LatticeBattleField(const BattleSceneData &battleData,const Unit * const punit,bool unitExist)
-	:m_xLatticeNum((size_t)(battleData.m_stageSize.x)/latticeIntervalSize+1)
-	,m_yLatticeNum((size_t)(battleData.m_stageSize.y)/latticeIntervalSize+1)
+LatticeBattleField::LatticeBattleField(const std::vector<BattleObject *> &field,const Vector2D stageSize,const Unit * const punit,bool unitExist)
+	:m_xLatticeNum((size_t)(stageSize.x)/latticeIntervalSize+1)
+	,m_yLatticeNum((size_t)(stageSize.y)/latticeIntervalSize+1)
 {
-	CalculateLatticeInShape(battleData,punit,unitExist);
+	CalculateLatticeInShape(field,punit,unitExist);
 }
 
-void LatticeBattleField::CalculateLatticeInShape(const BattleSceneData &battleData,const Unit * const punit,bool unitExist){
+void LatticeBattleField::CalculateLatticeInShape(const std::vector<BattleObject *> &field,const Unit * const punit,bool unitExist){
 	const size_t vecSize=m_xLatticeNum*m_yLatticeNum;
 	//最初に全ての格子点が通れるとして初期化する
 	m_latticeInShape=std::vector<LatticePass>(vecSize,LatticePass::e_passable);
 	//操作するユニットが通れない場所にe_unpassableを格納していく
 	//「障害物の中＝中にいないとユニットは通れない」という考え方を用いる
-	for(const BattleObject *object:battleData.m_field){
+	for(const BattleObject *object:field){
 		if(object==punit){
 			//操作ユニットは通れるか否かに影響を与えない
 

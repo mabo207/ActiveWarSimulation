@@ -4,15 +4,15 @@
 #include"AttackLog.h"
 #include"WaitLog.h"
 
-int ArmerPosition::RubricEvaluate(const BattleSceneData * const battleData)const{
+int ArmerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- 例外処理
 	//	- （なし）
 	//- 評価
 	//	1. 敵魔道士が2体以上、操作ユニットを次の行動で攻撃可能である
 	//	2. 敵魔道士が1体以上、操作ユニットを次の行動で攻撃可能である
 	//	3. どの敵魔道士も、操作ユニットを次の行動で攻撃できない
-	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(battleData->m_scoreObserver->GetLatestLog());
-	const std::shared_ptr<const WaitLog> waitLog=std::dynamic_pointer_cast<const WaitLog>(battleData->m_scoreObserver->GetLatestLog());
+	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(evaluateLog);
+	const std::shared_ptr<const WaitLog> waitLog=std::dynamic_pointer_cast<const WaitLog>(evaluateLog);
 	const std::vector<LogElement::UnitLogData> *pUnitLogDataList=nullptr;
 	std::function<LogElement::UnitLogData()> getAimedUnitFunc;
 	if(attackLog){
@@ -31,7 +31,7 @@ int ArmerPosition::RubricEvaluate(const BattleSceneData * const battleData)const
 		size_t attackableEnemyMageCount=0;
 		for(const LogElement::UnitLogData &unitData:*pUnitLogDataList){
 			if(unitData.punit->GetBaseStatus().profession==Unit::Profession::e_mage && unitData.punit->GetBattleStatus().team==Unit::Team::e_enemy){
-				if(JudgeAttackable(battleData,*pUnitLogDataList,unitData,getAimedUnitFunc())){
+				if(JudgeAttackable(field,stageSize,*pUnitLogDataList,unitData,getAimedUnitFunc())){
 					attackableEnemyMageCount++;
 				}
 			}

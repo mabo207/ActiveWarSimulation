@@ -459,6 +459,11 @@ void StageEditor::Draw() {
 			obj.get()->PosDraw(GetColor(255,0,0),TRUE,2.0f,adjust);
 		}
 	}
+	if(m_actionSettings.GetPMObject()->size()==2){
+		const std::vector<std::shared_ptr<BattleObject>> *pvec=m_actionSettings.GetPMObject();
+		const std::shared_ptr<Shape> s1=pvec->at(0)->GetHitJudgeShape()->VCopy(),s2=pvec->at(1)->GetHitJudgeShape()->VCopy();
+		printfDx((std::string("cross:")+(s1->JudgeCross(s2.get())?"true":"false")).c_str());
+	}
 	
 	//•ÒW‚Ì‚½‚ß‚Ìƒf[ƒ^‚ð•`‰æB}Œ`•`‰æ‚ªŽå
 	m_actionSettings.m_pEditAction->ActionDraw(adjust,m_actionSettings);

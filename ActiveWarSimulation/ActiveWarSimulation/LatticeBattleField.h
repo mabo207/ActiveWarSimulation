@@ -6,7 +6,6 @@
 #include<vector>
 #include<memory>
 #include"Unit.h"
-struct BattleSceneData;
 
 class LatticeBattleField{
 public:
@@ -26,7 +25,7 @@ public:
 		,e_neighborUnpassable	//隣接格子点が通れないので通れるか分からない
 	};
 
-	static std::shared_ptr<LatticeBattleField> Create(const BattleSceneData &battleData,const Unit * const punit,bool unitExist);
+	static std::shared_ptr<LatticeBattleField> Create(const std::vector<BattleObject *> &field,const Vector2D stageSize,const Unit * const punit,bool unitExist);
 	virtual ~LatticeBattleField();
 	size_t GetXLatticeNum()const{
 		return m_xLatticeNum;
@@ -49,8 +48,8 @@ public:
 	const static size_t latticeIntervalSize;//格子点は正方形状に並んでいるので、その大きさ
 
 private:
-	LatticeBattleField(const BattleSceneData &battleData,const Unit * const punit,bool unitExist);
-	void CalculateLatticeInShape(const BattleSceneData &battleData,const Unit * const punit,bool unitExist);//unitExistがfalseの時、ユニットがいないものとして距離計算をする
+	LatticeBattleField(const std::vector<BattleObject *> &field,const Vector2D stageSize,const Unit * const punit,bool unitExist);
+	void CalculateLatticeInShape(const std::vector<BattleObject *> &field,const Unit * const punit,bool unitExist);//unitExistがfalseの時、ユニットがいないものとして距離計算をする
 
 	std::vector<LatticePass> m_latticeInShape;
 	const size_t m_xLatticeNum;

@@ -43,16 +43,20 @@ const LogElement::UnitLogData LogElement::FindUnitData(const Unit *punit)const{
 }
 
 LogElement::LogElement(LogKind kind,const BattleSceneData * const battleData)
-	:m_kind(kind)
-	,m_unitDataList(CreateUnitDataList(battleData))
+	:LogElement(kind,battleData->m_unitList)
 {}
 
-std::vector<LogElement::UnitLogData> LogElement::CreateUnitDataList(const BattleSceneData * const battleData){
+LogElement::LogElement(LogKind kind,const std::vector<Unit *> &unitList)
+	:m_kind(kind)
+	,m_unitDataList(CreateUnitDataList(unitList))
+{}
+
+std::vector<LogElement::UnitLogData> LogElement::CreateUnitDataList(const std::vector<Unit *> &unitList){
 	std::vector<UnitLogData> retVec;
-	const size_t vecSize=battleData->m_unitList.size();
+	const size_t vecSize=unitList.size();
 	retVec.reserve(vecSize);
 	for(size_t i=0;i<vecSize;i++){
-		retVec.push_back(UnitLogData(battleData->m_unitList[i]));
+		retVec.push_back(UnitLogData(unitList[i]));
 	}
 	return retVec;
 }

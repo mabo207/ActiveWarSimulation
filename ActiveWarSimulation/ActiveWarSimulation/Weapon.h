@@ -102,6 +102,7 @@ public:
 	bool JudgeWeild(const Unit *attacker,const Unit *defender)const;//attacker¨defender‚Ö‚Ì’ÊíUŒ‚‚ğÀs‰Â”\‚Å‚ ‚é‚©
 	std::string GetEffectivenessString(const Unit *attacker)const;//attacker‚ª‚±‚Ì•Ší‚ğg‚¤‚Æ‚Ç‚ñ‚ÈŒø‰Ê‚ğ“¾‚ç‚ê‚é‚©
 	void DrawPredict(const int centerX,const int centerY,const int explainFont,const int numberFont,const Unit *attacker,const Unit *defender)const;//s“®—\‘z‚ğ•`‰æ‚·‚é
+	void DrawExtendPredict(const int centerX,const int centerY,const double exRate,const int explainFont,const int numberFont,const Unit *attacker,const Unit *defender)const;//s“®—\‘z‚ğ•`‰æ‚·‚é
 
 	//Ã“I•Ï”
 private:

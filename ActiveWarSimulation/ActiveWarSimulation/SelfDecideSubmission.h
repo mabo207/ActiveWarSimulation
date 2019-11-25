@@ -36,6 +36,10 @@ public:
 	void InitRubric(const std::shared_ptr<SubmissionRuleBase> &rule);
 	//リフレクション情報を構築して取得する
 	WholeReflectionInfo GetReflectionInfo()const;
+	//ルールを取得する
+	std::shared_ptr<const SubmissionRuleBase> GetRule()const{
+		return m_rule;
+	}
 
 	//サブミッション描画の領域の大きさ
 	static const int s_submissionWidth;

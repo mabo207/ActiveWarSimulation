@@ -50,10 +50,11 @@ public:
 protected:
 	//battleDataは、必要な値を取り出すだけなのでstd::shared_ptr<>である必要はない。
 	LogElement(LogKind kind,const BattleSceneData * const battleData);
+	LogElement(LogKind kind,const std::vector<Unit *> &unitList);
 	virtual ~LogElement(){}
 
 private:
-	static std::vector<UnitLogData> CreateUnitDataList(const BattleSceneData * const battleData);
+	static std::vector<UnitLogData> CreateUnitDataList(const std::vector<Unit *> &unitList);
 
 	const LogKind m_kind;
 };
