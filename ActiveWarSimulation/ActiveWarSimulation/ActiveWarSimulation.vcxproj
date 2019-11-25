@@ -164,6 +164,7 @@
     <ClCompile Include="ClearStageData.cpp" />
     <ClCompile Include="CreditScene.cpp" />
     <ClCompile Include="DamageScene.cpp" />
+    <ClCompile Include="ExperimentBattleScene.cpp" />
     <ClCompile Include="FadeInScene.cpp" />
     <ClCompile Include="FadeOutScene.cpp" />
     <ClCompile Include="FilePath.cpp" />
@@ -245,6 +246,7 @@
     <ClInclude Include="ClearStageData.h" />
     <ClInclude Include="CreditScene.h" />
     <ClInclude Include="DamageScene.h" />
+    <ClInclude Include="ExperimentBattleScene.h" />
     <ClInclude Include="FadeInScene.h" />
     <ClInclude Include="FadeOutScene.h" />
     <ClInclude Include="FilePath.h" />

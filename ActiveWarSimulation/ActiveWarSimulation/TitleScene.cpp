@@ -17,6 +17,7 @@
 #include"FadeInScene.h"
 #include"FadeOutScene.h"
 #include"SubmissionBattleScene.h"
+#include"ExperimentBattleScene.h"
 
 //-------------------TitleScene::SelectItem-------------------
 std::string TitleScene::SelectItem::GetString(const Kind kind){
@@ -322,10 +323,10 @@ std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameS
 		const auto tutorial=std::make_shared<TutorialScene::TutorialSceneFactory>("tutorial_2");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,tutorial,15,15);
 	} else if(m_selectItem==SelectItem::e_test_1){
-		const auto battle=std::make_shared<BattleScene::BattleSceneFactory>("test_1","",StageLevel::e_hard);
+		const auto battle=std::make_shared<ExperimentBattleScene::ExperimentBattleSceneFactory>("test_1");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
 	} else if(m_selectItem==SelectItem::e_test_2){
-		const auto battle=std::make_shared<BattleScene::BattleSceneFactory>("test_2","",StageLevel::e_hard);
+		const auto battle=std::make_shared<ExperimentBattleScene::ExperimentBattleSceneFactory>("test_2");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
 	} else if(m_selectItem==SelectItem::e_practice_1){
 		const auto battle=std::make_shared<SubmissionBattleScene::SubmissionBattleSceneFactory>("practice_1","",StageLevel::e_normal);
