@@ -147,6 +147,7 @@ TutorialBattleSceneData::ExplainTutorial::ExplainTutorial(const char *gFileName)
 	,m_gHandle(LoadGraphEX(gFileName))
 	//,m_pos(CommonConstParameter::gameResolutionX*2,CommonConstParameter::gameResolutionX/2,CommonConstParameter::gameResolutionY/2,CommonConstParameter::gameResolutionY/2,30,Easing::TYPE_OUT,Easing::FUNCTION_BACK,0.2)
 	,m_rate(0,1000,25,Easing::TYPE_OUT,Easing::FUNCTION_BACK,0.2)
+	,m_cooltime(0)
 	,m_secondMoveFlag(false)
 {}
 
