@@ -416,6 +416,8 @@ int StageEditor::Calculate() {
 }
 
 void StageEditor::Draw() {
+	//スクリーンショット撮影時かの判定
+	const bool screenshot=keyboard_get(KEY_INPUT_0)>0 && keyboard_get(KEY_INPUT_0)<=60;
 	//デバッグ描画
 	clsDx();
 	Vector2D v=GetMousePointVector2D();
@@ -434,9 +436,11 @@ void StageEditor::Draw() {
 	bool firstflag=true;
 	Vector2D mouse=GetMousePointVector2D()-Vector2D((float)leftUpPosX,(float)leftUpPosY)+m_actionSettings.GetMAdjust();//マウスの位置(補正値を考慮しマップ上の座標で表す)
 	Vector2D adjust=Vector2D((float)leftUpPosX,(float)leftUpPosY)-m_actionSettings.GetMAdjust();//描画の全体調整位置
-	DrawGraph((int)adjust.x,(int)adjust.y,m_mapPic,TRUE);
+	if(!screenshot){
+		DrawGraph((int)adjust.x,(int)adjust.y,m_mapPic,TRUE);
+	}
 	//現在の編集対象図形を描画
-	if(m_actionSettings.m_pBattleObject.get()!=nullptr){
+	if(!screenshot && m_actionSettings.m_pBattleObject.get()!=nullptr){
 		int mode,pal;
 		GetDrawBlendMode(&mode,&pal);
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
@@ -461,7 +465,9 @@ void StageEditor::Draw() {
 	}
 	
 	//編集のためのデータを描画。図形描画が主
-	m_actionSettings.m_pEditAction->ActionDraw(adjust,m_actionSettings);
+	if(!screenshot){
+		m_actionSettings.m_pEditAction->ActionDraw(adjust,m_actionSettings);
+	}
 /*	
 	//編集前のBattleObjectをマップに仮想的に描画
 	if(m_actionSettings.GetMPOriginObject()!=nullptr){
@@ -474,7 +480,7 @@ void StageEditor::Draw() {
 //*/
 
 	//AI操作の際の参考となるユニットの半径間隔の格子点の描画
-	{
+	if(!screenshot){
 		int init[2]={(int)m_actionSettings.GetMAdjust().x,(int)m_actionSettings.GetMAdjust().y};
 		for(int &pal:init){
 			//x,yの描画初期位置を調整する
@@ -491,6 +497,10 @@ void StageEditor::Draw() {
 				DrawCircle(x,y,2,GetColor(255,64,64),TRUE);
 			}
 		}
+	}
+	if(keyboard_get(KEY_INPUT_0)==60){
+		//スクリーンショット処理
+		SaveDrawScreenToPNG(leftUpPosX,leftUpPosY,leftUpPosX+mapSizeX,leftUpPosY + mapSizeY,"SaveData/screenshot.png");
 	}
 
 	SetDrawAreaFull();
