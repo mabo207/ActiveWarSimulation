@@ -3,8 +3,8 @@
 {(definition,mob),(name,ƒcƒ”ƒ@ƒC),(profession,1),(lv,4),(weapon,bow_bronze),(pos,254,144),(team,0),(ai,0,-1)}
 {(definition,mob),(name,ƒhƒ‰ƒC),(profession,3),(lv,4),(weapon,book_fire),(pos,384,549),(team,0),(ai,0,-1)}
 {(definition,mob),(name,ƒtƒ“ƒt),(profession,4),(lv,4),(weapon,rod_heal),(pos,106,241),(team,0),(ai,0,-1)}
-{(definition,mob),(name,“G•º),(profession,0),(lv,3),(weapon,sword_bronze),(pos,1580,570),(team,1),(ai,0,-1)}
-{(definition,mob),(name,“G•º),(profession,2),(lv,3),(weapon,lance_bronze),(pos,1028,98),(team,1),(ai,0,-1)}
-{(definition,mob),(name,“G•º),(profession,0),(lv,3),(weapon,sword_bronze),(pos,1370,768),(team,1),(ai,0,-1)}
-{(definition,mob),(name,“G•º),(profession,3),(lv,3),(weapon,book_fire),(pos,1700,750),(team,1),(ai,0,-1)}
-{(definition,mob),(name,“G•º),(profession,4),(lv,3),(weapon,rod_heal),(pos,1675,430),(team,1),(ai,0,-1)}
+{(definition,mob),(name,“G•º),(profession,2),(lv,1),(weapon,lance_bronze),(pos,1220,768),(team,1),(ai,0,-1)}
+{(definition,mob),(name,“G•º),(profession,0),(lv,1),(weapon,sword_bronze),(pos,1400,750),(team,1),(ai,0,-1)}
+{(definition,mob),(name,“G•º),(profession,3),(lv,1),(weapon,book_fire),(pos,1500,625),(team,1),(ai,0,-1)}
+{(definition,mob),(name,“G•º),(profession,0),(lv,1),(weapon,sword_bronze),(pos,1625,230),(team,1),(ai,0,-1)}
+{(definition,mob),(name,“G•º),(profession,1),(lv,1),(weapon,bow_bronze),(pos,1028,98),(team,1),(ai,0,-1)}
