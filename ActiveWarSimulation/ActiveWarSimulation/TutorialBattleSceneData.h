@@ -50,6 +50,7 @@ public:
 	struct ExplainTutorial:public TutorialBase{
 		//PositionControl m_pos;//説明絵の描画中心位置(中央で一旦停止した後更新される)
 		Easing m_rate;//説明絵の拡大率(中央で一旦停止した後更新される)
+		int m_cooltime;//説明絵が拡大終了後、何フレーム経ったか
 		const int m_gHandle;//説明絵のデータ
 		bool m_secondMoveFlag;//2回目の移動が始まったかどうか(チュートリアル終了の判定に用いる)
 

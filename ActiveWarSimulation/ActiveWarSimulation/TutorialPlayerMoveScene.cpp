@@ -131,14 +131,16 @@ bool TutorialPlayerMoveScene::TutorialExplainProcess(){
 		//説明チュートリアルの制御は、retIntPalを用いず、入力とチュートリアルデータのみを用いる
 		if(!data->m_secondMoveFlag){
 			//チュートリアル画面が入ってきてから真ん中で止まるまで
-//			if(data->m_pos.GetEndFlag()
-			if(data->m_rate.GetEndFlag()
+			if(data->m_rate.GetEndFlag()){
+				data->m_cooltime++;//経過フレームを増加
+			}
+			if(data->m_cooltime>30
 				&& (mouse_get(MOUSE_INPUT_LEFT)==1
 					|| keyboard_get(KEY_INPUT_Z)==1
 					)
 				)
 			{
-				//真ん中で停止した時にボタンを押していた場合、画面外に説明絵を移動させる
+				//真ん中で停止してから30フレーム経った後にボタンを押していた場合、画面外に説明絵を移動させる
 				data->SetSecondMoveFlag();
 			}
 		} else{
