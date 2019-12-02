@@ -35,8 +35,7 @@ void ReflectionWork::MoveSimulation::Update(){
 	const Vector2D newPosition=(mouse-m_startPos)/m_mapRate;
 	m_operateUnit->Warp(newPosition);
 	//評価の更新
-	const SubmissionEvaluation evaluate=m_rule->RubricEvaluate(m_field,m_stageSize,CreateLog());
-	m_evaluateInfo=std::pair<std::string,unsigned int>(evaluate.GetString(),evaluate.Color());
+	m_evaluate=m_rule->RubricEvaluate(m_field,m_stageSize,CreateLog());
 	//終了更新
 	if(mouse_get(MOUSE_INPUT_LEFT)==1 || keyboard_get(KEY_INPUT_Z)==1){
 		//決定ボタンをクリックしていて
@@ -54,7 +53,7 @@ bool ReflectionWork::MoveSimulation::WorkClear()const{
 void ReflectionWork::MoveSimulation::WorkDraw()const{
 	//評価の描画
 	const Vector2D pos=m_operateUnit->getPos()*m_mapRate+m_startPos+Vector2D(0.0f,-Unit::unitCircleSize);
-	DrawStringCenterBaseToHandle((int)pos.x,(int)pos.y,m_evaluateInfo.first.c_str(),GetColor(255,255,255),m_font,true,m_evaluateInfo.second);
+	DrawStringCenterBaseToHandle((int)pos.x,(int)pos.y,m_evaluate.GetString().c_str(),GetColor(255,255,255),m_font,true,m_evaluate.Color());
 }
 
 std::shared_ptr<LogElement> ReflectionWork::MoveSimulation::CreateLog()const{

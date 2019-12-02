@@ -106,8 +106,8 @@ void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 	if(!m_rubricList.empty() && m_rule){
 		//ルーブリック評価の文言を定義(Ruleに移譲)
 		const SubmissionEvaluation evaluate=m_rubricList.back().first;
-		std::string rubricStr=evaluate.GetString();
-		unsigned int edgeColor=evaluate.Color();
+		const std::string rubricStr=evaluate.GetString();
+		const unsigned int edgeColor=evaluate.Color();
 		//描画
 		DrawStringCenterBaseToHandle(centerX,centerY,rubricStr.c_str(),GetColor(255,255,255),m_rubricFont,true,edgeColor);
 	}
