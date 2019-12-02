@@ -44,8 +44,8 @@ bool SelfDecideSubmission::JudgeEvaluatedOrder(const BattleSceneData * const bat
 bool SelfDecideSubmission::JudgeDrawRubric()const{
 	if(!m_rubricList.empty() && m_rule){
 		//•]‰¿‚ª‘¶İ‚µ‚È‚¢‚Ü‚½‚Ím_rule‚ª‘¶İ‚µ‚È‚¢‚Í•`‰æ‚µ‚È‚¢
-		const int evaluate=m_rubricList.back().first;
-		return evaluate>=0;
+		const SubmissionEvaluation evaluate=m_rubricList.back().first;
+		return evaluate!=SubmissionEvaluation::e_noevaluation;
 	}
 	return false;
 }
@@ -66,9 +66,9 @@ void SelfDecideSubmission::WholeLookBack(){
 			return;
 		}
 		//Å•p’l‚ğ‹‚ß‚é
-		for(const std::pair<int,std::shared_ptr<const LogElement>> &pair:m_rubricList){
-			const int rubric=pair.first;
-			std::map<int,size_t>::iterator it=m_rubricFrequencyMap.find(rubric);
+		for(const std::pair<SubmissionEvaluation,std::shared_ptr<const LogElement>> &pair:m_rubricList){
+			const SubmissionEvaluation rubric=pair.first;
+			std::map<SubmissionEvaluation,size_t>::iterator it=m_rubricFrequencyMap.find(rubric);
 			if(it==m_rubricFrequencyMap.end()){
 				//‚Ü‚¾rubric‚ª1‰ñ‚à¶‚¶‚Ä‚¢‚È‚¢ê‡‚ÍAm_rubricFrequencyMap‚É’Ç‰Á
 				m_rubricFrequencyMap.insert(std::make_pair(rubric,1));
@@ -77,12 +77,12 @@ void SelfDecideSubmission::WholeLookBack(){
 				it->second++;
 			}
 		}
-		std::pair<int,size_t> mostFrequent=*m_rubricFrequencyMap.begin();
-		for(const std::pair<int,size_t> &pair:m_rubricFrequencyMap){
-			if(mostFrequent.first==-1){
+		std::pair<SubmissionEvaluation,size_t> mostFrequent=*m_rubricFrequencyMap.begin();
+		for(const std::pair<SubmissionEvaluation,size_t> &pair:m_rubricFrequencyMap){
+			if(mostFrequent.first==SubmissionEvaluation::e_noevaluation){
 				//mostFrequent‚ªuUŒ‚‚µ‚Ä‚¢‚È‚¢v‚Å‚ ‚éê‡‚ÍA•K‚¸ã‘‚«‚·‚é
 				mostFrequent=pair;
-			} else if(pair.second>mostFrequent.second && pair.first!=-1){
+			} else if(pair.second>mostFrequent.second && pair.first!=SubmissionEvaluation::e_noevaluation){
 				//uUŒ‚‚µ‚Ä‚¢‚È‚¢vˆÈŠO‚Ì•p“x‚ª‘å‚«‚¢‚à‚Ì‚ÉXV
 				mostFrequent=pair;
 			}
@@ -105,9 +105,9 @@ void SelfDecideSubmission::DrawSubmission(int x,int y)const{
 void SelfDecideSubmission::DrawRubric(int centerX,int centerY)const{
 	if(!m_rubricList.empty() && m_rule){
 		//ƒ‹[ƒuƒŠƒbƒN•]‰¿‚Ì•¶Œ¾‚ğ’è‹`(Rule‚ÉˆÚ÷)
-		std::pair<std::string,unsigned int> pair=m_rule->GetRubricStringInfo(m_rubricList.back().first);
-		std::string rubricStr=pair.first;
-		unsigned int edgeColor=pair.second;
+		const SubmissionEvaluation evaluate=m_rubricList.back().first;
+		std::string rubricStr=evaluate.GetString();
+		unsigned int edgeColor=evaluate.Color();
 		//•`‰æ
 		DrawStringCenterBaseToHandle(centerX,centerY,rubricStr.c_str(),GetColor(255,255,255),m_rubricFont,true,edgeColor);
 	}
@@ -134,7 +134,7 @@ void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{
 		int strY=y+5;
 		const int fontSize=GetFontSizeToHandle(m_sentenceFont);
 		for(const auto &pair:m_rubricFrequencyMap){
-			const std::string rubricStr=m_rule->GetRubricStringInfo(pair.first).first;
+			const std::string rubricStr=pair.first.GetString();
 			if(!rubricStr.empty()){
 				DrawStringToHandle(x+5,strY,rubricStr.c_str(),GetColor(255,255,255),m_sentenceFont);//“ïˆÕ“x–¼
 				DrawStringToHandle(x+wholeCommentWidth-150,strY,(":   ~"+to_string_0d(pair.second,2)).c_str(),GetColor(255,255,255),m_sentenceFont);//‰ñ”‚Ì•`‰æ
@@ -151,18 +151,18 @@ void SelfDecideSubmission::InitRubric(const std::shared_ptr<SubmissionRuleBase> 
 }
 
 WholeReflectionInfo SelfDecideSubmission::GetReflectionInfo()const{
-	std::pair<int,std::shared_ptr<const LogElement>> goodLog,badLog;
+	std::pair<SubmissionEvaluation,std::shared_ptr<const LogElement>> goodLog,badLog;
 	if(!m_rubricList.empty()){
 		//b’è“I‚É•]‰¿‚É-1‚ğŠi”[
-		goodLog.first=-1;
-		badLog.first=-1;
+		goodLog.first=SubmissionEvaluation::e_noevaluation;
+		badLog.first=SubmissionEvaluation::e_noevaluation;
 		//’Tõ
-		for(const std::pair<int,std::shared_ptr<const LogElement>> &log:m_rubricList){
+		for(const std::pair<SubmissionEvaluation,std::shared_ptr<const LogElement>> &log:m_rubricList){
 			//•]‰¿‚ª—Ç‚¢‚à‚Ì‚Æˆ«‚¢‚à‚Ì‚ğ’T‚µ‚Ä‚¢‚­A-1•]‰¿‚Í•K‚¸XV‚·‚é
-			if((goodLog.first<log.first || badLog.first<0) && log.first>=0){
+			if((goodLog.first<log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
 				goodLog=log;
 			}
-			if((badLog.first>log.first || badLog.first<0) && log.first>=0){
+			if((badLog.first>log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
 				badLog=log;
 			}
 		}

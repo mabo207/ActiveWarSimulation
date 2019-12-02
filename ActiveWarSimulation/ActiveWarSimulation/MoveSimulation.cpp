@@ -35,8 +35,8 @@ void ReflectionWork::MoveSimulation::Update(){
 	const Vector2D newPosition=(mouse-m_startPos)/m_mapRate;
 	m_operateUnit->Warp(newPosition);
 	//評価の更新
-	const int evaluate=m_rule->RubricEvaluate(m_field,m_stageSize,CreateLog());
-	m_evaluateInfo=m_rule->GetRubricStringInfo(evaluate);
+	const SubmissionEvaluation evaluate=m_rule->RubricEvaluate(m_field,m_stageSize,CreateLog());
+	m_evaluateInfo=std::pair<std::string,unsigned int>(evaluate.GetString(),evaluate.Color());
 	//終了更新
 	if(mouse_get(MOUSE_INPUT_LEFT)==1 || keyboard_get(KEY_INPUT_Z)==1){
 		//決定ボタンをクリックしていて

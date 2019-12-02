@@ -3,7 +3,7 @@
 #include"BattleSceneData.h"
 #include"AttackLog.h"
 
-int ArcherAttackDistance::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+SubmissionEvaluation ArcherAttackDistance::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- —áŠOˆ—
 	//	- UŒ‚‚µ‚È‚¢(-1)
 	//- •]‰¿
@@ -12,10 +12,10 @@ int ArcherAttackDistance::RubricEvaluate(const std::vector<BattleObject *> &fiel
 	//	2. ƒ‹[ƒg‹——£‚ªA“G‚ÌˆÚ“®‹——£ˆÈ‰º
 	//	3. 2ˆÈã‚Ì•]‰¿
 	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(evaluateLog);
-	int evaluate;
+	SubmissionEvaluation evaluate;
 	if(!attackLog){
 		//ƒƒO‚ªAttackLog‚Å‚È‚¢ê‡‚ÍuUŒ‚‚ğ‚µ‚È‚©‚Á‚½v‚Æ”»’f‚Å‚«‚é
-		evaluate=-1;
+		evaluate=SubmissionEvaluation::e_noevaluation;
 	} else{
 		//‹——£‚ÉŠÖ‚·‚é•]‰¿‚ğ‚·‚é
 		//’¼ü‹——£‚ğ‹‚ß‚é
@@ -27,76 +27,38 @@ int ArcherAttackDistance::RubricEvaluate(const std::vector<BattleObject *> &fiel
 		//•]‰¿(‚‚¢•û‚©‚ç”»’è‚µ‚Ä‚¢‚­)
 		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance() || routeDistance<0.0f){
 			//routeDistance<0.0f‚Ì‚ÍA“’BŒo˜H‚ª‘¶İ‚µ‚È‚¢‚Æ‚¢‚¤‚±‚Æ‚È‚Ì‚ÅAƒ‹[ƒg‹——£‚ª“G‚ÌˆÚ“®‹——£‚æ‚è’·‚¢‚Ì‚Æ“¯‚¶ˆµ‚¢‚É‚È‚éB
-			evaluate=3;
+			evaluate=SubmissionEvaluation::e_excellent;
 		} else if(routeDistance>=attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetLength()){
-			evaluate=2;
+			evaluate=SubmissionEvaluation::e_good;
 		} else if(directDistance>=attackLog->GetAimedUnit()->GetBattleStatus().weapon->GetLength()
 			|| attackLog->GetAimedUnit()->GetBattleStatus().weapon->GetLength()>=attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetLength())
 		{
-			evaluate=1;
+			evaluate=SubmissionEvaluation::e_ok;
 		} else{
-			evaluate=0;
+			evaluate=SubmissionEvaluation::e_bad;
 		}
 	}
 
 	return evaluate;
 }
 
-std::pair<std::string,unsigned int> ArcherAttackDistance::GetRubricStringInfo(int rubric)const{
-	std::string rubricStr;
-	unsigned int edgeColor;
-	switch(rubric){
-	case(-1):
-		rubricStr="";
-		edgeColor=GetColor(0,0,0);
-		break;
-	case(0):
-		//ˆ«‚¢
-		rubricStr="Worst";
-		edgeColor=GetColor(128,0,196);
-		break;
-	case(1):
-		//ˆ«‚¢
-		rubricStr="Bad";
-		edgeColor=GetColor(96,96,196);
-		break;
-	case(2):
-		//”÷–­
-		rubricStr="Not good";
-		edgeColor=GetColor(128,128,196);
-		break;
-	case(3):
-		//Š®àø
-		rubricStr="Good!!";
-		edgeColor=GetColor(196,196,64);
-		break;
-	}
-	return std::make_pair(rubricStr,edgeColor);
-}
-
-std::string ArcherAttackDistance::GetWholeLookBack(int mostFrequentEvaluate)const{
+std::string ArcherAttackDistance::GetWholeLookBack(SubmissionEvaluation mostFrequentEvaluate)const{
 	std::string comment;
-	switch(mostFrequentEvaluate){
-	case(-1):
+	if(mostFrequentEvaluate==SubmissionEvaluation::e_noevaluation){
 		//UŒ‚‚µ‚Ä‚¢‚È‚¢
 		comment="‚à‚Á‚ÆËè‚ÅUŒ‚‚µ‚Ä‚İ‚æ‚¤I";
-		break;
-	case(0):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_bad){
 		//“Gƒ†ƒjƒbƒg‚ÌUŒ‚Ë’ö“à‚©‚ç‚ÌUŒ‚
 		comment="“G‚ÌË’öŠO‚©‚çUŒ‚‚·‚é–‚ğˆÓ¯‚µ‚Ä‚İ‚é‚Æ—Ç‚¢‚æI";
-		break;
-	case(1):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_ok){
 		//ƒ‹[ƒg‹——£‚ªUŒ‚Ë’öˆÈ‰º
 		comment="‹|‚ÅUŒ‚‚·‚é‚ÍAáŠQ•¨‚â–¡•û‰z‚µ‚ÉUŒ‚‚µ‚Ä‚İ‚æ‚¤I";
-		break;
-	case(2):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_good){
 		//ƒ‹[ƒg‹——£‚ª“G‚ÌˆÚ“®‹——£ˆÈ‰º
 		comment="“G‚ªŸ‚Ìs“®‚Å‚Ç‚±‚Ü‚Ås‚¯‚é‚©‚ğl‚¦‚ÄA“G‚ÌUŒ‚‚ğó‚¯‚È‚¢‚æ‚¤‚ÈˆÊ’u‚ÅUŒ‚‚·‚é‚±‚Æ‚ğˆÓ¯‚µ‚Ä‚İ‚æ‚¤I";
-		break;
-	case(3):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_excellent){
 		//‚±‚êˆÈã‚Ì•]‰¿
 		comment="Œ¾‚¤‚±‚Æ‚È‚µ‚Å‚·IáŠQ•¨‚â–¡•û‚ğ‚¤‚Ü‚­g‚Á‚ÄAˆÀ‘S‚ÈêŠ‚©‚çUŒ‚‚Å‚«‚Ä‚¢‚Ü‚·I";
-		break;
 	}
 	return comment;
 }
@@ -114,18 +76,17 @@ bool ArcherAttackDistance::JudgeEvaluateOrder(const BattleSceneData * const batt
 		&& battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_archer);
 }
 
-std::string ArcherAttackDistance::GetReason(int rubric)const{
-	switch(rubric){
-	case(-1):
+std::string ArcherAttackDistance::GetReason(SubmissionEvaluation rubric)const{
+	if(rubric==SubmissionEvaluation::e_noevaluation){
 		//•`‰æ‚ğs‚í‚È‚¢
 		return "";
-	case(0):
+	} else if(rubric==SubmissionEvaluation::e_bad){
 		return "“G‚ª‚»‚Ìê‚ÅUŒ‚‚Å‚«‚é‚­‚ç‚¢‚É‹ß‚­‚ÅUŒ‚‚µ‚¿‚á‚Á‚Ä‚é‚æI";
-	case(1):
+	} else if(rubric==SubmissionEvaluation::e_ok){
 		return "áŠQ•¨‚ªü‚è‚É‚È‚¢‚©‚çUŒ‚‚µ‚½“G‚Ì”½Œ‚‚É‡‚¢‚â‚·‚»‚¤‚¶‚á‚È‚¢H";
-	case(2):
+	} else if(rubric==SubmissionEvaluation::e_good){
 		return "áŠQ•¨‰z‚µ‚ÉUŒ‚‚Å‚«‚Ä‚é‚¯‚ÇAˆÄŠO“G‚Í‰ñ‚è‚ñ‚ÅUŒ‚‚Å‚«‚»‚¤B";
-	case(3):
+	} else if(rubric==SubmissionEvaluation::e_excellent){
 		return "ˆÀ‘S’n‘Ñ‚©‚ç‚ÌUŒ‚A‚Æ‚Á‚Ä‚à—Ç‚¢Š´‚¶II";
 	}
 	return "";

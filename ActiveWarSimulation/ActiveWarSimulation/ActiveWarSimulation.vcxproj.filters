@@ -426,6 +426,9 @@
     <ClCompile Include="ReadExplanation.cpp">
       <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson\ReflectionWork</Filter>
     </ClCompile>
+    <ClCompile Include="SubmissionEvaluation.cpp">
+      <Filter>ソース ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmisson</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -685,6 +688,9 @@
     </ClInclude>
     <ClInclude Include="ReadExplanation.h">
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission\ReflectionWork</Filter>
+    </ClInclude>
+    <ClInclude Include="SubmissionEvaluation.h">
+      <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

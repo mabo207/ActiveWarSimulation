@@ -4,7 +4,7 @@
 #include"AttackLog.h"
 #include"WaitLog.h"
 
-int ArmerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+SubmissionEvaluation ArmerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- —áŠOˆ—
 	//	- i‚È‚µj
 	//- •]‰¿
@@ -22,10 +22,10 @@ int ArmerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,const
 		pUnitLogDataList=&waitLog->m_unitDataList;
 		getAimedUnitFunc=[waitLog](){return waitLog->GetOperateUnitData();};
 	}
-	int evaluate;
+	SubmissionEvaluation evaluate;
 	if(pUnitLogDataList==nullptr){
 		//‚±‚±‚É—ˆ‚é‚±‚Æ‚Í‚È‚¢‚Í‚¸‚¾‚ªAˆê‰ƒGƒ‰[ˆ—
-		evaluate=-1;
+		evaluate=SubmissionEvaluation::e_noevaluation;
 	} else{
 		//‘S‚Ä‚Ì“G–‚“¹m‚É‘Î‚µ‚ÄAUŒ‚‰Â”Û”»’è‚ğ‚µAUŒ‚‰Â”\‚È–‚“¹m‚Ì”‚ğŒvZ
 		size_t attackableEnemyMageCount=0;
@@ -38,63 +38,31 @@ int ArmerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,const
 		}
 		//UŒ‚‰Â”\‚È–‚“¹m‚Ì”‚Å•]‰¿
 		if(attackableEnemyMageCount==0){
-			evaluate=2;
+			evaluate=SubmissionEvaluation::e_excellent;
 		} else if(attackableEnemyMageCount==1){
-			evaluate=1;
+			evaluate=SubmissionEvaluation::e_ok;
 		} else{
-			evaluate=0;
+			evaluate=SubmissionEvaluation::e_bad;
 		}
 	}
 
 	return evaluate;
 }
 
-std::pair<std::string,unsigned int> ArmerPosition::GetRubricStringInfo(int rubric)const{
-	std::string rubricStr;
-	unsigned int edgeColor;
-	switch(rubric){
-	case(-1):
-		rubricStr="";
-		edgeColor=GetColor(0,0,0);
-		break;
-	case(0):
-		//ˆ«‚¢
-		rubricStr="Bad";
-		edgeColor=GetColor(96,96,196);
-		break;
-	case(1):
-		//”÷–­
-		rubricStr="Not good";
-		edgeColor=GetColor(128,128,196);
-		break;
-	case(2):
-		//Š®àø
-		rubricStr="Good!!";
-		edgeColor=GetColor(196,196,64);
-		break;
-	}
-	return std::make_pair(rubricStr,edgeColor);
-}
-
-std::string ArmerPosition::GetWholeLookBack(int mostFrequentEvaluate)const{
+std::string ArmerPosition::GetWholeLookBack(SubmissionEvaluation mostFrequentEvaluate)const{
 	std::string comment;
-	switch(mostFrequentEvaluate){
-	case(-1):
+	if(mostFrequentEvaluate==SubmissionEvaluation::e_noevaluation){
 		//d‘••º‚ª‚¢‚È‚¢
 		comment="d‘••º‚ğg‚Á‚Ä‚İ‚æ‚¤I";
-		break;
-	case(0):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_bad){
 		//Bad•]‰¿‚ª‘½‚¢
 		comment="d‘••º‚ğ“®‚©‚·‚ÍA“G‚Ì–‚“¹m‚É‹ß‚Ã‚¯‚·‚¬‚È‚¢‚æ‚¤‚É‹C‚ğ•t‚¯‚æ‚¤I";
-		break;
-	case(1):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_ok){
 		//Not Good•]‰¿‚ª‘½‚¢
 		comment="“G‚Ì–‚“¹m‚ªd‘••º‚É‹ß‚Ã‚¢‚Ä‚«‚½‚çA—Dæ“I‚É“|‚µ‚Ä‚İ‚é‚Ì‚à—Ç‚¢‚æI";
-		break;
-	case(2):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_excellent){
 		//‚±‚êˆÈã‚Ì•]‰¿
 		comment="Œ¾‚¤‚±‚Æ‚È‚µ‚Å‚·I–‚–@g‚¢‚ªd‘••º‚ÉUŒ‚‚·‚é‚Ì‚ğ‚Å‚«‚éŒÀ‚è–h‚°‚Ä‚¢‚Ü‚·I";
-		break;
 	}
 	return comment;
 }
@@ -112,16 +80,15 @@ bool ArmerPosition::JudgeEvaluateOrder(const BattleSceneData * const battleData)
 		&& battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_armer);
 }
 
-std::string ArmerPosition::GetReason(int rubric)const{
-	switch(rubric){
-	case(-1):
+std::string ArmerPosition::GetReason(SubmissionEvaluation rubric)const{
+	if(rubric==SubmissionEvaluation::e_noevaluation){
 		//•`‰æ‚ğs‚í‚È‚¢
 		return "";
-	case(0):
+	} else if(rubric==SubmissionEvaluation::e_bad){
 		return "‹ß‚­‚É–‚“¹m‚ª•¡”‚¢‚ÄŠë‚È‚¢ˆÊ’u‚¾I";
-	case(1):
+	} else if(rubric==SubmissionEvaluation::e_ok){
 		return "Ÿ‚Ìè”Ô‚Å©•ª‚ğUŒ‚‚Å‚«‚»‚¤‚È“G–‚“¹m‚ª‚¢‚é‚İ‚½‚¢‚¾cc";
-	case(2):
+	} else if(rubric==SubmissionEvaluation::e_excellent){
 		return "–‚“¹m‚ÍUŒ‚‚Å‚«‚éˆÊ’u‚É‚Í‚¢‚È‚¢‚İ‚½‚¢I";
 	}
 	return "";

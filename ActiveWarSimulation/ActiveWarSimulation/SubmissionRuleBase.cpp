@@ -4,7 +4,7 @@
 #include"Circle.h"
 
 //-----------------SubmissionRuleBase-------------------
-int SubmissionRuleBase::RubricEvaluate(const BattleSceneData * const battleData)const{
+SubmissionEvaluation SubmissionRuleBase::RubricEvaluate(const BattleSceneData * const battleData)const{
 	return RubricEvaluate(battleData->m_field,battleData->m_stageSize,battleData->m_scoreObserver->GetLatestLog());
 }
 

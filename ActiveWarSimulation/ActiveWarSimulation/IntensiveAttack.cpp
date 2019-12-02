@@ -4,7 +4,7 @@
 #include"AttackLog.h"
 #include<algorithm>
 
-int IntensiveAttack::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+SubmissionEvaluation IntensiveAttack::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- 例外処理
 	//	- 攻撃しない(-1)
 	//	- 撃破時は必ず最大評価(4)
@@ -17,11 +17,11 @@ int IntensiveAttack::RubricEvaluate(const std::vector<BattleObject *> &field,con
 	//	4. 攻撃相手よりHP割合の低いユニットがいない
 	//懸念点として、「そもそもの問題として、excellent評価が撃破時と初回攻撃時に出てしまうから下手でも最高評価をたたき出せてしまうのでは」説がある。
 	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(evaluateLog);
-	int evaluate;
-	const int maxEvaluate=3;
+	SubmissionEvaluation evaluate;
+	const SubmissionEvaluation maxEvaluate=SubmissionEvaluation::e_excellent;
 	if(!attackLog){
 		//ログがAttackLogでない場合は「攻撃をしなかった」と判断できる
-		evaluate=-1;
+		evaluate=SubmissionEvaluation::e_noevaluation;
 	} else{
 		//撃破できるかの判定
 		const LogElement::UnitLogData aimedData=attackLog->GetAimedUnitData();
@@ -65,83 +65,45 @@ int IntensiveAttack::RubricEvaluate(const std::vector<BattleObject *> &field,con
 			evaluate=maxEvaluate;
 		} else if(enemyNum==1){
 			//残り1体の場合は、撃破時以外評価なし
-			evaluate=-1;
+			evaluate=SubmissionEvaluation::e_noevaluation;
 		} else if(enemyNum==2 && order>0){
 			//残り2体の場合は、最大評価でない方の評価を通常と変える
-			evaluate=1;
+			evaluate=SubmissionEvaluation::e_ok;
 		} else if(order==0){
 			//攻撃相手よりHP割合の高いキャラがいない
 			evaluate=maxEvaluate;
 		} else if(order==1){
 			//攻撃相手よりHP割合の高いキャラが1体いる
-			evaluate=2;
+			evaluate=SubmissionEvaluation::e_good;
 		} else if(order==2){
 			//2体いる
-			evaluate=1;
+			evaluate=SubmissionEvaluation::e_ok;
 		} else{
 			//3体以上
-			evaluate=0;
+			evaluate=SubmissionEvaluation::e_bad;
 		}
 	}
 
 	return evaluate;
 }
 
-std::pair<std::string,unsigned int> IntensiveAttack::GetRubricStringInfo(int rubric)const{
-	std::string rubricStr;
-	unsigned int edgeColor;
-	switch(rubric){
-	case(-1):
-		rubricStr="";
-		edgeColor=GetColor(0,0,0);
-		break;
-	case(0):
-		//悪い
-		rubricStr="Bad";
-		edgeColor=GetColor(96,96,196);
-		break;
-	case(1):
-		//まあまあ
-		rubricStr="OK";
-		edgeColor=GetColor(128,128,196);
-		break;
-	case(2):
-		//良い
-		rubricStr="Good!!";
-		edgeColor=GetColor(196,196,64);
-		break;
-	case(3):
-		//とても良い
-		rubricStr="Excellent!!";
-		edgeColor=GetColor(196,64,128);
-		break;
-	}
-	return std::make_pair(rubricStr,edgeColor);
-}
-
-std::string IntensiveAttack::GetWholeLookBack(int mostFrequentEvaluate)const{
+std::string IntensiveAttack::GetWholeLookBack(SubmissionEvaluation mostFrequentEvaluate)const{
 	std::string comment;
-	switch(mostFrequentEvaluate){
-	case(-1):
+	if(mostFrequentEvaluate==SubmissionEvaluation::e_noevaluation){
 		//攻撃していない
 		comment="まずは積極的に攻撃してみよう！";
-		break;
-	case(0):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_bad){
 		//HP割合が高いユニットを狙っていた(3人以上)
 		comment="バラバラに敵を攻撃するのではなく、１体の敵を集中的に攻撃した方が自軍を守るためにも効果的ですよ！";
-		break;
-	case(1):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_ok){
 		//HP割合が高いユニットを狙っていた(2人以上)
 		comment="集中攻撃をしやすくするために、攻撃射程の短いキャラは前、射程の長いキャラは後ろに配置することを心がけてみよう！";
-		break;
-	case(2):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_good){
 		//HP割合が高いユニットを狙っていた(1人以上)
 		comment="集中攻撃をよく心がけていますが、弱っている敵を見落としているかもしれません。";
-		break;
-	case(3):
+	}else if(mostFrequentEvaluate==SubmissionEvaluation::e_excellent){
 		//集中攻撃できている
 		comment="言うことなしです！集中攻撃で敵の戦力を削る事ができています！";
-		break;
 	}
 	return comment;
 }
@@ -159,18 +121,17 @@ bool IntensiveAttack::JudgeEvaluateOrder(const BattleSceneData * const battleDat
 		&& battleData->m_operateUnit->GetBaseStatus().profession!=Unit::Profession::e_healer);
 }
 
-std::string IntensiveAttack::GetReason(int rubric)const{
-	switch(rubric){
-	case(-1):
+std::string IntensiveAttack::GetReason(SubmissionEvaluation rubric)const{
+	if(rubric==SubmissionEvaluation::e_noevaluation){
 		//描画を行わない
 		return "";
-	case(0):
+	} else if(rubric==SubmissionEvaluation::e_bad){
 		return "残りHPが少ない敵がほとんどだ、特定の敵を集中攻撃した方が良いんじゃない？";
-	case(1):
+	} else if(rubric==SubmissionEvaluation::e_ok){
 		return "別々の敵を狙っていないか？集中攻撃が大事だ。";
-	case(2):
+	} else if(rubric==SubmissionEvaluation::e_good){
 		return "もっと手頃に倒せる敵がいるかもしれない、探してみよう。";
-	case(3):
+	} else if(rubric==SubmissionEvaluation::e_excellent){
 		return "残りHPが少ない敵を集中して攻撃できています！";
 	}
 	return "";
