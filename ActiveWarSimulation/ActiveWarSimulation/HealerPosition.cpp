@@ -4,7 +4,7 @@
 #include"AttackLog.h"
 #include"WaitLog.h"
 
-int HealerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+SubmissionEvaluation HealerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- 例外処理
 	//	- （なし）
 	//- 評価
@@ -24,10 +24,10 @@ int HealerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,cons
 		pUnitLogDataList=&waitLog->m_unitDataList;
 		getAimedUnitData=[waitLog](){return waitLog->GetOperateUnitData();};
 	}
-	int evaluate;
+	SubmissionEvaluation evaluate;
 	if(pUnitLogDataList==nullptr){
 		//ここに来ることはないはずだが、一応エラー処理
-		evaluate=-1;
+		evaluate=SubmissionEvaluation::e_noevaluation;
 	} else{
 		//全ての敵物理アタッカーに対して、攻撃可否判定をし、攻撃可能な魔道士の数を計算
 		size_t attackableEnemyArcherCount=0;
@@ -55,85 +55,41 @@ int HealerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,cons
 		}
 		//攻撃可能な敵ユニットの数で評価
 		if(attackableEnemyArcherCount+attackableEnemyArmerCount+attackableEnemySoldierCount>=2){
-			evaluate=0;
+			evaluate=SubmissionEvaluation::e_bad;
 		} else if(attackableEnemyArmerCount==1){
-			evaluate=1;
+			evaluate=SubmissionEvaluation::e_ok;
 		} else if(attackableEnemySoldierCount==1){
-			evaluate=2;
+			evaluate=SubmissionEvaluation::e_good;
 		} else if(attackableEnemyArcherCount==1){
-			evaluate=3;
+			evaluate=SubmissionEvaluation::e_great;
 		} else{
-			evaluate=4;
+			evaluate=SubmissionEvaluation::e_excellent;
 		}
 	}
 
 	return evaluate;
 }
 
-std::pair<std::string,unsigned int> HealerPosition::GetRubricStringInfo(int rubric)const{
-	std::string rubricStr;
-	unsigned int edgeColor;
-	switch(rubric){
-	case(-1):
-		rubricStr="";
-		edgeColor=GetColor(0,0,0);
-		break;
-	case(0):
-		//悪い
-		rubricStr="Bad";
-		edgeColor=GetColor(96,96,196);
-		break;
-	case(1):
-		//微妙
-		rubricStr="Not good";
-		edgeColor=GetColor(128,128,196);
-		break;
-	case(2):
-		//微妙
-		rubricStr="OK";
-		edgeColor=GetColor(128,196,196);
-		break;
-	case(3):
-		//良い
-		rubricStr="Good!!";
-		edgeColor=GetColor(196,196,64);
-		break;
-	case(4):
-		//とても良い
-		rubricStr="Excellent!!";
-		edgeColor=GetColor(196,64,128);
-		break;
-	}
-	return std::make_pair(rubricStr,edgeColor);
-}
-
-std::string HealerPosition::GetWholeLookBack(int mostFrequentEvaluate)const{
+std::string HealerPosition::GetWholeLookBack(SubmissionEvaluation mostFrequentEvaluate)const{
 	std::string comment;
-	switch(mostFrequentEvaluate){
-	case(-1):
+	if(mostFrequentEvaluate==SubmissionEvaluation::e_noevaluation){
 		//衛生兵兵がいない
 		comment="衛生兵を使ってみよう！";
-		break;
-	case(0):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_bad){
 		//Bad評価が多い
 		comment="衛生兵を動かす時は、敵に攻撃されないような場所に動かすことを意識しよう！";
-		break;
-	case(1):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_ok){
 		//Not Good評価が多い
 		comment="重装兵は攻撃力が高いので、衛生兵を近づかせすぎないように気を付けよう！";
-		break;
-	case(2):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_good){
 		//OK評価が多い
 		comment="兵士は移動力が高いので、壁役のキャラを前に置いて道を塞ぐように動かすのを意識すると守りやすいぞ！";
-		break;
-	case(3):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_great){
 		//Good評価が多い
 		comment="射手は攻撃範囲が広く、いつの間に体力を削られてしまうので、できる限り早めに撃破することを心がけよう。";
-		break;
-	case(4):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_excellent){
 		//Excellent評価が多い
 		comment="言うことなしです！衛生兵を安全な場所に配置することを意識できています！";
-		break;
 	}
 	return comment;
 }
@@ -151,20 +107,19 @@ bool HealerPosition::JudgeEvaluateOrder(const BattleSceneData * const battleData
 		&& battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_healer);
 }
 
-std::string HealerPosition::GetReason(int rubric)const{
-	switch(rubric){
-	case(-1):
+std::string HealerPosition::GetReason(SubmissionEvaluation rubric)const{
+	if(rubric==SubmissionEvaluation::e_noevaluation){
 		//描画を行わない
 		return "";
-	case(0):
+	} else if(rubric==SubmissionEvaluation::e_bad){
 		return "複数の敵が攻撃してきそうだ、危ない！";
-	case(1):
+	} else if(rubric==SubmissionEvaluation::e_ok){
 		return "攻撃力の高い重装兵に狙われてしまう位置だ。";
-	case(2):
+	} else if(rubric==SubmissionEvaluation::e_good){
 		return "機動力のある兵士に目をつけられてしまったようだ……";
-	case(3):
+	} else if(rubric==SubmissionEvaluation::e_great){
 		return "射手に狙われている位置だから、油断はできなさそうだ。";
-	case(4):
+	} else if(rubric==SubmissionEvaluation::e_excellent){
 		return "敵が狙いづらい位置に移動できているね！";
 	}
 	return "";

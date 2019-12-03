@@ -31,7 +31,7 @@ namespace ReflectionWork{
 		
 		//変数
 		bool m_clear;//動かし終わったかを管理する
-		std::pair<std::string,unsigned int> m_evaluateInfo;//評価を描画するための情報
+		SubmissionEvaluation m_evaluate;//現在の評価
 		//バトルマップを表現するために必要な情報
 		const std::vector<BattleObject *> m_field;//フィールド
 		const Vector2D m_stageSize;//ステージの大きさ

@@ -4,7 +4,7 @@
 #include"AttackLog.h"
 #include"WaitLog.h"
 
-int ProtectFriend::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+SubmissionEvaluation ProtectFriend::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- 評価に用いるデータ
 	//	- いずれかの敵ユニットの次の行動で攻撃可能となる味方後衛ユニットの数(a)
 	//	- 操作ユニットをマップから消した時の上記のデータ(b)
@@ -25,10 +25,10 @@ int ProtectFriend::RubricEvaluate(const std::vector<BattleObject *> &field,const
 		pUnitLogDataList=&waitLog->m_unitDataList;
 		getOperatedUnitData=[waitLog](){return waitLog->GetOperateUnitData();};
 	}
-	int evaluate;
+	SubmissionEvaluation evaluate;
 	if(pUnitLogDataList==nullptr){
 		//ここに来ることはないはずだが、一応エラー処理
-		evaluate=-1;
+		evaluate=SubmissionEvaluation::e_noevaluation;
 	} else{
 		//全ての敵に対して、味方後衛ユニットへの攻撃可否判定をする
 		LogElement::UnitLogData operatedUnit=getOperatedUnitData();
@@ -95,68 +95,36 @@ int ProtectFriend::RubricEvaluate(const std::vector<BattleObject *> &field,const
 		//a,bの割合で評価
 		if(notExistCount==0){
 			//操作ユニットがいなくても誰も攻撃されない時
-			evaluate=-1;
+			evaluate=SubmissionEvaluation::e_noevaluation;
 		} else if(existCount==notExistCount){
 			//操作ユニットがいても攻撃可否関係が変化しない時
-			evaluate=0;
+			evaluate=SubmissionEvaluation::e_bad;
 		} else if(existCount>0){
 			//操作ユニットが一部の攻撃を防いでいる時
-			evaluate=1;
+			evaluate=SubmissionEvaluation::e_good;
 		} else if(existCount==0){
 			//操作ユニットが全ての攻撃を防いでいる時
-			evaluate=2;
+			evaluate=SubmissionEvaluation::e_excellent;
 		}
 	}
 
 	return evaluate;
 }
 
-std::pair<std::string,unsigned int> ProtectFriend::GetRubricStringInfo(int rubric)const{
-	std::string rubricStr;
-	unsigned int edgeColor;
-	switch(rubric){
-	case(-1):
-		rubricStr="";
-		edgeColor=GetColor(0,0,0);
-		break;
-	case(0):
-		//悪い
-		rubricStr="Bad";
-		edgeColor=GetColor(96,96,196);
-		break;
-	case(1):
-		//微妙
-		rubricStr="Not good";
-		edgeColor=GetColor(128,128,196);
-		break;
-	case(2):
-		//完璧
-		rubricStr="Good!!";
-		edgeColor=GetColor(196,196,64);
-		break;
-	}
-	return std::make_pair(rubricStr,edgeColor);
-}
-
-std::string ProtectFriend::GetWholeLookBack(int mostFrequentEvaluate)const{
+std::string ProtectFriend::GetWholeLookBack(SubmissionEvaluation mostFrequentEvaluate)const{
 	std::string comment;
-	switch(mostFrequentEvaluate){
-	case(-1):
+	if(mostFrequentEvaluate==SubmissionEvaluation::e_noevaluation){
 		//兵士や重装兵がいない
 		comment="兵士や重装兵を使ってみよう！";
-		break;
-	case(0):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_bad){
 		//Bad評価が多い
 		comment="後衛ユニットと敵ユニットの間に前衛ユニットを配置することで後衛ユニットを守ってみよう！";
-		break;
-	case(1):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_good){
 		//Not Good評価が多い
 		comment="道幅が比較的狭い場所に前衛ユニットを配置して、後衛ユニットをしっかり守ってあげよう！";
-		break;
-	case(2):
+	}else if(mostFrequentEvaluate==SubmissionEvaluation::e_excellent){
 		//これ以上の評価
 		comment="言うことなしです！前衛ユニットで後衛ユニットをしっかり守れています！";
-		break;
 	}
 	return comment;
 }
@@ -175,16 +143,15 @@ bool ProtectFriend::JudgeEvaluateOrder(const BattleSceneData * const battleData)
 			|| battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_soldier));
 }
 
-std::string ProtectFriend::GetReason(int rubric)const{
-	switch(rubric){
-	case(-1):
+std::string ProtectFriend::GetReason(SubmissionEvaluation rubric)const{
+	if(rubric==SubmissionEvaluation::e_noevaluation){
 		//描画を行わない
 		return "";
-	case(0):
+	} else if(rubric==SubmissionEvaluation::e_bad){
 		return "後衛ユニットへの攻撃をどれも防ぐことができなさそうだ。";
-	case(1):
+	} else if(rubric==SubmissionEvaluation::e_good){
 		return "後衛ユニットへの攻撃を一部防げているよ！";
-	case(2):
+	} else if(rubric==SubmissionEvaluation::e_excellent){
 		return "後衛ユニットへの攻撃をすべてシャットアウトしたようだ！";
 	}
 	return "";

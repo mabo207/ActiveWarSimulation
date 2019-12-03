@@ -7,6 +7,7 @@
 
 #include"LogElement.h"
 #include"LatticeBattleField.h"
+#include"SubmissionEvaluation.h"
 
 struct BattleSceneData;
 class Unit;
@@ -19,19 +20,18 @@ public:
 	};
 
 	virtual ~SubmissionRuleBase()=default;
-	int RubricEvaluate(const BattleSceneData * const battleData)const;//１つの行動についてルーブリック評価をする
-	virtual int RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const=0;
-	virtual int InAdvanceDataEvaluate(const std::shared_ptr<InAdvanceCalculateData> &,const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+	SubmissionEvaluation RubricEvaluate(const BattleSceneData * const battleData)const;//１つの行動についてルーブリック評価をする
+	virtual SubmissionEvaluation RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const=0;
+	virtual SubmissionEvaluation InAdvanceDataEvaluate(const std::shared_ptr<InAdvanceCalculateData> &,const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 		//事前計算データを用いて高速評価する関数
 		//デフォルトでは、通常評価を行うようになっている
 		return RubricEvaluate(field,stageSize,evaluateLog);
 	}
-	virtual std::pair<std::string,unsigned int> GetRubricStringInfo(int rubric)const=0;//ルーブリック評価に対する文字列を描画するための情報を返す（文字列＆文字の縁の色）
-	virtual std::string GetWholeLookBack(int mostFrequentEvaluate)const=0;//最も多かったルーブリック評価について、総括的になコメントを返す
+	virtual std::string GetWholeLookBack(SubmissionEvaluation mostFrequentEvaluate)const=0;//最も多かったルーブリック評価について、総括的になコメントを返す
 	virtual std::string GetWholeLookBackActionEmpty()const=0;//ルールに該当した行動が何もなかった時の総括的評価の文字列を返す
 	virtual std::string GetSubmissionExplanation()const=0;//サブミッションの説明文を返す
 	virtual bool JudgeEvaluateOrder(const BattleSceneData * const battleData)const=0;//評価を行うかどうか
-	virtual std::string GetReason(int rubric)const=0;//ルーブリック評価の理由の文章を返す
+	virtual std::string GetReason(SubmissionEvaluation rubric)const=0;//ルーブリック評価の理由の文章を返す
 
 protected:
 	SubmissionRuleBase()=default;

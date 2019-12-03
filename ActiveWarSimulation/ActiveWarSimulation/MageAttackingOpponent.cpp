@@ -3,7 +3,7 @@
 #include"BattleSceneData.h"
 #include"AttackLog.h"
 
-int MageAttackingOpponent::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+SubmissionEvaluation MageAttackingOpponent::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- —áŠOˆ—
 	//	- UŒ‚‚µ‚È‚¢(-1)
 	//- •]‰¿
@@ -11,23 +11,23 @@ int MageAttackingOpponent::RubricEvaluate(const std::vector<BattleObject *> &fie
 	//	1. “G‚ª•ºmEËè‚Å‚ ‚é
 	//	2. “G‚ªd‘••º‚Å‚ ‚é
 	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(evaluateLog);
-	int evaluate;
+	SubmissionEvaluation evaluate;
 	if(!attackLog){
 		//ƒƒO‚ªAttackLog‚Å‚È‚¢ê‡‚ÍuUŒ‚‚ğ‚µ‚È‚©‚Á‚½v‚Æ”»’f‚Å‚«‚é
-		evaluate=-1;
+		evaluate=SubmissionEvaluation::e_noevaluation;
 	} else{
 		//UŒ‚‘Šè‚Ì•ºí‚ğŒ©‚ÄA•]‰¿‚ğs‚¤
 		switch(attackLog->GetAimedUnit()->GetBaseStatus().profession){
 		case(Unit::Profession::e_healer):
 		case(Unit::Profession::e_mage):
-			evaluate=0;
+			evaluate=SubmissionEvaluation::e_bad;
 			break;
 		case(Unit::Profession::e_archer):
 		case(Unit::Profession::e_soldier):
-			evaluate=1;
+			evaluate=SubmissionEvaluation::e_ok;
 			break;
 		case(Unit::Profession::e_armer):
-			evaluate=2;
+			evaluate=SubmissionEvaluation::e_excellent;
 			break;
 		}
 	}
@@ -35,52 +35,20 @@ int MageAttackingOpponent::RubricEvaluate(const std::vector<BattleObject *> &fie
 	return evaluate;
 }
 
-std::pair<std::string,unsigned int> MageAttackingOpponent::GetRubricStringInfo(int rubric)const{
-	std::string rubricStr;
-	unsigned int edgeColor;
-	switch(rubric){
-	case(-1):
-		rubricStr="";
-		edgeColor=GetColor(0,0,0);
-		break;
-	case(0):
-		//ˆ«‚¢
-		rubricStr="Bad";
-		edgeColor=GetColor(96,96,196);
-		break;
-	case(1):
-		//‚Ü‚ ‚Ü‚ 
-		rubricStr="OK";
-		edgeColor=GetColor(128,128,196);
-		break;
-	case(2):
-		//Š®àø
-		rubricStr="Good!!";
-		edgeColor=GetColor(196,196,64);
-		break;
-	}
-	return std::make_pair(rubricStr,edgeColor);
-}
-
-std::string MageAttackingOpponent::GetWholeLookBack(int mostFrequentEvaluate)const{
+std::string MageAttackingOpponent::GetWholeLookBack(SubmissionEvaluation mostFrequentEvaluate)const{
 	std::string comment;
-	switch(mostFrequentEvaluate){
-	case(-1):
+	if(mostFrequentEvaluate==SubmissionEvaluation::e_noevaluation){
 		//UŒ‚‚µ‚Ä‚¢‚È‚¢
 		comment="‚à‚Á‚Æ–‚“¹m‚ÅUŒ‚‚µ‚Ä‚İ‚æ‚¤I";
-		break;
-	case(0):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_bad){
 		//–‚–@Œnƒ†ƒjƒbƒg‚Ö‚ÌUŒ‚
 		comment="–‚–@UŒ‚‚ÍA–‚–@‚ğg‚¤“G‚æ‚è•Ší‚Åí‚¤“G‚É‚µ‚½•û‚ªŒø‰Ê“I‚¾‚æI";
-		break;
-	case(1):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_ok){
 		//ËèE•ºm‚Ö‚ÌUŒ‚
 		comment="‚Å‚«‚ê‚ÎA•Ší‚ğg‚¤“G‚Ì’†‚Å‚à“Á‚É–‚–@‚Éã‚¢d‘••º‚ğ‚à‚Á‚Æ‘_‚Á‚Ä‚İ‚æ‚¤I";
-		break;
-	case(2):
+	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_excellent){
 		//d‘••º‚Ö‚ÌUŒ‚
 		comment="Œ¾‚¤‚±‚Æ‚È‚µ‚Å‚·I–‚–@‚Éã‚¢“G‚ğ‘_‚Á‚ÄUŒ‚‚Å‚«‚Ä‚¢‚Ü‚·I";
-		break;
 	}
 	return comment;
 }
@@ -98,16 +66,15 @@ bool MageAttackingOpponent::JudgeEvaluateOrder(const BattleSceneData * const bat
 		&& battleData->m_operateUnit->GetBaseStatus().profession==Unit::Profession::e_mage);
 }
 
-std::string MageAttackingOpponent::GetReason(int rubric)const{
-	switch(rubric){
-	case(-1):
+std::string MageAttackingOpponent::GetReason(SubmissionEvaluation rubric)const{
+	if(rubric==SubmissionEvaluation::e_noevaluation){
 		//•`‰æ‚ğs‚í‚È‚¢
 		return "";
-	case(0):
+	} else if(rubric==SubmissionEvaluation::e_bad){
 		return "–‚“¹m‚â‰q¶•º‚É‚Í–‚–@UŒ‚‚ÍŒø‰Ê‚ª”–‚¢‚İ‚½‚¢‚¾B";
-	case(1):
+	} else if(rubric==SubmissionEvaluation::e_ok){
 		return "•ºm‚âËè‚ğ–‚–@‚ÅUŒ‚‚·‚é‚Ì‚ÍA‚Ü‚ ‚Ü‚ Œø‰Ê“I‚¾B";
-	case(2):
+	} else if(rubric==SubmissionEvaluation::e_excellent){
 		return "–‚–@‚ªã“_‚Ìd‘••º‚ğUŒ‚‚Å‚«‚Ä‚¢‚Ü‚·I";
 	}
 	return "";

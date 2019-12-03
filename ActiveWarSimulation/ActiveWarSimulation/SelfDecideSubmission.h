@@ -50,9 +50,9 @@ public:
 
 private:
 	std::shared_ptr<SubmissionRuleBase> m_rule;//ルーブリック評価のルール
-	std::vector<std::pair<int,std::shared_ptr<const LogElement>>> m_rubricList;//ルーブリック評価と参照したログのペアの一覧
+	std::vector<std::pair<SubmissionEvaluation,std::shared_ptr<const LogElement>>> m_rubricList;//ルーブリック評価と参照したログのペアの一覧
 	std::string m_wholeComment;//総括的振り返りにおけるコメント
-	std::map<int,size_t> m_rubricFrequencyMap;//戦闘終了時にルーブリック評価の回数の一覧を格納する
+	std::map<SubmissionEvaluation,size_t> m_rubricFrequencyMap;//戦闘終了時にルーブリック評価の回数の一覧を格納する
 
 	const int m_sentenceFont;//文章を描画するためのフォント
 	const int m_rubricFont;//ルーブリック評価を描画するためのフォント
