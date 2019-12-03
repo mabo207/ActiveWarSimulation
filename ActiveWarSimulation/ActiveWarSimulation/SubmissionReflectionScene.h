@@ -98,20 +98,32 @@ private:
 	void DrawResizedMap(int x,int y,const MinimapDrawInfo &minimapInfo,const float rate)const;//簡易拡大縮小マップを描画する
 	void InitReflectionWork();//リフレクションワークを作成する処理(描画位置の調整のための情報がこのクラス内に存在するので、WholeReflectionInfoクラスでなくこのクラス内に処理を記述する)
 	void DrawTwoMinimap()const;//2つならべて普通にミニマップを描画する
+	void SetUnitPenetratable(Unit::Team::Kind phase);//MinimapDrawInfoのPhase設定を変更する（どちら側のフェーズの時のマップを見せるか）
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
 	void thisDraw()const;
 	int UpdateNextScene(int index);//次場面の設定。indexに戻りたいが、実際に戻れるかは不明なので実際の戻り場所を示すint値を返し直す。基本的に返り値はindexに等しくなる。
 	void ReturnProcess();//この場面に戻ってきた時の処理
 	//ワーク作成関数
-	void AddDrawLineWork();
+	void AddDrawLineWork(Unit::Team::Kind phase,const std::string question);
 	void AddShapeClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> conditionShapeFunc
 		,std::vector<ShapeClickWorkInfo> minimapInfo
-		,const std::shared_ptr<MinimapLayoutBase> minimapLayout);
-	void AddLineClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo,const std::shared_ptr<MinimapLayoutBase> &minimapLayout);
-	void AddAreaClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo,const std::shared_ptr<MinimapLayoutBase> &minimapLayout);
-	void AddSelectOneWork();
-	void AddMoveSimulationWork();
+		,const std::shared_ptr<MinimapLayoutBase> minimapLayout
+		,Unit::Team::Kind phase
+		,const std::string clickQuestion
+		,const std::string explanationComment);
+	void AddLineClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo
+		,const std::shared_ptr<MinimapLayoutBase> &minimapLayout
+		,Unit::Team::Kind phase
+		,const std::string question
+		,const std::string explanationComment);
+	void AddAreaClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo
+		,const std::shared_ptr<MinimapLayoutBase> &minimapLayout
+		,Unit::Team::Kind phase
+		,const std::string question
+		,const std::string explanationComment);
+	void AddSelectOneWork(Unit::Team::Kind phase,const std::string question);
+	void AddMoveSimulationWork(Unit::Team::Kind phase,const std::string question);
 
 	//変数
 	const std::shared_ptr<BattleSceneData> m_battleSceneData;
