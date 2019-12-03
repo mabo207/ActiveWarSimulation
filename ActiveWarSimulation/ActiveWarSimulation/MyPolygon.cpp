@@ -185,25 +185,37 @@ bool MyPolygon::JudgeInShape(const Shape *pShape)const{
 	//図形に応じて最適な内部判定アルゴリズムを適用する
 	switch(pShape->GetType()){
 	case(Shape::Type::e_circle):
-		//円との内部判定は、すべての分割三角形について「三角形内部に中心が存在する」「３辺と円が交点を持つ＝押し出し距離が0より大きい」のどちらも満たさないかどうかで行う
 		{
 			const Circle *c=dynamic_cast<const Circle *>(pShape);
 			if(c!=nullptr){
+				//「中心の内部判定」＋「円と全線分の非交差」で調べられる
+				bool centerInThis=false,noCross=true;
 				std::vector<Vector2D> pointPos;
 				CalculateAllPointPosition(&pointPos);
+				//中心の内部判定
 				for(const std::array<size_t,3> triangle:m_triangleSet){
-					//3つのEdgeを作る
-					Edge edges[3]={Edge(pointPos[triangle[0]],pointPos[triangle[1]],pShape->m_fix),Edge(pointPos[triangle[1]],pointPos[triangle[2]],pShape->m_fix),Edge(pointPos[triangle[2]],pointPos[triangle[0]],pShape->m_fix)};
-					if(!JudgeInTriangle(c->GetPosition(),pointPos[triangle[0]],pointPos[triangle[1]],pointPos[triangle[2]])){
-						//中心が三角形外にある場合は辺と円の当たり判定をする
-						for(size_t i=0;i<3;i++){
-							c->JudgeInShape(&edges[i]);
-						}
-					} else{
-						//中心が三角形内にある場合は多角形内部に円があると見なせる
-						return true;
+					if(JudgeInTriangle(c->GetPosition(),pointPos[triangle[0]],pointPos[triangle[1]],pointPos[triangle[2]])){
+						centerInThis=true;
+						break;
 					}
 				}
+				//円と全線分の非交差
+				if(centerInThis){
+					Vector2D begin=m_position;
+					for(const Vector2D &vec:GetAllEdgeVecs()){
+						//線分の作成
+						const Edge e(begin,vec,Shape::Fix::e_static);
+						//交差判定
+						if(e.JudgeCross(c)){
+							noCross=false;
+							break;
+						}
+						//begin更新
+						begin+=vec;
+					}
+				}
+				//結果を返す
+				return centerInThis & noCross;
 			} else{
 				//ここに来ることはないはず
 				assert(false);
