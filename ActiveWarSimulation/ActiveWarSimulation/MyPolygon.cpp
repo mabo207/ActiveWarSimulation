@@ -223,8 +223,45 @@ bool MyPolygon::JudgeInShape(const Shape *pShape)const{
 		}
 		break;
 	case(Shape::Type::e_edge):
-		//直線との内部判定は「始点と終点がどちらも多角形外」「どの辺ともedgeが交差しない」を調べれば良い
-		//使わないから実装しない
+		{
+			const Edge *e=dynamic_cast<const Edge *>(pShape);
+			if(e!=nullptr){
+				//「両端点の内部判定」＋「線分と全線分の非交差」で調べられる
+				bool beginInThis=false,endInThis=false,noCross=true;
+				std::vector<Vector2D> pointPos;
+				CalculateAllPointPosition(&pointPos);
+				//両端店の内部判定
+				const Vector2D eBegin=e->GetBeginPoint(),eEnd=e->GetEndPoint();
+				for(const std::array<size_t,3> triangle:m_triangleSet){
+					if(!beginInThis && JudgeInTriangle(eBegin,pointPos[triangle[0]],pointPos[triangle[1]],pointPos[triangle[2]])){
+						beginInThis=true;
+					}
+					if(!endInThis && JudgeInTriangle(eEnd,pointPos[triangle[0]],pointPos[triangle[1]],pointPos[triangle[2]])){
+						endInThis=true;
+					}
+					if(beginInThis && endInThis){
+						break;
+					}
+				}
+				//線分と全線分の非交差
+				if(beginInThis && endInThis){
+					Vector2D begin=m_position;
+					for(const Vector2D &vec:GetAllEdgeVecs()){
+						//線分の作成
+						const Edge polygonEdge(begin,vec,Shape::Fix::e_static);
+						//交差判定
+						if(polygonEdge.JudgeCross(e)){
+							noCross=false;
+							break;
+						}
+						//begin更新
+						begin+=vec;
+					}
+				}
+				//結果を返す
+				return beginInThis && endInThis & noCross;
+			}
+		}
 		break;
 	}
 	return false;
