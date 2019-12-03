@@ -30,10 +30,9 @@ ReflectionWork::MoveSimulation::MoveSimulation(const std::vector<BattleObject *>
 ReflectionWork::MoveSimulation::~MoveSimulation(){}
 
 void ReflectionWork::MoveSimulation::Update(){
-	//m_operateUnitを動かす(暫定)
-	const Vector2D mouse=GetMousePointVector2D();
-	const Vector2D newPosition=(mouse-m_startPos)/m_mapRate;
-	m_operateUnit->Warp(newPosition);
+	//m_operateUnitを動かす
+	const Vector2D mouseMapPosition=(GetMousePointVector2D()-m_startPos)/m_mapRate;
+	UpdateOperateUnitPosition(mouseMapPosition-m_operateUnit->getPos());
 	//評価の更新
 	m_evaluate=m_rule->RubricEvaluate(m_field,m_stageSize,CreateLog());
 	//終了更新
@@ -76,4 +75,8 @@ std::shared_ptr<LogElement> ReflectionWork::MoveSimulation::CreateLog()const{
 		//攻撃不可な場合(未完成)
 		return std::shared_ptr<LogElement>(new WaitLog(unitList,{}));
 	}
+}
+
+void ReflectionWork::MoveSimulation::UpdateOperateUnitPosition(const Vector2D inputVec){
+	m_operateUnit->Move(inputVec);
 }

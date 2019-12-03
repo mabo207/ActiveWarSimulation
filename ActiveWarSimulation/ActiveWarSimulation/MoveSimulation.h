@@ -28,7 +28,8 @@ namespace ReflectionWork{
 	private:
 		//関数
 		std::shared_ptr<LogElement> CreateLog()const;//現在のシミュレーション学習の状態をログ形式にする関数
-		
+		void UpdateOperateUnitPosition(const Vector2D inputVec);//m_operateUnitの位置更新をする関数
+
 		//変数
 		bool m_clear;//動かし終わったかを管理する
 		SubmissionEvaluation m_evaluate;//現在の評価
