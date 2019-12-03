@@ -263,6 +263,25 @@ bool MyPolygon::JudgeInShape(const Shape *pShape)const{
 			}
 		}
 		break;
+	case(Shape::Type::e_polygon):
+		{
+			const MyPolygon *p=dynamic_cast<const MyPolygon *>(pShape);
+			if(p!=nullptr){
+				//「全ての線分がthis内部にあるか」で判定可能
+				Vector2D begin=p->GetPosition();
+				for(const Vector2D &vec:p->GetAllEdgeVecs()){
+					//線分の作成
+					const Edge otherEdge(begin,vec,Shape::Fix::e_static);
+					//交差判定
+					if(!this->JudgeInShape(&otherEdge)){
+						return false;
+					}
+					//begin更新
+					begin+=vec;
+				}
+				return true;
+			}
+		}
 	}
 	return false;
 }
