@@ -105,19 +105,25 @@ private:
 	int UpdateNextScene(int index);//次場面の設定。indexに戻りたいが、実際に戻れるかは不明なので実際の戻り場所を示すint値を返し直す。基本的に返り値はindexに等しくなる。
 	void ReturnProcess();//この場面に戻ってきた時の処理
 	//ワーク作成関数
-	void AddDrawLineWork(Unit::Team::Kind phase);
+	void AddDrawLineWork(Unit::Team::Kind phase,const std::string question);
 	void AddShapeClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> conditionShapeFunc
 		,std::vector<ShapeClickWorkInfo> minimapInfo
 		,const std::shared_ptr<MinimapLayoutBase> minimapLayout
-		,Unit::Team::Kind phase);
+		,Unit::Team::Kind phase
+		,const std::string clickQuestion
+		,const std::string explanationComment);
 	void AddLineClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo
 		,const std::shared_ptr<MinimapLayoutBase> &minimapLayout
-		,Unit::Team::Kind phase);
+		,Unit::Team::Kind phase
+		,const std::string question
+		,const std::string explanationComment);
 	void AddAreaClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo
 		,const std::shared_ptr<MinimapLayoutBase> &minimapLayout
-		,Unit::Team::Kind phase);
-	void AddSelectOneWork(Unit::Team::Kind phase);
-	void AddMoveSimulationWork(Unit::Team::Kind phase);
+		,Unit::Team::Kind phase
+		,const std::string question
+		,const std::string explanationComment);
+	void AddSelectOneWork(Unit::Team::Kind phase,const std::string question);
+	void AddMoveSimulationWork(Unit::Team::Kind phase,const std::string question);
 
 	//変数
 	const std::shared_ptr<BattleSceneData> m_battleSceneData;

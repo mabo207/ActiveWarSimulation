@@ -290,11 +290,15 @@ void SubmissionReflectionScene::InitReflectionWork(){
 	};
 	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_goodLogInfo,minimapPos[0],twoMinimapRate),ShapeClickWorkInfo(&m_badLogInfo,minimapPos[1],twoMinimapRate)}
 		,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(twoMinimapDrawFunc))
-		,Unit::Team::e_enemy);
-	AddMoveSimulationWork(Unit::Team::e_player);//プレイヤーユニットを動かすため、e_playerを指定
+		,Unit::Team::e_enemy
+		,"今回のバトルで、射手が攻撃をした２つの場面を取り出してみた。\n攻撃相手からの反撃が予想されるが、射手の近くまで進むのを\n邪魔してくれている障害物やキャラクターをクリックしてみよう。"
+		,"ピンクの点で表現された敵の動く範囲を見てみると、\n大きく空いている隙間を縫って射手に近づいてくる事がわかる。");
+	AddMoveSimulationWork(Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
 	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_badLogInfo,minimapPos[0],oneMinimapRate)}
 		,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(oneMinimapDrawFunc))
-		,Unit::Team::e_enemy);
+		,Unit::Team::e_enemy
+		,"この場所だったら、\nどのような障害物やキャラクターが攻撃相手の移動を邪魔しているだろう？"
+		,"ピンクの点で表現された敵の動く範囲を見て、\n良い攻撃位置を見つけられたか確認しよう。");
 	//ワーク設定
 	m_nextWorkMethod=m_workMethodList.begin();
 	m_nowWork=(*m_nextWorkMethod)();
@@ -302,9 +306,9 @@ void SubmissionReflectionScene::InitReflectionWork(){
 }
 
 //ワーク作成関数
-void SubmissionReflectionScene::AddDrawLineWork(Unit::Team::Kind phase){
+void SubmissionReflectionScene::AddDrawLineWork(Unit::Team::Kind phase,const std::string question){
 	//攻撃ユニットと被攻撃ユニットを結ぶ線を引くワーク
-	const auto lineWorkMethod=[this,phase](){
+	const auto lineWorkMethod=[this,phase,question](){
 		//ユニットの侵入可否を敵フェーズ用に設定しておく
 		this->SetUnitPenetratable(phase);
 		//線分の位置の設定
@@ -315,7 +319,8 @@ void SubmissionReflectionScene::AddDrawLineWork(Unit::Team::Kind phase){
 		const std::shared_ptr<ReflectionWork::Base> work=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::LineDraw(
 			{Edge(goodLogStart,goodLogEnd-goodLogStart,Shape::Fix::e_ignore)
 			,Edge(badLogStart,badLogEnd-badLogStart,Shape::Fix::e_ignore)}
-			,"攻撃したキャラと敵との距離を線を引いて確認してみよう！"
+			,question
+			//,"攻撃したキャラと敵との距離を線を引いて確認してみよう！"
 		));
 		//マップの描画の仕方を設定
 		const auto drawFunc=[this](){
@@ -330,9 +335,11 @@ void SubmissionReflectionScene::AddDrawLineWork(Unit::Team::Kind phase){
 void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> conditionShapeFunc
 	,std::vector<ShapeClickWorkInfo> minimapInfo
 	,const std::shared_ptr<MinimapLayoutBase> minimapLayout
-	,Unit::Team::Kind phase)
+	,Unit::Team::Kind phase
+	,const std::string clickQuestion
+	,const std::string explanationComment)
 {
-	const auto clickWorkMethod=[minimapInfo,conditionShapeFunc,minimapLayout,phase,this](){
+	const auto clickWorkMethod=[minimapInfo,conditionShapeFunc,minimapLayout,phase,clickQuestion,this](){
 		//準備
 		//ユニットの侵入可否を敵フェーズ用に設定しておく
 		this->SetUnitPenetratable(phase);
@@ -385,12 +392,12 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 			}
 		}
 		//ワークの作成
-		const std::shared_ptr<ReflectionWork::Base> clickWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList,"攻撃した敵の移動を邪魔している障害物をクリックしてみよう！"));
+		const std::shared_ptr<ReflectionWork::Base> clickWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList,clickQuestion));
 		return WorkInfo(clickWork,minimapLayout);
 	};
 	m_workMethodList.push_back(clickWorkMethod);
 	//解説ワークの作成
-	const auto explanationWorkMethod=[minimapInfo,minimapLayout,this](){
+	const auto explanationWorkMethod=[minimapInfo,minimapLayout,explanationComment,this](){
 		std::vector<std::pair<std::shared_ptr<const Shape>,unsigned int>> assistList;
 		//敵の移動範囲に入っている格子点を全て補助関数に加える
 		minimapInfo[0].drawInfo->value().GetUnitListPtr(0);
@@ -427,7 +434,7 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 			}
 		}
 		//ワーク作成
-		const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation(assistList,m_nowWork.reflection,"点で表現された敵の動く範囲を見てみると、\n大きく空いている隙間を縫って射手に近づいてくる事がわかります。"));
+		const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation(assistList,m_nowWork.reflection,explanationComment));
 		return WorkInfo(explanationWork,minimapLayout);
 	};
 	m_workMethodList.push_back(explanationWorkMethod);
@@ -435,7 +442,9 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 
 void SubmissionReflectionScene::AddLineClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo
 	,const std::shared_ptr<MinimapLayoutBase> &minimapLayout
-	,Unit::Team::Kind phase)
+	,Unit::Team::Kind phase
+	,const std::string clickQuestion
+	,const std::string explanationComment)
 {
 	//攻撃ユニットと被攻撃ユニットを結ぶ線上の障害物をクリックするワーク
 	//図形作成関数の作成
@@ -443,12 +452,14 @@ void SubmissionReflectionScene::AddLineClickWork(std::vector<ShapeClickWorkInfo>
 		return std::shared_ptr<Shape>(new Edge(p0,p1-p0,Shape::Fix::e_dynamic));
 	};
 	//ワーク作成
-	AddShapeClickWork(createFunc,minimapInfo,minimapLayout,phase);
+	AddShapeClickWork(createFunc,minimapInfo,minimapLayout,phase,clickQuestion,explanationComment);
 }
 
 void SubmissionReflectionScene::AddAreaClickWork(std::vector<ShapeClickWorkInfo> &minimapInfo
 	,const std::shared_ptr<MinimapLayoutBase> &minimapLayout
-	,Unit::Team::Kind phase)
+	,Unit::Team::Kind phase
+	,const std::string clickQuestion
+	,const std::string explanationComment)
 {
 	//攻撃ユニットと被攻撃ユニットを結ぶ線分を対角線とした菱形領域の障害物をクリックするワーク
 	//図形作成関数の作成
@@ -460,11 +471,11 @@ void SubmissionReflectionScene::AddAreaClickWork(std::vector<ShapeClickWorkInfo>
 		return std::shared_ptr<Shape>(new MyPolygon(p0-h,{p0+h,p1+h,p1-h},Shape::Fix::e_dynamic));
 	};
 	//ワーク作成
-	AddShapeClickWork(createFunc,minimapInfo,minimapLayout,phase);
+	AddShapeClickWork(createFunc,minimapInfo,minimapLayout,phase,clickQuestion,explanationComment);
 }
 
-void SubmissionReflectionScene::AddSelectOneWork(Unit::Team::Kind phase){
-	const auto selectWorkMethod=[this,phase](){
+void SubmissionReflectionScene::AddSelectOneWork(Unit::Team::Kind phase,const std::string question){
+	const auto selectWorkMethod=[this,phase,question](){
 		//ユニットの侵入可否を敵フェーズ用に設定しておく
 		this->SetUnitPenetratable(phase);
 		//ワークの作成
@@ -472,7 +483,7 @@ void SubmissionReflectionScene::AddSelectOneWork(Unit::Team::Kind phase){
 		const float minimapHeight=(float)CommonConstParameter::mapSizeY*twoMinimapRate;
 		const std::shared_ptr<Shape> correct(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[0],Vector2D(minimapWidth,minimapHeight),Shape::Fix::e_static)));
 		const std::shared_ptr<Shape> incorrect(new MyPolygon(MyPolygon::CreateRectangle(minimapPos[1],Vector2D(minimapWidth,minimapHeight),Shape::Fix::e_static)));
-		const std::shared_ptr<ReflectionWork::Base> work=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::SelectOne(correct,{incorrect},"どちらの方が適した行動でしょうか？"));
+		const std::shared_ptr<ReflectionWork::Base> work=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::SelectOne(correct,{incorrect},question));
 		//マップの描画の仕方を設定
 		const auto drawFunc=[this](){
 			DrawTwoMinimap();
@@ -483,10 +494,10 @@ void SubmissionReflectionScene::AddSelectOneWork(Unit::Team::Kind phase){
 	m_workMethodList.push_back(selectWorkMethod);
 }
 
-void SubmissionReflectionScene::AddMoveSimulationWork(Unit::Team::Kind phase){
+void SubmissionReflectionScene::AddMoveSimulationWork(Unit::Team::Kind phase,const std::string question){
 	//攻撃キャラの位置を変えてみて評価がどうなるかをシミュレーション学習してみるワーク
 	if(m_badLogInfo.has_value()){
-		const auto simulationWorkMethod=[this,phase](){
+		const auto simulationWorkMethod=[this,phase,question](){
 			//ユニットの侵入可否を味方フェーズ用に設定しておく
 			this->SetUnitPenetratable(phase);
 			//フィールドの作成
@@ -514,7 +525,7 @@ void SubmissionReflectionScene::AddMoveSimulationWork(Unit::Team::Kind phase){
 					,minimapPos[0]
 					,oneMinimapRate
 					,m_battleSceneData->m_scoreObserver->GetSubmission().GetRule()
-					,"シミュレーション学習"));
+					,question));
 			//マップの描画の仕方を設定
 			const Easing::TYPE type=Easing::TYPE_OUT;
 			const Easing::FUNCTION function=Easing::FUNCTION_QUAD;
