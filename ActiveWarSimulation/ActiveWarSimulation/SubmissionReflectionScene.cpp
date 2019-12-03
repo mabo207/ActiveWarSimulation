@@ -64,6 +64,7 @@ SubmissionReflectionScene::MinimapDrawInfo::MinimapDrawInfo(const std::shared_pt
 			u.AddHP(logData.hp-u.GetBattleStatus().HP);
 			u.SetOP(logData.op);
 			u.SetPenetratable(phase);
+			u.SetFix(Shape::Fix::e_static);
 			//operateIndex,attackedIndexの探索、関数が存在するかどうか気をつける
 			if(getOperateUnit && logData.punit==getOperateUnit()){
 				operateIndex=index;
@@ -200,6 +201,27 @@ void SubmissionReflectionScene::DrawTwoMinimap()const{
 	}
 }
 
+void SubmissionReflectionScene::SetUnitPenetratable(Unit::Team::Kind phase){
+	if(m_goodLogInfo.has_value()){
+		for(size_t i=0,siz=m_goodLogInfo->GetUnitList().size();i<siz;i++){
+			Unit *pu=m_goodLogInfo->GetUnitListPtr(i);
+			if(pu!=m_goodLogInfo->GetOperateUnit() && pu!=nullptr){
+				//操作ユニットは視認性向上のために変更できないようにする
+				pu->SetPenetratable(phase);
+			}
+		}
+	}
+	if(m_badLogInfo.has_value()){
+		for(size_t i=0,siz=m_badLogInfo->GetUnitList().size();i<siz;i++){
+			Unit *pu=m_badLogInfo->GetUnitListPtr(i);
+			if(pu!=m_badLogInfo->GetOperateUnit() && pu!=nullptr){
+				//操作ユニットは視認性向上のために変更できないようにする
+				pu->SetPenetratable(phase);
+			}
+		}
+	}
+}
+
 int SubmissionReflectionScene::thisCalculate(){
 	//更新処理
 	//ワーク入力処理
@@ -279,6 +301,9 @@ void SubmissionReflectionScene::InitReflectionWork(){
 void SubmissionReflectionScene::AddDrawLineWork(){
 	//攻撃ユニットと被攻撃ユニットを結ぶ線を引くワーク
 	const auto lineWorkMethod=[this](){
+		//ユニットの侵入可否を敵フェーズ用に設定しておく
+		this->SetUnitPenetratable(Unit::Team::e_enemy);
+		//線分の位置の設定
 		const Vector2D goodLogStart=minimapPos[0]+m_goodLogInfo->GetOperateUnit()->getPos()*twoMinimapRate;
 		const Vector2D goodLogEnd=minimapPos[0]+m_goodLogInfo->GetAttackedUnit()->getPos()*twoMinimapRate;
 		const Vector2D badLogStart=minimapPos[1]+m_badLogInfo->GetOperateUnit()->getPos()*twoMinimapRate;
@@ -304,6 +329,8 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 {
 	const auto clickWorkMethod=[minimapInfo,conditionShapeFunc,minimapLayout,this](){
 		//準備
+		//ユニットの侵入可否を敵フェーズ用に設定しておく
+		this->SetUnitPenetratable(Unit::Team::e_enemy);
 		std::vector<std::shared_ptr<const Shape>> shapeList;
 		//関数の作成
 		const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const std::shared_ptr<const Shape> &conditionShape,const std::shared_ptr<const Shape> &attackedUnitShape,float rate){
@@ -427,6 +454,8 @@ void SubmissionReflectionScene::AddAreaClickWork(std::vector<ShapeClickWorkInfo>
 
 void SubmissionReflectionScene::AddSelectOneWork(){
 	const auto selectWorkMethod=[this](){
+		//ユニットの侵入可否を敵フェーズ用に設定しておく
+		this->SetUnitPenetratable(Unit::Team::e_enemy);
 		//ワークの作成
 		const float minimapWidth=(float)CommonConstParameter::mapSizeX*twoMinimapRate;
 		const float minimapHeight=(float)CommonConstParameter::mapSizeY*twoMinimapRate;
@@ -447,6 +476,8 @@ void SubmissionReflectionScene::AddMoveSimulationWork(){
 	//攻撃キャラの位置を変えてみて評価がどうなるかをシミュレーション学習してみるワーク
 	if(m_badLogInfo.has_value()){
 		const auto simulationWorkMethod=[this](){
+			//ユニットの侵入可否を味方フェーズ用に設定しておく
+			this->SetUnitPenetratable(Unit::Team::e_player);
 			//フィールドの作成
 			std::vector<BattleObject *> field;
 			for(BattleObject *obj:m_battleSceneData->m_field){

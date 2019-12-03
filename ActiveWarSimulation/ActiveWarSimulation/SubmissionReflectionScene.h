@@ -98,6 +98,7 @@ private:
 	void DrawResizedMap(int x,int y,const MinimapDrawInfo &minimapInfo,const float rate)const;//簡易拡大縮小マップを描画する
 	void InitReflectionWork();//リフレクションワークを作成する処理(描画位置の調整のための情報がこのクラス内に存在するので、WholeReflectionInfoクラスでなくこのクラス内に処理を記述する)
 	void DrawTwoMinimap()const;//2つならべて普通にミニマップを描画する
+	void SetUnitPenetratable(Unit::Team::Kind phase);//MinimapDrawInfoのPhase設定を変更する（どちら側のフェーズの時のマップを見せるか）
 	//仮想関数のオーバーライド
 	int thisCalculate();//0:直前場面に戻る 1~END-1:その場面に進む END:バトルパート終了
 	void thisDraw()const;
