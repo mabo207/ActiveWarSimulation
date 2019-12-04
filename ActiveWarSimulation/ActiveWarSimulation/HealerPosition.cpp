@@ -4,7 +4,7 @@
 #include"AttackLog.h"
 #include"WaitLog.h"
 
-SubmissionEvaluation HealerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+SubmissionEvaluation HealerPosition::InAdvanceDataEvaluate(const std::shared_ptr<InAdvanceCalculateDataBase> &,const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- —áŠOˆ—
 	//	- i‚È‚µj
 	//- •]‰¿

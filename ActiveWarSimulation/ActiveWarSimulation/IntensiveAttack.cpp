@@ -4,7 +4,7 @@
 #include"AttackLog.h"
 #include<algorithm>
 
-SubmissionEvaluation IntensiveAttack::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+SubmissionEvaluation IntensiveAttack::InAdvanceDataEvaluate(const std::shared_ptr<InAdvanceCalculateDataBase> &,const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- —áŠOˆ—
 	//	- UŒ‚‚µ‚È‚¢(-1)
 	//	- Œ‚”j‚Í•K‚¸Å‘å•]‰¿(4)

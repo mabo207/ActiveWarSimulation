@@ -11,7 +11,7 @@ const std::array<SubmissionEvaluation,4> ArcherAttackDistance::s_evaluate={
 	,SubmissionEvaluation::e_excellent
 };
 
-SubmissionEvaluation ArcherAttackDistance::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+SubmissionEvaluation ArcherAttackDistance::InAdvanceDataEvaluate(const std::shared_ptr<InAdvanceCalculateDataBase> &,const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- —áŠOˆ—
 	//	- UŒ‚‚µ‚È‚¢(-1)
 	//- •]‰¿

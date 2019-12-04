@@ -4,7 +4,7 @@
 #include"AttackLog.h"
 #include"WaitLog.h"
 
-SubmissionEvaluation ArmerPosition::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+SubmissionEvaluation ArmerPosition::InAdvanceDataEvaluate(const std::shared_ptr<InAdvanceCalculateDataBase> &,const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- ó·äOèàóù
 	//	- ÅiÇ»ÇµÅj
 	//- ï]âø

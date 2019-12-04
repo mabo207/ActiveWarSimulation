@@ -4,7 +4,7 @@
 #include"AttackLog.h"
 #include"WaitLog.h"
 
-SubmissionEvaluation ProtectFriend::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+SubmissionEvaluation ProtectFriend::InAdvanceDataEvaluate(const std::shared_ptr<InAdvanceCalculateDataBase> &,const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- 評価に用いるデータ
 	//	- いずれかの敵ユニットの次の行動で攻撃可能となる味方後衛ユニットの数(a)
 	//	- 操作ユニットをマップから消した時の上記のデータ(b)
