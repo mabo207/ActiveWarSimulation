@@ -74,10 +74,6 @@ protected:
 	bool JudgeAttackable(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const;//operatedUnit‚ªaimedUnit‚ğŸ‚Ìs“®‚ÅUŒ‚‚Å‚«‚é‚©‚Ç‚¤‚©”»’è‚·‚é
 	std::vector<bool> JudgeAttackableList(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const std::vector<LogElement::UnitLogData> &aimedUnitList)const;//aimedUnit‚ª•¡”‚É‚µ‚½Šg’£”Å
 	std::vector<bool> JudgeAttackableList(const std::shared_ptr<LatticeBattleField> &latticeField,const LogElement::UnitLogData operatedUnit,const std::vector<LogElement::UnitLogData> &aimedUnitList)const;//Šiq“_‚ÌN“ü‰Â”Ûî•ñ‚¾‚¯ŒÄ‚Ño‚µ‘¤‚Å©—R‚ÉŒˆ‚ß‚ç‚ê‚éBbattleData‚à“n‚·•K—v‚ª‚È‚­‚È‚éB
-	//BattleSceneData‚ğ—p‚¢‚½‚â‚Â
-	float CalculateRouteDistance(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const;//operatedUnit‚©‚çaimedUnit‚Ü‚Å‚ÌŒo˜H‹——£‚ğŒvZ‚·‚é
-	bool JudgeAttackable(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const;//operatedUnit‚ªaimedUnit‚ğŸ‚Ìs“®‚ÅUŒ‚‚Å‚«‚é‚©‚Ç‚¤‚©”»’è‚·‚é
-	std::vector<bool> JudgeAttackableList(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const std::vector<LogElement::UnitLogData> &aimedUnitList)const;//aimedUnit‚ª•¡”‚É‚µ‚½Šg’£”Å
 };
 
 #endif // !DEF_SUBMISSIONRULEBASE_H
