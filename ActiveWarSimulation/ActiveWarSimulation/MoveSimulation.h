@@ -43,6 +43,7 @@ namespace ReflectionWork{
 		//ログを作成するために必要な情報
 		const Unit *m_attackedUnit;//攻撃をされるユニット
 		const std::shared_ptr<const SubmissionRuleBase> m_rule;//サブミッション評価手法
+		std::shared_ptr<SubmissionRuleBase::InAdvanceCalculateDataBase> m_inAdvanceEvaluateData;//事前計算用のデータ
 		//グラフィック変数
 		const int m_font;
 	};
