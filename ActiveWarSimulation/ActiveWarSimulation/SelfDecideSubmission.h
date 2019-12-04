@@ -6,7 +6,6 @@
 #include<string>
 #include"SubmissionRuleBase.h"
 #include<map>
-#include"WholeReflectionInfo.h"
 
 struct BattleSceneData;
 
@@ -34,11 +33,14 @@ public:
 	void DrawWholeLookBack(int x,int y)const;
 	//ルール初期化
 	void InitRubric(const std::shared_ptr<SubmissionRuleBase> &rule);
-	//リフレクション情報を構築して取得する
-	WholeReflectionInfo GetReflectionInfo()const;
 	//ルールを取得する
 	std::shared_ptr<const SubmissionRuleBase> GetRule()const{
 		return m_rule;
+	}
+	//評価一覧を取得する
+	std::vector<std::pair<SubmissionEvaluation,std::shared_ptr<const LogElement>>> GetRubricList()const{
+		//データが大きくなりすぎることもなく頻繁にも使われないはずなので、コピーして渡す
+		return m_rubricList;
 	}
 
 	//サブミッション描画の領域の大きさ

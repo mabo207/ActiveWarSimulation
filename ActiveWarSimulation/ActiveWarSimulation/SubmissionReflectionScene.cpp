@@ -111,12 +111,28 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 	,m_predictExplainFont(CreateFontToHandleEX("メイリオ",20,2,DX_FONTTYPE_EDGE,-1,2))
 	,m_nowWork(std::shared_ptr<ReflectionWork::Base>(),std::shared_ptr<MinimapLayoutBase>())
 {
+	const auto rubricList=m_battleSceneData->m_scoreObserver->GetSubmission().GetRubricList();
+	std::pair<SubmissionEvaluation,std::shared_ptr<const LogElement>> goodLog,badLog;
+	if(!rubricList.empty()){
+		//暫定的に評価に-1を格納
+		goodLog.first=SubmissionEvaluation::e_noevaluation;
+		badLog.first=SubmissionEvaluation::e_noevaluation;
+		//探索
+		for(const std::pair<SubmissionEvaluation,std::shared_ptr<const LogElement>> &log:rubricList){
+			//評価が良いものと悪いものを探していく、-1評価は必ず更新する
+			if((goodLog.first<log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
+				goodLog=log;
+			}
+			if((badLog.first>log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
+				badLog=log;
+			}
+		}
+	}
 	//m_goodLogInfo,m_badLogInfoの初期化
-	const WholeReflectionInfo reflectionInfo=m_battleSceneData->m_scoreObserver->GetSubmission().GetReflectionInfo();
 	//射手の安全地帯についてのワークなので、敵フェーズの侵入不可範囲設定にする
 	const Unit::Team::Kind phaseSetting=Unit::Team::e_enemy;//サブミッションによってここのフェーズ設定が決められる
-	m_goodLogInfo.emplace(reflectionInfo.m_goodLog.second,phaseSetting);
-	m_badLogInfo.emplace(reflectionInfo.m_badLog.second,phaseSetting);
+	m_goodLogInfo.emplace(goodLog.second,phaseSetting);
+	m_badLogInfo.emplace(badLog.second,phaseSetting);
 	//m_workMethodListの初期化
 	InitReflectionWork();
 }
