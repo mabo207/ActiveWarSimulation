@@ -398,6 +398,7 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 	m_workMethodList.push_back(clickWorkMethod);
 	//解説ワークの作成
 	const auto explanationWorkMethod=[minimapInfo,minimapLayout,explanationComment,this](){
+		const unsigned int pointColor=GetColor(196,64,128);
 		std::vector<std::pair<std::shared_ptr<const Shape>,unsigned int>> assistList;
 		//敵の移動範囲に入っている格子点を全て補助関数に加える
 		minimapInfo[0].drawInfo->value().GetUnitListPtr(0);
@@ -406,7 +407,6 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 			std::shared_ptr<LatticeBattleField> lField;
 			std::vector<LatticeBattleField::LatticeDistanceInfo> dField;
 			float moveDistance;
-			const unsigned int pointColor=GetColor(0,128,64);
 			//フィールドの作成
 			for(BattleObject *obj:m_battleSceneData->m_field){
 				//全ての障害物を追加

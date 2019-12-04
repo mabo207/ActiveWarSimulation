@@ -2,6 +2,7 @@
 #define DEF_ARCHERATTACKDISTANCE_H
 
 #include"SubmissionRuleBase.h"
+#include<array>
 
 class ArcherAttackDistance:public SubmissionRuleBase{
 public:
@@ -13,6 +14,8 @@ public:
 	std::string GetSubmissionExplanation()const;//サブミッションの説明文を返す
 	bool JudgeEvaluateOrder(const BattleSceneData * const battleData)const;//評価を行うかどうか
 	std::string GetReason(SubmissionEvaluation rubric)const;//ルーブリック評価の理由の説明文を返す
+
+	static const std::array<SubmissionEvaluation,4> s_evaluate;//「評価なし」以外で使われる評価一覧
 };
 
 #endif // !DEF_ARCHERATTACKDISTANCE_H

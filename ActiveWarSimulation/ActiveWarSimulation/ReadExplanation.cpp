@@ -16,6 +16,6 @@ void ReflectionWork::ReadExplanation::WorkDraw()const{
 	m_beforeWork->WorkDraw();
 	//}Œ`ˆê——‚ğ•`‰æ
 	for(const std::pair<std::shared_ptr<const Shape>,unsigned int> &info:m_assistShapeList){
-		info.first->Draw(Vector2D(),info.second,FALSE,2.0f);
+		info.first->Draw(Vector2D(),GetColor(196,64,128),FALSE,2.0f);
 	}
 }

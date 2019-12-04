@@ -3,6 +3,14 @@
 #include"BattleSceneData.h"
 #include"AttackLog.h"
 
+//----------------ArcherAttackDistance----------------
+const std::array<SubmissionEvaluation,4> ArcherAttackDistance::s_evaluate={
+	SubmissionEvaluation::e_bad
+	,SubmissionEvaluation::e_ok
+	,SubmissionEvaluation::e_good
+	,SubmissionEvaluation::e_excellent
+};
+
 SubmissionEvaluation ArcherAttackDistance::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
 	//- —áŠOˆ—
 	//	- UŒ‚‚µ‚È‚¢(-1)
@@ -27,15 +35,15 @@ SubmissionEvaluation ArcherAttackDistance::RubricEvaluate(const std::vector<Batt
 		//•]‰¿(‚‚¢•û‚©‚ç”»’è‚µ‚Ä‚¢‚­)
 		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance() || routeDistance<0.0f){
 			//routeDistance<0.0f‚Ì‚ÍA“’BŒo˜H‚ª‘¶İ‚µ‚È‚¢‚Æ‚¢‚¤‚±‚Æ‚È‚Ì‚ÅAƒ‹[ƒg‹——£‚ª“G‚ÌˆÚ“®‹——£‚æ‚è’·‚¢‚Ì‚Æ“¯‚¶ˆµ‚¢‚É‚È‚éB
-			evaluate=SubmissionEvaluation::e_excellent;
+			evaluate=s_evaluate[3];
 		} else if(routeDistance>=attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetLength()){
-			evaluate=SubmissionEvaluation::e_good;
+			evaluate=s_evaluate[2];
 		} else if(directDistance>=attackLog->GetAimedUnit()->GetBattleStatus().weapon->GetLength()
 			|| attackLog->GetAimedUnit()->GetBattleStatus().weapon->GetLength()>=attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetLength())
 		{
-			evaluate=SubmissionEvaluation::e_ok;
+			evaluate=s_evaluate[1];
 		} else{
-			evaluate=SubmissionEvaluation::e_bad;
+			evaluate=s_evaluate[0];
 		}
 	}
 
@@ -47,16 +55,16 @@ std::string ArcherAttackDistance::GetWholeLookBack(SubmissionEvaluation mostFreq
 	if(mostFrequentEvaluate==SubmissionEvaluation::e_noevaluation){
 		//UŒ‚‚µ‚Ä‚¢‚È‚¢
 		comment="‚à‚Á‚ÆËè‚ÅUŒ‚‚µ‚Ä‚İ‚æ‚¤I";
-	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_bad){
+	} else if(mostFrequentEvaluate==s_evaluate[0]){
 		//“Gƒ†ƒjƒbƒg‚ÌUŒ‚Ë’ö“à‚©‚ç‚ÌUŒ‚
 		comment="“G‚ÌË’öŠO‚©‚çUŒ‚‚·‚é–‚ğˆÓ¯‚µ‚Ä‚İ‚é‚Æ—Ç‚¢‚æI";
-	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_ok){
+	} else if(mostFrequentEvaluate==s_evaluate[1]){
 		//ƒ‹[ƒg‹——£‚ªUŒ‚Ë’öˆÈ‰º
 		comment="‹|‚ÅUŒ‚‚·‚é‚ÍAáŠQ•¨‚â–¡•û‰z‚µ‚ÉUŒ‚‚µ‚Ä‚İ‚æ‚¤I";
-	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_good){
+	} else if(mostFrequentEvaluate==s_evaluate[2]){
 		//ƒ‹[ƒg‹——£‚ª“G‚ÌˆÚ“®‹——£ˆÈ‰º
 		comment="“G‚ªŸ‚Ìs“®‚Å‚Ç‚±‚Ü‚Ås‚¯‚é‚©‚ğl‚¦‚ÄA“G‚ÌUŒ‚‚ğó‚¯‚È‚¢‚æ‚¤‚ÈˆÊ’u‚ÅUŒ‚‚·‚é‚±‚Æ‚ğˆÓ¯‚µ‚Ä‚İ‚æ‚¤I";
-	} else if(mostFrequentEvaluate==SubmissionEvaluation::e_excellent){
+	} else if(mostFrequentEvaluate==s_evaluate[3]){
 		//‚±‚êˆÈã‚Ì•]‰¿
 		comment="Œ¾‚¤‚±‚Æ‚È‚µ‚Å‚·IáŠQ•¨‚â–¡•û‚ğ‚¤‚Ü‚­g‚Á‚ÄAˆÀ‘S‚ÈêŠ‚©‚çUŒ‚‚Å‚«‚Ä‚¢‚Ü‚·I";
 	}
@@ -80,13 +88,13 @@ std::string ArcherAttackDistance::GetReason(SubmissionEvaluation rubric)const{
 	if(rubric==SubmissionEvaluation::e_noevaluation){
 		//•`‰æ‚ğs‚í‚È‚¢
 		return "";
-	} else if(rubric==SubmissionEvaluation::e_bad){
+	} else if(rubric==s_evaluate[0]){
 		return "“G‚ª‚»‚Ìê‚ÅUŒ‚‚Å‚«‚é‚­‚ç‚¢‚É‹ß‚­‚ÅUŒ‚‚µ‚¿‚á‚Á‚Ä‚é‚æI";
-	} else if(rubric==SubmissionEvaluation::e_ok){
+	} else if(rubric==s_evaluate[1]){
 		return "áŠQ•¨‚ªü‚è‚É‚È‚¢‚©‚çUŒ‚‚µ‚½“G‚Ì”½Œ‚‚É‡‚¢‚â‚·‚»‚¤‚¶‚á‚È‚¢H";
-	} else if(rubric==SubmissionEvaluation::e_good){
+	} else if(rubric==s_evaluate[2]){
 		return "áŠQ•¨‰z‚µ‚ÉUŒ‚‚Å‚«‚Ä‚é‚¯‚ÇAˆÄŠO“G‚Í‰ñ‚è‚ñ‚ÅUŒ‚‚Å‚«‚»‚¤B";
-	} else if(rubric==SubmissionEvaluation::e_excellent){
+	} else if(rubric==s_evaluate[3]){
 		return "ˆÀ‘S’n‘Ñ‚©‚ç‚ÌUŒ‚A‚Æ‚Á‚Ä‚à—Ç‚¢Š´‚¶II";
 	}
 	return "";
