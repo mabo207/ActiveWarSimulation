@@ -17,6 +17,18 @@ class SubmissionRuleBase{
 public:
 	struct InAdvanceCalculateDataBase{
 		//事前計算した結果を格納するクラス、継承して用いる
+		virtual ~InAdvanceCalculateDataBase()=default;
+	};
+	struct InAdvanceRouteData:public InAdvanceCalculateDataBase{
+		//ルート計算について、事前計算できる内容
+		InAdvanceRouteData(const std::shared_ptr<LatticeBattleField> &latticeField
+			,const std::vector<LatticeBattleField::LatticeDistanceInfo> &distanceInfoVec)
+			:InAdvanceCalculateDataBase()
+			,m_latticeField(latticeField)
+			,m_distanceInfoVec(distanceInfoVec)
+		{}
+		std::shared_ptr<LatticeBattleField> m_latticeField;//格子点データ
+		std::vector<LatticeBattleField::LatticeDistanceInfo> m_distanceInfoVec;//距離マップ
 	};
 
 	virtual ~SubmissionRuleBase()=default;
@@ -57,6 +69,8 @@ protected:
 	SubmissionRuleBase()=default;
 	//よく評価に用いられる情報を計算する関数、Unit *でなくUnitLogDataを用いて計算をしないといけない
 	float CalculateRouteDistance(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const;//operatedUnitからaimedUnitまでの経路距離を計算する
+	float CalculateRouteDistance(const std::shared_ptr<InAdvanceRouteData> &inAdvanceData,const LogElement::UnitLogData operatedUnit)const;//operatedUnitからaimedUnitまでの経路距離を計算する(事前データ使用)
+	std::shared_ptr<InAdvanceRouteData> CalculateInAdvanceRouteData(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const;
 	bool JudgeAttackable(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const;//operatedUnitがaimedUnitを次の行動で攻撃できるかどうか判定する
 	std::vector<bool> JudgeAttackableList(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const std::vector<LogElement::UnitLogData> &aimedUnitList)const;//aimedUnitが複数にした拡張版
 	std::vector<bool> JudgeAttackableList(const std::shared_ptr<LatticeBattleField> &latticeField,const LogElement::UnitLogData operatedUnit,const std::vector<LogElement::UnitLogData> &aimedUnitList)const;//格子点の侵入可否情報だけ呼び出し側で自由に決められる。battleDataも渡す必要がなくなる。
