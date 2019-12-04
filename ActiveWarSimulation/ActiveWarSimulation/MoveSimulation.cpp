@@ -28,6 +28,8 @@ ReflectionWork::MoveSimulation::MoveSimulation(const std::vector<BattleObject *>
 {
 	//m_operateUnitの図形状態をdynamicにする
 	m_operateUnit->SetFix(Shape::Fix::e_dynamic);
+	//評価の事前計算データを作成する
+	m_inAdvanceEvaluateData=m_rule->CalculateInAdvanceData(m_field,m_stageSize,CreateLog());
 }
 
 ReflectionWork::MoveSimulation::~MoveSimulation(){}
@@ -37,7 +39,7 @@ void ReflectionWork::MoveSimulation::Update(){
 	const Vector2D mouseMapPosition=(GetMousePointVector2D()-m_startPos)/m_mapRate;
 	UpdateOperateUnitPosition(mouseMapPosition-m_operateUnit->getPos());
 	//評価の更新
-	m_evaluate=m_rule->RubricEvaluate(m_field,m_stageSize,CreateLog());
+	m_evaluate=m_rule->InAdvanceDataEvaluate(m_inAdvanceEvaluateData,m_field,m_stageSize,CreateLog());
 	//終了更新
 	if(mouse_get(MOUSE_INPUT_LEFT)==1 || keyboard_get(KEY_INPUT_Z)==1){
 		//決定ボタンをクリックしていて

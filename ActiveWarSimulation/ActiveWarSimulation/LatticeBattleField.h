@@ -44,6 +44,7 @@ public:
 	Vector2D CalculateLatticePointPos(size_t x,size_t y)const;
 	Vector2D CalculateLatticePointPos(size_t index)const;
 	std::vector<float> CalculateRouteDistance(const Vector2D start,const std::vector<Vector2D> &endVec)const;//格子点情報を用いた迂回を考慮した経路距離を返す。距離マップを何回も作らないで済むように、目標地点をまとめて渡す。
+	std::vector<float> CalculateRouteDistance(const std::vector<LatticeDistanceInfo> &distanceInfoVec,const std::vector<Vector2D> &endVec)const;//距離マップが既に作成されている時の経路距離計算。
 
 	const static size_t latticeIntervalSize;//格子点は正方形状に並んでいるので、その大きさ
 

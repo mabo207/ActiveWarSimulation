@@ -11,7 +11,29 @@ const std::array<SubmissionEvaluation,4> ArcherAttackDistance::s_evaluate={
 	,SubmissionEvaluation::e_excellent
 };
 
-SubmissionEvaluation ArcherAttackDistance::RubricEvaluate(const std::vector<BattleObject *> &field,const Vector2D stageSize,const std::shared_ptr<const LogElement> &evaluateLog)const{
+std::shared_ptr<SubmissionRuleBase::InAdvanceCalculateDataBase> ArcherAttackDistance::CalculateInAdvanceData(
+	const std::vector<BattleObject *> &field
+	,const Vector2D stageSize
+	,const std::shared_ptr<const LogElement> &evaluateLog)const
+{
+	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(evaluateLog);
+	if(!attackLog){
+		//ログがAttackLogでない場合は意味のないデータを返す
+		return std::shared_ptr<InAdvanceCalculateDataBase>();
+	} else{
+		//被弾ユニット→行動ユニットへのルートについての事前データを返す
+		const LogElement::UnitLogData operatedUnit=attackLog->GetOperateUnitData();
+		const LogElement::UnitLogData aimedUnit=attackLog->GetAimedUnitData();
+		return CalculateInAdvanceRouteData(field,stageSize,attackLog->m_unitDataList,operatedUnit,aimedUnit);
+	}
+}
+
+SubmissionEvaluation ArcherAttackDistance::InAdvanceDataEvaluate(
+	const std::shared_ptr<InAdvanceCalculateDataBase> &inAdvanceData
+	,const std::vector<BattleObject *> &field
+	,const Vector2D stageSize
+	,const std::shared_ptr<const LogElement> &evaluateLog)const
+{
 	//- 例外処理
 	//	- 攻撃しない(-1)
 	//- 評価
@@ -20,18 +42,18 @@ SubmissionEvaluation ArcherAttackDistance::RubricEvaluate(const std::vector<Batt
 	//	2. ルート距離が、敵の移動距離以下
 	//	3. 2以上の評価
 	const std::shared_ptr<const AttackLog> attackLog=std::dynamic_pointer_cast<const AttackLog>(evaluateLog);
+	const std::shared_ptr<InAdvanceRouteData> routeData=std::dynamic_pointer_cast<InAdvanceRouteData>(inAdvanceData);
 	SubmissionEvaluation evaluate;
-	if(!attackLog){
+	if(!attackLog || !routeData){
 		//ログがAttackLogでない場合は「攻撃をしなかった」と判断できる
 		evaluate=SubmissionEvaluation::e_noevaluation;
 	} else{
 		//距離に関する評価をする
 		//直線距離を求める
 		const float directDistance=(attackLog->GetOperateUnitData().pos-attackLog->GetAimedUnitData().pos).size();
-		//被弾ユニット→行動ユニットへのルート距離を求める
-		const LogElement::UnitLogData operatedUnit=attackLog->GetOperateUnitData();
-		const LogElement::UnitLogData aimedUnit=attackLog->GetAimedUnitData();
-		const float routeDistance=CalculateRouteDistance(field,stageSize,attackLog->m_unitDataList,operatedUnit,aimedUnit);
+		//事前データを用いて被弾ユニット→行動ユニットへのルート距離を求める
+		const LogElement::UnitLogData operateUnit=attackLog->GetOperateUnitData();
+		const float routeDistance=CalculateRouteDistance(routeData,operateUnit);
 		//評価(高い方から判定していく)
 		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance() || routeDistance<0.0f){
 			//routeDistance<0.0fの時は、到達経路が存在しないということなので、ルート距離が敵の移動距離より長いのと同じ扱いになる。

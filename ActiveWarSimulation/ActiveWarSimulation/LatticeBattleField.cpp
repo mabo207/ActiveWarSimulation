@@ -143,6 +143,11 @@ std::vector<float> LatticeBattleField::CalculateRouteDistance(const Vector2D sta
 	std::vector<LatticeDistanceInfo> distanceInfoVec;
 	CalculateLatticeDistanceInfo(distanceInfoVec,start);
 	//各格子点に対して距離を求める
+	return CalculateRouteDistance(distanceInfoVec,endVec);
+}
+
+std::vector<float> LatticeBattleField::CalculateRouteDistance(const std::vector<LatticeDistanceInfo> &distanceInfoVec,const std::vector<Vector2D> &endVec)const{
+	//距離マップを元に各格子点に対して距離を求める
 	std::vector<float> retPal;
 	const auto CalcMinDistance=[&distanceInfoVec,this](size_t x,size_t y,float minDistance){
 		//(x,y)の格子点までの距離と引数minDistanceを比較し、短い方を返す

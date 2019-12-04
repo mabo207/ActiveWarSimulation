@@ -8,24 +8,19 @@ SubmissionEvaluation SubmissionRuleBase::RubricEvaluate(const BattleSceneData * 
 	return RubricEvaluate(battleData->m_field,battleData->m_stageSize,battleData->m_scoreObserver->GetLatestLog());
 }
 
-float SubmissionRuleBase::CalculateRouteDistance(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const{
-	//格子点の侵入可否情報の計算、ユニットは情報に影響を与えない設定なので、battleData->m_operatedUnitは誰でも問題ない
-	std::shared_ptr<LatticeBattleField> latticeField=battleData->CalculateLatticeBattleField(false);
-	for(const LogElement::UnitLogData &logData:unitDataList){
-		//ログの位置データをもとに、ユニットによる格子点侵入不可情報を追加(被弾ユニットが動く事を想定している)
-		if(logData.punit!=operatedUnit.punit && logData.punit!=aimedUnit.punit){
-			Unit virtualUnit=*logData.punit;
-			virtualUnit.Warp(logData.pos);
-			latticeField->BecomeImpassibleLattice(&virtualUnit,aimedUnit.punit->GetBattleStatus().team);
-		}
-	}
-	//距離計算。CalculateRouteDistance()は、第２引数の座標それぞれに対してそこまでの経路距離を返す関数。ここでは1点のみ分かれば良い。
-	const std::vector<float> distVec=latticeField->CalculateRouteDistance(aimedUnit.pos,{operatedUnit.pos});
+float SubmissionRuleBase::CalculateRouteDistance(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const{
+	//事前データ計算と事前データ利用計算の組み合わせ
+	return CalculateRouteDistance(CalculateInAdvanceRouteData(field,mapSize,unitDataList,operatedUnit,aimedUnit),operatedUnit);
+}
+
+float SubmissionRuleBase::CalculateRouteDistance(const std::shared_ptr<InAdvanceRouteData> &inAdvanceData,const LogElement::UnitLogData operatedUnit)const{
+	//格子点データと距離マップが既に作成されているので、距離計算だけすればよい
+	const std::vector<float> distVec=inAdvanceData->m_latticeField->CalculateRouteDistance(inAdvanceData->m_distanceInfoVec,{operatedUnit.pos});
 	const float routeDistance=distVec.front();//要素は1つだけなので、先頭要素を取り出せば良い。
 	return routeDistance;
 }
 
-float SubmissionRuleBase::CalculateRouteDistance(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const{
+std::shared_ptr<SubmissionRuleBase::InAdvanceRouteData> SubmissionRuleBase::CalculateInAdvanceRouteData(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const{
 	//格子点の侵入可否情報の計算、ユニットは情報に影響を与えない設定なので、battleData->m_operatedUnitは誰でも問題ない
 	std::shared_ptr<LatticeBattleField> latticeField=LatticeBattleField::Create(field,mapSize,operatedUnit.punit,false);
 	for(const LogElement::UnitLogData &logData:unitDataList){
@@ -36,20 +31,11 @@ float SubmissionRuleBase::CalculateRouteDistance(const std::vector<BattleObject 
 			latticeField->BecomeImpassibleLattice(&virtualUnit,aimedUnit.punit->GetBattleStatus().team);
 		}
 	}
-	//距離計算。CalculateRouteDistance()は、第２引数の座標それぞれに対してそこまでの経路距離を返す関数。ここでは1点のみ分かれば良い。
-	const std::vector<float> distVec=latticeField->CalculateRouteDistance(aimedUnit.pos,{operatedUnit.pos});
-	const float routeDistance=distVec.front();//要素は1つだけなので、先頭要素を取り出せば良い。
-	return routeDistance;
-}
-
-bool SubmissionRuleBase::JudgeAttackable(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const{
-	std::vector<bool> judgeList=JudgeAttackableList(battleData,unitDataList,operatedUnit,{aimedUnit});
-	if(judgeList.empty()){
-		//一応例外処理
-		return false;
-	} else{
-		return judgeList.front();
-	}
+	//距離マップ計算。CalculateRouteDistance()は、第２引数の座標それぞれに対してそこまでの経路距離を返す関数。ここでは1点のみ分かれば良い。
+	std::vector<LatticeBattleField::LatticeDistanceInfo> distanceInfoVec;
+	latticeField->CalculateLatticeDistanceInfo(distanceInfoVec,aimedUnit.pos);
+	//インスタンス作成して返す
+	return std::shared_ptr<InAdvanceRouteData>(new InAdvanceRouteData(latticeField,distanceInfoVec));
 }
 
 bool SubmissionRuleBase::JudgeAttackable(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const{
@@ -60,21 +46,6 @@ bool SubmissionRuleBase::JudgeAttackable(const std::vector<BattleObject *> &fiel
 	} else{
 		return judgeList.front();
 	}
-}
-
-std::vector<bool> SubmissionRuleBase::JudgeAttackableList(const BattleSceneData * const battleData,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const std::vector<LogElement::UnitLogData> &aimedUnitList)const{
-	//格子点の侵入可否情報の計算、ユニットは情報に影響を与えない設定なので、battleData->m_operatedUnitは誰でも問題ない
-	std::shared_ptr<LatticeBattleField> latticeField=battleData->CalculateLatticeBattleField(false);
-	for(const LogElement::UnitLogData &logData:unitDataList){
-		//ユニットによる格子点侵入不可情報を追加
-		if(logData.punit!=operatedUnit.punit){
-			Unit virtualUnit=*logData.punit;
-			virtualUnit.Warp(logData.pos);
-			latticeField->BecomeImpassibleLattice(&virtualUnit,operatedUnit.punit->GetBattleStatus().team);
-		}
-	}
-	//分離したやつで計算
-	return JudgeAttackableList(latticeField,operatedUnit,aimedUnitList);
 }
 
 std::vector<bool> SubmissionRuleBase::JudgeAttackableList(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const std::vector<LogElement::UnitLogData> &aimedUnitList)const{
