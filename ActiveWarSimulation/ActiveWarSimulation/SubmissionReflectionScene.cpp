@@ -304,9 +304,14 @@ void SubmissionReflectionScene::InitReflectionWork(){
 	const auto twoMinimapDrawFunc=[this](){
 		DrawTwoMinimap();
 	};
-	const auto oneMinimapDrawFunc=[this](){
+	const auto onlyBadMinimapDrawFunc=[this](){
 		if(m_badLogInfo.has_value()){
 			DrawResizedMap(minimapX[0],minimapY[0],m_badLogInfo.value(),oneMinimapRate);
+		}
+	};
+	const auto onlyGoodMinimapDrawFunc=[this](){
+		if(m_goodLogInfo.has_value()){
+			DrawResizedMap(minimapX[0],minimapY[0],m_goodLogInfo.value(),oneMinimapRate);
 		}
 	};
 	std::shared_ptr<MinimapLayoutBase> rightMinimapToLeftMiddleMapLayout;//右から左に拡大していくマップレイアウト情報
@@ -347,17 +352,33 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		}
 	}
 	//ワーク一覧の作成
-	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_goodLogInfo,minimapPos[0],twoMinimapRate),ShapeClickWorkInfo(&m_badLogInfo,minimapPos[1],twoMinimapRate)}
-		,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(twoMinimapDrawFunc))
-		,Unit::Team::e_enemy
-		,"今回のバトルで、射手が攻撃をした２つの場面を取り出してみた。\n攻撃相手からの反撃が予想されるが、射手の近くまで進むのを\n邪魔してくれている障害物やキャラクターをクリックしてみよう。"
-		,firstExplanation);
-	AddMoveSimulationWork(rightMinimapToLeftMiddleMapLayout,Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
-	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_badLogInfo,minimapPos[0],oneMinimapRate)}
-		,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(oneMinimapDrawFunc))
-		,Unit::Team::e_enemy
-		,"この場所だったら、\nどのような障害物やキャラクターが攻撃相手の移動を邪魔しているだろう？"
-		,"ピンクの点で表現された敵の動く範囲を見て、\n良い攻撃位置を見つけられたか確認しよう。");
+	if(m_goodLogInfo.has_value() && m_goodLogInfo->GetEvaluate()==SubmissionEvaluation::e_excellent){
+		//goodlogがexcellentの時は、比較する価値があるので２つを比べる形式にする
+		AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_goodLogInfo,minimapPos[0],twoMinimapRate),ShapeClickWorkInfo(&m_badLogInfo,minimapPos[1],twoMinimapRate)}
+			,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(twoMinimapDrawFunc))
+			,Unit::Team::e_enemy
+			,"今回のバトルで、射手が攻撃をした２つの場面を取り出してみた。\nそれぞれ比較しながら、攻撃相手が射手に接近するのを\n邪魔してくれている障害物やキャラクターをクリックしてみよう。"
+			,firstExplanation);
+		AddMoveSimulationWork(rightMinimapToLeftMiddleMapLayout,Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
+		AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_badLogInfo,minimapPos[0],oneMinimapRate)}
+			,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(onlyBadMinimapDrawFunc))
+			,Unit::Team::e_enemy
+			,"この場所だったら、\nどのような障害物やキャラクターが攻撃相手の移動を邪魔しているだろう？"
+			,"ピンクの点で表現された敵の動く範囲を見て、\n良い攻撃位置を見つけられたか確認しよう。");
+	} else{
+		//そうでない場合は、goodlogをより良くすることを考えさせるために１場面だけ切り出す
+		AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_goodLogInfo,minimapPos[0],oneMinimapRate)}
+			,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(onlyGoodMinimapDrawFunc))
+			,Unit::Team::e_enemy
+			,"今回のバトルで、射手が攻撃をした場面を取り出してみた。\n攻撃相手からの反撃が予想されるが、射手の近くまで進むのを\n邪魔してくれている障害物やキャラクターをクリックしてみよう。"
+			,firstExplanation);
+		AddMoveSimulationWork(std::shared_ptr<MinimapLayoutBase>(new NormalDraw(onlyBadMinimapDrawFunc)),Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
+		AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_goodLogInfo,minimapPos[0],oneMinimapRate)}
+			,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(onlyGoodMinimapDrawFunc))
+			,Unit::Team::e_enemy
+			,"この場所だったら、\nどのような障害物やキャラクターが攻撃相手の移動を邪魔しているだろう？"
+			,"ピンクの点で表現された敵の動く範囲を見て、\n良い攻撃位置を見つけられたか確認しよう。");
+	}
 	//ワーク設定
 	m_nextWorkMethod=m_workMethodList.begin();
 	m_nowWork=(*m_nextWorkMethod)();
@@ -460,7 +481,6 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 		const unsigned int pointColor=GetColor(196,64,128);
 		std::vector<std::pair<std::shared_ptr<const Shape>,unsigned int>> assistList;
 		//敵の移動範囲に入っている格子点を全て補助関数に加える
-		minimapInfo[0].drawInfo->value().GetUnitListPtr(0);
 		for(const ShapeClickWorkInfo &mapinfo:minimapInfo){
 			std::vector<BattleObject *> field;
 			std::shared_ptr<LatticeBattleField> lField;
