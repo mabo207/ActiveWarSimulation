@@ -22,6 +22,8 @@
 #include"MyPolygon.h"
 #include"Circle.h"
 #include<cmath>
+//ルール一覧
+#include"ArcherAttackDistance.h"
 
 namespace {
 	const int lineWidth=5;
@@ -33,8 +35,10 @@ namespace {
 	const int minimapY[2]={(int)minimapPos[0].y,(int)minimapPos[1].y};
 }
 //---------------SubmissionReflectionScene::MinimapDrawInfo-----------------
-SubmissionReflectionScene::MinimapDrawInfo::MinimapDrawInfo(const std::shared_ptr<const LogElement> &log,Unit::Team::Kind phase)
-	:pOperateUnit(nullptr),pAttackedUnit(nullptr)
+SubmissionReflectionScene::MinimapDrawInfo::MinimapDrawInfo(const std::shared_ptr<const LogElement> &log
+	,SubmissionEvaluation i_evaluate
+	,Unit::Team::Kind phase)
+	:evaluate(i_evaluate),pOperateUnit(nullptr),pAttackedUnit(nullptr)
 {
 	if(log){
 		//logの有効性判定
@@ -111,12 +115,29 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 	,m_predictExplainFont(CreateFontToHandleEX("メイリオ",20,2,DX_FONTTYPE_EDGE,-1,2))
 	,m_nowWork(std::shared_ptr<ReflectionWork::Base>(),std::shared_ptr<MinimapLayoutBase>())
 {
+	//良い時と悪い時のログを選択する
+	const auto rubricList=m_battleSceneData->m_scoreObserver->GetSubmission().GetRubricList();
+	std::pair<SubmissionEvaluation,std::shared_ptr<const LogElement>> goodLog,badLog;
+	if(!rubricList.empty()){
+		//暫定的に評価にe_noevaaluationを格納
+		goodLog.first=SubmissionEvaluation::e_noevaluation;
+		badLog.first=SubmissionEvaluation::e_noevaluation;
+		//探索
+		for(const std::pair<SubmissionEvaluation,std::shared_ptr<const LogElement>> &log:rubricList){
+			//評価が良いものと悪いものを探していく、-1評価は必ず更新する
+			if((goodLog.first<log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
+				goodLog=log;
+			}
+			if((badLog.first>log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
+				badLog=log;
+			}
+		}
+	}
 	//m_goodLogInfo,m_badLogInfoの初期化
-	const WholeReflectionInfo reflectionInfo=m_battleSceneData->m_scoreObserver->GetSubmission().GetReflectionInfo();
 	//射手の安全地帯についてのワークなので、敵フェーズの侵入不可範囲設定にする
 	const Unit::Team::Kind phaseSetting=Unit::Team::e_enemy;//サブミッションによってここのフェーズ設定が決められる
-	m_goodLogInfo.emplace(reflectionInfo.m_goodLog.second,phaseSetting);
-	m_badLogInfo.emplace(reflectionInfo.m_badLog.second,phaseSetting);
+	m_goodLogInfo.emplace(goodLog.second,goodLog.first,phaseSetting);
+	m_badLogInfo.emplace(badLog.second,badLog.first,phaseSetting);
 	//m_workMethodListの初期化
 	InitReflectionWork();
 }
@@ -279,6 +300,28 @@ void SubmissionReflectionScene::ReturnProcess(){
 }
 
 void SubmissionReflectionScene::InitReflectionWork(){
+	//ワークの説明文の初期化
+	std::string firstExplanation;//最高評価の次の評価になるためのアドバイスにする
+	if(m_goodLogInfo.has_value() && m_badLogInfo.has_value()){
+		const SubmissionEvaluation goodEvaluate=m_goodLogInfo->GetEvaluate();
+		const SubmissionEvaluation badEvaluate=m_badLogInfo->GetEvaluate();
+		if(goodEvaluate==ArcherAttackDistance::s_evaluate[0]){
+			//okになるためには、距離を取れるようになる必要がある
+			firstExplanation="ピンクの点で表現された敵の動く範囲を見てみると、\n敵との距離が近く、敵の動ける範囲に射手が入ってしまっている。\nまずは、攻撃相手から離れた所から攻撃するのを意識しよう。";
+		} else if(goodEvaluate==ArcherAttackDistance::s_evaluate[1]){
+			//goodになるためには、障害物越しに攻撃できるようになる必要がある
+			firstExplanation="ピンクの点で表現された敵の動く範囲を見てみると、\n障害物がなく、敵の動ける範囲に射手が入ってしまっている。\n障害物越しの攻撃だと敵がこちらに向かいづらいはずだ。";
+		} else if(goodEvaluate==ArcherAttackDistance::s_evaluate[2]){
+			//excellentになるためには、障害物の隙間がない場所から攻撃できるようになる必要がある
+			firstExplanation="ピンクの点で表現された敵の動く範囲を見てみると、\n大きく空いている隙間を縫って射手に近づいてくる事がわかる。\n障害物が広がっている場所を探して攻撃してみよう。";
+		} else if(badEvaluate!=ArcherAttackDistance::s_evaluate[3]){
+			//全ての行動がexcellentでない場合は、比較を促す
+			firstExplanation="左右のマップのピンクの点で表現された敵の動く範囲を見てみると、\nキャラの配置や戦う場所によって\n敵の動ける範囲が大きく変わるのが分かる。";
+		} else{
+			//全ての行動がexcellentの場合、言うことなしと褒める
+			firstExplanation="左右のマップのピンクの点で表現された敵の動く範囲を見てみると、\n攻撃相手の接近を防げているのがわかります。\n防げてる時の配置の特徴を確認してみよう。";
+		}
+	}
 	//ワーク一覧の作成
 	const auto twoMinimapDrawFunc=[this](){
 		DrawTwoMinimap();
@@ -292,7 +335,7 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(twoMinimapDrawFunc))
 		,Unit::Team::e_enemy
 		,"今回のバトルで、射手が攻撃をした２つの場面を取り出してみた。\n攻撃相手からの反撃が予想されるが、射手の近くまで進むのを\n邪魔してくれている障害物やキャラクターをクリックしてみよう。"
-		,"ピンクの点で表現された敵の動く範囲を見てみると、\n大きく空いている隙間を縫って射手に近づいてくる事がわかる。");
+		,firstExplanation);
 	AddMoveSimulationWork(Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
 	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_badLogInfo,minimapPos[0],oneMinimapRate)}
 		,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(oneMinimapDrawFunc))
@@ -425,7 +468,7 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 			//距離マップの作成
 			lField->CalculateLatticeDistanceInfo(dField,mapinfo.drawInfo->value().GetAttackedUnit()->getPos());
 			//格子点の追加
-			moveDistance=mapinfo.drawInfo->value().GetOperateUnit()->GetMaxMoveDistance();
+			moveDistance=mapinfo.drawInfo->value().GetAttackedUnit()->GetMaxMoveDistance();
 			for(const LatticeBattleField::LatticeDistanceInfo &info:dField){
 				if(info.dist<moveDistance){
 					const Vector2D pos=lField->CalculateLatticePointPos(info.index)*mapinfo.rate+mapinfo.startPos;

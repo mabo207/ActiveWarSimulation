@@ -149,23 +149,3 @@ void SelfDecideSubmission::DrawWholeLookBack(int x,int y)const{
 void SelfDecideSubmission::InitRubric(const std::shared_ptr<SubmissionRuleBase> &rule){
 	m_rule=rule;
 }
-
-WholeReflectionInfo SelfDecideSubmission::GetReflectionInfo()const{
-	std::pair<SubmissionEvaluation,std::shared_ptr<const LogElement>> goodLog,badLog;
-	if(!m_rubricList.empty()){
-		//b’è“I‚É•]‰¿‚É-1‚ğŠi”[
-		goodLog.first=SubmissionEvaluation::e_noevaluation;
-		badLog.first=SubmissionEvaluation::e_noevaluation;
-		//’Tõ
-		for(const std::pair<SubmissionEvaluation,std::shared_ptr<const LogElement>> &log:m_rubricList){
-			//•]‰¿‚ª—Ç‚¢‚à‚Ì‚Æˆ«‚¢‚à‚Ì‚ğ’T‚µ‚Ä‚¢‚­A-1•]‰¿‚Í•K‚¸XV‚·‚é
-			if((goodLog.first<log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
-				goodLog=log;
-			}
-			if((badLog.first>log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
-				badLog=log;
-			}
-		}
-	}
-	return WholeReflectionInfo(goodLog,badLog);
-}

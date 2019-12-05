@@ -18,13 +18,16 @@ private:
 	//ミニマップ描画のために必要な情報
 	struct MinimapDrawInfo{
 		//ミニマップ描画に必要な情報群
-		MinimapDrawInfo(const std::shared_ptr<const LogElement> &log,Unit::Team::Kind phase);
+		MinimapDrawInfo(const std::shared_ptr<const LogElement> &log
+			,SubmissionEvaluation i_evaluate
+			,Unit::Team::Kind phase);
 		~MinimapDrawInfo();
 		//素朴なgetter
 		const std::vector<Unit>& GetUnitList()const{ return unitList; }//unitListのgetter
 		const std::vector<RouteInfo>& GetRoute()const{ return route; }
 		Unit *GetOperateUnit()const{ return pOperateUnit; }
 		Unit *GetAttackedUnit()const{ return pAttackedUnit; }
+		SubmissionEvaluation GetEvaluate()const{ return evaluate; }
 		//unitListの要素へのアドレスについてのgetter
 		Unit *GetUnitListPtr(size_t index){
 			return &unitList[index];
@@ -36,6 +39,8 @@ private:
 		//unitListの中身のどれかを指すポインタ
 		Unit *pOperateUnit;
 		Unit *pAttackedUnit;//nullptrならアクション情報の描画を行わない
+		//その他の情報
+		SubmissionEvaluation evaluate;//参照したログの評価
 	};
 	//ミニマップの描画の仕方を記録するための構造体
 	class MinimapLayoutBase{
