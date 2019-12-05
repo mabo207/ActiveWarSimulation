@@ -359,7 +359,7 @@ void SubmissionReflectionScene::InitReflectionWork(){
 			,Unit::Team::e_enemy
 			,"今回のバトルで、射手が攻撃をした２つの場面を取り出してみた。\nそれぞれ比較しながら、攻撃相手が射手に接近するのを\n邪魔してくれている障害物やキャラクターをクリックしてみよう。"
 			,firstExplanation);
-		AddMoveSimulationWork(rightMinimapToLeftMiddleMapLayout,Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
+		AddMoveSimulationWork(false,rightMinimapToLeftMiddleMapLayout,Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
 		AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_badLogInfo,minimapPos[0],oneMinimapRate)}
 			,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(onlyBadMinimapDrawFunc))
 			,Unit::Team::e_enemy
@@ -372,7 +372,7 @@ void SubmissionReflectionScene::InitReflectionWork(){
 			,Unit::Team::e_enemy
 			,"今回のバトルで、射手が攻撃をした場面を取り出してみた。\n攻撃相手からの反撃が予想されるが、射手の近くまで進むのを\n邪魔してくれている障害物やキャラクターをクリックしてみよう。"
 			,firstExplanation);
-		AddMoveSimulationWork(std::shared_ptr<MinimapLayoutBase>(new NormalDraw(onlyBadMinimapDrawFunc)),Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
+		AddMoveSimulationWork(true,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(onlyGoodMinimapDrawFunc)),Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
 		AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_goodLogInfo,minimapPos[0],oneMinimapRate)}
 			,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(onlyGoodMinimapDrawFunc))
 			,Unit::Team::e_enemy
@@ -573,13 +573,16 @@ void SubmissionReflectionScene::AddSelectOneWork(Unit::Team::Kind phase,const st
 	m_workMethodList.push_back(selectWorkMethod);
 }
 
-void SubmissionReflectionScene::AddMoveSimulationWork(const std::shared_ptr<MinimapLayoutBase> minimapLayout
+void SubmissionReflectionScene::AddMoveSimulationWork(bool simulationGood
+	,const std::shared_ptr<MinimapLayoutBase> minimapLayout
 	,Unit::Team::Kind phase
 	,const std::string question)
 {
 	//攻撃キャラの位置を変えてみて評価がどうなるかをシミュレーション学習してみるワーク
-	if(m_badLogInfo.has_value()){
-		const auto simulationWorkMethod=[this,phase,question,minimapLayout](){
+	if((simulationGood && m_goodLogInfo.has_value()) || (!simulationGood && m_badLogInfo.has_value())){
+		const auto simulationWorkMethod=[this,phase,question,minimapLayout,simulationGood](){
+			//シミュレーションするログを決定
+			std::optional<MinimapDrawInfo> &drawInfo=simulationGood?this->m_goodLogInfo:this->m_badLogInfo;
 			//ユニットの侵入可否を味方フェーズ用に設定しておく
 			this->SetUnitPenetratable(phase);
 			//フィールドの作成
@@ -590,15 +593,15 @@ void SubmissionReflectionScene::AddMoveSimulationWork(const std::shared_ptr<Mini
 					field.push_back(obj);
 				}
 			}
-			for(size_t i=0;i<m_badLogInfo->GetUnitList().size();i++){
-				field.push_back(m_badLogInfo->GetUnitListPtr(i));
+			for(size_t i=0;i<drawInfo->GetUnitList().size();i++){
+				field.push_back(drawInfo->GetUnitListPtr(i));
 			}
 			//ワークの設定
 			const std::shared_ptr<ReflectionWork::Base> work=std::shared_ptr<ReflectionWork::Base>(new
 				ReflectionWork::MoveSimulation(field
-					,m_badLogInfo->GetOperateUnit()
+					,drawInfo->GetOperateUnit()
 					,m_battleSceneData->m_stageSize
-					,m_badLogInfo->GetAttackedUnit()
+					,drawInfo->GetAttackedUnit()
 					,minimapPos[0]
 					,oneMinimapRate
 					,m_battleSceneData->m_scoreObserver->GetSubmission().GetRule()

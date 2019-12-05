@@ -128,7 +128,8 @@ private:
 		,const std::string question
 		,const std::string explanationComment);
 	void AddSelectOneWork(Unit::Team::Kind phase,const std::string question);
-	void AddMoveSimulationWork(const std::shared_ptr<MinimapLayoutBase> minimapLayout
+	void AddMoveSimulationWork(bool simulationGood
+		,const std::shared_ptr<MinimapLayoutBase> minimapLayout
 		,Unit::Team::Kind phase
 		,const std::string question);
 
