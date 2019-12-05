@@ -55,7 +55,7 @@ SubmissionEvaluation ArcherAttackDistance::InAdvanceDataEvaluate(
 		const LogElement::UnitLogData operateUnit=attackLog->GetOperateUnitData();
 		const float routeDistance=CalculateRouteDistance(routeData,operateUnit);
 		//評価(高い方から判定していく)
-		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance() || routeDistance<0.0f){
+		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance()+attackLog->GetAimedUnit()->GetBattleStatus().weapon->GetLength() || routeDistance<0.0f){
 			//routeDistance<0.0fの時は、到達経路が存在しないということなので、ルート距離が敵の移動距離より長いのと同じ扱いになる。
 			evaluate=s_evaluate[3];
 		} else if(routeDistance>=attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetLength()){
