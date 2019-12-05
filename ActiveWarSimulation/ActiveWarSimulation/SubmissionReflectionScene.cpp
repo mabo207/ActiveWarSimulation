@@ -554,11 +554,6 @@ void SubmissionReflectionScene::AddMoveSimulationWork(Unit::Team::Kind phase,con
 			for(size_t i=0;i<m_badLogInfo->GetUnitList().size();i++){
 				field.push_back(m_badLogInfo->GetUnitListPtr(i));
 			}
-			//クリア後に行う処理を記述
-			const auto clearProcess=[this](){
-				//ワークを追加
-
-			};
 			//ワークの設定
 			const std::shared_ptr<ReflectionWork::Base> work=std::shared_ptr<ReflectionWork::Base>(new
 				ReflectionWork::MoveSimulation(field
