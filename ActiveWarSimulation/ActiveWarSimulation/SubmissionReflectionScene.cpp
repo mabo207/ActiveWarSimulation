@@ -468,7 +468,7 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 			//距離マップの作成
 			lField->CalculateLatticeDistanceInfo(dField,mapinfo.drawInfo->value().GetAttackedUnit()->getPos());
 			//格子点の追加
-			moveDistance=mapinfo.drawInfo->value().GetOperateUnit()->GetMaxMoveDistance();
+			moveDistance=mapinfo.drawInfo->value().GetAttackedUnit()->GetMaxMoveDistance();
 			for(const LatticeBattleField::LatticeDistanceInfo &info:dField){
 				if(info.dist<moveDistance){
 					const Vector2D pos=lField->CalculateLatticePointPos(info.index)*mapinfo.rate+mapinfo.startPos;
