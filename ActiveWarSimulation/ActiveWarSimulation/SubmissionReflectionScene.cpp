@@ -300,6 +300,30 @@ void SubmissionReflectionScene::ReturnProcess(){
 }
 
 void SubmissionReflectionScene::InitReflectionWork(){
+	//ワーク作成に必要な情報を作成
+	const auto twoMinimapDrawFunc=[this](){
+		DrawTwoMinimap();
+	};
+	const auto oneMinimapDrawFunc=[this](){
+		if(m_badLogInfo.has_value()){
+			DrawResizedMap(minimapX[0],minimapY[0],m_badLogInfo.value(),oneMinimapRate);
+		}
+	};
+	std::shared_ptr<MinimapLayoutBase> rightMinimapToLeftMiddleMapLayout;//右から左に拡大していくマップレイアウト情報
+	{
+		const Easing::TYPE type=Easing::TYPE_OUT;
+		const Easing::FUNCTION function=Easing::FUNCTION_QUAD;
+		const double degree=4.0;
+		const int maxFrame=10;
+		const auto drawFunc=[this](int x,int y,float rate){
+			if(m_badLogInfo.has_value()){
+				DrawResizedMap(x,y,m_badLogInfo.value(),rate);
+			}
+		};
+		rightMinimapToLeftMiddleMapLayout=std::shared_ptr<MinimapLayoutBase>(new ExtendDraw(drawFunc
+			,PositionControl(minimapPos[1],minimapPos[0],maxFrame,type,function,degree)
+			,Easing((int)(CommonConstParameter::mapSizeX*twoMinimapRate),(int)(CommonConstParameter::mapSizeX*oneMinimapRate),maxFrame,type,function,degree)));
+	}
 	//ワークの説明文の初期化
 	std::string firstExplanation;//最高評価の次の評価になるためのアドバイスにする
 	if(m_goodLogInfo.has_value() && m_badLogInfo.has_value()){
@@ -323,20 +347,12 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		}
 	}
 	//ワーク一覧の作成
-	const auto twoMinimapDrawFunc=[this](){
-		DrawTwoMinimap();
-	};
-	const auto oneMinimapDrawFunc=[this](){
-		if(m_badLogInfo.has_value()){
-			DrawResizedMap(minimapX[0],minimapY[0],m_badLogInfo.value(),oneMinimapRate);
-		}
-	};
 	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_goodLogInfo,minimapPos[0],twoMinimapRate),ShapeClickWorkInfo(&m_badLogInfo,minimapPos[1],twoMinimapRate)}
 		,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(twoMinimapDrawFunc))
 		,Unit::Team::e_enemy
 		,"今回のバトルで、射手が攻撃をした２つの場面を取り出してみた。\n攻撃相手からの反撃が予想されるが、射手の近くまで進むのを\n邪魔してくれている障害物やキャラクターをクリックしてみよう。"
 		,firstExplanation);
-	AddMoveSimulationWork(Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
+	AddMoveSimulationWork(rightMinimapToLeftMiddleMapLayout,Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
 	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_badLogInfo,minimapPos[0],oneMinimapRate)}
 		,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(oneMinimapDrawFunc))
 		,Unit::Team::e_enemy
@@ -537,10 +553,13 @@ void SubmissionReflectionScene::AddSelectOneWork(Unit::Team::Kind phase,const st
 	m_workMethodList.push_back(selectWorkMethod);
 }
 
-void SubmissionReflectionScene::AddMoveSimulationWork(Unit::Team::Kind phase,const std::string question){
+void SubmissionReflectionScene::AddMoveSimulationWork(const std::shared_ptr<MinimapLayoutBase> minimapLayout
+	,Unit::Team::Kind phase
+	,const std::string question)
+{
 	//攻撃キャラの位置を変えてみて評価がどうなるかをシミュレーション学習してみるワーク
 	if(m_badLogInfo.has_value()){
-		const auto simulationWorkMethod=[this,phase,question](){
+		const auto simulationWorkMethod=[this,phase,question,minimapLayout](){
 			//ユニットの侵入可否を味方フェーズ用に設定しておく
 			this->SetUnitPenetratable(phase);
 			//フィールドの作成
@@ -564,20 +583,8 @@ void SubmissionReflectionScene::AddMoveSimulationWork(Unit::Team::Kind phase,con
 					,oneMinimapRate
 					,m_battleSceneData->m_scoreObserver->GetSubmission().GetRule()
 					,question));
-			//マップの描画の仕方を設定
-			const Easing::TYPE type=Easing::TYPE_OUT;
-			const Easing::FUNCTION function=Easing::FUNCTION_QUAD;
-			const double degree=4.0;
-			const int maxFrame=10;
-			const auto drawFunc=[this](int x,int y,float rate){
-				if(m_badLogInfo.has_value()){
-					DrawResizedMap(x,y,m_badLogInfo.value(),rate);
-				}
-			};
-			const std::shared_ptr<MinimapLayoutBase> minimap=std::shared_ptr<MinimapLayoutBase>(new ExtendDraw(drawFunc
-				,PositionControl(minimapPos[1],minimapPos[0],maxFrame,type,function,degree)
-				,Easing((int)(CommonConstParameter::mapSizeX*twoMinimapRate),(int)(CommonConstParameter::mapSizeX*oneMinimapRate),maxFrame,type,function,degree)));
-			return WorkInfo(work,minimap);
+			//ワーク情報を返す
+			return WorkInfo(work,minimapLayout);
 		};
 		m_workMethodList.push_back(simulationWorkMethod);
 	}
