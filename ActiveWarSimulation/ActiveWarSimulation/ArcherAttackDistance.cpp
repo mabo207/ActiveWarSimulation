@@ -140,9 +140,9 @@ std::string ArcherAttackDistance::GetReason(SubmissionEvaluation rubric)const{
 	} else if(rubric==s_evaluate[0]){
 		return "“G‚ª‚»‚Ìê‚ÅUŒ‚‚Å‚«‚é‚­‚ç‚¢‚É‹ß‚­‚ÅUŒ‚‚µ‚¿‚á‚Á‚Ä‚é‚æI";
 	} else if(rubric==s_evaluate[1]){
-		return "áŠQ•¨‚ªü‚è‚É‚È‚¢‚©‚çUŒ‚‚µ‚½“G‚Ì”½Œ‚‚É‡‚¢‚â‚·‚»‚¤‚¶‚á‚È‚¢H";
+		return "‹——£‚ğæ‚é‚¾‚¯‚¶‚á‚È‚­AáŠQ•¨‚ğg‚Á‚Ä“G‚ÌN“ü‚ğ–h‚°‚éêŠ‚©‚çUŒ‚‚µ‚Ä‚İ‚æ‚¤I";
 	} else if(rubric==s_evaluate[2]){
-		return "áŠQ•¨‰z‚µ‚ÉUŒ‚‚Å‚«‚Ä‚é‚¯‚ÇAˆÄŠO“G‚Í‰ñ‚è‚ñ‚ÅUŒ‚‚Å‚«‚»‚¤B";
+		return "áŠQ•¨‰z‚µ‚ÉUŒ‚‚Å‚«‚Ä‚é‚¯‚ÇA‚à‚µ‚©‚µ‚½‚ç“G‚Í‰ñ‚è‚ñ‚ÅUŒ‚‚Å‚«‚é‚©‚àH";
 	} else if(rubric==s_evaluate[3]){
 		return "ˆÀ‘S’n‘Ñ‚©‚ç‚ÌUŒ‚A‚Æ‚Á‚Ä‚à—Ç‚¢Š´‚¶II";
 	}
