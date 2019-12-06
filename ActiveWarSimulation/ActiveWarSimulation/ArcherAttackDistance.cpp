@@ -2,6 +2,8 @@
 #include"ArcherAttackDistance.h"
 #include"BattleSceneData.h"
 #include"AttackLog.h"
+//仮想図形構築のために使う
+#include"Edge.h"
 
 //----------------ArcherAttackDistance----------------
 const std::array<SubmissionEvaluation,4> ArcherAttackDistance::s_evaluate={
@@ -49,16 +51,41 @@ SubmissionEvaluation ArcherAttackDistance::InAdvanceDataEvaluate(
 		evaluate=SubmissionEvaluation::e_noevaluation;
 	} else{
 		//距離に関する評価をする
+		FpsMeasuring fps;
+		fps.RecordTime();
 		//直線距離を求める
 		const float directDistance=(attackLog->GetOperateUnitData().pos-attackLog->GetAimedUnitData().pos).size();
 		//事前データを用いて被弾ユニット→行動ユニットへのルート距離を求める
 		const LogElement::UnitLogData operateUnit=attackLog->GetOperateUnitData();
 		const float routeDistance=CalculateRouteDistance(routeData,operateUnit);
+		//2ユニット間に障害物があるかの判定
+		const Vector2D p0=attackLog->GetOperateUnitData().pos,p1=attackLog->GetAimedUnitData().pos;//2ユニットの位置		
+		const Edge edge(p0,p1-p0,Shape::Fix::e_static);//2ユニットの直径によって構成される長方形を構築
+		//全ての図形に対して重なっているかを判定
+		bool existSomethingInSpace=false;
+		for(const BattleObject *obj:field){
+			if(obj->GetFix()!=Shape::Fix::e_ignore
+				&& (obj!=attackLog->GetAimedUnit() && obj!=attackLog->GetOperateUnitData().punit)
+				&& (edge.JudgeCross(obj->GetHitJudgeShape()) || edge.JudgeInShape(obj->GetHitJudgeShape())))
+			{
+				std::shared_ptr<Shape> operatedShape=attackLog->GetOperateUnitData().punit->GetUnitCircleShape()->VCopy();
+				operatedShape->Move(attackLog->GetOperateUnitData().pos-operatedShape->GetPosition());
+				if(!obj->GetHitJudgeShape()->JudgeInShape(operatedShape.get())){
+					//「障害物がある」の条件
+					//- 存在しない地形ではない
+					//- 2ユニットとは異なるものである
+					//- edge内部もしくはedgeと交差している
+					//- operatedUnitがobjに内包されていない
+					existSomethingInSpace=true;
+					break;
+				}
+			}
+		}
 		//評価(高い方から判定していく)
-		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance() || routeDistance<0.0f){
+		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance()+attackLog->GetAimedUnit()->GetBattleStatus().weapon->GetLength() || routeDistance<0.0f){
 			//routeDistance<0.0fの時は、到達経路が存在しないということなので、ルート距離が敵の移動距離より長いのと同じ扱いになる。
 			evaluate=s_evaluate[3];
-		} else if(routeDistance>=attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetLength()){
+		} else if(existSomethingInSpace && routeDistance>=attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetLength()){
 			evaluate=s_evaluate[2];
 		} else if(directDistance>=attackLog->GetAimedUnit()->GetBattleStatus().weapon->GetLength()
 			|| attackLog->GetAimedUnit()->GetBattleStatus().weapon->GetLength()>=attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->GetLength())
@@ -113,9 +140,9 @@ std::string ArcherAttackDistance::GetReason(SubmissionEvaluation rubric)const{
 	} else if(rubric==s_evaluate[0]){
 		return "敵がその場で攻撃できるくらいに近くで攻撃しちゃってるよ！";
 	} else if(rubric==s_evaluate[1]){
-		return "障害物が周りにないから攻撃した敵の反撃に合いやすそうじゃない？";
+		return "距離を取るだけじゃなく、障害物を使って敵の侵入を防げる場所から攻撃してみよう！";
 	} else if(rubric==s_evaluate[2]){
-		return "障害物越しに攻撃できてるけど、案外敵は回り込んで攻撃できそう。";
+		return "障害物越しに攻撃できてるけど、もしかしたら敵は回り込んで攻撃できるかも？";
 	} else if(rubric==s_evaluate[3]){
 		return "安全地帯からの攻撃、とっても良い感じ！！";
 	}

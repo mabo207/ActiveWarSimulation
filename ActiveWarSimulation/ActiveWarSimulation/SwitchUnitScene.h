@@ -29,7 +29,8 @@ protected:
 
 	//ルーブリック評価描画
 	PositionControl m_rubricWordPosition;//評価の描画位置
-	PositionControl m_rubricReasonPosition;//評価理由の描画位置
+	int m_rubricReasonX,m_rubricReasonY;//評価理由の描画位置
+	PositionControl m_rubricReasonArea;//評価理由の描画領域の広さ
 	bool m_rubricPopupExiting;//理由のポップアップが画面外に出る処理中である
 
 	//フォント
