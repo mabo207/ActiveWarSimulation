@@ -58,8 +58,6 @@ SubmissionEvaluation ArcherAttackDistance::InAdvanceDataEvaluate(
 		//事前データを用いて被弾ユニット→行動ユニットへのルート距離を求める
 		const LogElement::UnitLogData operateUnit=attackLog->GetOperateUnitData();
 		const float routeDistance=CalculateRouteDistance(routeData,operateUnit);
-		double d1=fps.GetProcessedTime();
-		fps.RecordTime();
 		//2ユニット間に障害物があるかの判定
 		const Vector2D p0=attackLog->GetOperateUnitData().pos,p1=attackLog->GetAimedUnitData().pos;//2ユニットの位置		
 		const Edge edge(p0,p1-p0,Shape::Fix::e_static);//2ユニットの直径によって構成される長方形を構築
@@ -83,7 +81,6 @@ SubmissionEvaluation ArcherAttackDistance::InAdvanceDataEvaluate(
 				}
 			}
 		}
-		double d2=fps.GetProcessedTime();
 		//評価(高い方から判定していく)
 		if(routeDistance>=attackLog->GetAimedUnit()->GetMaxMoveDistance()+attackLog->GetAimedUnit()->GetBattleStatus().weapon->GetLength() || routeDistance<0.0f){
 			//routeDistance<0.0fの時は、到達経路が存在しないということなので、ルート距離が敵の移動距離より長いのと同じ扱いになる。
