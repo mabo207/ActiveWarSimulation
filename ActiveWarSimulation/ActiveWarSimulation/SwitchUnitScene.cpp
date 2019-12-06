@@ -119,7 +119,6 @@ void SwitchUnitScene::thisDraw()const{
 
 	//サブミッション評価表示
 	if(JudgeDrawRubric()){
-		m_battleSceneData->m_scoreObserver->GetSubmission().DrawRubric(m_rubricWordPosition.GetX(),m_rubricWordPosition.GetY());
 		const int width=m_rubricReasonArea.GetX(),height=m_rubricReasonArea.GetY();
 		if(width<0){
 			SetDrawArea(m_rubricReasonX+width,m_rubricReasonY,m_rubricReasonX,m_rubricReasonY+height);
@@ -129,6 +128,7 @@ void SwitchUnitScene::thisDraw()const{
 			m_battleSceneData->m_scoreObserver->GetSubmission().DrawReason(m_rubricReasonX,m_rubricReasonY);
 		}
 		SetDrawAllArea();
+		m_battleSceneData->m_scoreObserver->GetSubmission().DrawRubric(m_rubricWordPosition.GetX(),m_rubricWordPosition.GetY());
 	}
 }
 
