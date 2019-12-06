@@ -49,7 +49,7 @@ bool SwitchUnitScene::JudgeGoToMoveScene()const{
 	//サブミッション情報を描画するかどうかで決まる
 	if(JudgeDrawRubric()){
 		//サブミッション情報を描画する時は、ポップアップが画面外に出てから
-		return m_rubricPopupExiting & m_rubricReasonPosition.GetEndFlag();
+		return m_rubricPopupExiting & m_rubricReasonArea.GetEndFlag();
 	} else{
 		//サブミッション情報を描画しない時は、時間経過で良い
 		return JudgeTimeProcessed();
@@ -66,7 +66,7 @@ int SwitchUnitScene::thisCalculate(){
 	m_battleSceneData->m_fpsMesuring.Update();
 	//ルーブリック描画位置の更新
 	m_rubricWordPosition.Update();
-	m_rubricReasonPosition.Update();
+	m_rubricReasonArea.Update();
 	
 	//勝敗判定によって、遷移処理は分岐
 	switch(m_judgeEnd){
@@ -82,7 +82,7 @@ int SwitchUnitScene::thisCalculate(){
 			//移行時間が経って以降に次に進む入力をしたら、ポップアップを新たな位置へ
 			//サブミッションのルーブリック評価の表示がない時は、JudgeGoToMoveScene()がJudgeTimeProcessed()と一致するので、ここには来ない。
 			m_rubricPopupExiting=true;
-			m_rubricReasonPosition.SetTarget(m_rubricReasonPosition.GetX(),-SelfDecideSubmission::s_reasonHeight,true);
+			m_rubricReasonArea.SetTarget(0,0,true);
 		}
 		break;
 	case(JudgeEnd::e_playerWin):
@@ -120,7 +120,15 @@ void SwitchUnitScene::thisDraw()const{
 	//サブミッション評価表示
 	if(JudgeDrawRubric()){
 		m_battleSceneData->m_scoreObserver->GetSubmission().DrawRubric(m_rubricWordPosition.GetX(),m_rubricWordPosition.GetY());
-		m_battleSceneData->m_scoreObserver->GetSubmission().DrawReason(m_rubricReasonPosition.GetX(),m_rubricReasonPosition.GetY());
+		const int width=m_rubricReasonArea.GetX(),height=m_rubricReasonArea.GetY();
+		if(width<0){
+			SetDrawArea(m_rubricReasonX+width,m_rubricReasonY,m_rubricReasonX,m_rubricReasonY+height);
+			m_battleSceneData->m_scoreObserver->GetSubmission().DrawReason(m_rubricReasonX-SelfDecideSubmission::s_reasonWidth,m_rubricReasonY);
+		} else{
+			SetDrawArea(m_rubricReasonX,m_rubricReasonY,m_rubricReasonX+width,m_rubricReasonY+height);
+			m_battleSceneData->m_scoreObserver->GetSubmission().DrawReason(m_rubricReasonX,m_rubricReasonY);
+		}
+		SetDrawAllArea();
 	}
 }
 
@@ -158,8 +166,19 @@ void SwitchUnitScene::ReturnProcess(){
 		m_rubricWordPosition=PositionControl((int)m_battleSceneData->m_operateUnit->getPos().x,(int)m_battleSceneData->m_operateUnit->getPos().y-10,10,Easing::TYPE_IN,Easing::FUNCTION_LINER,1.0);
 	}
 	m_rubricWordPosition.SetTarget(m_rubricWordPosition.GetX(),m_rubricWordPosition.GetY()-50,true);//初期位置より50px上に移動
-	m_rubricReasonPosition=PositionControl(CommonConstParameter::gameResolutionX-SelfDecideSubmission::s_reasonWidth,-SelfDecideSubmission::s_reasonHeight,20,Easing::TYPE_IN,Easing::FUNCTION_LINER,0.0);
-	m_rubricReasonPosition.SetTarget(m_rubricReasonPosition.GetX(),0,true);
+	if(m_rubricWordPosition.GetX()<CommonConstParameter::gameResolutionX/2){
+		//評価の右側に理由を描画
+		m_rubricReasonX=m_rubricWordPosition.GetX()+60;
+		m_rubricReasonY=m_rubricWordPosition.GetY()-50;
+		m_rubricReasonArea=PositionControl(0,0,20,Easing::TYPE_IN,Easing::FUNCTION_LINER,0.0);
+		m_rubricReasonArea.SetTarget(SelfDecideSubmission::s_reasonWidth,SelfDecideSubmission::s_reasonHeight,true);
+	} else{
+		//評価の左側に理由を描画
+		m_rubricReasonX=m_rubricWordPosition.GetX()-60;
+		m_rubricReasonY=m_rubricWordPosition.GetY()-50;
+		m_rubricReasonArea=PositionControl(0,0,20,Easing::TYPE_IN,Easing::FUNCTION_LINER,0.0);
+		m_rubricReasonArea.SetTarget(-SelfDecideSubmission::s_reasonWidth,SelfDecideSubmission::s_reasonHeight,true);
+	}
 	m_rubricPopupExiting=false;
 	//勝敗判定
 	size_t playerUnitNum=0,enemyUnitNum=0;
