@@ -15,8 +15,8 @@ namespace{
 //--------------SelfDecideSubmission---------------
 const int SelfDecideSubmission::s_submissionWidth=700;
 const int SelfDecideSubmission::s_submissionHeight=90;
-const int SelfDecideSubmission::s_reasonWidth=700;
-const int SelfDecideSubmission::s_reasonHeight=90;
+const int SelfDecideSubmission::s_reasonWidth=300;
+const int SelfDecideSubmission::s_reasonHeight=150;
 
 SelfDecideSubmission::SelfDecideSubmission()
 	:m_rule(nullptr)
