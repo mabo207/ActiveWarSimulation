@@ -76,9 +76,6 @@ int SetDrawAllArea(){
 //文字列描画。\nで改行させる。また右端まで行ったら改行する。
 //最後が\0で終わらない文字列だとフリーズまたはオーバーフローが起こる
 int DrawStringNewLineToHandle(const int strX,const int strY,const int printableX,const int printableY,const int maxDX,const int maxDY,const int Color,const int Font,const int FontSize,const char *str){
-	//描画可能範囲を設定
-	SetDrawArea(printableX-1,printableY-1,printableX+maxDX+1,printableY+maxDY+1);//細かい部分で文字が切れることがあるので余裕を持たせる
-																				 //文字列の長さを格納
 	int strlength=strlen(str)+1;
 	//それぞれの文字がどれだけ描画幅を使用するかを計算する
 	int *indexlength=new int[strlength];
@@ -151,8 +148,7 @@ int DrawStringNewLineToHandle(const int strX,const int strY,const int printableX
 
 		}
 	}
-	SetDrawAllArea();//描画範囲設定の解除
-
+	
 					 //終了処理
 	delete[] indexlength;
 	//return 0;
