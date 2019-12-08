@@ -445,7 +445,38 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 	//クリックするワークを構築する関数の作成
 	const auto clickWorkMethod=[minimapInfo,conditionShapeFunc,minimapLayout,phase,clickQuestion,getObstructionShapeList,this](){
 		//準備
-		const std::vector<std::shared_ptr<const Shape>> shapeList=getObstructionShapeList(conditionShapeFunc,minimapInfo,phase,this);
+		//フィールドの全図形をクリックできるようにする
+		std::vector<std::shared_ptr<const Shape>> shapeList;
+		//ユニットデータ以外の障害物の格納
+		for(const BattleObject *object:this->m_battleSceneData->m_field){
+			if(object->GetType()!=BattleObject::Type::e_unit){
+				//当たり判定図形を引き出して追加
+				for(const ShapeClickWorkInfo &info:minimapInfo){
+					if(!object->GetHitJudgeShape()->JudgeInShape(info.drawInfo->value().GetOperateUnit()->GetUnitCircleShape())){
+						//操作ユニットを内包する図形は除く
+						std::shared_ptr<Shape> addShape=object->GetHitJudgeShape()->VCopy();
+						const Vector2D pos=addShape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
+						addShape->Move(info.startPos+pos*info.rate-pos);
+						addShape->Resize(addShape->GetRetResize()*info.rate);
+						shapeList.push_back(addShape);
+					}
+				}
+			}
+		}
+		//ユニットデータの格納
+		for(const ShapeClickWorkInfo &info:minimapInfo){
+			for(size_t i=0,siz=info.drawInfo->value().GetUnitList().size();i<siz;i++){
+				//当たり判定図形を引き出して追加
+				if(&info.drawInfo->value().GetUnitList()[i]!=info.drawInfo->value().GetOperateUnit() && &info.drawInfo->value().GetUnitList()[i]!=info.drawInfo->value().GetAttackedUnit()){
+					//ユニットがユニットを内包することはないので、内包判定はしない
+					std::shared_ptr<Shape> addShape=info.drawInfo->value().GetUnitList()[i].GetHitJudgeShape()->VCopy();
+					const Vector2D pos=addShape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
+					addShape->Move(info.startPos+pos*info.rate-pos);
+					addShape->Resize(addShape->GetRetResize()*info.rate);
+					shapeList.push_back(addShape);
+				}
+			}
+		}
 		//ワークの作成
 		const std::shared_ptr<ReflectionWork::Base> clickWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList,clickQuestion));
 		return WorkInfo(clickWork,minimapLayout);
