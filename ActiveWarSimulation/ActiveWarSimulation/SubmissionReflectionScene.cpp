@@ -335,7 +335,7 @@ void SubmissionReflectionScene::InitReflectionWork(){
 	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_goodLogInfo,minimapPos[0],twoMinimapRate),ShapeClickWorkInfo(&m_badLogInfo,minimapPos[1],twoMinimapRate)}
 		,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(twoMinimapDrawFunc))
 		,Unit::Team::e_enemy
-		,"今回のバトルで、射手が攻撃をした２つの場面を取り出してみた。\n攻撃相手からの反撃が予想されるが、射手の近くまで進むのを\n邪魔してくれている障害物やキャラクターをクリックしてみよう。"
+		,"今回のバトルで、射手が攻撃をした２つの場面を取り出してみた。\n攻撃相手からの反撃が予想されるが、射手の近くまで進むのを\n邪魔してくれている障害物やキャラクターを3つクリックしてみよう。"
 		,firstExplanation);
 	AddMoveSimulationWork(Unit::Team::e_player,"射手を動かしてみて、\n敵から反撃を受けづらいような攻撃位置を探してみよう！");//プレイヤーユニットを動かすため、e_playerを指定
 	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_badLogInfo,minimapPos[0],oneMinimapRate)}
