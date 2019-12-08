@@ -383,13 +383,17 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 	,const std::string clickQuestion
 	,const std::string explanationComment)
 {
-	const auto clickWorkMethod=[minimapInfo,conditionShapeFunc,minimapLayout,phase,clickQuestion,this](){
-		//準備
+	//攻撃相手の移動を妨害する図形の一覧を取得する関数
+	const auto getObstructionShapeList=[](const std::function<std::shared_ptr<const Shape>(Vector2D,Vector2D)> &conditionShapeFunc
+		,const std::vector<ShapeClickWorkInfo> &minimapInfo
+		,Unit::Team::Kind phase
+		,SubmissionReflectionScene *thisPtr)
+	{
 		//ユニットの侵入可否を敵フェーズ用に設定しておく
-		this->SetUnitPenetratable(phase);
+		thisPtr->SetUnitPenetratable(phase);
 		std::vector<std::shared_ptr<const Shape>> shapeList;
 		//関数の作成
-		const auto addFunc=[&shapeList,this](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const std::shared_ptr<const Shape> &conditionShape,const std::shared_ptr<const Shape> &attackedUnitShape,float rate){
+		const auto addFunc=[&shapeList,thisPtr](std::shared_ptr<Shape> &addShape,const Vector2D &minimapPosition,const std::shared_ptr<const Shape> &conditionShape,const std::shared_ptr<const Shape> &attackedUnitShape,float rate){
 			//地図に合うように加工
 			const Vector2D pos=addShape->GetPosition();//現在位置、縮小マップ上の位置を指定するためにこれを用いて移動させないといけない
 			addShape->Move(minimapPosition+pos*rate-pos);
@@ -418,7 +422,7 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 			addFunc(shape,minimapInfo.startPos,conditionShape,attackedUnitShape,minimapInfo.rate);
 		};
 		//ユニットデータ以外の障害物の格納
-		for(const BattleObject *object:m_battleSceneData->m_field){
+		for(const BattleObject *object:thisPtr->m_battleSceneData->m_field){
 			if(object->GetType()!=BattleObject::Type::e_unit){
 				//当たり判定図形を引き出して追加
 				for(const ShapeClickWorkInfo &info:minimapInfo){
@@ -435,6 +439,13 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 				}
 			}
 		}
+		//妨害図形一覧を返す
+		return shapeList;
+	};
+	//クリックするワークを構築する関数の作成
+	const auto clickWorkMethod=[minimapInfo,conditionShapeFunc,minimapLayout,phase,clickQuestion,getObstructionShapeList,this](){
+		//準備
+		const std::vector<std::shared_ptr<const Shape>> shapeList=getObstructionShapeList(conditionShapeFunc,minimapInfo,phase,this);
 		//ワークの作成
 		const std::shared_ptr<ReflectionWork::Base> clickWork=std::shared_ptr<ReflectionWork::Base>(new ReflectionWork::ObjectClick(shapeList,clickQuestion));
 		return WorkInfo(clickWork,minimapLayout);
