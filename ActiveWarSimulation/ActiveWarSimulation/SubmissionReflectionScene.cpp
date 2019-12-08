@@ -454,7 +454,7 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 	//解説ワークの作成
 	const auto explanationWorkMethod=[minimapInfo,minimapLayout,explanationComment,this](){
 		const unsigned int pointColor=GetColor(196,64,128);
-		std::vector<std::pair<std::shared_ptr<const Shape>,unsigned int>> assistList;
+		std::vector<ReflectionWork::ReadExplanation::AssistShapeInfo> assistList;
 		//敵の移動範囲に入っている格子点を全て補助関数に加える
 		minimapInfo[0].drawInfo->value().GetUnitListPtr(0);
 		for(const ShapeClickWorkInfo &mapinfo:minimapInfo){
@@ -484,7 +484,7 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 			for(const LatticeBattleField::LatticeDistanceInfo &info:dField){
 				if(info.dist<moveDistance){
 					const Vector2D pos=lField->CalculateLatticePointPos(info.index)*mapinfo.rate+mapinfo.startPos;
-					assistList.push_back(std::make_pair(std::shared_ptr<const Shape>(new Circle(pos,2.0f,Shape::Fix::e_ignore)),pointColor));
+					assistList.push_back(ReflectionWork::ReadExplanation::AssistShapeInfo(std::shared_ptr<const Shape>(new Circle(pos,2.0f,Shape::Fix::e_ignore)),pointColor));
 				}
 			}
 		}

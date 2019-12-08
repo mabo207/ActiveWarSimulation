@@ -3,6 +3,22 @@
 #include"DxLib.h"
 
 //--------------ReflectionWork::ReadExplanation---------------
+void ReflectionWork::ReadExplanation::AssistShapeInfo::Draw()const{
+	int mode=0,pal=0;
+	if(alpha!=opacityAlpha){
+		//透明描画する場合
+		GetDrawBlendMode(&mode,&pal);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA,alpha);
+	}
+	if(shape){
+		shape->Draw(Vector2D(),color,TRUE,2.0f);
+	}
+	if(alpha!=opacityAlpha){
+		//透明描画した場合はブレンドモードを元に戻す
+		SetDrawBlendMode(mode,pal);
+	}
+}
+
 void ReflectionWork::ReadExplanation::Update(){
 	//特に更新することはない
 }
@@ -15,7 +31,7 @@ void ReflectionWork::ReadExplanation::WorkDraw()const{
 	//直前ワークの様子を描画
 	m_beforeWork->WorkDraw();
 	//図形一覧を描画
-	for(const std::pair<std::shared_ptr<const Shape>,unsigned int> &info:m_assistShapeList){
-		info.first->Draw(Vector2D(),GetColor(196,64,128),FALSE,2.0f);
+	for(const AssistShapeInfo &assistShape:m_assistShapeList){
+		assistShape.Draw();
 	}
 }
