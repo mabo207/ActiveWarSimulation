@@ -10,6 +10,10 @@ bool SubmissionEvaluation::operator<(const SubmissionEvaluation &otherobj)const{
 	return this->m_kind<otherobj.m_kind;
 }
 
+bool SubmissionEvaluation::operator<=(const SubmissionEvaluation &otherobj)const{
+	return this->m_kind<=otherobj.m_kind;
+}
+
 unsigned int SubmissionEvaluation::Color()const{
 	switch(m_kind){
 	case(e_bad):

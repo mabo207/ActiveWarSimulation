@@ -31,6 +31,10 @@ public:
 	bool operator>(const SubmissionEvaluation &otherobj)const{
 		return otherobj<(*this);
 	}
+	bool operator<=(const SubmissionEvaluation &otherobj)const;
+	bool operator>=(const SubmissionEvaluation &otherobj)const{
+		return otherobj<=(*this);
+	}
 	//F‚Æ•¶Žš—ñ‚ð•Ô‚·
 	unsigned int Color()const;
 	std::string GetString()const;

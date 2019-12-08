@@ -128,7 +128,8 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 			if((goodLog.first<log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
 				goodLog=log;
 			}
-			if((badLog.first>log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
+			if((badLog.first>=log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
+				//goodLogとbadLogの同一ログ取り出しの対策として、>でなく>=を採用する
 				badLog=log;
 			}
 		}
