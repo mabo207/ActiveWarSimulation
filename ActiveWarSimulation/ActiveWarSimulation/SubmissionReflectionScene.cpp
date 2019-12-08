@@ -452,10 +452,16 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 	};
 	m_workMethodList.push_back(clickWorkMethod);
 	//‰ðàƒ[ƒN‚Ìì¬
-	const auto explanationWorkMethod=[minimapInfo,minimapLayout,explanationComment,this](){
+	const auto explanationWorkMethod=[minimapInfo,conditionShapeFunc,minimapLayout,phase,explanationComment,getObstructionShapeList,this](){
 		const unsigned int pointColor=GetColor(196,64,128);
+		const unsigned int obstructionColor=GetColor(196,128,64);
 		std::vector<ReflectionWork::ReadExplanation::AssistShapeInfo> assistList;
-		//“G‚ÌˆÚ“®”ÍˆÍ‚É“ü‚Á‚Ä‚¢‚éŠiŽq“_‚ð‘S‚Ä•â•ŠÖ”‚É‰Á‚¦‚é
+		//–WŠQ}Œ`‚ð•â•}Œ`ƒŠƒXƒg‚É‰Á‚¦‚é
+		const auto obstructionList=getObstructionShapeList(conditionShapeFunc,minimapInfo,phase,this);
+		for(const auto &obstruction:obstructionList){
+			assistList.push_back(ReflectionWork::ReadExplanation::AssistShapeInfo(obstruction,obstructionColor,128));
+		}
+		//“G‚ÌˆÚ“®”ÍˆÍ‚É“ü‚Á‚Ä‚¢‚éŠiŽq“_‚ð‘S‚Ä•â•}Œ`ƒŠƒXƒg‚É‰Á‚¦‚é
 		minimapInfo[0].drawInfo->value().GetUnitListPtr(0);
 		for(const ShapeClickWorkInfo &mapinfo:minimapInfo){
 			std::vector<BattleObject *> field;
@@ -489,7 +495,7 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 			}
 		}
 		//ƒ[ƒNì¬
-		const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation(assistList,m_nowWork.reflection,explanationComment));
+		const std::shared_ptr<ReflectionWork::Base> explanationWork(new ReflectionWork::ReadExplanation(assistList,explanationComment));
 		return WorkInfo(explanationWork,minimapLayout);
 	};
 	m_workMethodList.push_back(explanationWorkMethod);

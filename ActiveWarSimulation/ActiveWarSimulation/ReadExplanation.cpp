@@ -28,8 +28,6 @@ bool ReflectionWork::ReadExplanation::WorkClear()const{
 }
 
 void ReflectionWork::ReadExplanation::WorkDraw()const{
-	//直前ワークの様子を描画
-	m_beforeWork->WorkDraw();
 	//図形一覧を描画
 	for(const AssistShapeInfo &assistShape:m_assistShapeList){
 		assistShape.Draw();

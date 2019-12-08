@@ -23,11 +23,9 @@ namespace ReflectionWork{
 		};
 
 		ReadExplanation(const std::vector<AssistShapeInfo> &assistShapeList
-			,const std::shared_ptr<const Base> &beforeWork
 			,const std::string &question)
 			:Base(Kind::e_readExplanation,question)
 			,m_assistShapeList(assistShapeList)
-			,m_beforeWork(beforeWork)
 		{}
 		~ReadExplanation()=default;
 		void Update();
@@ -35,7 +33,6 @@ namespace ReflectionWork{
 		void WorkDraw()const;
 	private:
 		const std::vector<AssistShapeInfo> m_assistShapeList;//解説の補助を行う図形の描画情報一覧
-		const std::shared_ptr<const Base> m_beforeWork;//直前のワーク
 	};
 }
 
