@@ -128,7 +128,8 @@ SubmissionReflectionScene::SubmissionReflectionScene(const std::shared_ptr<Battl
 			if((goodLog.first<log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
 				goodLog=log;
 			}
-			if((badLog.first>log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
+			if((badLog.first>=log.first || badLog.first==SubmissionEvaluation::e_noevaluation) && log.first!=SubmissionEvaluation::e_noevaluation){
+				//goodLogとbadLogの同一ログ取り出しの対策として、>でなく>=を採用する
 				badLog=log;
 			}
 		}
@@ -340,7 +341,7 @@ void SubmissionReflectionScene::InitReflectionWork(){
 	AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_badLogInfo,minimapPos[0],oneMinimapRate)}
 		,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(oneMinimapDrawFunc))
 		,Unit::Team::e_enemy
-		,"この場所だったら、\nどのような障害物やキャラクターが攻撃相手の移動を邪魔しているだろう？"
+		,"この場所だったら、どのような障害物やキャラクターが\n攻撃相手の移動を邪魔しているだろう？"
 		,"ピンクの点で表現された敵の動く範囲を見て、\n良い攻撃位置を見つけられたか確認しよう。");
 	//ワーク設定
 	m_nextWorkMethod=m_workMethodList.begin();
