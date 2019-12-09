@@ -56,8 +56,21 @@ SubmissionEvaluation ArcherAttackDistance::InAdvanceDataEvaluate(
 		//直線距離を求める
 		const float directDistance=(attackLog->GetOperateUnitData().pos-attackLog->GetAimedUnitData().pos).size();
 		//事前データを用いて被弾ユニット→行動ユニットへのルート距離を求める
+		//operateUnitの内部の格子点全ての距離計算をし、最小のものをピックアップする
 		const LogElement::UnitLogData operateUnit=attackLog->GetOperateUnitData();
-		const float routeDistance=CalculateRouteDistance(routeData,operateUnit);
+		std::shared_ptr<Shape> shape=operateUnit.punit->GetUnitCircleShape()->VCopy();
+		shape->Move(operateUnit.pos-shape->GetPosition());
+		std::vector<int> latticeInShape(routeData->m_latticeField->GetLatticeInShapeSize(),1);//shape内の格子点だけ0になる
+		shape->RecordLatticePointInShape(latticeInShape,routeData->m_latticeField->GetXLatticeNum(),routeData->m_latticeField->GetYLatticeNum(),routeData->m_latticeField->latticeIntervalSize,routeData->m_latticeField->latticeIntervalSize,0);
+		float routeDistance=-0.1f;
+		for(size_t i=0,siz=routeData->m_latticeField->GetLatticeInShapeSize();i<siz;i++){
+			if(latticeInShape[i]==0){
+				const float dist=CalculateRouteDistance(routeData,routeData->m_latticeField->CalculateLatticePointPos(i));
+				if(dist>=0.0f && (routeDistance<0.0f || dist<routeDistance)){
+					routeDistance=dist;
+				}
+			}
+		}
 		//2ユニット間に障害物があるかの判定
 		const Vector2D p0=attackLog->GetOperateUnitData().pos,p1=attackLog->GetAimedUnitData().pos;//2ユニットの位置		
 		const Edge edge(p0,p1-p0,Shape::Fix::e_static);//2ユニットの直径によって構成される長方形を構築
