@@ -337,19 +337,19 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		const SubmissionEvaluation badEvaluate=m_badLogInfo->GetEvaluate();
 		if(goodEvaluate==ArcherAttackDistance::s_evaluate[0]){
 			//okになるためには、距離を取れるようになる必要がある
-			firstExplanation="ピンクの点で表現された敵の動く範囲を見てみると、\n敵との距離が近く、敵の動ける範囲に射手が入ってしまっている。\nまずは、攻撃相手から離れた所から攻撃するのを意識しよう。";
+			firstExplanation="ピンクの点で表現された敵が１回で動ける範囲を見てみると、\n敵との距離が近く、敵の動ける範囲に射手が入ってしまっている。\nまずは、攻撃相手から離れた所から攻撃するのを意識しよう。";
 		} else if(goodEvaluate==ArcherAttackDistance::s_evaluate[1]){
 			//goodになるためには、障害物越しに攻撃できるようになる必要がある
-			firstExplanation="ピンクの点で表現された敵の動く範囲を見てみると、\n障害物がなく、敵の動ける範囲に射手が入ってしまっている。\n障害物越しの攻撃だと敵がこちらに向かいづらいはずだ。";
+			firstExplanation="ピンクの点で表現された敵が１回で動ける範囲を見てみると、\n障害物がなく、敵の動ける範囲に射手が入ってしまっている。\n障害物越しの攻撃だと敵がこちらに向かいづらいはずだ。";
 		} else if(goodEvaluate==ArcherAttackDistance::s_evaluate[2]){
 			//excellentになるためには、障害物の隙間がない場所から攻撃できるようになる必要がある
-			firstExplanation="ピンクの点で表現された敵の動く範囲を見てみると、\n大きく空いている隙間を縫って射手に近づいてくる事がわかる。\n障害物が広がっている場所を探して攻撃してみよう。";
+			firstExplanation="ピンクの点で表現された敵が１回で動ける範囲を見てみると、\n大きく空いている隙間を縫って射手に近づいてくる事がわかる。\n障害物が広がっている場所を探して攻撃してみよう。";
 		} else if(badEvaluate!=ArcherAttackDistance::s_evaluate[3]){
 			//全ての行動がexcellentでない場合は、比較を促す
-			firstExplanation="左右のマップのピンクの点で表現された敵の動く範囲を見てみると、\nキャラの配置や戦う場所によって\n敵の動ける範囲が大きく変わるのが分かる。";
+			firstExplanation="ピンクの点で表現された敵が１回で動ける範囲を\n左右で比較してみると、キャラの配置や戦う場所によって\n敵の動ける範囲が大きく変わるのが分かる。";
 		} else{
 			//全ての行動がexcellentの場合、言うことなしと褒める
-			firstExplanation="左右のマップのピンクの点で表現された敵の動く範囲を見てみると、\n攻撃相手の接近を防げているのがわかります。\n防げてる時の配置の特徴を確認してみよう。";
+			firstExplanation="ピンクの点で表現された敵が１回で動ける範囲を左右で\n比較してみると、攻撃相手の接近を防げているのがわかります。\n防げてる時の配置の特徴を確認してみよう。";
 		}
 	}
 	//ワーク一覧の作成
