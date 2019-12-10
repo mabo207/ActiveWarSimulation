@@ -53,6 +53,7 @@ protected:
 	//battleDataは、必要な値を取り出すだけなのでstd::shared_ptr<>である必要はない。
 	LogElement(LogKind kind,const BattleSceneData * const battleData);
 	LogElement(LogKind kind,const std::vector<Unit *> &unitList);
+	LogElement(LogKind kind,const std::vector<UnitLogData> &unitDataList);
 	virtual ~LogElement(){}
 	void OutputUnitDataList(std::ofstream &ofs,const std::map<const Unit *,size_t> &unitPtrToIndex,const char splitter,const char beginer,const char ender)const;
 

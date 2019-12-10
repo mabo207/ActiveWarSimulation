@@ -6,6 +6,11 @@ FinishLog::FinishLog(const BattleSceneData * const battleData)
 	,m_clearTurn(battleData->CalculateTurn())
 {}
 
+FinishLog::FinishLog(const std::vector<UnitLogData> &unitDataList,int clearTurn)
+	:LogElement(LogKind::e_finish,unitDataList)
+	,m_clearTurn(clearTurn)
+{}
+
 void FinishLog::OutputLog(std::ofstream &ofs,const std::map<const Unit *,size_t> &unitPtrToIndex,const char splitter,const char beginer,const char ender)const{
 	ofs<<beginer;
 	ofs<<beginer<<"kind"<<splitter<<"FinishLog"<<ender;

@@ -233,6 +233,7 @@
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="AttackScene.cpp" />
     <ClCompile Include="WaitLog.cpp" />
+    <ClCompile Include="WatchLogScene.cpp" />
     <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="WholeReflectionInfo.cpp" />
   </ItemGroup>
@@ -322,6 +323,7 @@
     <ClInclude Include="Unit.h" />
     <ClInclude Include="AttackScene.h" />
     <ClInclude Include="WaitLog.h" />
+    <ClInclude Include="WatchLogScene.h" />
     <ClInclude Include="Weapon.h" />
     <ClInclude Include="WholeReflectionInfo.h" />
   </ItemGroup>

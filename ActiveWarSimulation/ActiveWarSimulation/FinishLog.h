@@ -7,6 +7,7 @@
 class FinishLog:public LogElement{
 public:
 	FinishLog(const BattleSceneData * const battleData);
+	FinishLog(const std::vector<UnitLogData> &unitDataList,int clearTurn);
 	virtual ~FinishLog(){}
 	int GetClearTurn()const{
 		return m_clearTurn;

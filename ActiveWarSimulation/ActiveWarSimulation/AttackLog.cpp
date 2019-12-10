@@ -13,6 +13,12 @@ AttackLog::AttackLog(const std::vector<Unit *> &unitList,const Unit * const aime
 	,m_route(route)
 {}
 
+AttackLog::AttackLog(const std::vector<UnitLogData> &unitDataList,const Unit * const aimedUnit,const std::vector<RouteInfo> &route)
+	:LogElement(LogKind::e_attack,unitDataList)
+	,m_aimedUnit(aimedUnit)
+	,m_route(route)
+{}
+
 LogElement::UnitLogData AttackLog::GetAimedUnitData()const{
 	for(const UnitLogData &logData:m_unitDataList){
 		if(logData.punit==m_aimedUnit){

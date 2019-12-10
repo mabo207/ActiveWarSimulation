@@ -51,6 +51,11 @@ LogElement::LogElement(LogKind kind,const std::vector<Unit *> &unitList)
 	,m_unitDataList(CreateUnitDataList(unitList))
 {}
 
+LogElement::LogElement(LogKind kind,const std::vector<UnitLogData> &unitDataList)
+	:m_kind(kind)
+	,m_unitDataList(unitDataList)
+{}
+
 void LogElement::OutputUnitDataList(std::ofstream &ofs,const std::map<const Unit *,size_t> &unitPtrToIndex,const char splitter,const char beginer,const char ender)const{
 	const size_t listSize=m_unitDataList.size();
 	for(size_t i=0;i<listSize;i++){
