@@ -276,7 +276,7 @@ void TitleScene::Draw()const{
 	//îwåiÇÃï`âÊ
 	DrawGraph(0,0,m_backPic,TRUE);
 	//ÉoÅ[ÉWÉáÉìèÓïÒ
-	const std::string VERSION_STRING="- ver 1.0 -";
+	const std::string VERSION_STRING="- ver C -";
 	const int verX=CommonConstParameter::gameResolutionX-GetDrawStringWidthToHandle(VERSION_STRING.c_str(),VERSION_STRING.size(),GeneralPurposeResource::gothicMiddleFont);
 	const int verY=CommonConstParameter::gameResolutionY-GetFontSizeToHandle(GeneralPurposeResource::gothicMiddleFont);
 	DrawStringToHandle(verX,verY,VERSION_STRING.c_str(),GetColor(0,0,0),GeneralPurposeResource::gothicMiddleFont);
