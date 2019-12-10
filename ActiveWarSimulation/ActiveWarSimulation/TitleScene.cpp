@@ -329,13 +329,13 @@ std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameS
 		const auto battle=std::make_shared<ExperimentBattleScene::ExperimentBattleSceneFactory>("test_2");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
 	} else if(m_selectItem==SelectItem::e_practice_1){
-		const auto battle=std::make_shared<SubmissionBattleScene::SubmissionBattleSceneFactory>("practice_1","",StageLevel::e_normal);
+		const auto battle=std::make_shared<ExperimentBattleScene::ExperimentBattleSceneFactory>("practice_1");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
 	} else if(m_selectItem==SelectItem::e_practice_2){
-		const auto battle=std::make_shared<SubmissionBattleScene::SubmissionBattleSceneFactory>("practice_2","",StageLevel::e_normal);
+		const auto battle=std::make_shared<ExperimentBattleScene::ExperimentBattleSceneFactory>("practice_2");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
 	} else if(m_selectItem==SelectItem::e_practice_3){
-		const auto battle=std::make_shared<SubmissionBattleScene::SubmissionBattleSceneFactory>("practice_3","",StageLevel::e_normal);
+		const auto battle=std::make_shared<ExperimentBattleScene::ExperimentBattleSceneFactory>("practice_3");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
 	}
 	return std::shared_ptr<GameScene>();
