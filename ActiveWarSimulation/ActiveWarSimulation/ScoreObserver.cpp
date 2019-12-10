@@ -787,7 +787,10 @@ void ScoreObserver::OutputLogList(std::ofstream &ofs,const char splitter,const c
 		//情報出力
 		for(size_t i=0;i<listSize;i++){
 			//要素出力
+			ofs<<beginer;
+			m_logList[i]->OutputUnitDataList(ofs,unitPtrToIndex,splitter,beginer,ender);
 			//m_logList[i]->OutPutLog(ofs,unitPtrToIndex,splitter,beginer,ender);
+			ofs<<ender;
 			//データの区切りを出力
 			if(i+1!=listSize){
 				//最後の要素の後ろにはsplitterを出力しない

@@ -51,6 +51,23 @@ LogElement::LogElement(LogKind kind,const std::vector<Unit *> &unitList)
 	,m_unitDataList(CreateUnitDataList(unitList))
 {}
 
+void LogElement::OutputUnitDataList(std::ofstream &ofs,const std::map<const Unit *,size_t> &unitPtrToIndex,const char splitter,const char beginer,const char ender)const{
+	const size_t listSize=m_unitDataList.size();
+	for(size_t i=0;i<listSize;i++){
+		ofs<<beginer;
+		//î•ño—Í
+		ofs<<beginer<<"index"<<splitter<<unitPtrToIndex.find(m_unitDataList[i].punit)->second<<ender;
+		ofs<<splitter<<beginer<<"hp"<<splitter<<m_unitDataList[i].hp<<ender;
+		ofs<<splitter<<beginer<<"op"<<splitter<<m_unitDataList[i].op<<ender;
+		ofs<<splitter<<beginer<<"pos"<<splitter<<m_unitDataList[i].pos.x<<splitter<<m_unitDataList[i].pos.y<<ender;
+		//‹æØ‚è•¶Žšo—Í
+		ofs<<ender;
+		if(i+1!=listSize){
+			ofs<<splitter;
+		}
+	}
+}
+
 std::vector<LogElement::UnitLogData> LogElement::CreateUnitDataList(const std::vector<Unit *> &unitList){
 	std::vector<UnitLogData> retVec;
 	const size_t vecSize=unitList.size();
