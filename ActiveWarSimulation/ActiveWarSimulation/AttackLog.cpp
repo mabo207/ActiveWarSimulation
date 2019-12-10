@@ -13,6 +13,12 @@ AttackLog::AttackLog(const std::vector<Unit *> &unitList,const Unit * const aime
 	,m_route(route)
 {}
 
+AttackLog::AttackLog(const std::vector<UnitLogData> &unitDataList,const Unit * const aimedUnit,const std::vector<RouteInfo> &route)
+	:LogElement(LogKind::e_attack,unitDataList)
+	,m_aimedUnit(aimedUnit)
+	,m_route(route)
+{}
+
 LogElement::UnitLogData AttackLog::GetAimedUnitData()const{
 	for(const UnitLogData &logData:m_unitDataList){
 		if(logData.punit==m_aimedUnit){
@@ -28,4 +34,14 @@ Weapon::AttackInfo AttackLog::GetAttackInfo()const{
 		return operateUnit->GetBattleStatus().weapon->GetAttackInfo(operateUnit,m_aimedUnit);
 	}
 	return Weapon::AttackInfo();
+}
+
+void AttackLog::OutputLog(std::ofstream &ofs,const std::map<const Unit *,size_t> &unitPtrToIndex,const char splitter,const char beginer,const char ender)const{
+	ofs<<beginer;
+	ofs<<beginer<<"kind"<<splitter<<"AttackLog"<<ender;
+	ofs<<splitter<<beginer<<"unitList"<<splitter;
+	OutputUnitDataList(ofs,unitPtrToIndex,splitter,beginer,ender);
+	ofs<<ender;
+	ofs<<splitter<<beginer<<"aimed"<<splitter<<unitPtrToIndex.find(m_aimedUnit)->second<<ender;
+	ofs<<ender;
 }

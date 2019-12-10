@@ -38,6 +38,8 @@ BattleScene::BattleScene(const std::string &stageDirName,const std::string &titl
 	:BattleScene(std::shared_ptr<BattleSceneData>(new BattleSceneData(stageDirName,titleName,stageLevel))){}
 
 BattleScene::~BattleScene(){
+	//ログを出力する
+	m_battleSceneData->OutputLog();
 	//m_battleSceneDataにあるシーン終了時に行う処理群の一括処理をする
 	m_battleSceneData->RunSceneEndProcess();
 	//BGMを止める

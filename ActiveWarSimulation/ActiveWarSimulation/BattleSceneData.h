@@ -100,6 +100,7 @@ public:
 	void ResisterSceneEndProcess(const std::function<void(void)> &func);//画面暗転時に行う処理を登録する
 	void RunSceneEndProcess();//バトル場面終了時に行う処理を実行する
 	bool JudgeEvaluateSubmission();//今回の行動でサブミッションの評価を行うかの判定をする
+	void OutputLog()const;//ログを出力する
 
 	//情報描画関数
 	void DrawField(const std::set<const BattleObject *> &notDraw={})const;//フィールドの描画、ユニットの描画は別。こいつより前に描画したものはマップ絵で全て消えるはず。

@@ -11,6 +11,7 @@
 #include"FilePath.h"
 #include<optional>
 #include"StageInfoReader.h"
+#include<ctime>
 
 //----------------------BattleSceneData----------------------
 const Vector2D BattleSceneData::mapDrawSize=Vector2D((float)CommonConstParameter::mapSizeX,(float)CommonConstParameter::mapSizeY);
@@ -481,4 +482,23 @@ bool BattleSceneData::JudgeMousePushInsideMapDrawZone(int mouseCode,bool continu
 
 bool BattleSceneData::JudgeEvaluateSubmission(){
 	return m_submissionRunFlag=m_scoreObserver->GetSubmission().JudgeEvaluatedOrder(this);
+}
+
+void BattleSceneData::OutputLog()const{
+	//出力先の指定
+	std::ofstream ofs("GameLog_"+m_stageDirName+"_"+m_stageLevel.GetString()+"_"+std::to_string(_time64(nullptr))+".txt",std::ios_base::trunc);
+	if(!ofs){
+		return;
+	}
+	const char splitter=',',beginer='(',ender=')';
+	//ステージ情報の出力
+	ofs<<beginer<<"stageDirName"<<splitter<<m_stageDirName<<ender;
+	//ステージ難易度の出力
+	ofs<<splitter<<beginer<<"stageLevel"<<splitter<<m_stageLevel.GetString()<<ender;
+	//ログの出力
+	ofs<<splitter<<beginer<<"log"<<splitter;
+	m_scoreObserver->OutputLogList(ofs,splitter,beginer,ender);
+	ofs<<ender;
+	//ファイルを閉じる
+	ofs.close();
 }

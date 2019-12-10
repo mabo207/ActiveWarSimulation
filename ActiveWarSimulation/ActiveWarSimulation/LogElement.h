@@ -4,6 +4,7 @@
 #include<memory>
 #include<functional>
 #include<vector>
+#include<map>
 #include"ToolsLib.h"
 
 struct BattleSceneData;
@@ -44,6 +45,7 @@ public:
 	const UnitLogData GetOperateUnitData()const;
 	bool JudgeEveryUnitData(const std::function<bool(const UnitLogData &)> &func,bool all)const;//allがtrueなら「全て成立」を、falseなら「成立しているものがある」(exist)を調べる。
 	const UnitLogData FindUnitData(const Unit *punit)const;
+	virtual void OutputLog(std::ofstream &ofs,const std::map<const Unit *,size_t> &unitPtrToIndex,const char splitter,const char beginer,const char ender)const=0;
 
 	const std::vector<UnitLogData> m_unitDataList;
 
@@ -51,7 +53,9 @@ protected:
 	//battleDataは、必要な値を取り出すだけなのでstd::shared_ptr<>である必要はない。
 	LogElement(LogKind kind,const BattleSceneData * const battleData);
 	LogElement(LogKind kind,const std::vector<Unit *> &unitList);
+	LogElement(LogKind kind,const std::vector<UnitLogData> &unitDataList);
 	virtual ~LogElement(){}
+	void OutputUnitDataList(std::ofstream &ofs,const std::map<const Unit *,size_t> &unitPtrToIndex,const char splitter,const char beginer,const char ender)const;
 
 private:
 	static std::vector<UnitLogData> CreateUnitDataList(const std::vector<Unit *> &unitList);
