@@ -15,6 +15,8 @@ public:
 	const std::vector<RouteInfo> GetRoute()const{
 		return m_route;
 	}
+	//仮想関数のオーバーライド
+	void OutputLog(std::ofstream &ofs,const std::map<const Unit *,size_t> &unitPtrToIndex,const char splitter,const char beginer,const char ender)const;
 
 private:
 	//メモリ負担になる上にいるかよく分からない、そのうち使いたくなるかも。

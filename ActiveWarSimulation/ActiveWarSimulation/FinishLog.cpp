@@ -5,3 +5,12 @@ FinishLog::FinishLog(const BattleSceneData * const battleData)
 	:LogElement(LogKind::e_finish,battleData)
 	,m_clearTurn(battleData->CalculateTurn())
 {}
+
+void FinishLog::OutputLog(std::ofstream &ofs,const std::map<const Unit *,size_t> &unitPtrToIndex,const char splitter,const char beginer,const char ender)const{
+	ofs<<beginer;
+	ofs<<beginer<<"kind"<<splitter<<"FinishLog"<<ender;
+	ofs<<splitter<<beginer<<"unitList"<<splitter;
+	OutputUnitDataList(ofs,unitPtrToIndex,splitter,beginer,ender);
+	ofs<<ender;
+	ofs<<ender;
+}

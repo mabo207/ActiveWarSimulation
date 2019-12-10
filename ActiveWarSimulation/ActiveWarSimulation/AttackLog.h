@@ -19,6 +19,8 @@ public:
 	}
 	UnitLogData GetAimedUnitData()const;//GetAimedUnit()の上位互換っぽいが、処理が遅いのでできるだけ使わないようにしたい。
 	Weapon::AttackInfo GetAttackInfo()const;
+	//仮想関数のオーバーライド
+	void OutputLog(std::ofstream &ofs,const std::map<const Unit *,size_t> &unitPtrToIndex,const char splitter,const char beginer,const char ender)const;
 
 private:
 	const Unit * const m_aimedUnit;

@@ -29,3 +29,13 @@ Weapon::AttackInfo AttackLog::GetAttackInfo()const{
 	}
 	return Weapon::AttackInfo();
 }
+
+void AttackLog::OutputLog(std::ofstream &ofs,const std::map<const Unit *,size_t> &unitPtrToIndex,const char splitter,const char beginer,const char ender)const{
+	ofs<<beginer;
+	ofs<<beginer<<"kind"<<splitter<<"AttackLog"<<ender;
+	ofs<<splitter<<beginer<<"unitList"<<splitter;
+	OutputUnitDataList(ofs,unitPtrToIndex,splitter,beginer,ender);
+	ofs<<ender;
+	ofs<<splitter<<beginer<<"aimed"<<splitter<<unitPtrToIndex.find(m_aimedUnit)->second<<ender;
+	ofs<<ender;
+}
