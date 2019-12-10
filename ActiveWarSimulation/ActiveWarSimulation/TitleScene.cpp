@@ -18,6 +18,7 @@
 #include"FadeOutScene.h"
 #include"SubmissionBattleScene.h"
 #include"ExperimentBattleScene.h"
+#include"WatchLogScene.h"
 
 //-------------------TitleScene::SelectItem-------------------
 std::string TitleScene::SelectItem::GetString(const Kind kind){
@@ -212,6 +213,11 @@ int TitleScene::thisCalculate(){
 			PlaySoundMem(GeneralPurposeResource::decideSound,DX_PLAYTYPE_BACK,TRUE);//効果音再生
 			return m_selectItem;
 		}
+		if(keyboard_get(KEY_INPUT_L)==60){
+			//暫定のログ再生クラスに行く方法
+			m_selectItem=SelectItem::e_watchLog;
+			return m_selectItem;
+		}
 	}
 
 	//マウス位置の更新
@@ -258,6 +264,9 @@ int TitleScene::Calculate(){
 		break;
 	case(SelectItem::e_practice_3):
 		//バトル画面へ
+		return 1;
+		break;
+	case(SelectItem::e_watchLog):
 		return 1;
 		break;
 	case(SelectItem::COUNTER):
@@ -336,6 +345,9 @@ std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameS
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
 	} else if(m_selectItem==SelectItem::e_practice_3){
 		const auto battle=std::make_shared<SubmissionBattleScene::SubmissionBattleSceneFactory>("practice_3","",StageLevel::e_normal);
+		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
+	} else if(m_selectItem==SelectItem::e_watchLog){
+		const auto battle=std::make_shared<WatchLogScene::WatchLogSceneFactory>("GameLog_tutorial_easy_1575949795.txt");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
 	}
 	return std::shared_ptr<GameScene>();

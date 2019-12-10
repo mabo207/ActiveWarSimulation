@@ -25,6 +25,7 @@ private:
 			,e_practice_3
 			,e_test_2
 			,e_gameFinish
+			,e_watchLog
 			,COUNTER
 		};
 		static std::string GetString(const Kind kind);
