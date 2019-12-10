@@ -91,3 +91,4 @@ nonfree
 *.db
 *.ogg
 *.pch
+*GameLog_*.txt

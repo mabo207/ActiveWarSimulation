@@ -773,6 +773,30 @@ void ScoreObserver::SetSubmissionRule(const std::shared_ptr<SubmissionRuleBase> 
 	m_submission.InitRubric(rule);
 }
 
+void ScoreObserver::OutputLogList(std::ofstream &ofs,const char splitter,const char beginer,const char ender)const{
+	if(!m_logList.empty()){
+		//攻撃相手などはログ再生をすれば分かるので、ユニット情報のみを出力する
+		const size_t listSize=m_logList.size();
+		//ユニット情報の紐づけ
+		std::map<const Unit *,size_t> unitPtrToIndex;
+		size_t index=0;
+		for(const LogElement::UnitLogData &unitData:m_logList[0]->m_unitDataList){
+			unitPtrToIndex.insert(std::pair<const Unit *,size_t>(unitData.punit,index));
+			index++;
+		}
+		//情報出力
+		for(size_t i=0;i<listSize;i++){
+			//要素出力
+			//m_logList[i]->OutPutLog(ofs,unitPtrToIndex,splitter,beginer,ender);
+			//データの区切りを出力
+			if(i+1!=listSize){
+				//最後の要素の後ろにはsplitterを出力しない
+				ofs<<splitter;
+			}
+		}
+	}
+}
+
 ScoreObserver::ScoreObserver()
 	:m_researchCount(0)
 	,m_cancelCount(0)

@@ -75,6 +75,8 @@ public:
 	}
 	//サブミッションのルールを設定
 	void SetSubmissionRule(const std::shared_ptr<SubmissionRuleBase> &rule);
+	//ログを出力する
+	void OutputLogList(std::ofstream &ofs,const char splitter,const char beginer,const char ender)const;
 	//コンストラクタ等
 	ScoreObserver();
 	virtual ~ScoreObserver();
