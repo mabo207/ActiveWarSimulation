@@ -364,7 +364,7 @@ void SubmissionReflectionScene::InitReflectionWork(){
 		AddAreaClickWork(std::vector<ShapeClickWorkInfo>{ShapeClickWorkInfo(&m_badLogInfo,minimapPos[0],oneMinimapRate)}
 			,std::shared_ptr<MinimapLayoutBase>(new NormalDraw(onlyBadMinimapDrawFunc))
 			,Unit::Team::e_enemy
-			,"この場所だったら、\nどのような障害物やキャラクターが攻撃相手の移動を邪魔しているだろう？"
+			,"この場所だったら、どのような障害物やキャラクターが\n攻撃相手の移動を邪魔しているだろう？"
 			,"ピンクの点で表現された敵の動く範囲を見て、\n良い攻撃位置を見つけられたか確認しよう。");
 	} else{
 		//そうでない場合は、goodlogをより良くすることを考えさせるために１場面だけ切り出す
