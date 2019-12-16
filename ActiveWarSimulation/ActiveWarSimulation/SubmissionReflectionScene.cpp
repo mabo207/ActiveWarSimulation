@@ -490,14 +490,15 @@ void SubmissionReflectionScene::AddShapeClickWork(const std::function<std::share
 					field.push_back(obj);
 				}
 			}
+			//格子点マップの作成
+			lField=LatticeBattleField::Create(field,m_battleSceneData->m_stageSize,mapinfo.drawInfo->value().GetOperateUnit(),false);
 			for(size_t i=0;i<mapinfo.drawInfo->value().GetUnitList().size();i++){
-				Unit *pu=mapinfo.drawInfo->value().GetUnitListPtr(i);
+				//ユニットの範囲を除去
+				const Unit *pu=mapinfo.drawInfo->value().GetUnitListPtr(i);
 				if(pu!=mapinfo.drawInfo->value().GetAttackedUnit() && pu!=mapinfo.drawInfo->value().GetOperateUnit()){
-					field.push_back(pu);
+					lField->BecomeImpassibleLattice(pu,mapinfo.drawInfo->value().GetAttackedUnit()->GetBattleStatus().team);
 				}
 			}
-			//格子点マップの作成
-			lField=LatticeBattleField::Create(field,m_battleSceneData->m_stageSize,mapinfo.drawInfo->value().GetOperateUnit(),true);
 			//距離マップの作成
 			lField->CalculateLatticeDistanceInfo(dField,mapinfo.drawInfo->value().GetAttackedUnit()->getPos());
 			//格子点の追加
