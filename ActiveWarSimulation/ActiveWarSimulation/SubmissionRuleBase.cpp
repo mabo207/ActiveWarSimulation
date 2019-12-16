@@ -14,8 +14,12 @@ float SubmissionRuleBase::CalculateRouteDistance(const std::vector<BattleObject 
 }
 
 float SubmissionRuleBase::CalculateRouteDistance(const std::shared_ptr<InAdvanceRouteData> &inAdvanceData,const LogElement::UnitLogData operatedUnit)const{
+	return CalculateRouteDistance(inAdvanceData,operatedUnit.pos);
+}
+
+float SubmissionRuleBase::CalculateRouteDistance(const std::shared_ptr<InAdvanceRouteData> &inAdvanceData,const Vector2D from)const{
 	//格子点データと距離マップが既に作成されているので、距離計算だけすればよい
-	const std::vector<float> distVec=inAdvanceData->m_latticeField->CalculateRouteDistance(inAdvanceData->m_distanceInfoVec,{operatedUnit.pos});
+	const std::vector<float> distVec=inAdvanceData->m_latticeField->CalculateRouteDistance(inAdvanceData->m_distanceInfoVec,{from});
 	const float routeDistance=distVec.front();//要素は1つだけなので、先頭要素を取り出せば良い。
 	return routeDistance;
 }

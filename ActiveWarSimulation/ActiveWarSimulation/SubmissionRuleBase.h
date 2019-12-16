@@ -70,6 +70,7 @@ protected:
 	//よく評価に用いられる情報を計算する関数、Unit *でなくUnitLogDataを用いて計算をしないといけない
 	float CalculateRouteDistance(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const;//operatedUnitからaimedUnitまでの経路距離を計算する
 	float CalculateRouteDistance(const std::shared_ptr<InAdvanceRouteData> &inAdvanceData,const LogElement::UnitLogData operatedUnit)const;//operatedUnitからaimedUnitまでの経路距離を計算する(事前データ使用)
+	float CalculateRouteDistance(const std::shared_ptr<InAdvanceRouteData> &inAdvanceData,const Vector2D from)const;//fromからaimedUnitまでの経路距離を計算する(事前データ使用)
 	std::shared_ptr<InAdvanceRouteData> CalculateInAdvanceRouteData(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const;
 	bool JudgeAttackable(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const LogElement::UnitLogData aimedUnit)const;//operatedUnitがaimedUnitを次の行動で攻撃できるかどうか判定する
 	std::vector<bool> JudgeAttackableList(const std::vector<BattleObject *> &field,const Vector2D mapSize,const std::vector<LogElement::UnitLogData> &unitDataList,const LogElement::UnitLogData operatedUnit,const std::vector<LogElement::UnitLogData> &aimedUnitList)const;//aimedUnitが複数にした拡張版
