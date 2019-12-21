@@ -204,6 +204,7 @@
     <ClCompile Include="ResearchScene.cpp" />
     <ClCompile Include="ScoreObserver.cpp" />
     <ClCompile Include="ScoreRankingData.cpp" />
+    <ClCompile Include="SelectLogScene.cpp" />
     <ClCompile Include="SelectOne.cpp" />
     <ClCompile Include="SelectSubmissionScene.cpp" />
     <ClCompile Include="SelfDecideSubmission.cpp" />
@@ -288,6 +289,7 @@
     <ClInclude Include="RouteInfo.h" />
     <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="ScoreRankingData.h" />
+    <ClInclude Include="SelectLogScene.h" />
     <ClInclude Include="SelectOne.h" />
     <ClInclude Include="SelectSubmissionScene.h" />
     <ClInclude Include="SelfDecideSubmission.h" />

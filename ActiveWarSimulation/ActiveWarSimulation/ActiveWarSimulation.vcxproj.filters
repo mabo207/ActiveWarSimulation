@@ -438,6 +438,9 @@
     <ClCompile Include="WatchLogScene.cpp">
       <Filter>ソース ファイル\GameScene\WatchLogScene</Filter>
     </ClCompile>
+    <ClCompile Include="SelectLogScene.cpp">
+      <Filter>ソース ファイル\GameScene\WatchLogScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -702,6 +705,9 @@
       <Filter>ヘッダー ファイル\GameScene\BattleScene\BattleSceneData\ScoreObserver\SelfDecideSubmission</Filter>
     </ClInclude>
     <ClInclude Include="WatchLogScene.h">
+      <Filter>ヘッダー ファイル\GameScene\WatchLogScene</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectLogScene.h">
       <Filter>ヘッダー ファイル\GameScene\WatchLogScene</Filter>
     </ClInclude>
   </ItemGroup>
