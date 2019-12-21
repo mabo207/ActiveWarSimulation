@@ -166,7 +166,10 @@ void WatchLogScene::Draw()const{
 	//”wŒi‚Ì•`‰æ
 	m_battleSceneData->DrawField();
 	//ƒ†ƒjƒbƒg‚Ì•`‰æ
-	m_battleSceneData->DrawUnit(true);
+	m_battleSceneData->DrawUnit(true,{m_battleSceneData->m_operateUnit});
+	m_battleSceneData->m_operateUnit->DrawUnit(Vector2D(),0,true,true,true);
+	m_battleSceneData->m_operateUnit->DrawMoveInfo();
+	m_battleSceneData->m_operateUnit->DrawMaxMoveInfo();//‚Ç‚Ì‚­‚ç‚¢ˆÚ“®‚µ‚½‚Ì‚©•ª‚©‚è‚â‚·‚¢‚æ‚¤‚É‚·‚é‚½‚ß‚É•`‰æ
 	//HPƒQ[ƒW‚Ì•`‰æ
 	m_battleSceneData->DrawHPGage();
 	//‡”Ô‚Ì•`‰æ
