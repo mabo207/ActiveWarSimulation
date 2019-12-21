@@ -28,6 +28,7 @@ public:
 
 private:
 	std::shared_ptr<GameScene> VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const;//場面遷移をする時に、どこに移動するかを決める関数。この値の設定方法は、クラスごとに実装方法を変えて良い。
+	void AdaptLog();
 
 	size_t m_logIndex;
 	std::shared_ptr<BattleSceneData> m_battleSceneData;

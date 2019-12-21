@@ -97,7 +97,7 @@ WatchLogScene::WatchLogScene(const std::string &logFileName)
 							if(dataSb.m_vec.size()>=3 && dataSb.m_vec[0].GetString()=="pos"){
 								Vector2D p;
 								p.x=std::strtof(dataSb.m_vec[1].GetString().c_str(),nullptr);
-								p.x=std::strtof(dataSb.m_vec[2].GetString().c_str(),nullptr);
+								p.y=std::strtof(dataSb.m_vec[2].GetString().c_str(),nullptr);
 								pos.emplace(p);
 							}
 						}
@@ -129,6 +129,8 @@ WatchLogScene::WatchLogScene(const std::string &logFileName)
 			}
 		}
 	}
+	//ログをm_battleSceneDataに適用する
+	AdaptLog();
 }
 
 WatchLogScene::~WatchLogScene(){}
@@ -138,14 +140,88 @@ void WatchLogScene::InitCompletely(){}
 void WatchLogScene::Activate(){}
 
 int WatchLogScene::Calculate(){
+	//場面の選択
+	if(m_logIndex>0 && (keyboard_get(KEY_INPUT_LEFT)==1 || (keyboard_get(KEY_INPUT_LEFT)>30 && keyboard_get(KEY_INPUT_LEFT)%5==0))){
+		m_logIndex--;
+		AdaptLog();
+	} else if(m_logIndex+1<m_logList.size() && (keyboard_get(KEY_INPUT_RIGHT)==1 || (keyboard_get(KEY_INPUT_RIGHT)>30 && keyboard_get(KEY_INPUT_RIGHT)%5==0))){
+		m_logIndex++;
+		AdaptLog();
+	}
+	//遷移
+	if(keyboard_get(KEY_INPUT_X)==1 || mouse_get(MOUSE_INPUT_RIGHT)==1){
+		return 1;
+	}
+
 	return 0;
 }
 
 void WatchLogScene::Draw()const{
-
+	//背景の描画
+	m_battleSceneData->DrawField();
+	//ユニットの描画
+	m_battleSceneData->DrawUnit(true);
+	//HPゲージの描画
+	m_battleSceneData->DrawHPGage();
+	//順番の描画
+	m_battleSceneData->DrawOrder();
 }
 
 std::shared_ptr<GameScene> WatchLogScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	//タイトル画面へ
 	return CreateFadeOutInSceneCompletely(thisSharedPtr,std::make_shared<TitleScene::TitleSceneFactory>(),15,15);
+}
+
+void WatchLogScene::AdaptLog(){
+	//操作ユニットの変更
+	for(BattleObject *obj:m_battleSceneData->m_field){
+		if(obj->GetType()==BattleObject::Type::e_unit && obj==m_logList[m_logIndex]->m_unitDataList.begin()->punit){
+			Unit *pu=dynamic_cast<Unit *>(obj);
+			if(pu!=nullptr){
+				m_battleSceneData->m_operateUnit=pu;
+			}
+			break;
+		}
+	}
+	//ユニットの状態を適用する
+	for(BattleObject *ob:m_battleSceneData->m_field){
+		if(ob->GetType()==BattleObject::Type::e_unit){
+			Unit * const pu=dynamic_cast<Unit *>(ob);
+			if(pu!=nullptr){
+				//puがログに存在するかを調べる
+				bool logExist=false;
+				for(const LogElement::UnitLogData &data:m_logList[m_logIndex]->m_unitDataList){
+					if(pu==data.punit){
+						logExist=true;
+						//存在した場合、情報適用する
+						pu->SetFix(Shape::Fix::e_static);//生存しているのでstatic状態にする
+						pu->SetOP(data.op);
+						pu->AddHP(data.hp-pu->GetBattleStatus().HP);
+						pu->Warp(data.pos);
+						pu->SetPenetratable(m_battleSceneData->m_operateUnit->GetBattleStatus().team);
+						break;
+					}
+				}
+				if(!logExist){
+					//ログが存在しなかった場合は、ユニットをマップ上に出さない
+					pu->SetFix(Shape::Fix::e_ignore);
+				}
+			}
+		}
+	}
+	//m_unitListの順番を整える
+	m_battleSceneData->m_unitList.clear();
+	for(const LogElement::UnitLogData &data:m_logList[m_logIndex]->m_unitDataList){
+		//m_battleSceneData->m_unitList.push_back(data.punit);//本来はこうしたいけども、data.punitはconstなので格納できない
+		//data.punitをm_battleSceneData->m_fieldから探す
+		for(BattleObject *obj:m_battleSceneData->m_field){
+			if(obj->GetType()==BattleObject::Type::e_unit && obj==data.punit){
+				Unit *pu=dynamic_cast<Unit *>(obj);
+				if(pu!=nullptr){
+					m_battleSceneData->m_unitList.push_back(pu);
+				}
+				break;
+			}
+		}
+	}
 }
