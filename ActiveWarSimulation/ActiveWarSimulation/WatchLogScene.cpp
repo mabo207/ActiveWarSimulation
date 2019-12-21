@@ -9,6 +9,8 @@
 #include"GraphicControl.h"
 #include"SelectLogScene.h"
 #include"FilePath.h"
+#include"GeneralPurposeResource.h"
+#include"CommonConstParameter.h"
 //ƒƒOˆê——
 #include"AttackLog.h"
 #include"WaitLog.h"
@@ -183,6 +185,8 @@ void WatchLogScene::Draw()const{
 			attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->DrawPredict((int)pos.x,(int)pos.y,m_predictExplainFont,m_predictNumberFont,attackLog->GetOperateUnitData().punit,attackLog->GetAimedUnit());
 		}
 	}
+	//¡‚ÌƒƒO‚Ì”Ô†‚ğ‘‚­
+	DrawStringRightJustifiedToHandle(CommonConstParameter::gameResolutionX-10,CommonConstParameter::gameResolutionY-100,std::to_string(m_logIndex)+"/"+std::to_string(m_logList.size()),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
 }
 
 std::shared_ptr<GameScene> WatchLogScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
