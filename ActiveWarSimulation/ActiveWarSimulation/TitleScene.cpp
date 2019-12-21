@@ -347,7 +347,7 @@ std::shared_ptr<GameScene> TitleScene::VGetNextScene(const std::shared_ptr<GameS
 		const auto battle=std::make_shared<SubmissionBattleScene::SubmissionBattleSceneFactory>("practice_3","",StageLevel::e_normal);
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
 	} else if(m_selectItem==SelectItem::e_watchLog){
-		const auto battle=std::make_shared<WatchLogScene::WatchLogSceneFactory>("GameLog_tutorial_easy_1575949795.txt");
+		const auto battle=std::make_shared<WatchLogScene::WatchLogSceneFactory>("GameLog_practice_3_normal_1576219503.txt");
 		return CreateFadeOutInSceneCompletely(thisSharedPtr,battle,15,15);
 	}
 	return std::shared_ptr<GameScene>();

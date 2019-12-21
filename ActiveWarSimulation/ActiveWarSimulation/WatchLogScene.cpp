@@ -7,6 +7,8 @@
 #include<map>
 #include<optional>
 #include"TitleScene.h"
+#include"GraphicControl.h"
+#include"FilePath.h"
 //ログ一覧
 #include"AttackLog.h"
 #include"WaitLog.h"
@@ -15,7 +17,8 @@
 
 //---------------------WatchLogScene-----------------
 WatchLogScene::WatchLogScene(const std::string &logFileName)
-	:m_logIndex(0)
+	:m_logIndex(0),m_predictExplainFont(LoadFontDataToHandleEX(FilePath::fontDir+"PredictExplainFont.dft",1))
+	,m_predictNumberFont(LoadFontDataToHandleEX(FilePath::fontDir+"PredictNumberFont.dft",3))
 {
 	//ファイルを読み込み、文字列分割
 	const StringBuilder sb(FileStrRead(logFileName.c_str()),',','(',')');
@@ -133,7 +136,10 @@ WatchLogScene::WatchLogScene(const std::string &logFileName)
 	AdaptLog();
 }
 
-WatchLogScene::~WatchLogScene(){}
+WatchLogScene::~WatchLogScene(){
+	DeleteFontToHandleEX(m_predictExplainFont);
+	DeleteFontToHandleEX(m_predictNumberFont);
+}
 
 void WatchLogScene::InitCompletely(){}
 
@@ -165,6 +171,15 @@ void WatchLogScene::Draw()const{
 	m_battleSceneData->DrawHPGage();
 	//順番の描画
 	m_battleSceneData->DrawOrder();
+	//ダメージの描画
+	if(m_logList[m_logIndex]->GetLogKind()==LogElement::LogKind::e_attack){
+		//攻撃した場面の時は、どのような行動をしたかを見えるようにする
+		const std::shared_ptr<AttackLog> attackLog=std::dynamic_pointer_cast<AttackLog>(m_logList[m_logIndex]);
+		if(attackLog){
+			const Vector2D pos=attackLog->GetAimedUnit()->getPos();
+			attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->DrawPredict((int)pos.x,(int)pos.y,m_predictExplainFont,m_predictNumberFont,attackLog->GetOperateUnitData().punit,attackLog->GetAimedUnit());
+		}
+	}
 }
 
 std::shared_ptr<GameScene> WatchLogScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
