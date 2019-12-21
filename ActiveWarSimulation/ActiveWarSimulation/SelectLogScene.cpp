@@ -33,9 +33,30 @@ int SelectLogScene::Calculate(){
 }
 
 void SelectLogScene::Draw()const{
+	//描画をするファイル名の場所を決める
+	const int maxGap=6;
 	std::vector<std::string>::const_iterator it=m_selectFileIt;
-	const int centerX=CommonConstParameter::gameResolutionX/2,centerY=CommonConstParameter::gameResolutionY/2;
-	DrawStringCenterBaseToHandle(centerX,centerY,(it!=m_fileNameList.end()?it->c_str():"タイトル画面に戻る"),GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont,true);
+	int gap=0;
+	for(size_t i=0;i<maxGap;i++){
+		if(it!=m_fileNameList.begin()){
+			it--;
+			gap--;
+		} else{
+			//m_fileNameListの先頭より前に戻らないようにする
+			break;
+		}
+	}
+	//選択しているものの前後のファイル名もまとめて描画
+	for(;gap<=maxGap;gap++){
+		const int centerX=CommonConstParameter::gameResolutionX/2,centerY=CommonConstParameter::gameResolutionY/2+gap*60;
+		DrawStringCenterBaseToHandle(centerX,centerY,(it!=m_fileNameList.end()?it->c_str():"タイトル画面に戻る"),GetColor(255,255,255),gap==0?GeneralPurposeResource::popLargeFont:GeneralPurposeResource::gothicMiddleFont,true);
+		//表示するファイル名の更新
+		if(it==m_fileNameList.end()){
+			break;
+		} else{
+			it++;
+		}
+	}
 }
 
 SelectLogScene::SelectLogScene(){
