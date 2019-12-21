@@ -153,7 +153,7 @@ std::vector<float> LatticeBattleField::CalculateRouteDistance(const std::vector<
 		//(x,y)‚ÌŠiŽq“_‚Ü‚Å‚Ì‹——£‚Æˆø”minDistance‚ð”äŠr‚µA’Z‚¢•û‚ð•Ô‚·
 		if(x>=0 && x<m_xLatticeNum && y>=0 && y<m_yLatticeNum){
 			const float dist=distanceInfoVec[x+y*m_xLatticeNum].dist;
-			if(minDistance<0.0f || dist<minDistance){
+			if(dist>=0.0f && (minDistance<0.0f || dist<minDistance)){
 				return dist;
 			}
 		}

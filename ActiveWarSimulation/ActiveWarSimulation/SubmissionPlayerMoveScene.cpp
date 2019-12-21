@@ -26,7 +26,6 @@ int SubmissionPlayerMoveScene::thisCalculate(){
 	} else{
 		m_notOperateFrame++;
 	}
-	printfDx("frame:%d y:%d targety:%d\n",m_notOperateFrame,m_submissionPosition.GetY(),m_submissionPosition.GetendY());
 	//説明グラフィックが出ていない時、サブミッションの位置の更新
 	if(m_tutorialBattleSceneData->m_tutorialData.empty() || m_tutorialBattleSceneData->m_tutorialData[0]->m_kind!=TutorialBattleSceneData::TutorialBase::TutorialKind::e_explain){
 		if(m_notOperateFrame==0){
