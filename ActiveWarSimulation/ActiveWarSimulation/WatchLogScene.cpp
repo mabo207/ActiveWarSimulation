@@ -6,8 +6,8 @@
 #include"StringBuilder.h"
 #include<map>
 #include<optional>
-#include"TitleScene.h"
 #include"GraphicControl.h"
+#include"SelectLogScene.h"
 #include"FilePath.h"
 //ログ一覧
 #include"AttackLog.h"
@@ -187,7 +187,7 @@ void WatchLogScene::Draw()const{
 
 std::shared_ptr<GameScene> WatchLogScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
 	//タイトル画面へ
-	return CreateFadeOutInSceneCompletely(thisSharedPtr,std::make_shared<TitleScene::TitleSceneFactory>(),15,15);
+	return CreateFadeOutInSceneCompletely(thisSharedPtr,std::make_shared<SelectLogScene::SelectLogSceneFactory>(),15,15);
 }
 
 void WatchLogScene::AdaptLog(){
