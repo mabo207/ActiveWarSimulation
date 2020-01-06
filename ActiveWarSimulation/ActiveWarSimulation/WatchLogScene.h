@@ -34,6 +34,7 @@ private:
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
 	std::vector<std::shared_ptr<LogElement>> m_logList;
 	float m_totalOP;//クリアターン数を計算するために用意
+	int m_survivalNum;//クリア時の生存数を格納、敗北時は敵の生存数をマイナスにして表示
 	//フォント
 	const int m_predictExplainFont;
 	const int m_predictNumberFont;

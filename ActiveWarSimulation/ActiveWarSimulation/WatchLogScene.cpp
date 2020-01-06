@@ -136,7 +136,8 @@ WatchLogScene::WatchLogScene(const std::string &logFileName)
 	}
 	//m_totalOPの計算
 	m_totalOP=0.0f;
-	for(size_t i=0,siz=m_logList.size();i+1<siz;i++){
+	const size_t logListSize=m_logList.size();
+	for(size_t i=0;i+1<logListSize;i++){
 		if((m_logList[i]->GetLogKind()==LogElement::LogKind::e_attack || m_logList[i]->GetLogKind()==LogElement::LogKind::e_wait)
 			&& m_logList[i+1]->GetLogKind()!=LogElement::LogKind::e_finish
 			&& m_logList[i]->m_unitDataList.size()>=2)
@@ -144,6 +145,17 @@ WatchLogScene::WatchLogScene(const std::string &logFileName)
 			//BattleSceneDataと同様の、ターン数測定アルゴリズムを使用。次に行動するユニットのOPをmaxOPに増加させるのに必要な値だけm_totalOPを増加させる
 			//最後の行動のOPは加算しないことに注意
 			m_totalOP+=Unit::BattleStatus::maxOP-m_logList[i]->m_unitDataList[1].op;
+		}
+	}
+	//m_survivalNumの計算
+	m_survivalNum=0;
+	if(logListSize>0 && m_logList[logListSize-1]->GetLogKind()==LogElement::LogKind::e_finish){
+		for(const LogElement::UnitLogData &unitdata:m_logList[logListSize-1]->m_unitDataList){
+			if(unitdata.punit->GetBattleStatus().team==Unit::Team::e_player){
+				m_survivalNum++;
+			} else{
+				m_survivalNum--;
+			}
 		}
 	}
 	//ログをm_battleSceneDataに適用する
@@ -197,8 +209,8 @@ void WatchLogScene::Draw()const{
 			attackLog->GetOperateUnitData().punit->GetBattleStatus().weapon->DrawPredict((int)pos.x,(int)pos.y,m_predictExplainFont,m_predictNumberFont,attackLog->GetOperateUnitData().punit,attackLog->GetAimedUnit());
 		}
 	}
-	//全体のターン数を書く
-	DrawStringRightJustifiedToHandle(CommonConstParameter::gameResolutionX-10,CommonConstParameter::gameResolutionY-200,"Total Turn : "+std::to_string((int)(m_totalOP/Unit::BattleStatus::maxOP)+1),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
+	//クリアターン数と生存数を書く
+	DrawStringRightJustifiedToHandle(CommonConstParameter::gameResolutionX-10,CommonConstParameter::gameResolutionY-150,"Total Turn : "+std::to_string((int)(m_totalOP/Unit::BattleStatus::maxOP)+1)+" Survival : "+std::to_string(m_survivalNum),GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont);
 	//今のログの番号を書く
 	DrawStringRightJustifiedToHandle(CommonConstParameter::gameResolutionX-10,CommonConstParameter::gameResolutionY-100,std::to_string(m_logIndex)+"/"+std::to_string(m_logList.size()),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
 }
