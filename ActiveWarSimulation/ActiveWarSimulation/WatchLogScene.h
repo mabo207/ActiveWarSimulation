@@ -33,6 +33,7 @@ private:
 	size_t m_logIndex;
 	std::shared_ptr<BattleSceneData> m_battleSceneData;
 	std::vector<std::shared_ptr<LogElement>> m_logList;
+	float m_totalOP;//クリアターン数を計算するために用意
 	//フォント
 	const int m_predictExplainFont;
 	const int m_predictNumberFont;
