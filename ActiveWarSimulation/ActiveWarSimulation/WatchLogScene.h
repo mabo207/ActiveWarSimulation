@@ -37,6 +37,7 @@ private:
 	float m_totalOP;//クリアターン数を計算するために用意
 	int m_survivalNum;//クリア時の生存数を格納、敗北時は敵の生存数をマイナスにして表示
 	std::vector<SubmissionEvaluation> m_evaluateList;//全てのログの評価一覧
+	std::map<SubmissionEvaluation,size_t> m_evaluateCounter;//ログの評価カウンタ
 	//フォント
 	const int m_predictExplainFont;
 	const int m_predictNumberFont;

@@ -215,9 +215,19 @@ void WatchLogScene::Draw()const{
 		}
 	}
 	//クリアターン数と生存数を書く
-	DrawStringRightJustifiedToHandle(CommonConstParameter::gameResolutionX-10,CommonConstParameter::gameResolutionY-150,"Total Turn : "+std::to_string((int)(m_totalOP/Unit::BattleStatus::maxOP)+1)+" Survival : "+std::to_string(m_survivalNum),GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont);
+	DrawStringRightJustifiedToHandle(CommonConstParameter::gameResolutionX-10,CommonConstParameter::gameResolutionY-130,"Total Turn : "+std::to_string((int)(m_totalOP/Unit::BattleStatus::maxOP)+1)+" Survival : "+std::to_string(m_survivalNum),GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont);
 	//今のログの番号を書く
 	DrawStringRightJustifiedToHandle(CommonConstParameter::gameResolutionX-10,CommonConstParameter::gameResolutionY-100,std::to_string(m_logIndex)+"/"+std::to_string(m_logList.size()),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
+	//サブミッション評価一覧を描画
+	{
+		std::string str;
+		for(const std::pair<SubmissionEvaluation,size_t> &counter:m_evaluateCounter){
+			if(counter.first!=SubmissionEvaluation::e_noevaluation){
+				str+=(" "+counter.first.GetString()+":"+std::to_string(counter.second));
+			}
+		}
+		DrawStringRightJustifiedToHandle(CommonConstParameter::gameResolutionX-10,CommonConstParameter::gameResolutionY-160,str,GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont);
+	}
 	//現在のログのサブミッション評価を書く
 	DrawStringToHandle(0,0,m_evaluateList[m_logIndex].GetString().c_str(),GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont,m_evaluateList[m_logIndex].Color());
 }
@@ -294,6 +304,17 @@ void WatchLogScene::EvaluateAllLog(){
 			m_evaluateList.push_back(m_battleSceneData->m_scoreObserver->GetSubmission().GetRule()->RubricEvaluate(m_battleSceneData->m_field,m_battleSceneData->m_stageSize,m_logList[m_logIndex]));
 		} else{
 			m_evaluateList.push_back(SubmissionEvaluation::e_noevaluation);
+		}
+	}
+	//ログの個数を集計する
+	for(const SubmissionEvaluation &evaluate:m_evaluateList){
+		auto it=m_evaluateCounter.find(evaluate);
+		if(it==m_evaluateCounter.end()){
+			//まだその評価がカウントされていない場合は、要素追加
+			m_evaluateCounter.insert(std::make_pair(evaluate,1));
+		} else{
+			//すでにカウントしたことあるのなら、個数を+1する
+			it->second++;
 		}
 	}
 }
