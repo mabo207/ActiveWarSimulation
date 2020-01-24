@@ -16,6 +16,8 @@
 #include"WaitLog.h"
 #include"InitLog.h"
 #include"FinishLog.h"
+//サブミッション
+#include"ArcherAttackDistance.h"
 
 //---------------------WatchLogScene-----------------
 WatchLogScene::WatchLogScene(const std::string &logFileName)
@@ -158,7 +160,10 @@ WatchLogScene::WatchLogScene(const std::string &logFileName)
 			}
 		}
 	}
-	//ログをm_battleSceneDataに適用する
+	//サブミッションの評価情報を記録
+	EvaluateAllLog();
+	//最初のログをm_battleSceneDataに適用する
+	m_logIndex=0;
 	AdaptLog();
 }
 
@@ -213,6 +218,8 @@ void WatchLogScene::Draw()const{
 	DrawStringRightJustifiedToHandle(CommonConstParameter::gameResolutionX-10,CommonConstParameter::gameResolutionY-150,"Total Turn : "+std::to_string((int)(m_totalOP/Unit::BattleStatus::maxOP)+1)+" Survival : "+std::to_string(m_survivalNum),GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont);
 	//今のログの番号を書く
 	DrawStringRightJustifiedToHandle(CommonConstParameter::gameResolutionX-10,CommonConstParameter::gameResolutionY-100,std::to_string(m_logIndex)+"/"+std::to_string(m_logList.size()),GetColor(255,255,255),GeneralPurposeResource::popLargeFont);
+	//現在のログのサブミッション評価を書く
+	DrawStringToHandle(0,0,m_evaluateList[m_logIndex].GetString().c_str(),GetColor(255,255,255),GeneralPurposeResource::gothicMiddleFont,m_evaluateList[m_logIndex].Color());
 }
 
 std::shared_ptr<GameScene> WatchLogScene::VGetNextScene(const std::shared_ptr<GameScene> &thisSharedPtr)const{
@@ -270,6 +277,23 @@ void WatchLogScene::AdaptLog(){
 				}
 				break;
 			}
+		}
+	}
+}
+
+void WatchLogScene::EvaluateAllLog(){
+	//サブミッションの定義
+	m_battleSceneData->m_scoreObserver->SetSubmissionRule(std::shared_ptr<SubmissionRuleBase>(new ArcherAttackDistance()));//ひとまず射手のを定義
+	//すべてのログの評価
+	for(size_t i=0,siz=m_logList.size();i<siz;i++){
+		//m_battleSceneDataを該当ログの盤面にする
+		m_logIndex=i;
+		AdaptLog();
+		//評価する
+		if(m_battleSceneData->m_scoreObserver->GetSubmission().JudgeEvaluatedOrder(m_battleSceneData.get())){
+			m_evaluateList.push_back(m_battleSceneData->m_scoreObserver->GetSubmission().GetRule()->RubricEvaluate(m_battleSceneData->m_field,m_battleSceneData->m_stageSize,m_logList[m_logIndex]));
+		} else{
+			m_evaluateList.push_back(SubmissionEvaluation::e_noevaluation);
 		}
 	}
 }
